@@ -7,9 +7,15 @@
     <link rel="stylesheet" type="text/css" href="style.css" />
   </head>
   <body>
-    <audio id="audio-element" controls>
-      <source src="songs/nanana.mp3" type="audio/mp3" />
-    </audio>
+    <div class="control">
+      <audio id="audio-element" controls>
+        <source src="songs/nanana.mp3" type="audio/mp3" />
+      </audio>
+      <div id="mode">Create mode</div>
+      <div id="speed">2</div>
+      <button onclick="loadFromLocal('mcr')">Load</button>
+      <button onclick="playGame()">Start</button>
+    </div>
     <canvas></canvas>
   </body>
   <script src="script.js"></script>

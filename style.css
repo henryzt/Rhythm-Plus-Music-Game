@@ -3,12 +3,13 @@ body {
   margin: 0;
   overflow: hidden;
   background: black;
+  color: white;
 }
 canvas {
   background: black;
 }
 
-audio {
+.control {
   position: absolute;
   top: 20px;
   left: 20px;

@@ -2,6 +2,8 @@ let audio = document.getElementById("audio-element");
 
 let canvas = document.querySelector("canvas");
 
+let playMode = false;
+
 let ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -15,8 +17,10 @@ window.onload = function() {
   document.addEventListener(
     "keydown",
     function(event) {
-      console.log(audio.currentTime, event.key);
-      timeArr.push({ time: audio.currentTime, key: event.key });
+      if (!playMode) {
+        console.log(audio.currentTime, event.key);
+        timeArr.push({ time: audio.currentTime, key: event.key });
+      }
       for (track of dropTrackArr) {
         track.keyDown(event.key);
       }
@@ -72,13 +76,26 @@ function dropTrack(x, width, keyBind) {
   };
 }
 
-let noteSpeed = 5;
+let noteSpeedInSec = 4;
+let noteSpeedPxPerSec = canvas.height / noteSpeedInSec;
 
 function Note(x, width) {
   this.x = x;
   this.width = width;
 
   this.y = 0;
+
+  // modulate speed, ref https://www.viget.com/articles/time-based-animation/
+  this.now = Date.now();
+  this.delta = 0;
+  this.then = 0;
+
+  this.setDelta = function() {
+    if (this.then == 0) this.then = this.now;
+    this.now = Date.now();
+    this.delta = (parseFloat(this.now) - parseFloat(this.then)) / 1000; // seconds since last frame
+    this.then = this.now;
+  };
 
   this.getScore = function() {
     return checkHitLineY - this.y;
@@ -89,10 +106,11 @@ function Note(x, width) {
   };
 
   this.update = function() {
+    this.setDelta();
     let color = this.y > checkHitLineY + 10 ? "red" : "yellow";
     ctx.fillStyle = color;
     ctx.fillRect(x, this.y, this.width, 10);
-    this.y += noteSpeed;
+    this.y += noteSpeedPxPerSec * this.delta;
   };
 }
 
@@ -116,3 +134,8 @@ function animate() {
 }
 
 animate();
+
+function playGame() {
+  audio.currentTime = 0;
+  audio.play();
+}

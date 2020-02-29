@@ -11,6 +11,10 @@ canvas.height = window.innerHeight;
 let dropTrackArr = [];
 
 let timeArr = [];
+let timeArrIdx = 0;
+
+let playTime = 0;
+
 console.log(audio.currentTime);
 
 window.onload = function() {
@@ -47,7 +51,9 @@ function dropTrack(x, width, keyBind) {
   this.keyDown = function(key) {
     if (keyBind == key) {
       this.hitIndicatorOpacity = 1;
-      this.noteArr.push(new Note(this.x, this.width));
+      if (!playMode) {
+        this.noteArr.push(new Note(this.x, this.width));
+      }
     }
   };
 
@@ -59,11 +65,12 @@ function dropTrack(x, width, keyBind) {
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(x, checkHitLineY, this.width, 10);
     //note update
-    for (note of this.noteArr) {
-      note.update();
-      //   if(note.isOutOfCanvas()){
-
-      //   }
+    for (let i = 0; i < this.noteArr.length; ++i) {
+      this.noteArr[i].update();
+      if (this.noteArr[i].isOutOfCanvas()) {
+        this.noteArr.splice(i, 1); // Remove out of canvas note
+        --i; // Correct the index value
+      }
     }
     //hit indicator
     if (this.hitIndicatorOpacity > 0) {
@@ -73,11 +80,18 @@ function dropTrack(x, width, keyBind) {
       this.hitIndicatorOpacity -= 0.01;
       ctx.globalAlpha = 1;
     }
+
+    //create note
+    if (playMode && playTime >= timeArr[timeArrIdx].time && timeArr[timeArrIdx].key == keyBind) {
+      console.log(playTime);
+      this.noteArr.push(new Note(this.x, this.width));
+      timeArrIdx++;
+    }
   };
 }
 
 let noteSpeedInSec = 4;
-let noteSpeedPxPerSec = canvas.height / noteSpeedInSec;
+let noteSpeedPxPerSec = checkHitLineY / noteSpeedInSec;
 
 function Note(x, width) {
   this.x = x;
@@ -136,6 +150,21 @@ function animate() {
 animate();
 
 function playGame() {
+  timeArrIdx = 0;
   audio.currentTime = 0;
-  audio.play();
+  let startTime = Date.now();
+  playMode = true;
+
+  let intervalPlay = null;
+  let intervalPrePlay = setInterval(function() {
+    let elapsedTime = Date.now() - startTime;
+    playTime = Number(elapsedTime / 1000);
+    if (playTime > noteSpeedInSec) {
+      audio.play();
+      clearInterval(intervalPrePlay);
+      intervalPlay = setInterval(() => {
+        playTime = audio.currentTime + noteSpeedInSec;
+      }, 1);
+    }
+  }, 100);
 }

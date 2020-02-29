@@ -14,6 +14,7 @@
         </audio>
         <div id="mode">{{playMode ? "Play Mode" : "Create Mode"}}</div>
         <div id="speed">{{speed}}</div>
+        <!-- select song -->
         <div>
           <select id="song" v-model="currentSong">
             <option disabled value="">Please select song to play</option>
@@ -22,9 +23,15 @@
             <option value="songs/nanana.mp3">NANANA - MCR</option>
           </select>
         </div>
+        <!-- load song -->
         <div>
           <input v-model="loadFrom" placeholder="enter local saves" />
           <button onclick="loadFromLocal(app.loadFrom)">Load</button>
+        </div>
+        <!-- save song -->
+        <div>
+          <input v-model="saveTo" placeholder="enter name to save" />
+          <button onclick="saveToLocal(app.saveTo)">Save</button>
         </div>
         <button onclick="playGame()">Start</button>
       </div>

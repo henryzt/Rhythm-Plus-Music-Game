@@ -29,7 +29,8 @@ let app = new Vue({
     mode: this.playMode ? "Play Mode" : "Create Mode",
     speed: noteSpeedInSec,
     currentSong: "",
-    loadFrom: ""
+    loadFrom: "",
+    saveTo: ""
   },
   mounted: function() {
     this.$watch("currentSong", () => {

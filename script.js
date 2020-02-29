@@ -27,11 +27,18 @@ let app = new Vue({
   data: {
     playMode: false,
     mode: this.playMode ? "Play Mode" : "Create Mode",
-    speed: noteSpeedInSec
+    speed: noteSpeedInSec,
+    currentSong: "",
+    loadFrom: ""
+  },
+  mounted: function() {
+    this.$watch("currentSong", () => {
+      this.$refs.audioElement.load();
+    });
   }
 });
 
-let audio = app.$refs["audio-element"];
+let audio = app.$refs.audioElement;
 
 window.onload = function() {
   document.addEventListener(

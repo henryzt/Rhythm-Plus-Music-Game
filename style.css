@@ -1,0 +1,52 @@
+body {
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  background: black;
+}
+canvas {
+  background: black;
+}
+
+audio {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  opacity: 0.2;
+}
+
+.center {
+  position: absolute;
+  color: white;
+  font-family: Arial;
+  opacity: 0.7;
+  text-align: center;
+  line-height: 80px;
+  width: 400px;
+  height: 80px;
+  top: 50%;
+  left: 50%;
+  margin-top: -40px;
+  margin-left: -200px;
+  user-select: none;
+
+  animation-name: enter;
+  animation-duration: 2s;
+  transition: opacity 2s ease-in-out;
+}
+
+.hidden {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s 2s, opacity 2s linear;
+}
+
+@keyframes enter {
+  from {
+    top: 30%;
+    opacity: 0;
+  }
+  to {
+    opacity: 0.7;
+  }
+}

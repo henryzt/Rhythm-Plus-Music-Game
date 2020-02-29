@@ -1,5 +1,11 @@
 var audio = document.getElementById("audio-element");
 
+var canvas = document.querySelector("canvas");
+
+var ctx = this.canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
 let arr = [];
 console.log(audio.currentTime);
 

@@ -15,23 +15,40 @@ let timeArrIdx = 0;
 
 let playTime = 0;
 
-console.log(audio.currentTime);
-
 window.onload = function() {
   document.addEventListener(
     "keydown",
+    event => {
+      onKeyDown(event.key);
+    },
+    false
+  );
+
+  canvas.addEventListener(
+    "click",
     function(event) {
-      if (!playMode) {
-        console.log(audio.currentTime, event.key);
-        timeArr.push({ time: audio.currentTime, key: event.key });
-      }
-      for (track of dropTrackArr) {
-        track.keyDown(event.key);
-      }
+      let x = event.pageX,
+        y = event.pageY;
+
+      dropTrackArr.forEach(function(track) {
+        if (x > track.x && x < track.x + track.width) {
+          onKeyDown(track.keyBind);
+        }
+      });
     },
     false
   );
 };
+
+function onKeyDown(key) {
+  if (!playMode) {
+    console.log(audio.currentTime, key);
+    timeArr.push({ time: audio.currentTime, key: key });
+  }
+  for (track of dropTrackArr) {
+    track.keyDown(key);
+  }
+}
 
 //hit indicator gradient
 let hitGradient = ctx.createLinearGradient(0, (canvas.height / 10) * 8, 0, canvas.height);

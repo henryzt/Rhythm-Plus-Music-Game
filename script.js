@@ -101,7 +101,7 @@ function dropTrack(x, width, keyBind) {
   };
 }
 
-let noteSpeedInSec = 4;
+let noteSpeedInSec = 2;
 let noteSpeedPxPerSec = checkHitLineY / noteSpeedInSec;
 
 function Note(x, width) {
@@ -175,6 +175,9 @@ window.addEventListener("resize", function(event) {
   dropTrackArr[1].resizeTrack(startX + trackWidth * 1 + 1, trackWidth);
   dropTrackArr[2].resizeTrack(startX + trackWidth * 2 + 2, trackWidth);
   dropTrackArr[3].resizeTrack(startX + trackWidth * 3 + 3, trackWidth);
+
+  checkHitLineY = (canvas.height / 10) * 9;
+  noteSpeedPxPerSec = checkHitLineY / noteSpeedInSec;
 });
 
 function animate() {

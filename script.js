@@ -57,13 +57,18 @@ function dropTrack(x, width, keyBind) {
     }
   };
 
+  this.resizeTrack = function(x, width) {
+    this.x = x;
+    this.width = width;
+  };
+
   this.update = function() {
     //track bg
     ctx.fillStyle = "#212121";
-    ctx.fillRect(x, 0, width, canvas.height);
+    ctx.fillRect(this.x, 0, this.width, canvas.height);
     //hit line
     ctx.fillStyle = "#ffffff";
-    ctx.fillRect(x, checkHitLineY, this.width, 10);
+    ctx.fillRect(this.x, checkHitLineY, this.width, 10);
     //note update
     for (let i = 0; i < this.noteArr.length; ++i) {
       this.noteArr[i].update();
@@ -76,7 +81,7 @@ function dropTrack(x, width, keyBind) {
     if (this.hitIndicatorOpacity > 0) {
       ctx.fillStyle = hitGradient;
       ctx.globalAlpha = this.hitIndicatorOpacity;
-      ctx.fillRect(x, (canvas.height / 10) * 8, this.width, (canvas.height / 10) * 2);
+      ctx.fillRect(this.x, (canvas.height / 10) * 8, this.width, (canvas.height / 10) * 2);
       this.hitIndicatorOpacity -= 0.01;
       ctx.globalAlpha = 1;
     }
@@ -135,27 +140,42 @@ function Note(x, width) {
 }
 
 function saveToLocal(name) {
-  let local = localStorage.getItem("localTimeline") || {};
+  let local = JSON.parse(localStorage.getItem("localTimeline")) || {};
   local[name] = { timeline: timeArr };
-  localStorage.setItem("localTimeline", local);
+  localStorage.setItem("localTimeline", JSON.stringify(local));
 }
 
 function loadFromLocal(name) {
   let local = localStorage.getItem("localTimeline");
-  if (local && local[name]) {
+  if (local) {
+    local = JSON.parse(local);
     timeArr = local[name].timeline;
   }
 }
 
 let trackNum = 4;
-let trackWidth = 150;
+let trackMaxWidth = 150;
+let trackWidth = canvas.width / 4 > trackMaxWidth ? trackMaxWidth : canvas.width / 4;
 
 let startX = canvas.width / 2 - (trackNum * trackWidth) / 2;
 
 dropTrackArr.push(new dropTrack(startX + trackWidth * 0, trackWidth, "d"));
-dropTrackArr.push(new dropTrack(startX + trackWidth * 1 + 2, trackWidth, "f"));
-dropTrackArr.push(new dropTrack(startX + trackWidth * 2 + 4, trackWidth, "j"));
-dropTrackArr.push(new dropTrack(startX + trackWidth * 3 + 6, trackWidth, "k"));
+dropTrackArr.push(new dropTrack(startX + trackWidth * 1 + 1, trackWidth, "f"));
+dropTrackArr.push(new dropTrack(startX + trackWidth * 2 + 2, trackWidth, "j"));
+dropTrackArr.push(new dropTrack(startX + trackWidth * 3 + 3, trackWidth, "k"));
+
+window.addEventListener("resize", function(event) {
+  console.log("resize");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  let trackMaxWidth = 150;
+  let trackWidth = canvas.width / 4 > trackMaxWidth ? trackMaxWidth : canvas.width / 4;
+  let startX = canvas.width / 2 - (trackNum * trackWidth) / 2;
+  dropTrackArr[0].resizeTrack(startX + trackWidth * 0, trackWidth);
+  dropTrackArr[1].resizeTrack(startX + trackWidth * 1 + 1, trackWidth);
+  dropTrackArr[2].resizeTrack(startX + trackWidth * 2 + 2, trackWidth);
+  dropTrackArr[3].resizeTrack(startX + trackWidth * 3 + 3, trackWidth);
+});
 
 function animate() {
   requestAnimationFrame(animate);

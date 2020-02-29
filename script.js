@@ -30,16 +30,20 @@ let hitGradient = ctx.createLinearGradient(0, (canvas.height / 10) * 8, 0, canva
 hitGradient.addColorStop(0, "rgba(0,0,0,0)");
 hitGradient.addColorStop(1, "yellow");
 
+let checkHitLineY = (canvas.height / 10) * 9;
+
 function dropTrack(x, width, keyBind) {
   this.x = x;
   this.width = width;
   this.keyBind = keyBind;
 
   this.hitIndicatorOpacity = 0;
+  this.noteArr = [];
 
   this.keyDown = function(key) {
     if (keyBind == key) {
       this.hitIndicatorOpacity = 1;
+      this.noteArr.push(new note(this.x, this.width));
     }
   };
 
@@ -49,7 +53,14 @@ function dropTrack(x, width, keyBind) {
     ctx.fillRect(x, 0, width, canvas.height);
     //hit line
     ctx.fillStyle = "#ffffff";
-    ctx.fillRect(x, (canvas.height / 10) * 9, this.width, 10);
+    ctx.fillRect(x, checkHitLineY, this.width, 10);
+    //note update
+    for (note of this.noteArr) {
+      note.update();
+      //   if(note.isOutOfCanvas()){
+
+      //   }
+    }
     //hit indicator
     if (this.hitIndicatorOpacity > 0) {
       ctx.fillStyle = hitGradient;
@@ -58,6 +69,30 @@ function dropTrack(x, width, keyBind) {
       this.hitIndicatorOpacity -= 0.01;
       ctx.globalAlpha = 1;
     }
+  };
+}
+
+let noteSpeed = 5;
+
+function note(x, width) {
+  this.x = x;
+  this.width = width;
+
+  this.y = 0;
+
+  this.getScore = function() {
+    return checkHitLineY - this.y;
+  };
+
+  this.isOutOfCanvas = function() {
+    return this.y > canvas.height;
+  };
+
+  this.update = function() {
+    let color = this.y > checkHitLineY + 10 ? "red" : "yellow";
+    ctx.fillStyle = color;
+    ctx.fillRect(x, this.y, this.width, 10);
+    this.y += noteSpeed;
   };
 }
 

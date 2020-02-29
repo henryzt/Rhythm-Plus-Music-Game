@@ -82,7 +82,13 @@ function dropTrack(x, width, keyBind) {
     }
 
     //create note
-    if (playMode && playTime >= timeArr[timeArrIdx].time && timeArr[timeArrIdx].key == keyBind) {
+    let needNote =
+      playMode &&
+      timeArrIdx < timeArr.length &&
+      playTime >= timeArr[timeArrIdx].time &&
+      timeArr[timeArrIdx].key == keyBind;
+
+    if (needNote) {
       console.log(playTime);
       this.noteArr.push(new Note(this.x, this.width));
       timeArrIdx++;
@@ -126,6 +132,19 @@ function Note(x, width) {
     ctx.fillRect(x, this.y, this.width, 10);
     this.y += noteSpeedPxPerSec * this.delta;
   };
+}
+
+function saveToLocal(name) {
+  let local = localStorage.getItem("localTimeline") || {};
+  local[name] = { timeline: timeArr };
+  localStorage.setItem("localTimeline", local);
+}
+
+function loadFromLocal(name) {
+  let local = localStorage.getItem("localTimeline");
+  if (local && local[name]) {
+    timeArr = local[name].timeline;
+  }
 }
 
 let trackNum = 4;

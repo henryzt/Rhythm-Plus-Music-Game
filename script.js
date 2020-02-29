@@ -51,16 +51,19 @@ window.onload = function() {
   );
 
   canvas.addEventListener(
-    "click",
-    function(event) {
-      let x = event.pageX,
-        y = event.pageY;
+    "touchstart",
+    function(e) {
+      for (var c = 0; c < e.changedTouches.length; c++) {
+        // touchInf[e.changedTouches[c].identifier] = {"x":e.changedTouches[c].clientX,"y":e.changedTouches[c].clientY};
+        let x = e.changedTouches[c].clientX,
+          y = e.changedTouches[c].clientY;
 
-      dropTrackArr.forEach(function(track) {
-        if (x > track.x && x < track.x + track.width) {
-          onKeyDown(track.keyBind);
-        }
-      });
+        dropTrackArr.forEach(function(track) {
+          if (x > track.x && x < track.x + track.width) {
+            onKeyDown(track.keyBind);
+          }
+        });
+      }
     },
     false
   );

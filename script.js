@@ -43,7 +43,7 @@ function dropTrack(x, width, keyBind) {
   this.keyDown = function(key) {
     if (keyBind == key) {
       this.hitIndicatorOpacity = 1;
-      this.noteArr.push(new note(this.x, this.width));
+      this.noteArr.push(new Note(this.x, this.width));
     }
   };
 
@@ -74,7 +74,7 @@ function dropTrack(x, width, keyBind) {
 
 let noteSpeed = 5;
 
-function note(x, width) {
+function Note(x, width) {
   this.x = x;
   this.width = width;
 

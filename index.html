@@ -7,16 +7,19 @@
     <link rel="stylesheet" type="text/css" href="style.css" />
   </head>
   <body>
-    <div class="control">
-      <audio id="audio-element" controls>
-        <source src="songs/nanana.mp3" type="audio/mp3" />
-      </audio>
-      <div id="mode">Create mode</div>
-      <div id="speed">2</div>
-      <button onclick="loadFromLocal('mcr')">Load</button>
-      <button onclick="playGame()">Start</button>
+    <div id="app">
+      <div class="control">
+        <audio id="audio-element" ref="audio-element" controls>
+          <source src="songs/nanana.mp3" type="audio/mp3" />
+        </audio>
+        <div id="mode">{{playMode ? "Play Mode" : "Create Mode"}}</div>
+        <div id="speed">{{speed}}</div>
+        <button onclick="loadFromLocal('mcr')">Load</button>
+        <button onclick="playGame()">Start</button>
+      </div>
     </div>
     <canvas></canvas>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="script.js"></script>
   </body>
-  <script src="script.js"></script>
 </html>

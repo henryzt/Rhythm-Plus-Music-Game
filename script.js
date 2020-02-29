@@ -1,8 +1,4 @@
-let audio = document.getElementById("audio-element");
-
 let canvas = document.querySelector("canvas");
-
-let playMode = false;
 
 let ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
@@ -14,6 +10,28 @@ let timeArr = [];
 let timeArrIdx = 0;
 
 let playTime = 0;
+
+//hit indicator gradient
+let hitGradient = ctx.createLinearGradient(0, (canvas.height / 10) * 8, 0, canvas.height);
+hitGradient.addColorStop(0, "rgba(0,0,0,0)");
+hitGradient.addColorStop(1, "yellow");
+
+let checkHitLineY = (canvas.height / 10) * 9;
+
+//note speed
+let noteSpeedInSec = 2;
+let noteSpeedPxPerSec = checkHitLineY / noteSpeedInSec;
+
+let app = new Vue({
+  el: "#app",
+  data: {
+    playMode: false,
+    mode: this.playMode ? "Play Mode" : "Create Mode",
+    speed: noteSpeedInSec
+  }
+});
+
+let audio = app.$refs["audio-element"];
 
 window.onload = function() {
   document.addEventListener(
@@ -41,7 +59,7 @@ window.onload = function() {
 };
 
 function onKeyDown(key) {
-  if (!playMode) {
+  if (!app.playMode) {
     console.log(audio.currentTime, key);
     timeArr.push({ time: audio.currentTime, key: key });
   }
@@ -49,13 +67,6 @@ function onKeyDown(key) {
     track.keyDown(key);
   }
 }
-
-//hit indicator gradient
-let hitGradient = ctx.createLinearGradient(0, (canvas.height / 10) * 8, 0, canvas.height);
-hitGradient.addColorStop(0, "rgba(0,0,0,0)");
-hitGradient.addColorStop(1, "yellow");
-
-let checkHitLineY = (canvas.height / 10) * 9;
 
 function dropTrack(x, width, keyBind) {
   this.x = x;
@@ -68,7 +79,7 @@ function dropTrack(x, width, keyBind) {
   this.keyDown = function(key) {
     if (keyBind == key) {
       this.hitIndicatorOpacity = 1;
-      if (!playMode) {
+      if (!app.playMode) {
         this.noteArr.push(new Note(this.x, this.width));
       }
     }
@@ -105,7 +116,7 @@ function dropTrack(x, width, keyBind) {
 
     //create note
     let needNote =
-      playMode &&
+      app.playMode &&
       timeArrIdx < timeArr.length &&
       playTime >= timeArr[timeArrIdx].time &&
       timeArr[timeArrIdx].key == keyBind;
@@ -117,9 +128,6 @@ function dropTrack(x, width, keyBind) {
     }
   };
 }
-
-let noteSpeedInSec = 2;
-let noteSpeedPxPerSec = checkHitLineY / noteSpeedInSec;
 
 function Note(x, width) {
   this.x = x;
@@ -212,7 +220,7 @@ function playGame() {
   timeArrIdx = 0;
   audio.currentTime = 0;
   let startTime = Date.now();
-  playMode = true;
+  app.playMode = true;
 
   let intervalPlay = null;
   let intervalPrePlay = setInterval(function() {

@@ -10,7 +10,17 @@ function DropTrack(x, width, keyBind) {
     if (keyBind == key) {
       this.hitIndicatorOpacity = 1;
       if (!app.playMode) {
+        //create mode
         this.noteArr.push(new Note(this.x, this.width));
+      } else {
+        //play mode
+        if (this.noteArr && this.noteArr[0]) {
+          let noteToDismiss = this.noteArr[0];
+          if (noteToDismiss.getDistPercentage() < 2) {
+            noteToDismiss.hitAndCountScore();
+            this.noteArr.shift();
+          }
+        }
       }
     }
   };
@@ -26,7 +36,8 @@ function DropTrack(x, width, keyBind) {
     ctx.fillRect(this.x, 0, this.width, canvas.height);
     //hit line
     ctx.fillStyle = "#ffffff";
-    ctx.fillRect(this.x, checkHitLineY, this.width, 10);
+    let hitLineY = app.playMode ? checkHitLineY : 0;
+    ctx.fillRect(this.x, hitLineY, this.width, 10);
     //note update
     for (let i = 0; i < this.noteArr.length; ++i) {
       this.noteArr[i].update();

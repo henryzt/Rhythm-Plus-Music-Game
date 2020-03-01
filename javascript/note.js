@@ -16,8 +16,20 @@ function Note(x, width) {
     this.then = this.now;
   };
 
-  this.getScore = function() {
-    return checkHitLineY - this.y;
+  this.getDistPercentage = function() {
+    let dist = checkHitLineY - this.y;
+    let percentage = Math.abs(dist) / (canvas.height / 10); //the lower the better
+
+    console.log(dist, percentage);
+    return percentage;
+  };
+
+  this.hitAndCountScore = function() {
+    let percentage = this.getDistPercentage();
+    app.score += 1000 * (3 - percentage);
+    if (percentage < 0.01) {
+      app.marks.perfect += 1;
+    }
   };
 
   this.isOutOfCanvas = function() {

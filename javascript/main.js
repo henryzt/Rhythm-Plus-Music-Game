@@ -29,7 +29,10 @@ let app = new Vue({
     noteSpeedInSec: 2,
     currentSong: "",
     loadFrom: "",
-    saveTo: ""
+    saveTo: "",
+    score: 0,
+    combo: 0,
+    marks: { perfect: 0, good: 0, offbeat: 0, miss: 0 }
   },
   mounted: function() {
     this.$watch("currentSong", () => {

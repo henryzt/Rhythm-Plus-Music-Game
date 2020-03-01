@@ -28,6 +28,7 @@ function Note(x, width) {
     let percentage = this.getDistPercentage();
     app.score = app.score + 1000 * (3 - percentage);
     app.combo += 1;
+    app.maxCombo = app.combo > app.maxCombo ? app.combo : app.maxCombo;
     if (percentage < 0.3) {
       app.marks.perfect += 1;
     } else if (percentage < 0.6) {

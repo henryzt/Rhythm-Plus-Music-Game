@@ -13,7 +13,9 @@
   <body>
     <div id="app">
       <div class="control">
-        <a onclick="toggleControl()">Toggle Control</a> | <a onclick="startDemo()">Start a demo</a>
+        <a onclick="toggleControl()">Toggle Control</a> |
+        <a onclick="startDemo()">Start a demo</a> |
+        <a href="index.html" style="text-decoration: none;color: white;">Turn off Visual</a>
         <div :class="{hidden: !showControl}" style="transition: opacity 1s ease-in-out;">
           <br />
           <audio id="audio-element" ref="audioElement" controls>

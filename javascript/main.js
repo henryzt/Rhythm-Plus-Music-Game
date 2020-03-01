@@ -81,30 +81,32 @@ window.onload = function() {
 
 let trackNum = 4;
 let trackMaxWidth = 150;
-let trackWidth = canvas.width / 4 > trackMaxWidth ? trackMaxWidth : canvas.width / 4;
 
-let startX = canvas.width / 2 - (trackNum * trackWidth) / 2;
-
-dropTrackArr.push(new dropTrack(startX + trackWidth * 0, trackWidth, "d"));
-dropTrackArr.push(new dropTrack(startX + trackWidth * 1 + 1, trackWidth, "f"));
-dropTrackArr.push(new dropTrack(startX + trackWidth * 2 + 2, trackWidth, "j"));
-dropTrackArr.push(new dropTrack(startX + trackWidth * 3 + 3, trackWidth, "k"));
+// init tracks
+for (keyBind of ["d", "f", "j", "k"]) {
+  dropTrackArr.push(new dropTrack(0, trackMaxWidth, keyBind));
+}
+reposition();
 
 window.addEventListener("resize", function(event) {
   console.log("resize");
+  reposition();
+});
+
+function reposition() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-  let trackMaxWidth = 150;
   let trackWidth = canvas.width / 4 > trackMaxWidth ? trackMaxWidth : canvas.width / 4;
   let startX = canvas.width / 2 - (trackNum * trackWidth) / 2;
-  dropTrackArr[0].resizeTrack(startX + trackWidth * 0, trackWidth);
-  dropTrackArr[1].resizeTrack(startX + trackWidth * 1 + 1, trackWidth);
-  dropTrackArr[2].resizeTrack(startX + trackWidth * 2 + 2, trackWidth);
-  dropTrackArr[3].resizeTrack(startX + trackWidth * 3 + 3, trackWidth);
+  let counter = 0;
+  for (track of dropTrackArr) {
+    dropTrackArr[counter].resizeTrack(startX + trackWidth * counter + counter, trackWidth);
+    counter++;
+  }
 
   checkHitLineY = (canvas.height / 10) * 9;
   noteSpeedPxPerSec = checkHitLineY / noteSpeedInSec;
-});
+}
 
 function animate() {
   requestAnimationFrame(animate);

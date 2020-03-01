@@ -35,6 +35,13 @@
           <input v-model="loadFrom" placeholder="enter local saves" />
           <button onclick="loadFromLocal(app.loadFrom)">Load</button>
         </div>
+        <div>
+          <select id="loadFromDemo" v-model="currentDemoNotes">
+            <option disabled value="">Or select demo note</option>
+            <option v-for="option in demoList" :value="option">{{option}}</option>
+          </select>
+          <button onclick="loadFromDemo(app.currentDemoNotes)">Load</button>
+        </div>
         <!-- save song -->
         <div>
           <input v-model="saveTo" placeholder="enter name to save" />
@@ -65,6 +72,7 @@
     <script src="javascript/note.js"></script>
     <script src="javascript/track.js"></script>
     <script src="javascript/storage.js"></script>
+    <script src="songs/demo.js"></script>
     <script src="javascript/main.js"></script>
 
     <!-- visualizer -->

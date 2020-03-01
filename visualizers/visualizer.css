@@ -12,3 +12,10 @@
   background-color: midnightblue;
   pointer-events: none;
 }
+
+#visualizer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}

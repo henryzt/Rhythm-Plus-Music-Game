@@ -20,6 +20,7 @@
             <source :src="currentSong" type="audio/mp3" />
           </audio>
           <div id="mode">{{playMode ? "Play Mode" : "Create Mode"}}</div>
+          <br />
           <div id="speed">
             Speed
             <input v-model="noteSpeedInSec" placeholder="Speed" type="number" />
@@ -33,6 +34,7 @@
               <option value="songs/nanana.mp3">NANANA - MCR</option>
             </select>
           </div>
+          <br />
           <!-- load song -->
           <div>
             <input v-model="loadFrom" placeholder="enter local saves" />
@@ -45,14 +47,17 @@
             </select>
             <button onclick="loadFromDemo(app.currentDemoNotes)">Load</button>
           </div>
+          <br />
           <!-- save song -->
           <div>
             <input v-model="saveTo" placeholder="enter name to save" />
             <button onclick="saveToLocal(app.saveTo)">Save</button>
           </div>
+          <br />
           <button onclick="playGame()">Start</button>
           <button onclick="resetPlaying()">Reset</button>
           <!-- score -->
+          <br />
           <div>
             score - {{score}} | combo - {{combo}} | max combo - {{maxCombo}}<br />
             perfect - {{marks.perfect}} | good - {{marks.good}} | offbeat - {{marks.offbeat}} | miss

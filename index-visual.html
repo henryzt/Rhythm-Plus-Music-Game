@@ -13,47 +13,56 @@
   <body>
     <div id="app">
       <div class="control">
-        <audio id="audio-element" ref="audioElement" controls>
-          <source :src="currentSong" type="audio/mp3" />
-        </audio>
-        <div id="mode">{{playMode ? "Play Mode" : "Create Mode"}}</div>
-        <div id="speed">
-          Speed
-          <input v-model="noteSpeedInSec" placeholder="Speed" type="number" />
-        </div>
-        <!-- select song -->
-        <div>
-          <select id="song" v-model="currentSong">
-            <option disabled value="">Please select song to play</option>
-            <option value="songs/myblood.m4a">My Blood - 21P</option>
-            <option value="songs/police.m4a">Karma Police - RH</option>
-            <option value="songs/nanana.mp3">NANANA - MCR</option>
-          </select>
-        </div>
-        <!-- load song -->
-        <div>
-          <input v-model="loadFrom" placeholder="enter local saves" />
-          <button onclick="loadFromLocal(app.loadFrom)">Load</button>
-        </div>
-        <div>
-          <select id="loadFromDemo" v-model="currentDemoNotes">
-            <option disabled value="">Or select demo note</option>
-            <option v-for="option in demoList" :value="option">{{option}}</option>
-          </select>
-          <button onclick="loadFromDemo(app.currentDemoNotes)">Load</button>
-        </div>
-        <!-- save song -->
-        <div>
-          <input v-model="saveTo" placeholder="enter name to save" />
-          <button onclick="saveToLocal(app.saveTo)">Save</button>
-        </div>
-        <button onclick="playGame()">Start</button>
-        <button onclick="resetPlaying()">Reset</button>
-        <!-- score -->
-        <div>
-          score - {{score}} | combo - {{combo}} | max combo - {{maxCombo}}<br />
-          perfect - {{marks.perfect}} | good - {{marks.good}} | offbeat - {{marks.offbeat}} | miss -
-          {{marks.miss}}
+        <a onclick="toggleControl()">Toggle Control</a> | <a onclick="startDemo()">Start a demo</a>
+        <div :class="{hidden: !showControl}" style="transition: opacity 1s ease-in-out;">
+          <br />
+          <audio id="audio-element" ref="audioElement" controls>
+            <source :src="currentSong" type="audio/mp3" />
+          </audio>
+          <div id="mode">{{playMode ? "Play Mode" : "Create Mode"}}</div>
+          <br />
+          <div id="speed">
+            Speed
+            <input v-model="noteSpeedInSec" placeholder="Speed" type="number" />
+          </div>
+          <!-- select song -->
+          <div>
+            <select id="song" v-model="currentSong">
+              <option disabled value="">Please select song to play</option>
+              <option value="songs/myblood.m4a">My Blood - 21P</option>
+              <option value="songs/police.m4a">Karma Police - RH</option>
+              <option value="songs/nanana.mp3">NANANA - MCR</option>
+            </select>
+          </div>
+          <br />
+          <!-- load song -->
+          <div>
+            <input v-model="loadFrom" placeholder="enter local saves" />
+            <button onclick="loadFromLocal(app.loadFrom)">Load</button>
+          </div>
+          <div>
+            <select id="loadFromDemo" v-model="currentDemoNotes">
+              <option disabled value="">Or select demo note</option>
+              <option v-for="option in demoList" :value="option">{{option}}</option>
+            </select>
+            <button onclick="loadFromDemo(app.currentDemoNotes)">Load</button>
+          </div>
+          <br />
+          <!-- save song -->
+          <div>
+            <input v-model="saveTo" placeholder="enter name to save" />
+            <button onclick="saveToLocal(app.saveTo)">Save</button>
+          </div>
+          <br />
+          <button onclick="playGame()">Start</button>
+          <button onclick="resetPlaying()">Reset</button>
+          <!-- score -->
+          <br />
+          <div>
+            score - {{score}} | combo - {{combo}} | max combo - {{maxCombo}}<br />
+            perfect - {{marks.perfect}} | good - {{marks.good}} | offbeat - {{marks.offbeat}} | miss
+            - {{marks.miss}}
+          </div>
         </div>
       </div>
 

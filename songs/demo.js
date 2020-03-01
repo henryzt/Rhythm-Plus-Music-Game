@@ -2,7 +2,7 @@ let demoJson = `{"21p":{"timeline":[{"time":0.984595,"key":"k"},{"time":0.985222
 let demo = JSON.parse(demoJson);
 
 function startDemo() {
-  app.currentSong = "songs/myblood.m4a";
+  app.currentSong = "songs/myblood.mp3";
   app.$refs.audioElement.load();
   loadFromDemo("21p");
   playGame();

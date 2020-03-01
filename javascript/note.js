@@ -26,14 +26,24 @@ function Note(x, width) {
 
   this.hitAndCountScore = function() {
     let percentage = this.getDistPercentage();
-    app.score += 1000 * (3 - percentage);
-    if (percentage < 0.01) {
+    app.score = app.score + 1000 * (3 - percentage);
+    app.combo += 1;
+    if (percentage < 0.3) {
       app.marks.perfect += 1;
+    } else if (percentage < 0.6) {
+      app.marks.good += 1;
+    } else if (percentage < 0.9) {
+      app.marks.offbeat += 1;
     }
   };
 
   this.isOutOfCanvas = function() {
-    return this.y > canvas.height;
+    let isOut = this.y > canvas.height;
+    if (isOut) {
+      app.marks.miss += 1;
+      app.combo = 0;
+    }
+    return isOut;
   };
 
   this.update = function() {

@@ -36,7 +36,8 @@ let app = new Vue({
     marks: { perfect: 0, good: 0, offbeat: 0, miss: 0 },
     lastMark: "",
     demoList: Object.keys(demo),
-    currentDemoNotes: ""
+    currentDemoNotes: "",
+    showControl: false
   },
   mounted: function() {
     this.$watch("currentSong", () => {
@@ -165,4 +166,8 @@ function resetPlaying() {
   app.playMode = false;
   audio.pause();
   audio.currentTime = 0;
+}
+
+function toggleControl() {
+  app.showControl = !app.showControl;
 }

@@ -11,7 +11,8 @@ body {
   position: absolute;
   top: 20px;
   left: 20px;
-  opacity: 0.2;
+  opacity: 0.5;
+  transition: opacity 2s ease-in-out;
 }
 
 .center {
@@ -42,7 +43,6 @@ body {
 .hidden {
   visibility: hidden;
   opacity: 0;
-  transition: visibility 0s 2s, opacity 2s linear;
 }
 
 @keyframes enter {

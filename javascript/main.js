@@ -15,6 +15,7 @@ let hitGradient = ctx.createLinearGradient(0, (canvas.height / 10) * 8, 0, canva
 hitGradient.addColorStop(0, "rgba(0,0,0,0)");
 hitGradient.addColorStop(1, "yellow");
 
+//hit line postion (white line)
 let checkHitLineY = (canvas.height / 10) * 9;
 
 //note speed
@@ -25,7 +26,7 @@ let noteSpeedPxPerSec = checkHitLineY / noteSpeedInSec;
 let app = new Vue({
   el: "#app",
   data: {
-    playMode: false,
+    playMode: false, //play or edit mode
     mode: this.playMode ? "Play Mode" : "Create Mode",
     speed: noteSpeedInSec,
     currentSong: "",
@@ -39,8 +40,39 @@ let app = new Vue({
   }
 });
 
+//get audio element
 let audio = app.$refs.audioElement;
 
+// init play tracks
+let trackNum = 4;
+let trackMaxWidth = 150;
+
+for (keyBind of ["d", "f", "j", "k"]) {
+  dropTrackArr.push(new dropTrack(0, trackMaxWidth, keyBind));
+}
+reposition();
+
+window.addEventListener("resize", function(event) {
+  console.log("resize");
+  reposition();
+});
+
+function reposition() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  let trackWidth = canvas.width / 4 > trackMaxWidth ? trackMaxWidth : canvas.width / 4;
+  let startX = canvas.width / 2 - (trackNum * trackWidth) / 2;
+  let counter = 0;
+  for (track of dropTrackArr) {
+    dropTrackArr[counter].resizeTrack(startX + trackWidth * counter + counter, trackWidth);
+    counter++;
+  }
+
+  checkHitLineY = (canvas.height / 10) * 9;
+  noteSpeedPxPerSec = checkHitLineY / noteSpeedInSec;
+}
+
+// log key and touch events
 function onKeyDown(key) {
   if (!app.playMode) {
     console.log(audio.currentTime, key);
@@ -79,35 +111,7 @@ window.onload = function() {
   );
 };
 
-let trackNum = 4;
-let trackMaxWidth = 150;
-
-// init tracks
-for (keyBind of ["d", "f", "j", "k"]) {
-  dropTrackArr.push(new dropTrack(0, trackMaxWidth, keyBind));
-}
-reposition();
-
-window.addEventListener("resize", function(event) {
-  console.log("resize");
-  reposition();
-});
-
-function reposition() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  let trackWidth = canvas.width / 4 > trackMaxWidth ? trackMaxWidth : canvas.width / 4;
-  let startX = canvas.width / 2 - (trackNum * trackWidth) / 2;
-  let counter = 0;
-  for (track of dropTrackArr) {
-    dropTrackArr[counter].resizeTrack(startX + trackWidth * counter + counter, trackWidth);
-    counter++;
-  }
-
-  checkHitLineY = (canvas.height / 10) * 9;
-  noteSpeedPxPerSec = checkHitLineY / noteSpeedInSec;
-}
-
+// animate all
 function animate() {
   requestAnimationFrame(animate);
   ctx.fillStyle = "black";
@@ -119,13 +123,15 @@ function animate() {
 
 animate();
 
+//clock for counting time
+let intervalPlay = null;
+
 function playGame() {
   timeArrIdx = 0;
   audio.currentTime = 0;
   let startTime = Date.now();
   app.playMode = true;
 
-  let intervalPlay = null;
   let intervalPrePlay = setInterval(function() {
     let elapsedTime = Date.now() - startTime;
     playTime = Number(elapsedTime / 1000);
@@ -134,7 +140,17 @@ function playGame() {
       clearInterval(intervalPrePlay);
       intervalPlay = setInterval(() => {
         playTime = audio.currentTime + noteSpeedInSec;
-      }, 1);
+      }, 100);
     }
   }, 100);
+}
+
+function resetPlaying() {
+  clearInterval(intervalPlay);
+  timeArr = [];
+  timeArrIdx = 0;
+  playTime = 0;
+  app.playMode = false;
+  audio.pause();
+  audio.currentTime = 0;
 }

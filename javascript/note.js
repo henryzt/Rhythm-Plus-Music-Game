@@ -55,9 +55,9 @@ function Note(x, width) {
 
   this.update = function() {
     this.setDelta();
-    let color = this.y > checkHitLineY + 10 ? "red" : "rgba(255,255,0,0.6)";
+    let color = this.y > checkHitLineY + 10 ? "red" : "rgba(255,255,255,0.5)";
     //Make note blur when get missed.
-    ctx.filter = this.y > checkHitLineY + 10 ?  "blur(5px)" : "none" ;
+    ctx.filter = this.y > checkHitLineY + 10 ?  "blur(5px)" : "blur(2px)" ;
     ctx.fillStyle = color;
     ctx.fillRect(x, this.y, this.width, 10);
     ctx.filter = "none";

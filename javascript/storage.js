@@ -11,3 +11,9 @@ function loadFromLocal(name) {
     timeArr = local[name].timeline;
   }
 }
+
+function loadFromDemo(name) {
+  if (demo && demo[name]) {
+    timeArr = demo[name].timeline;
+  }
+}

@@ -6,7 +6,7 @@ canvas.height = window.innerHeight;
 let timeArr = [];
 let timeArrIdx = 0;
 
-//time elapsed relative to audio play time (+noteSpeedInSec)
+//time elapsed relative to audio play time (+Number(app.noteSpeedInSec))
 let playTime = 0;
 
 //hit indicator gradient
@@ -15,11 +15,10 @@ hitGradient.addColorStop(0, "rgba(0,0,0,0)");
 hitGradient.addColorStop(1, "yellow");
 
 //hit line postion (white line)
-let checkHitLineY = (canvas.height / 10) * 9;
+let checkHitLineY = null;
 
 //note speed
-let noteSpeedInSec = 2;
-let noteSpeedPxPerSec = checkHitLineY / noteSpeedInSec;
+let noteSpeedPxPerSec = null;
 
 //vue app
 let app = new Vue({
@@ -27,7 +26,7 @@ let app = new Vue({
   data: {
     playMode: false, //play or edit mode
     mode: this.playMode ? "Play Mode" : "Create Mode",
-    speed: noteSpeedInSec,
+    noteSpeedInSec: 2,
     currentSong: "",
     loadFrom: "",
     saveTo: ""
@@ -35,6 +34,9 @@ let app = new Vue({
   mounted: function() {
     this.$watch("currentSong", () => {
       this.$refs.audioElement.load();
+    });
+    this.$watch("noteSpeedInSec", () => {
+      reposition();
     });
   }
 });
@@ -62,11 +64,11 @@ function reposition() {
   }
 
   checkHitLineY = (canvas.height / 10) * 9;
-  noteSpeedPxPerSec = checkHitLineY / noteSpeedInSec;
+  noteSpeedPxPerSec = checkHitLineY / Number(app.noteSpeedInSec);
 }
 
 for (keyBind of trackKeyBind) {
-  dropTrackArr.push(new dropTrack(0, trackMaxWidth, keyBind));
+  dropTrackArr.push(new DropTrack(0, trackMaxWidth, keyBind));
 }
 reposition();
 
@@ -138,11 +140,12 @@ function playGame() {
   let intervalPrePlay = setInterval(function() {
     let elapsedTime = Date.now() - startTime;
     playTime = Number(elapsedTime / 1000);
-    if (playTime > noteSpeedInSec) {
+    console.log(playTime, Number(app.noteSpeedInSec));
+    if (playTime > Number(app.noteSpeedInSec)) {
       audio.play();
       clearInterval(intervalPrePlay);
       intervalPlay = setInterval(() => {
-        playTime = audio.currentTime + noteSpeedInSec;
+        playTime = audio.currentTime + Number(app.noteSpeedInSec);
       }, 100);
     }
   }, 100);

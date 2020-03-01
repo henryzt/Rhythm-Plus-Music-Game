@@ -13,7 +13,10 @@
           <source :src="currentSong" type="audio/mp3" />
         </audio>
         <div id="mode">{{playMode ? "Play Mode" : "Create Mode"}}</div>
-        <div id="speed">{{speed}}</div>
+        <div id="speed">
+          Speed
+          <input v-model="noteSpeedInSec" placeholder="Speed" type="number" />
+        </div>
         <!-- select song -->
         <div>
           <select id="song" v-model="currentSong">

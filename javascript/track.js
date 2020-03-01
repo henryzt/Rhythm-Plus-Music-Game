@@ -1,4 +1,4 @@
-function dropTrack(x, width, keyBind) {
+function DropTrack(x, width, keyBind) {
   this.x = x;
   this.width = width;
   this.keyBind = keyBind;

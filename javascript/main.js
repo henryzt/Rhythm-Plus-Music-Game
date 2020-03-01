@@ -3,11 +3,10 @@ let ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-let dropTrackArr = [];
-
 let timeArr = [];
 let timeArrIdx = 0;
 
+//time elapsed relative to audio play time (+noteSpeedInSec)
 let playTime = 0;
 
 //hit indicator gradient
@@ -44,23 +43,17 @@ let app = new Vue({
 let audio = app.$refs.audioElement;
 
 // init play tracks
+let dropTrackArr = [];
+
 let trackNum = 4;
+let trackKeyBind = ["d", "f", "j", "k"];
 let trackMaxWidth = 150;
-
-for (keyBind of ["d", "f", "j", "k"]) {
-  dropTrackArr.push(new dropTrack(0, trackMaxWidth, keyBind));
-}
-reposition();
-
-window.addEventListener("resize", function(event) {
-  console.log("resize");
-  reposition();
-});
 
 function reposition() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-  let trackWidth = canvas.width / 4 > trackMaxWidth ? trackMaxWidth : canvas.width / 4;
+  let trackWidth =
+    canvas.width / trackNum > trackMaxWidth ? trackMaxWidth : canvas.width / trackNum;
   let startX = canvas.width / 2 - (trackNum * trackWidth) / 2;
   let counter = 0;
   for (track of dropTrackArr) {
@@ -71,6 +64,16 @@ function reposition() {
   checkHitLineY = (canvas.height / 10) * 9;
   noteSpeedPxPerSec = checkHitLineY / noteSpeedInSec;
 }
+
+for (keyBind of trackKeyBind) {
+  dropTrackArr.push(new dropTrack(0, trackMaxWidth, keyBind));
+}
+reposition();
+
+window.addEventListener("resize", function(event) {
+  console.log("resize");
+  reposition();
+});
 
 // log key and touch events
 function onKeyDown(key) {

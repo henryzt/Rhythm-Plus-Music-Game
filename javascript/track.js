@@ -32,8 +32,10 @@ function DropTrack(x, width, keyBind) {
 
   this.update = function() {
     //track bg
+    ctx.globalAlpha = 0.5;
     ctx.fillStyle = "#212121";
     ctx.fillRect(this.x, 0, this.width, canvas.height);
+    ctx.globalAlpha = 1;
     //hit line
     ctx.fillStyle = "#ffffff";
     let hitLineY = app.playMode ? checkHitLineY : 0;
@@ -52,7 +54,7 @@ function DropTrack(x, width, keyBind) {
       ctx.globalAlpha = this.hitIndicatorOpacity;
       ctx.fillRect(this.x, (canvas.height / 10) * 8, this.width, (canvas.height / 10) * 2);
       this.hitIndicatorOpacity -= 0.01;
-      ctx.globalAlpha = 0.9;
+      ctx.globalAlpha = 1;
     }
 
     //create note

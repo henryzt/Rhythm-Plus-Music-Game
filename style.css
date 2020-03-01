@@ -4,6 +4,7 @@ body {
   overflow: hidden;
   background: black;
   color: white;
+  font-family: "Raleway";
 }
 canvas {
   background: black;
@@ -19,7 +20,7 @@ canvas {
 .center {
   position: absolute;
   color: white;
-  font-family: Arial;
+  font-family: "Raleway";
   font-size: 3em;
   opacity: 0.7;
   text-align: center;

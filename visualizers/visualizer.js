@@ -42,10 +42,10 @@ function renderFrame() {
     let b = barHeight + 10 * (i / bufferLength);
 
     let temp = 0;
-    const transValue = 100;
+    const transValue = 10;
     if (barHeight != 0) {
-      for (let j = 0; j <= barHeight; j += 2) {
-        temp += 1 / barHeight / 2;
+      for (let j = 0; j <= barHeight; j += transValue) {
+        temp += 1 / (barHeight/50)/2;
         vCtx.fillStyle = "rgba(" + r + "," + g + "," + b + "," + temp + ")";
         vCtx.fillRect(x, HEIGHT - barHeight + j + 10, barWidth, barHeight / transValue);
       }

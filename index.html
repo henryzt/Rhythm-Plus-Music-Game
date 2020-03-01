@@ -46,8 +46,8 @@
         </div>
       </div>
 
-      <div class="center" :class="{ hitAnimation: showHitIndicator }" ref="hitIndicator">
-        {{lastMark}} {{combo>0?combo:''}}
+      <div class="center" ref="hitIndicator">
+        {{lastMark}} {{combo>=5?combo:''}}
       </div>
     </div>
     <canvas></canvas>

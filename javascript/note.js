@@ -32,12 +32,14 @@ function Note(x, width) {
     if (percentage < 0.3) {
       app.marks.perfect += 1;
       app.lastMark = "Perfect";
-      hitIndicator();
     } else if (percentage < 0.6) {
       app.marks.good += 1;
+      app.lastMark = "Good";
     } else if (percentage < 0.9) {
       app.marks.offbeat += 1;
+      app.lastMark = "Offbeat";
     }
+    hitIndicator();
   };
 
   this.isOutOfCanvas = function() {
@@ -45,6 +47,8 @@ function Note(x, width) {
     if (isOut) {
       app.marks.miss += 1;
       app.combo = 0;
+      app.lastMark = "Miss";
+      hitIndicator();
     }
     return isOut;
   };
@@ -59,6 +63,8 @@ function Note(x, width) {
 }
 
 function hitIndicator() {
-  app.showHitIndicator = false;
-  app.showHitIndicator = true;
+  app.$refs.hitIndicator.classList.remove("hitAnimation");
+  setTimeout(() => {
+    app.$refs.hitIndicator.classList.add("hitAnimation");
+  }, 1);
 }

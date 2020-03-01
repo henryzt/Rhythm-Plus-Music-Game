@@ -44,7 +44,7 @@ function Note(x, width) {
 
   this.isOutOfCanvas = function() {
     let isOut = this.y > canvas.height;
-    if (isOut) {
+    if (app.playMode && isOut) {
       app.marks.miss += 1;
       app.combo = 0;
       app.lastMark = "Miss";

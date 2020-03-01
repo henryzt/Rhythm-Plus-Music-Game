@@ -45,6 +45,14 @@ body {
   opacity: 0;
 }
 
+*.unselectable {
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 @keyframes enter {
   from {
     top: 30%;

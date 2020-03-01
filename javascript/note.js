@@ -31,6 +31,8 @@ function Note(x, width) {
     app.maxCombo = app.combo > app.maxCombo ? app.combo : app.maxCombo;
     if (percentage < 0.3) {
       app.marks.perfect += 1;
+      app.lastMark = "Perfect";
+      hitIndicator();
     } else if (percentage < 0.6) {
       app.marks.good += 1;
     } else if (percentage < 0.9) {
@@ -54,4 +56,9 @@ function Note(x, width) {
     ctx.fillRect(x, this.y, this.width, 10);
     this.y += noteSpeedPxPerSec * this.delta;
   };
+}
+
+function hitIndicator() {
+  app.showHitIndicator = false;
+  app.showHitIndicator = true;
 }

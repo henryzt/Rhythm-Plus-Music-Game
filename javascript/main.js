@@ -33,7 +33,9 @@ let app = new Vue({
     score: 0,
     combo: 0,
     maxCombo: 0,
-    marks: { perfect: 0, good: 0, offbeat: 0, miss: 0 }
+    marks: { perfect: 0, good: 0, offbeat: 0, miss: 0 },
+    lastMark: "",
+    showHitIndicator: false
   },
   mounted: function() {
     this.$watch("currentSong", () => {

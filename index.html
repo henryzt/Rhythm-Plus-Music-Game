@@ -45,6 +45,10 @@
           {{marks.miss}}
         </div>
       </div>
+
+      <div class="center" :class="{ hitAnimation: showHitIndicator }" ref="hitIndicator">
+        {{lastMark}} {{combo>0?combo:''}}
+      </div>
     </div>
     <canvas></canvas>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>

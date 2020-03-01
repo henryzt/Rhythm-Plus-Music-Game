@@ -1,5 +1,4 @@
 let canvas = document.querySelector("canvas");
-
 let ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -22,6 +21,7 @@ let checkHitLineY = (canvas.height / 10) * 9;
 let noteSpeedInSec = 2;
 let noteSpeedPxPerSec = checkHitLineY / noteSpeedInSec;
 
+//vue app
 let app = new Vue({
   el: "#app",
   data: {
@@ -40,6 +40,16 @@ let app = new Vue({
 });
 
 let audio = app.$refs.audioElement;
+
+function onKeyDown(key) {
+  if (!app.playMode) {
+    console.log(audio.currentTime, key);
+    timeArr.push({ time: audio.currentTime, key: key });
+  }
+  for (track of dropTrackArr) {
+    track.keyDown(key);
+  }
+}
 
 window.onload = function() {
   document.addEventListener(
@@ -68,126 +78,6 @@ window.onload = function() {
     false
   );
 };
-
-function onKeyDown(key) {
-  if (!app.playMode) {
-    console.log(audio.currentTime, key);
-    timeArr.push({ time: audio.currentTime, key: key });
-  }
-  for (track of dropTrackArr) {
-    track.keyDown(key);
-  }
-}
-
-function dropTrack(x, width, keyBind) {
-  this.x = x;
-  this.width = width;
-  this.keyBind = keyBind;
-
-  this.hitIndicatorOpacity = 0;
-  this.noteArr = [];
-
-  this.keyDown = function(key) {
-    if (keyBind == key) {
-      this.hitIndicatorOpacity = 1;
-      if (!app.playMode) {
-        this.noteArr.push(new Note(this.x, this.width));
-      }
-    }
-  };
-
-  this.resizeTrack = function(x, width) {
-    this.x = x;
-    this.width = width;
-  };
-
-  this.update = function() {
-    //track bg
-    ctx.fillStyle = "#212121";
-    ctx.fillRect(this.x, 0, this.width, canvas.height);
-    //hit line
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(this.x, checkHitLineY, this.width, 10);
-    //note update
-    for (let i = 0; i < this.noteArr.length; ++i) {
-      this.noteArr[i].update();
-      if (this.noteArr[i].isOutOfCanvas()) {
-        this.noteArr.splice(i, 1); // Remove out of canvas note
-        --i; // Correct the index value
-      }
-    }
-    //hit indicator
-    if (this.hitIndicatorOpacity > 0) {
-      ctx.fillStyle = hitGradient;
-      ctx.globalAlpha = this.hitIndicatorOpacity;
-      ctx.fillRect(this.x, (canvas.height / 10) * 8, this.width, (canvas.height / 10) * 2);
-      this.hitIndicatorOpacity -= 0.01;
-      ctx.globalAlpha = 1;
-    }
-
-    //create note
-    let needNote =
-      app.playMode &&
-      timeArrIdx < timeArr.length &&
-      playTime >= timeArr[timeArrIdx].time &&
-      timeArr[timeArrIdx].key == keyBind;
-
-    if (needNote) {
-      console.log(playTime);
-      this.noteArr.push(new Note(this.x, this.width));
-      timeArrIdx++;
-    }
-  };
-}
-
-function Note(x, width) {
-  this.x = x;
-  this.width = width;
-
-  this.y = 0;
-
-  // modulate speed, ref https://www.viget.com/articles/time-based-animation/
-  this.now = Date.now();
-  this.delta = 0;
-  this.then = 0;
-
-  this.setDelta = function() {
-    if (this.then == 0) this.then = this.now;
-    this.now = Date.now();
-    this.delta = (parseFloat(this.now) - parseFloat(this.then)) / 1000; // seconds since last frame
-    this.then = this.now;
-  };
-
-  this.getScore = function() {
-    return checkHitLineY - this.y;
-  };
-
-  this.isOutOfCanvas = function() {
-    return this.y > canvas.height;
-  };
-
-  this.update = function() {
-    this.setDelta();
-    let color = this.y > checkHitLineY + 10 ? "red" : "yellow";
-    ctx.fillStyle = color;
-    ctx.fillRect(x, this.y, this.width, 10);
-    this.y += noteSpeedPxPerSec * this.delta;
-  };
-}
-
-function saveToLocal(name) {
-  let local = JSON.parse(localStorage.getItem("localTimeline")) || {};
-  local[name] = { timeline: timeArr };
-  localStorage.setItem("localTimeline", JSON.stringify(local));
-}
-
-function loadFromLocal(name) {
-  let local = localStorage.getItem("localTimeline");
-  if (local) {
-    local = JSON.parse(local);
-    timeArr = local[name].timeline;
-  }
-}
 
 let trackNum = 4;
 let trackMaxWidth = 150;

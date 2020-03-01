@@ -124,8 +124,7 @@ window.onload = function() {
 // animate all
 function animate() {
   requestAnimationFrame(animate);
-  ctx.fillStyle = "black";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   for (track of dropTrackArr) {
     track.update();
   }

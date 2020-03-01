@@ -52,7 +52,7 @@ function DropTrack(x, width, keyBind) {
       ctx.globalAlpha = this.hitIndicatorOpacity;
       ctx.fillRect(this.x, (canvas.height / 10) * 8, this.width, (canvas.height / 10) * 2);
       this.hitIndicatorOpacity -= 0.01;
-      ctx.globalAlpha = 1;
+      ctx.globalAlpha = 0.9;
     }
 
     //create note

@@ -1,19 +1,3 @@
-let canvas = document.querySelector("canvas");
-let ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-let timeArr = [];
-let timeArrIdx = 0;
-
-//time elapsed relative to audio play time (+Number(app.noteSpeedInSec))
-let playTime = 0;
-
-//hit indicator gradient
-let hitGradient = ctx.createLinearGradient(0, (canvas.height / 10) * 8, 0, canvas.height);
-hitGradient.addColorStop(0, "rgba(0,0,0,0)");
-hitGradient.addColorStop(1, "yellow");
-
 //hit line postion (white line)
 let checkHitLineY = null;
 
@@ -48,6 +32,22 @@ let app = new Vue({
     });
   }
 });
+
+let canvas = app.$refs.mainCanvas;
+let ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let timeArr = [];
+let timeArrIdx = 0;
+
+//time elapsed relative to audio play time (+Number(app.noteSpeedInSec))
+let playTime = 0;
+
+//hit indicator gradient
+let hitGradient = ctx.createLinearGradient(0, (canvas.height / 10) * 8, 0, canvas.height);
+hitGradient.addColorStop(0, "rgba(0,0,0,0)");
+hitGradient.addColorStop(1, "yellow");
 
 //get audio element
 let audio = app.$refs.audioElement;

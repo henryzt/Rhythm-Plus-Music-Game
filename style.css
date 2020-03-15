@@ -60,6 +60,13 @@ body {
   pointer-events: none;
 }
 
+.visualizer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
 *.unselectable {
   -moz-user-select: -moz-none;
   -khtml-user-select: none;

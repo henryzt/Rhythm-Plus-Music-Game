@@ -133,13 +133,13 @@ function animate() {
     renderBarVisualizer();
     ctx.fillStyle = "rgba(10,10,44,0.2)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+  } else {
+    renderSpaceVisualizer();
   }
   for (track of dropTrackArr) {
     track.update();
   }
 }
-
-animate();
 
 //clock for counting time
 let intervalPlay = null;
@@ -181,3 +181,5 @@ function toggleControl() {
 function toggleVisualizer() {
   app.visualizer = !app.visualizer;
 }
+
+animate();

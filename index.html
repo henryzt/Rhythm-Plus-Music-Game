@@ -86,10 +86,8 @@
 
       <canvas ref="mainCanvas"></canvas>
 
-      <!-- visualizer -->
-      <!-- <div v-if="visualizer">
-        <img id="visualizerBarBG" />
-      </div> -->
+      <!-- visualizer space -->
+      <div ref="visualizerSpace" id="visualizer" class="visualizer"></div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
@@ -99,7 +97,9 @@
     <script src="songs/demo.js"></script>
     <script src="javascript/main.js"></script>
 
-    <!-- visualizer -->
+    <!-- visualizer bar -->
     <script src="visualizers/visualizerBar.js"></script>
+    <!-- visualizer space -->
+    <script src="visualizers/visualizerSpace.js"></script>
   </body>
 </html>

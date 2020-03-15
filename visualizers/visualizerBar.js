@@ -1,10 +1,10 @@
 audio.crossOrigin = "anonymous";
-let context = new AudioContext();
-let src = context.createMediaElementSource(audio);
-let analyser = context.createAnalyser();
+let audioCtx = new AudioContext();
+let src = audioCtx.createMediaElementSource(audio);
+let analyser = audioCtx.createAnalyser();
 
 src.connect(analyser);
-analyser.connect(context.destination);
+analyser.connect(audioCtx.destination);
 
 analyser.fftSize = 256;
 
@@ -12,14 +12,13 @@ let bufferLength = analyser.frequencyBinCount;
 
 let dataArray = new Uint8Array(bufferLength);
 
-let WIDTH = canvas.width;
-let HEIGHT = canvas.height;
-
-let barWidth = (WIDTH / bufferLength) * 2.5;
 let barHeight;
 let barX = 0;
 
 function renderBarVisualizer() {
+  let WIDTH = canvas.width;
+  let HEIGHT = canvas.height;
+  let barWidth = (WIDTH / bufferLength) * 2.5;
   barX = 0;
 
   analyser.getByteFrequencyData(dataArray);

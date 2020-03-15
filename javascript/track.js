@@ -32,7 +32,7 @@ function DropTrack(x, width, keyBind) {
 
   this.update = function() {
     //track bg
-    ctx.globalAlpha = 0.5;
+    ctx.globalAlpha = 0.6;
     ctx.fillStyle = "#212121";
     ctx.fillRect(this.x, 0, this.width, canvas.height);
     ctx.globalAlpha = 1;

@@ -408,7 +408,7 @@ var Visualizer = function() {
     makeStarArray();
 
     this.resizeCanvas();
-    draw();
+    // draw();
 
     setInterval(drawBg, 100);
     setInterval(rotateForeground, 20);
@@ -431,8 +431,8 @@ visualizer.init({
   audioSource: audioSource
 });
 
-function renderSpaceVisualizer() {
-  visualizer.render();
+function renderSpaceVisualizer(drawPolygon) {
+  visualizer.render(drawPolygon);
 }
 
 //   function keyControls(e) {

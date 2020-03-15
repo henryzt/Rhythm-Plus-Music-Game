@@ -4,6 +4,9 @@ let checkHitLineY = null;
 //note speed
 let noteSpeedPxPerSec = null;
 
+//visualizers
+let visualizerArr = ["Visualizer Off", "Space Visualizer", "Bar Visualizer", "Space with Polygon"];
+
 //vue app
 let app = new Vue({
   el: "#app",
@@ -22,7 +25,8 @@ let app = new Vue({
     demoList: Object.keys(demo),
     currentDemoNotes: "",
     showControl: false,
-    visualizer: false
+    visualizer: 1,
+    visualizerArr: visualizerArr
   },
   mounted: function() {
     this.$watch("currentSong", () => {
@@ -129,15 +133,28 @@ window.onload = function() {
 function animate() {
   requestAnimationFrame(animate);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  if (app.visualizer) {
-    renderBarVisualizer();
-    ctx.fillStyle = "rgba(10,10,44,0.2)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-  } else {
-    renderSpaceVisualizer();
-  }
+  renderVisualizer();
   for (track of dropTrackArr) {
     track.update();
+  }
+}
+
+//render visualizer
+function renderVisualizer() {
+  switch (app.visualizer) {
+    case 1:
+      renderSpaceVisualizer();
+      break;
+    case 2:
+      renderBarVisualizer();
+      ctx.fillStyle = "rgba(10,10,44,0.2)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    case 3:
+      renderSpaceVisualizer(true);
+      break;
+    default:
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
 }
 
@@ -179,7 +196,7 @@ function toggleControl() {
 }
 
 function toggleVisualizer() {
-  app.visualizer = !app.visualizer;
+  app.visualizer = app.visualizer == visualizerArr.length - 1 ? 0 : app.visualizer + 1;
 }
 
 animate();

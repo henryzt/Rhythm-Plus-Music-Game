@@ -26,7 +26,7 @@
       <div class="control">
         <a onclick="toggleControl()">Toggle Control</a> |
         <a onclick="startDemo()">Start a demo</a> |
-        <a onclick="toggleVisualizer()">Toggle Visual</a>
+        <a onclick="toggleVisualizer()">{{visualizerArr[visualizer]}}</a>
         <div :class="{hidden: !showControl}" style="transition: opacity 1s ease-in-out;">
           <br />
           <audio id="audio-element" ref="audioElement" controls>

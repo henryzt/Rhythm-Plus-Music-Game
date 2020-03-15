@@ -45,6 +45,21 @@ body {
   opacity: 0;
 }
 
+#visualizerBarBG {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  left: 0;
+  left: 0;
+  top: 0;
+  z-index: 10;
+  filter: blur(8px);
+  -webkit-filter: blur(8px);
+  opacity: 0.25;
+  background-color: midnightblue;
+  pointer-events: none;
+}
+
 *.unselectable {
   -moz-user-select: -moz-none;
   -khtml-user-select: none;

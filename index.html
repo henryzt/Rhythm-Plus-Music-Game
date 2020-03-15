@@ -21,12 +21,12 @@
       gtag("config", "UA-113940817-5");
     </script>
   </head>
-  <body>
+  <body class="unselectable">
     <div id="app">
       <div class="control">
         <a onclick="toggleControl()">Toggle Control</a> |
         <a onclick="startDemo()">Start a demo</a> |
-        <a onclick="toggleVisualizer()">Turn on Visual</a>
+        <a onclick="toggleVisualizer()">Toggle Visual</a>
         <div :class="{hidden: !showControl}" style="transition: opacity 1s ease-in-out;">
           <br />
           <audio id="audio-element" ref="audioElement" controls>
@@ -86,12 +86,10 @@
 
       <canvas ref="mainCanvas"></canvas>
 
-      <div v-if="visualizer">
-        <!-- visualizer -->
-        <link rel="stylesheet" type="text/css" href="visualizers/visualizer.css" />
-        <img id="visualizerBG" />
-        <canvas id="visualizer" ref="visualizerCanvas"></canvas>
-      </div>
+      <!-- visualizer -->
+      <!-- <div v-if="visualizer">
+        <img id="visualizerBarBG" />
+      </div> -->
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
@@ -102,6 +100,6 @@
     <script src="javascript/main.js"></script>
 
     <!-- visualizer -->
-    <script src="visualizers/visualizer.js"></script>
+    <script src="visualizers/visualizerBar.js"></script>
   </body>
 </html>

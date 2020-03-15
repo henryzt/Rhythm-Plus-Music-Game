@@ -17,12 +17,10 @@ let HEIGHT = canvas.height;
 
 let barWidth = (WIDTH / bufferLength) * 2.5;
 let barHeight;
-let x = 0;
+let barX = 0;
 
-function renderVisualizerFrame() {
-  // requestAnimationFrame(renderFrame);
-
-  x = 0;
+function renderBarVisualizer() {
+  barX = 0;
 
   analyser.getByteFrequencyData(dataArray);
 
@@ -32,7 +30,7 @@ function renderVisualizerFrame() {
   for (let i = 0; i < bufferLength; i++) {
     barHeight = dataArray[i] * 3;
 
-    let r = (x / WIDTH) * 255;
+    let r = (barX / WIDTH) * 255;
     let g = 50 * (i / bufferLength);
     let b = barHeight + 10 * (i / bufferLength);
 
@@ -42,9 +40,9 @@ function renderVisualizerFrame() {
       for (let j = 0; j <= barHeight; j += transValue) {
         temp += 1 / (barHeight / 50) / 2;
         ctx.fillStyle = "rgba(" + r + "," + g + "," + b + "," + temp + ")";
-        ctx.fillRect(x, HEIGHT - barHeight + j + 10, barWidth, barHeight / transValue);
+        ctx.fillRect(barX, HEIGHT - barHeight + j + 10, barWidth, barHeight / transValue);
       }
-      x += barWidth;
+      barX += barWidth;
     }
   }
 }

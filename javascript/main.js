@@ -130,7 +130,9 @@ function animate() {
   requestAnimationFrame(animate);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   if (app.visualizer) {
-    renderVisualizerFrame();
+    renderBarVisualizer();
+    ctx.fillStyle = "rgba(10,10,44,0.2)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
   for (track of dropTrackArr) {
     track.update();

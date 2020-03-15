@@ -26,7 +26,7 @@
       <div class="control">
         <a onclick="toggleControl()">Toggle Control</a> |
         <a onclick="startDemo()">Start a demo</a> |
-        <a href="index-visual.html" style="text-decoration: none;color: white;">Turn on Visual</a>
+        <a onclick="toggleVisualizer()">Turn on Visual</a>
         <div :class="{hidden: !showControl}" style="transition: opacity 1s ease-in-out;">
           <br />
           <audio id="audio-element" ref="audioElement" controls>
@@ -86,8 +86,12 @@
 
       <canvas ref="mainCanvas"></canvas>
 
-      <!-- visualizer -->
-      <!-- <script src="visualizers/visualizer.js"></script> -->
+      <div v-if="visualizer">
+        <!-- visualizer -->
+        <link rel="stylesheet" type="text/css" href="visualizers/visualizer.css" />
+        <img id="visualizerBG" />
+        <canvas id="visualizer" ref="visualizerCanvas"></canvas>
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
@@ -96,5 +100,8 @@
     <script src="javascript/storage.js"></script>
     <script src="songs/demo.js"></script>
     <script src="javascript/main.js"></script>
+
+    <!-- visualizer -->
+    <script src="visualizers/visualizer.js"></script>
   </body>
 </html>

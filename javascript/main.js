@@ -21,7 +21,8 @@ let app = new Vue({
     lastMark: "",
     demoList: Object.keys(demo),
     currentDemoNotes: "",
-    showControl: false
+    showControl: false,
+    visualizer: false
   },
   mounted: function() {
     this.$watch("currentSong", () => {
@@ -128,6 +129,9 @@ window.onload = function() {
 function animate() {
   requestAnimationFrame(animate);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (app.visualizer) {
+    renderVisualizerFrame();
+  }
   for (track of dropTrackArr) {
     track.update();
   }
@@ -170,4 +174,8 @@ function resetPlaying() {
 
 function toggleControl() {
   app.showControl = !app.showControl;
+}
+
+function toggleVisualizer() {
+  app.visualizer = !app.visualizer;
 }

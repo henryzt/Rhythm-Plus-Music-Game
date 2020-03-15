@@ -25,7 +25,7 @@ let app = new Vue({
     demoList: Object.keys(demo),
     currentDemoNotes: "",
     showControl: false,
-    visualizer: 1,
+    visualizer: 2,
     visualizerArr: visualizerArr
   },
   mounted: function() {

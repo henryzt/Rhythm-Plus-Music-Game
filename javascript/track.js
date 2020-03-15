@@ -65,8 +65,10 @@ function DropTrack(x, width, keyBind) {
       timeArr[timeArrIdx].key == keyBind;
 
     if (needNote) {
-      console.log(playTime);
-      this.noteArr.push(new Note(this.x, this.width));
+      if (playTime - timeArr[timeArrIdx].time < 1) {
+        console.log(playTime);
+        this.noteArr.push(new Note(this.x, this.width));
+      }
       timeArrIdx++;
     }
   };

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Simple Rhythm Game - HZ</title>
+    <title>VSRG Music Game - HZ</title>
     <link rel="stylesheet" type="text/css" href="style.css" />
     <link
       href="https://fonts.googleapis.com/css?family=Montserrat|Raleway&display=swap"
@@ -29,14 +29,7 @@
         <a onclick="toggleVisualizer()">{{visualizerArr[visualizer]}}</a>
         <div :class="{hidden: !showControl}" style="transition: opacity 1s ease-in-out;">
           <br />
-          <audio
-            id="audio-element"
-            ref="audioElement"
-            :src="currentSong"
-            controls
-            autobuffer
-            preload="auto"
-          ></audio>
+          <audio ref="audioElement" :src="currentSong" controls muted preload="auto"></audio>
           <div id="mode">{{playMode ? "Play Mode" : "Create Mode"}}</div>
           <br />
           <div id="speed">

@@ -1,4 +1,4 @@
-audio.crossOrigin = "anonymous";
+// audio.crossOrigin = "anonymous";
 let audioCtx = new AudioContext();
 let src = audioCtx.createMediaElementSource(audio);
 let analyser = audioCtx.createAnalyser();

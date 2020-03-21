@@ -25,7 +25,7 @@ let app = new Vue({
     demoList: Object.keys(demo),
     currentDemoNotes: "",
     showControl: false,
-    visualizer: 2,
+    visualizer: 0,
     visualizerArr: visualizerArr
   },
   mounted: function() {
@@ -152,6 +152,7 @@ function renderVisualizer() {
       renderBarVisualizer();
       ctx.fillStyle = "rgba(10,10,44,0.2)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+      break;
     case 3:
       renderSpaceVisualizer(true);
       break;
@@ -175,7 +176,11 @@ function playGame() {
     playTime = Number(elapsedTime / 1000);
     console.log(playTime, Number(app.noteSpeedInSec));
     if (playTime > Number(app.noteSpeedInSec)) {
-      res = await audio.play();
+      try {
+        res = await audio.play();
+      } catch (e) {
+        console.error(e);
+      }
       console.log("audio playing", res, audio.canplay);
       clearInterval(intervalPrePlay);
       intervalPlay = setInterval(() => {

@@ -4,58 +4,50 @@
  * original repo: https://github.com/michaelbromley/soundcloud-visualizer
  */
 
-var PlayerAudioSource = function(player) {
-  var self = this;
-  //   var analyser;
-  //   var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let PlayerAudioSource = function(player) {
+  let self = this;
+  //   let analyser;
+  //   let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   //   analyser = audioCtx.createAnalyser();
   //   analyser.fftSize = 256;
   //   player.crossOrigin = "anonymous";
-  //   var source = audioCtx.createMediaElementSource(player);
-  var source = src;
-  source.connect(analyser);
-  analyser.connect(audioCtx.destination);
-  var sampleAudioStream = function() {
-    analyser.getByteFrequencyData(self.streamData);
+  //   let source = audioCtx.createMediaElementSource(player);
+  // let source = src;
+  // source.connect(analyser);
+  // analyser.connect(audioCtx.destination);
+  let sampleAudioStream = function() {
+    analyser.getByteFrequencyData(dataArray);
     // calculate an overall volume value
-    var total = 0;
-    for (var i = 0; i < 80; i++) {
+    let total = 0;
+    for (let i = 0; i < 80; i++) {
       // get the volume from the first 80 bins, else it gets too loud with treble
-      total += self.streamData[i];
+      total += dataArray[i];
     }
     self.volume = total;
   };
   setInterval(sampleAudioStream, 20);
   // public properties and methods
   this.volume = 0;
-  this.streamData = new Uint8Array(128);
-  this.playStream = function(streamUrl) {
-    // get the input stream from the audio element
-    player.addEventListener("ended", function() {
-      self.directStream("coasting");
-    });
-    player.setAttribute("src", streamUrl);
-    player.play();
-  };
+  // this.streamData = new Uint8Array(128);
 };
 /**
  * The Visualizer object, after being instantiated, must be initialized with the init() method,
  * which takes an options object specifying the element to append the canvases to and the audiosource which will
  * provide the data to be visualized.
  */
-var Visualizer = function() {
-  var tileSize;
-  var tiles = [];
-  var stars = [];
-  // canvas vars
-  var fgCanvas;
-  var fgCtx;
-  var fgRotation = 0.001;
-  var bgCanvas;
-  var bgCtx;
-  var sfCanvas;
-  var sfCtx;
-  var audioSource;
+let Visualizer = function() {
+  let tileSize;
+  let tiles = [];
+  let stars = [];
+  // canvas lets
+  let fgCanvas;
+  let fgCtx;
+  let fgRotation = 0.001;
+  let bgCanvas;
+  let bgCtx;
+  let sfCanvas;
+  let sfCtx;
+  let audioSource;
 
   function Polygon(sides, x, y, tileSize, ctx, num) {
     this.sides = sides;
@@ -67,13 +59,13 @@ var Visualizer = function() {
     this.highlight = 0; // for highlighted stroke effect;
     // figure out the x and y coordinates of the center of the polygon based on the
     // 60 degree XY axis coordinates passed in
-    var step = Math.round(Math.cos(Math.PI / 6) * tileSize * 2);
+    let step = Math.round(Math.cos(Math.PI / 6) * tileSize * 2);
     this.y = Math.round(step * Math.sin(Math.PI / 3) * -y);
     this.x = Math.round(x * step + (y * step) / 2);
 
     // calculate the vertices of the polygon
     this.vertices = [];
-    for (var i = 1; i <= this.sides; i += 1) {
+    for (let i = 1; i <= this.sides; i += 1) {
       x = this.x + this.tileSize * Math.cos((i * 2 * Math.PI) / this.sides + Math.PI / 6);
       y = this.y + this.tileSize * Math.sin((i * 2 * Math.PI) / this.sides + Math.PI / 6);
       this.vertices.push([x, y]);
@@ -81,37 +73,37 @@ var Visualizer = function() {
   }
   Polygon.prototype.rotateVertices = function() {
     // rotate all the vertices to achieve the overall rotational effect
-    var rotation = fgRotation;
+    let rotation = fgRotation;
     rotation -= audioSource.volume > 10000 ? Math.sin(audioSource.volume / 800000) : 0;
-    for (var i = 0; i <= this.sides - 1; i += 1) {
+    for (let i = 0; i <= this.sides - 1; i += 1) {
       this.vertices[i][0] = this.vertices[i][0] - this.vertices[i][1] * Math.sin(rotation);
       this.vertices[i][1] = this.vertices[i][1] + this.vertices[i][0] * Math.sin(rotation);
     }
   };
-  var minMental = 0,
+  let minMental = 0,
     maxMental = 0;
   Polygon.prototype.calculateOffset = function(coords) {
-    var angle = Math.atan(coords[1] / coords[0]);
-    var distance = Math.sqrt(Math.pow(coords[0], 2) + Math.pow(coords[1], 2)); // a bit of pythagoras
-    var mentalFactor = Math.min(Math.max(Math.tan(audioSource.volume / 6000) * 0.5, -20), 2); // this factor makes the visualization go crazy wild
+    let angle = Math.atan(coords[1] / coords[0]);
+    let distance = Math.sqrt(Math.pow(coords[0], 2) + Math.pow(coords[1], 2)); // a bit of pythagoras
+    let mentalFactor = Math.min(Math.max(Math.tan(audioSource.volume / 6000) * 0.5, -20), 2); // this factor makes the visualization go crazy wild
     /*
         // debug
         minMental = mentalFactor < minMental ? mentalFactor : minMental;
          maxMental = mentalFactor > maxMental ? mentalFactor : maxMental;*/
-    var offsetFactor =
+    let offsetFactor =
       Math.pow(distance / 3, 2) *
       (audioSource.volume / 2000000) *
       (Math.pow(this.high, 1.3) / 300) *
       mentalFactor;
-    var offsetX = Math.cos(angle) * offsetFactor;
-    var offsetY = Math.sin(angle) * offsetFactor;
+    let offsetX = Math.cos(angle) * offsetFactor;
+    let offsetY = Math.sin(angle) * offsetFactor;
     offsetX *= coords[0] < 0 ? -1 : 1;
     offsetY *= coords[0] < 0 ? -1 : 1;
     return [offsetX, offsetY];
   };
   Polygon.prototype.drawPolygon = function() {
-    var bucket = Math.ceil((audioSource.streamData.length / tiles.length) * this.num);
-    var val = Math.pow(audioSource.streamData[bucket] / 255, 2) * 255;
+    let bucket = Math.ceil((audioSource.streamData.length / tiles.length) * this.num);
+    let val = Math.pow(audioSource.streamData[bucket] / 255, 2) * 255;
     val *= this.num > 42 ? 1.1 : 1;
     // establish the value for this tile
     if (val > this.high) {
@@ -122,13 +114,13 @@ var Visualizer = function() {
     }
 
     // figure out what colour to fill it and then draw the polygon
-    var r, g, b, a;
+    let r, g, b, a;
     if (val > 0) {
       this.ctx.beginPath();
-      var offset = this.calculateOffset(this.vertices[0]);
+      let offset = this.calculateOffset(this.vertices[0]);
       this.ctx.moveTo(this.vertices[0][0] + offset[0], this.vertices[0][1] + offset[1]);
       // draw the polygon
-      for (var i = 1; i <= this.sides - 1; i += 1) {
+      for (let i = 1; i <= this.sides - 1; i += 1) {
         offset = this.calculateOffset(this.vertices[i]);
         this.ctx.lineTo(this.vertices[i][0] + offset[0], this.vertices[i][1] + offset[1]);
       }
@@ -154,7 +146,7 @@ var Visualizer = function() {
         this.highlight = 100; // add the highlight effect if it's pretty loud
       }
       // set the alpha
-      var e = 2.7182;
+      let e = 2.7182;
       a = 0.5 / (1 + 40 * Math.pow(e, -val / 8)) + 0.5 / (1 + 40 * Math.pow(e, -val / 20));
 
       this.ctx.fillStyle =
@@ -162,7 +154,7 @@ var Visualizer = function() {
       this.ctx.fill();
       // stroke
       if (val > 20) {
-        var strokeVal = 20;
+        let strokeVal = 20;
         this.ctx.strokeStyle = "rgba(" + strokeVal + ", " + strokeVal + ", " + strokeVal + ", 0.5)";
         this.ctx.lineWidth = 1;
         this.ctx.stroke();
@@ -176,37 +168,37 @@ var Visualizer = function() {
   Polygon.prototype.drawHighlight = function() {
     this.ctx.beginPath();
     // draw the highlight
-    var offset = this.calculateOffset(this.vertices[0]);
+    let offset = this.calculateOffset(this.vertices[0]);
     this.ctx.moveTo(this.vertices[0][0] + offset[0], this.vertices[0][1] + offset[1]);
     // draw the polygon
-    for (var i = 0; i <= this.sides - 1; i += 1) {
+    for (let i = 0; i <= this.sides - 1; i += 1) {
       offset = this.calculateOffset(this.vertices[i]);
       this.ctx.lineTo(this.vertices[i][0] + offset[0], this.vertices[i][1] + offset[1]);
     }
     this.ctx.closePath();
-    var a = this.highlight / 100;
+    let a = this.highlight / 100;
     this.ctx.strokeStyle = "rgba(255, 255, 255, " + a + ")";
     this.ctx.lineWidth = 1;
     this.ctx.stroke();
     this.highlight -= 0.5;
   };
 
-  var makePolygonArray = function() {
+  let makePolygonArray = function() {
     tiles = [];
     /**
      * Arrange into a grid x, y, with the y axis at 60 degrees to the x, rather than
      * the usual 90.
      * @type {number}
      */
-    var i = 0; // unique number for each tile
+    let i = 0; // unique number for each tile
     tiles.push(new Polygon(6, 0, 0, tileSize, fgCtx, i)); // the centre tile
     i++;
-    for (var layer = 1; layer < 7; layer++) {
+    for (let layer = 1; layer < 7; layer++) {
       tiles.push(new Polygon(6, 0, layer, tileSize, fgCtx, i));
       i++;
       tiles.push(new Polygon(6, 0, -layer, tileSize, fgCtx, i));
       i++;
-      for (var x = 1; x < layer; x++) {
+      for (let x = 1; x < layer; x++) {
         tiles.push(new Polygon(6, x, -layer, tileSize, fgCtx, i));
         i++;
         tiles.push(new Polygon(6, -x, layer, tileSize, fgCtx, i));
@@ -216,7 +208,7 @@ var Visualizer = function() {
         tiles.push(new Polygon(6, -x, -layer + x, tileSize, fgCtx, i));
         i++;
       }
-      for (var y = -layer; y <= 0; y++) {
+      for (let y = -layer; y <= 0; y++) {
         tiles.push(new Polygon(6, layer, y, tileSize, fgCtx, i));
         i++;
         tiles.push(new Polygon(6, -layer, -y, tileSize, fgCtx, i));
@@ -234,22 +226,22 @@ var Visualizer = function() {
     this.high = 0;
   }
   Star.prototype.drawStar = function() {
-    var distanceFromCentre = Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
+    let distanceFromCentre = Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
 
     // stars as lines
-    var brightness = 200 + Math.min(Math.round(this.high * 5), 55);
+    let brightness = 200 + Math.min(Math.round(this.high * 5), 55);
     this.ctx.lineWidth = 0.5 + (distanceFromCentre / 2000) * Math.max(this.starSize / 2, 1);
     this.ctx.strokeStyle = "rgba(" + brightness + ", " + brightness + ", " + brightness + ", 1)";
     this.ctx.beginPath();
     this.ctx.moveTo(this.x, this.y);
-    var lengthFactor =
+    let lengthFactor =
       1 +
       Math.min(
         ((Math.pow(distanceFromCentre, 2) / 30000) * Math.pow(audioSource.volume, 2)) / 6000000,
         distanceFromCentre
       );
-    var toX = Math.cos(this.angle) * -lengthFactor;
-    var toY = Math.sin(this.angle) * -lengthFactor;
+    let toX = Math.cos(this.angle) * -lengthFactor;
+    let toY = Math.sin(this.angle) * -lengthFactor;
     toX *= this.x > 0 ? 1 : -1;
     toY *= this.y > 0 ? 1 : -1;
     this.ctx.lineTo(this.x + toX, this.y + toY);
@@ -257,18 +249,18 @@ var Visualizer = function() {
     this.ctx.closePath();
 
     // starfield movement coming towards the camera
-    var speed = (lengthFactor / 20) * this.starSize;
+    let speed = (lengthFactor / 20) * this.starSize;
     this.high -= Math.max(this.high - 0.0001, 0);
     if (speed > this.high) {
       this.high = speed;
     }
-    var dX = Math.cos(this.angle) * this.high;
-    var dY = Math.sin(this.angle) * this.high;
+    let dX = Math.cos(this.angle) * this.high;
+    let dY = Math.sin(this.angle) * this.high;
     this.x += this.x > 0 ? dX : -dX;
     this.y += this.y > 0 ? dY : -dY;
 
-    var limitY = fgCanvas.height / 2 + 500;
-    var limitX = fgCanvas.width / 2 + 500;
+    let limitY = fgCanvas.height / 2 + 500;
+    let limitX = fgCanvas.width / 2 + 500;
     if (this.y > limitY || this.y < -limitY || this.x > limitX || this.x < -limitX) {
       // it has gone off the edge so respawn it somewhere near the middle.
       this.x = ((Math.random() - 0.5) * fgCanvas.width) / 3;
@@ -277,11 +269,11 @@ var Visualizer = function() {
     }
   };
 
-  var makeStarArray = function() {
-    var x, y, starSize;
+  let makeStarArray = function() {
+    let x, y, starSize;
     stars = [];
-    var limit = fgCanvas.width / 15; // how many stars?
-    for (var i = 0; i < limit; i++) {
+    let limit = fgCanvas.width / 15; // how many stars?
+    for (let i = 0; i < limit; i++) {
       x = (Math.random() - 0.5) * fgCanvas.width;
       y = (Math.random() - 0.5) * fgCanvas.height;
       starSize = (Math.random() + 0.1) * 3;
@@ -289,10 +281,10 @@ var Visualizer = function() {
     }
   };
 
-  var drawBg = function() {
+  let drawBg = function() {
     bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
-    var r, g, b, a;
-    var val = audioSource.volume / 1000;
+    let r, g, b, a;
+    let val = audioSource.volume / 1000;
     r = 200 + (Math.sin(val) + 1) * 28;
     g = val * 2;
     b = val * 8;
@@ -300,7 +292,7 @@ var Visualizer = function() {
     bgCtx.beginPath();
     bgCtx.rect(0, 0, bgCanvas.width, bgCanvas.height);
     // create radial gradient
-    var grd = bgCtx.createRadialGradient(
+    let grd = bgCtx.createRadialGradient(
       bgCanvas.width / 2,
       bgCanvas.height / 2,
       val,
@@ -350,13 +342,13 @@ var Visualizer = function() {
     }
   };
 
-  var rotateForeground = function() {
+  let rotateForeground = function() {
     tiles.forEach(function(tile) {
       tile.rotateVertices();
     });
   };
 
-  var draw = function(drawPolygon) {
+  let draw = function(drawPolygon) {
     fgCtx.clearRect(-fgCanvas.width, -fgCanvas.height, fgCanvas.width * 2, fgCanvas.height * 2);
     sfCtx.clearRect(-fgCanvas.width / 2, -fgCanvas.height / 2, fgCanvas.width, fgCanvas.height);
 
@@ -384,8 +376,8 @@ var Visualizer = function() {
 
   this.init = function(options) {
     audioSource = options.audioSource;
-    // var container = document.getElementById(options.containerId);
-    var container = app.$refs.visualizerSpace;
+    // let container = document.getElementById(options.containerId);
+    let container = app.$refs.visualizerSpace;
 
     // foreground hexagons layer
     fgCanvas = document.createElement("canvas");
@@ -421,10 +413,10 @@ var Visualizer = function() {
   };
 };
 
-var visualizer = new Visualizer();
-var player = audio;
+let visualizer = new Visualizer();
+// let player = audio;
 
-var audioSource = new PlayerAudioSource(player);
+let audioSource = new PlayerAudioSource();
 
 visualizer.init({
   containerId: "visualizer",

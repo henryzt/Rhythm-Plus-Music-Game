@@ -3,6 +3,6 @@ Simple DJMAX like VSRG (Vertically Scrolling Rhythm Game) using vanillna js and 
 
 # Gameplay
 
-[Play Now](https://henryz00.github.io/VSRG-Music-Rhythm-Game/index-visual.html)
+[Play Now](https://henryz00.github.io/VSRG-Music-Rhythm-Game/)
 
 ![gameplay gif](gameplay.gif)

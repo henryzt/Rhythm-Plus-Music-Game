@@ -48,6 +48,9 @@ let Visualizer = function() {
   let sfCanvas;
   let sfCtx;
   let audioSource;
+  let getVolume = () => {
+    return audioSource.volume * 0.95;
+  };
 
   function Polygon(sides, x, y, tileSize, ctx, num) {
     this.sides = sides;
@@ -74,7 +77,7 @@ let Visualizer = function() {
   Polygon.prototype.rotateVertices = function() {
     // rotate all the vertices to achieve the overall rotational effect
     let rotation = fgRotation;
-    rotation -= audioSource.volume > 10000 ? Math.sin(audioSource.volume / 800000) : 0;
+    rotation -= getVolume() > 10000 ? Math.sin(getVolume() / 800000) : 0;
     for (let i = 0; i <= this.sides - 1; i += 1) {
       this.vertices[i][0] = this.vertices[i][0] - this.vertices[i][1] * Math.sin(rotation);
       this.vertices[i][1] = this.vertices[i][1] + this.vertices[i][0] * Math.sin(rotation);
@@ -85,14 +88,14 @@ let Visualizer = function() {
   Polygon.prototype.calculateOffset = function(coords) {
     let angle = Math.atan(coords[1] / coords[0]);
     let distance = Math.sqrt(Math.pow(coords[0], 2) + Math.pow(coords[1], 2)); // a bit of pythagoras
-    let mentalFactor = Math.min(Math.max(Math.tan(audioSource.volume / 6000) * 0.5, -20), 2); // this factor makes the visualization go crazy wild
+    let mentalFactor = Math.min(Math.max(Math.tan(getVolume() / 6000) * 0.5, -20), 2); // this factor makes the visualization go crazy wild
     /*
         // debug
         minMental = mentalFactor < minMental ? mentalFactor : minMental;
          maxMental = mentalFactor > maxMental ? mentalFactor : maxMental;*/
     let offsetFactor =
       Math.pow(distance / 3, 2) *
-      (audioSource.volume / 2000000) *
+      (getVolume() / 2000000) *
       (Math.pow(this.high, 1.3) / 300) *
       mentalFactor;
     let offsetX = Math.cos(angle) * offsetFactor;
@@ -237,7 +240,7 @@ let Visualizer = function() {
     let lengthFactor =
       1 +
       Math.min(
-        ((Math.pow(distanceFromCentre, 2) / 30000) * Math.pow(audioSource.volume, 2)) / 6000000,
+        ((Math.pow(distanceFromCentre, 2) / 30000) * Math.pow(getVolume(), 2)) / 6000000,
         distanceFromCentre
       );
     let toX = Math.cos(this.angle) * -lengthFactor;
@@ -284,7 +287,7 @@ let Visualizer = function() {
   let drawBg = function() {
     bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
     let r, g, b, a;
-    let val = audioSource.volume / 1000;
+    let val = getVolume() / 1000;
     r = 200 + (Math.sin(val) + 1) * 28;
     g = val * 2;
     b = val * 8;

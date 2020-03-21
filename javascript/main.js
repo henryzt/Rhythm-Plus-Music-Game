@@ -199,4 +199,7 @@ function toggleVisualizer() {
   app.visualizer = app.visualizer == visualizerArr.length - 1 ? 0 : app.visualizer + 1;
 }
 
-animate();
+window.onload = () => {
+  console.log("window loaded");
+  animate();
+};

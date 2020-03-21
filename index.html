@@ -29,8 +29,8 @@
         <a onclick="toggleVisualizer()">{{visualizerArr[visualizer]}}</a>
         <div :class="{hidden: !showControl}" style="transition: opacity 1s ease-in-out;">
           <br />
-          <audio id="audio-element" ref="audioElement" controls>
-            <source :src="currentSong" type="audio/mp3" />
+          <audio id="audio-element" ref="audioElement" controls autobuffer>
+            <source :src="currentSong" preload="auto" />
           </audio>
           <div id="mode">{{playMode ? "Play Mode" : "Create Mode"}}</div>
           <br />

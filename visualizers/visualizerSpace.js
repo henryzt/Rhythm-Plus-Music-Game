@@ -19,7 +19,7 @@ let PlayerAudioSource = function(player) {
     analyser.getByteFrequencyData(dataArray);
     // calculate an overall volume value
     let total = 0;
-    for (let i = 0; i < 80; i++) {
+    for (let i = 0; i < 50; i++) {
       // get the volume from the first 80 bins, else it gets too loud with treble
       total += dataArray[i];
     }
@@ -49,7 +49,7 @@ let Visualizer = function() {
   let sfCtx;
   let audioSource;
   let getVolume = () => {
-    return audioSource.volume * 0.95;
+    return audioSource.volume;
   };
 
   function Polygon(sides, x, y, tileSize, ctx, num) {

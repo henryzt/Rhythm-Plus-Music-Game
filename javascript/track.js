@@ -122,7 +122,7 @@ function HitParticleEffect() {
     };
 
     // Size our particle
-    this.radius = 5 + Math.random() * 5;
+    this.radius = 5 + Math.random() * 10;
 
     // Set a max time to live for our particle
     this.life = 20 + Math.random() * 10;
@@ -135,9 +135,10 @@ function HitParticleEffect() {
       if (this.remainingLife > 0 && this.radius > 0) {
         // Draw a circle at the current location
         ctx.beginPath();
-        ctx.arc(p.startX, p.startY, p.radius, 0, Math.PI * 2);
+        // ctx.arc(p.startX, p.startY, p.radius, 0, Math.PI * 2);
         ctx.fillStyle = this.rgbArray[Math.floor(Math.random() * this.rgbArray.length)];
-        ctx.fill();
+        ctx.fillRect(p.startX, p.startY, p.radius, p.radius);
+        // ctx.fill();
 
         // Update the particle's location and life
         p.remainingLife--;
@@ -167,7 +168,7 @@ function HitParticleEffect() {
 
     // Draw all of our particles in their new location
     for (let i = 0; i < particles.length; i++) {
-      ctx.globalAlpha = 0.6;
+      ctx.globalAlpha = 0.7;
       particles[i].draw(ctx);
       ctx.globalAlpha = 1;
       // Simple way to clean up if the last particle is done animating

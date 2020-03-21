@@ -102,8 +102,8 @@ let Visualizer = function() {
     return [offsetX, offsetY];
   };
   Polygon.prototype.drawPolygon = function() {
-    let bucket = Math.ceil((audioSource.streamData.length / tiles.length) * this.num);
-    let val = Math.pow(audioSource.streamData[bucket] / 255, 2) * 255;
+    let bucket = Math.ceil((dataArray.length / tiles.length) * this.num);
+    let val = Math.pow(dataArray[bucket] / 255, 2) * 255;
     val *= this.num > 42 ? 1.1 : 1;
     // establish the value for this tile
     if (val > this.high) {
@@ -413,15 +413,19 @@ let Visualizer = function() {
   };
 };
 
-let visualizer = new Visualizer();
-// let player = audio;
+let visualizer, audioSource;
 
-let audioSource = new PlayerAudioSource();
+function initSpaceVisualizer() {
+  visualizer = new Visualizer();
+  // let player = audio;
 
-visualizer.init({
-  containerId: "visualizer",
-  audioSource: audioSource
-});
+  audioSource = new PlayerAudioSource();
+
+  visualizer.init({
+    containerId: "visualizer",
+    audioSource: audioSource
+  });
+}
 
 function renderSpaceVisualizer(drawPolygon) {
   visualizer.render(drawPolygon);

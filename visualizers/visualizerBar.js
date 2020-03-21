@@ -1,16 +1,28 @@
 // audio.crossOrigin = "anonymous";
-let audioCtx = new AudioContext();
-let src = audioCtx.createMediaElementSource(audio);
-let analyser = audioCtx.createAnalyser();
+let audioCtx, src, analyser, bufferLength, dataArray;
 
-src.connect(analyser);
-analyser.connect(audioCtx.destination);
+function initVisualizerData() {
+  audioCtx = new AudioContext();
+  src = audioCtx.createMediaElementSource(audio);
+  analyser = audioCtx.createAnalyser();
 
-analyser.fftSize = 256;
+  src.connect(analyser);
+  analyser.connect(audioCtx.destination);
 
-let bufferLength = analyser.frequencyBinCount;
+  analyser.fftSize = 256;
 
-let dataArray = new Uint8Array(bufferLength);
+  bufferLength = analyser.frequencyBinCount;
+
+  dataArray = new Uint8Array(bufferLength);
+}
+
+function initAllVisualizersIfRequried() {
+  if (!audioCtx) {
+    initVisualizerData();
+    initSpaceVisualizer();
+    visualizerLoaded = true;
+  }
+}
 
 let barHeight;
 let barX = 0;

@@ -4,6 +4,9 @@ let checkHitLineY = null;
 //note speed
 let noteSpeedPxPerSec = null;
 
+//visualizer loaded indicator
+let visualizerLoaded = false;
+
 //visualizers
 let visualizerArr = ["Visualizer Off", "Space Visualizer", "Bar Visualizer", "Space with Polygon"];
 
@@ -25,7 +28,7 @@ let app = new Vue({
     demoList: Object.keys(demo),
     currentDemoNotes: "",
     showControl: false,
-    visualizer: 0,
+    visualizer: 2,
     visualizerArr: visualizerArr
   },
   mounted: function() {
@@ -144,6 +147,7 @@ function animate() {
 
 //render visualizer
 function renderVisualizer() {
+  if (!visualizerLoaded) return;
   switch (app.visualizer) {
     case 1:
       renderSpaceVisualizer();
@@ -182,6 +186,7 @@ function playGame() {
         console.error(e);
       }
       console.log("audio playing", res, audio.canplay);
+      initAllVisualizersIfRequried();
       clearInterval(intervalPrePlay);
       intervalPlay = setInterval(() => {
         playTime = audio.currentTime + Number(app.noteSpeedInSec);

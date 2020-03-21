@@ -127,6 +127,9 @@ window.onload = function() {
     },
     false
   );
+
+  //start animate
+  animate();
 };
 
 // animate all
@@ -167,12 +170,13 @@ function playGame() {
   let startTime = Date.now();
   app.playMode = true;
 
-  let intervalPrePlay = setInterval(function() {
+  let intervalPrePlay = setInterval(async function() {
     let elapsedTime = Date.now() - startTime;
     playTime = Number(elapsedTime / 1000);
     console.log(playTime, Number(app.noteSpeedInSec));
     if (playTime > Number(app.noteSpeedInSec)) {
-      audio.play();
+      res = await audio.play();
+      console.log("audio playing", res, audio.canplay);
       clearInterval(intervalPrePlay);
       intervalPlay = setInterval(() => {
         playTime = audio.currentTime + Number(app.noteSpeedInSec);
@@ -198,5 +202,3 @@ function toggleControl() {
 function toggleVisualizer() {
   app.visualizer = app.visualizer == visualizerArr.length - 1 ? 0 : app.visualizer + 1;
 }
-
-animate();

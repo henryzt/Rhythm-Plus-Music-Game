@@ -53,7 +53,7 @@ let timeArrIdx = 0;
 let playTime = 0;
 
 //hit indicator gradient
-let hitGradient = ctx.createLinearGradient(0, (canvas.height / 10) * 8, 0, canvas.height);
+let hitGradient = ctx.createLinearGradient(0, (canvas.height / 10) * 7, 0, canvas.height);
 hitGradient.addColorStop(0, "rgba(0,0,0,0)");
 hitGradient.addColorStop(1, "yellow");
 

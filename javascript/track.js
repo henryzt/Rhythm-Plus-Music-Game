@@ -36,10 +36,7 @@ function DropTrack(x, width, keyBind) {
     ctx.fillStyle = "#212121";
     ctx.fillRect(this.x, 0, this.width, canvas.height);
     ctx.globalAlpha = 1;
-    //hit line
-    ctx.fillStyle = "#ffffff";
-    let hitLineY = app.playMode ? checkHitLineY : 0;
-    ctx.fillRect(this.x, hitLineY, this.width, 10);
+
     //note update
     for (let i = 0; i < this.noteArr.length; ++i) {
       this.noteArr[i].update();
@@ -50,12 +47,21 @@ function DropTrack(x, width, keyBind) {
     }
     //hit indicator
     if (this.hitIndicatorOpacity > 0) {
+      ctx.fillStyle = "rgba(255,255,255," + this.hitIndicatorOpacity / 10 + ")";
+      let rectWidth = this.width * this.hitIndicatorOpacity;
+      ctx.fillRect(this.x + this.width / 2 - rectWidth / 2, 0, rectWidth, canvas.height);
+      //yellow gradient
       ctx.fillStyle = hitGradient;
       ctx.globalAlpha = this.hitIndicatorOpacity;
-      ctx.fillRect(this.x, (canvas.height / 10) * 8, this.width, (canvas.height / 10) * 2);
-      this.hitIndicatorOpacity -= 0.01;
+      ctx.fillRect(this.x, (canvas.height / 10) * 6, this.width, (canvas.height / 10) * 4);
+      this.hitIndicatorOpacity -= 0.02;
       ctx.globalAlpha = 1;
     }
+
+    //hit line
+    ctx.fillStyle = "#ffffff";
+    let hitLineY = app.playMode ? checkHitLineY : 0;
+    ctx.fillRect(this.x, hitLineY, this.width, 10);
 
     //create note
     let needNote =

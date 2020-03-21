@@ -205,6 +205,15 @@ function resetPlaying() {
   audio.currentTime = 0;
 }
 
+function startSong(song) {
+  resetPlaying();
+  app.currentSong = song.url;
+  app.$refs.audioElement.load();
+  loadFromDemo(song.noteName);
+  app.visualizer = song.visualizerNo ? song.visualizerNo : app.visualizer;
+  playGame();
+}
+
 function toggleControl() {
   app.showControl = !app.showControl;
 }

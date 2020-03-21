@@ -67,6 +67,7 @@ function DropTrack(x, width, keyBind) {
     let hitLineY = app.playMode ? checkHitLineY : 0;
     ctx.fillRect(this.x, hitLineY, this.width, 10);
 
+    //particel effect
     this.particleEffect.update();
 
     //create note
@@ -124,7 +125,7 @@ function HitParticleEffect() {
     this.radius = 5 + Math.random() * 5;
 
     // Set a max time to live for our particle
-    this.life = 30 + Math.random() * 10;
+    this.life = 20 + Math.random() * 10;
     this.remainingLife = this.life;
 
     // This function will be called by our animation logic later on

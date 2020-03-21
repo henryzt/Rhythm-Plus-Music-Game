@@ -8,7 +8,13 @@ let noteSpeedPxPerSec = null;
 let visualizerLoaded = false;
 
 //visualizers
-let visualizerArr = ["Visualizer Off", "Space Visualizer", "Bar Visualizer", "Space with Polygon"];
+let visualizerArr = [
+  "Visualizer Off",
+  "Space Visualizer",
+  "Bar Visualizer",
+  "Space with Polygon",
+  "Space Blurred"
+];
 
 //vue app
 let app = new Vue({
@@ -158,6 +164,9 @@ function renderVisualizer() {
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       break;
     case 3:
+      renderSpaceVisualizer(true);
+      break;
+    case 4:
       renderSpaceVisualizer(true);
       break;
     default:

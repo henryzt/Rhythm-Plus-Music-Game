@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <title>VSRG Music Game - HZ</title>
+    <title>VSRG Music Game - henryz00</title>
     <link rel="stylesheet" type="text/css" href="style.css" />
     <link
       href="https://fonts.googleapis.com/css?family=Montserrat|Raleway&display=swap"
@@ -90,6 +90,8 @@
         <div class="blurFilter" v-if="visualizer==4"></div>
         <div ref="visualizerSpace" id="visualizer"></div>
       </div>
+
+      <div id="ytPlayer" v-show="srcMode=='youtube'"></div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
@@ -98,6 +100,8 @@
     <script src="javascript/storage.js"></script>
     <script src="songs/demo.js"></script>
     <script src="javascript/main.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="javascript/youtube.js"></script>
 
     <!-- visualizer bar -->
     <script src="visualizers/visualizerBar.js"></script>

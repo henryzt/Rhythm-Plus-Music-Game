@@ -13,7 +13,7 @@ let visualizerArr = [
   "Space Visualizer",
   "Bar Visualizer",
   "Space with Polygon",
-  "Space Blurred"
+  "Space Blurred",
 ];
 
 //vue app
@@ -35,16 +35,17 @@ let app = new Vue({
     currentDemoNotes: "",
     showControl: false,
     visualizer: 2,
-    visualizerArr: visualizerArr
+    visualizerArr: visualizerArr,
+    srcMode: "youtube",
   },
-  mounted: function() {
+  mounted: function () {
     this.$watch("currentSong", () => {
       this.$refs.audioElement.load();
     });
     this.$watch("noteSpeedInSec", () => {
       reposition();
     });
-  }
+  },
 });
 
 let canvas = app.$refs.mainCanvas;
@@ -94,7 +95,7 @@ for (keyBind of trackKeyBind) {
 }
 reposition();
 
-window.addEventListener("resize", function(event) {
+window.addEventListener("resize", function (event) {
   console.log("resize");
   reposition();
 });
@@ -110,10 +111,10 @@ function onKeyDown(key) {
   }
 }
 
-window.onload = function() {
+window.onload = function () {
   document.addEventListener(
     "keydown",
-    event => {
+    (event) => {
       onKeyDown(event.key);
     },
     false
@@ -121,13 +122,13 @@ window.onload = function() {
 
   canvas.addEventListener(
     "touchstart",
-    function(e) {
+    function (e) {
       for (var c = 0; c < e.changedTouches.length; c++) {
         // touchInf[e.changedTouches[c].identifier] = {"x":e.changedTouches[c].clientX,"y":e.changedTouches[c].clientY};
         let x = e.changedTouches[c].clientX,
           y = e.changedTouches[c].clientY;
 
-        dropTrackArr.forEach(function(track) {
+        dropTrackArr.forEach(function (track) {
           if (x > track.x && x < track.x + track.width) {
             onKeyDown(track.keyBind);
           }
@@ -184,7 +185,7 @@ function playGame() {
   let startTime = Date.now();
   app.playMode = true;
 
-  let intervalPrePlay = setInterval(async function() {
+  let intervalPrePlay = setInterval(async function () {
     let elapsedTime = Date.now() - startTime;
     playTime = Number(elapsedTime / 1000);
     console.log(playTime, Number(app.noteSpeedInSec));

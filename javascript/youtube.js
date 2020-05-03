@@ -3,7 +3,7 @@ function onYouTubeIframeAPIReady() {
   ytPlayer = new YT.Player("ytPlayer", {
     height: "100%",
     width: "100%",
-    videoId: "egG7fiE89IU",
+    videoId: "60ItHLz5WEA",
     playerVars: { autoplay: 1, controls: 0, rel: 0 },
     events: {
       onReady: onPlayerReady,
@@ -13,7 +13,26 @@ function onYouTubeIframeAPIReady() {
 }
 
 function onPlayerReady(event) {
-  event.target.playVideo();
+  console.log("Player Ready.");
+  //   event.target.playVideo();
+}
+
+function loadYoutubeVideo(id) {
+  ytPlayer.loadVideoByUrl(id, 0);
+  ytPlayer.setVolume(100);
+}
+
+function playVideo() {
+  ytPlayer.playVideo();
+}
+
+function resetVideo() {
+  ytPlayer.pauseVideo();
+  ytPlayer.seekTo(0);
+}
+
+function getPlayerTime() {
+  return ytPlayer.getCurrentTime();
 }
 
 function addWmode() {

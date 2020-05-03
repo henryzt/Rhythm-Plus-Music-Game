@@ -103,8 +103,9 @@ window.addEventListener("resize", function (event) {
 // log key and touch events
 function onKeyDown(key) {
   if (!app.playMode) {
-    console.log(audio.currentTime, key);
-    timeArr.push({ time: audio.currentTime, key: key });
+    let cTime = getCurrentTime();
+    console.log(cTime, key);
+    timeArr.push({ time: cTime, key: key });
   }
   for (track of dropTrackArr) {
     track.keyDown(key);
@@ -182,6 +183,7 @@ let intervalPlay = null;
 function playGame() {
   timeArrIdx = 0;
   audio.currentTime = 0;
+  resetVideo();
   let startTime = Date.now();
   app.playMode = true;
 
@@ -191,18 +193,26 @@ function playGame() {
     console.log(playTime, Number(app.noteSpeedInSec));
     if (playTime > Number(app.noteSpeedInSec)) {
       try {
-        res = await audio.play();
+        if (app.srcMode == "url") {
+          res = await audio.play();
+          console.log("audio playing", res, audio.canplay);
+        } else if (app.srcMode == "youtube") {
+          playVideo();
+        }
       } catch (e) {
         console.error(e);
       }
-      console.log("audio playing", res, audio.canplay);
       initAllVisualizersIfRequried();
       clearInterval(intervalPrePlay);
       intervalPlay = setInterval(() => {
-        playTime = audio.currentTime + Number(app.noteSpeedInSec);
+        playTime = getCurrentTime() + Number(app.noteSpeedInSec);
       }, 100);
     }
   }, 100);
+}
+
+function getCurrentTime() {
+  return app.srcMode == "youtube" ? getPlayerTime() : audio.currentTime;
 }
 
 function resetPlaying() {

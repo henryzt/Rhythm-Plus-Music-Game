@@ -23,61 +23,7 @@
   </head>
   <body class="unselectable">
     <div id="app">
-      <div class="control">
-        <a onclick="toggleControl()">Toggle Control</a> | <a onclick="startDemo1()">Demo 1</a> |
-        <a onclick="startDemo2()">Demo 2</a> |
-        <a onclick="toggleVisualizer()">{{visualizerArr[visualizer]}}</a>
-        <div :class="{hidden: !showControl}" style="transition: opacity 1s ease-in-out;">
-          <br />
-          <audio ref="audioElement" :src="currentSong" volume="0.5" controls preload="auto"></audio>
-          <div id="mode">{{playMode ? "Play Mode" : "Create Mode"}}</div>
-          <br />
-          <div id="speed">
-            Speed
-            <input v-model="noteSpeedInSec" placeholder="Speed" type="number" />
-          </div>
-          <!-- select song -->
-          <div>
-            <select id="song" v-model="currentSong">
-              <option disabled value="">Please select song to play</option>
-              <option value="songs/myblood.mp3">My Blood - 21P</option>
-              <option value="songs/police.mp3">Karma Police - RH</option>
-              <option value="songs/nanana.mp3">NANANA - MCR</option>
-              <option value="songs/sheepdog.mp3">Sheepdog MTV - MD</option>
-              <option value="songs/whywelose.mp3">Why We Lose - CT</option>
-            </select>
-          </div>
-          <br />
-          <!-- load song -->
-          <div>
-            <input v-model="loadFrom" placeholder="enter local saves" />
-            <button onclick="loadFromLocal(app.loadFrom)">Load</button>
-          </div>
-          <div>
-            <select id="loadFromDemo" v-model="currentDemoNotes">
-              <option disabled value="">Or select demo note</option>
-              <option v-for="option in demoList" :value="option">{{option}}</option>
-            </select>
-            <button onclick="loadFromDemo(app.currentDemoNotes)">Load</button>
-          </div>
-          <br />
-          <!-- save song -->
-          <div>
-            <input v-model="saveTo" placeholder="enter name to save" />
-            <button onclick="saveToLocal(app.saveTo)">Save</button>
-          </div>
-          <br />
-          <button onclick="playGame()">Start</button>
-          <button onclick="resetPlaying()">Reset</button>
-          <!-- score -->
-          <br />
-          <div>
-            score - {{score}} | combo - {{combo}} | max combo - {{maxCombo}}<br />
-            perfect - {{marks.perfect}} | good - {{marks.good}} | offbeat - {{marks.offbeat}} | miss
-            - {{marks.miss}}
-          </div>
-        </div>
-      </div>
+      <play-control ref="control"></play-control>
 
       <div class="center" ref="hitIndicator">
         {{lastMark}} {{combo>=5?combo:''}}
@@ -99,6 +45,7 @@
     <script src="javascript/track.js"></script>
     <script src="javascript/storage.js"></script>
     <script src="songs/demo.js"></script>
+    <script src="javascript/control.js"></script>
     <script src="javascript/main.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
     <script src="javascript/youtube.js"></script>

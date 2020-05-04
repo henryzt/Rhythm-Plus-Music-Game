@@ -3,8 +3,8 @@ function onYouTubeIframeAPIReady() {
   ytPlayer = new YT.Player("ytPlayer", {
     height: "100%",
     width: "100%",
-    videoId: "60ItHLz5WEA",
-    playerVars: { autoplay: 1, controls: 0, rel: 0 },
+    videoId: "ALZHF5UqnU4",
+    playerVars: { autoplay: 0, controls: 0, rel: 0 },
     events: {
       onReady: onPlayerReady,
     },
@@ -27,8 +27,8 @@ function playVideo() {
 }
 
 function resetVideo() {
-  ytPlayer.pauseVideo();
   ytPlayer.seekTo(0);
+  ytPlayer.pauseVideo();
 }
 
 function getPlayerTime() {

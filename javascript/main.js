@@ -40,7 +40,7 @@ let app = new Vue({
   },
   mounted: function () {
     this.$watch("currentSong", () => {
-      this.$refs.audioElement.load();
+      audio.load();
     });
     this.$watch("noteSpeedInSec", () => {
       reposition();
@@ -65,7 +65,7 @@ hitGradient.addColorStop(0, "rgba(0,0,0,0)");
 hitGradient.addColorStop(1, "yellow");
 
 //get audio element
-let audio = app.$refs.audioElement;
+let audio = app.$refs.control.$refs.audioElement;
 
 // init play tracks
 let dropTrackArr = [];
@@ -228,7 +228,7 @@ function resetPlaying() {
 function startSong(song) {
   resetPlaying();
   app.currentSong = song.url;
-  app.$refs.audioElement.load();
+  audio.load();
   loadFromDemo(song.noteName);
   app.visualizer = song.visualizerNo ? song.visualizerNo : app.visualizer;
   playGame();

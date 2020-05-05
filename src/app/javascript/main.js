@@ -1,14 +1,10 @@
-//hit line postion (white line)
-let checkHitLineY = null;
-
-//note speed
-let noteSpeedPxPerSec = null;
-
-//visualizer loaded indicator
-let visualizerLoaded = false;
+import { demo } from "./demo.js";
+import { DropTrack } from "./track.js";
+import { getPlayerTime, resetVideo, playVideo, loadYoutubeVideo } from "./youtube.js";
+require("./control.js");
 
 //visualizers
-let visualizerArr = [
+const visualizerArr = [
   "Visualizer Off",
   "Space Visualizer",
   "Bar Visualizer",
@@ -20,8 +16,13 @@ let visualizerArr = [
 let app = new Vue({
   el: "#app",
   data: {
+    audio: null,
+    canvas: null,
+    canvasCtx: null,
+    checkHitLineY: null, //hit line postion (white line)
+    noteSpeedPxPerSec: null, //note speed
+    visualizerLoaded: false, //visualizer loaded indicator
     playMode: false, //play or edit mode
-    mode: this.playMode ? "Play Mode" : "Create Mode",
     noteSpeedInSec: 2,
     currentSong: "",
     loadFrom: "",
@@ -38,7 +39,12 @@ let app = new Vue({
     visualizerArr: visualizerArr,
     srcMode: "youtube",
   },
-  mounted: function () {
+  computed: {
+    mode: function() {
+      return this.playMode ? "Play Mode" : "Create Mode";
+    },
+  },
+  mounted: function() {
     this.$watch("currentSong", () => {
       audio.load();
     });
@@ -48,8 +54,10 @@ let app = new Vue({
   },
 });
 
-let canvas = app.$refs.mainCanvas;
-let ctx = canvas.getContext("2d");
+app.canvas = app.$refs.mainCanvas;
+app.canvasCtx = app.canvas.getContext("2d");
+let canvas = app.canvas;
+let ctx = app.canvasCtx;
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
@@ -59,13 +67,9 @@ let timeArrIdx = 0;
 //time elapsed relative to audio play time (+Number(app.noteSpeedInSec))
 let playTime = 0;
 
-//hit indicator gradient
-let hitGradient = ctx.createLinearGradient(0, (canvas.height / 10) * 7, 0, canvas.height);
-hitGradient.addColorStop(0, "rgba(0,0,0,0)");
-hitGradient.addColorStop(1, "yellow");
-
 //get audio element
-let audio = app.$refs.control.$refs.audioElement;
+app.audio = app.$refs.control.$refs.audioElement;
+let audio = app.audio;
 
 // init play tracks
 let dropTrackArr = [];
@@ -81,21 +85,22 @@ function reposition() {
     canvas.width / trackNum > trackMaxWidth ? trackMaxWidth : canvas.width / trackNum;
   let startX = canvas.width / 2 - (trackNum * trackWidth) / 2;
   let counter = 0;
-  for (track of dropTrackArr) {
+  for (let track of dropTrackArr) {
     dropTrackArr[counter].resizeTrack(startX + trackWidth * counter + counter, trackWidth);
     counter++;
   }
 
-  checkHitLineY = (canvas.height / 10) * 9;
-  noteSpeedPxPerSec = checkHitLineY / Number(app.noteSpeedInSec);
+  app.checkHitLineY = (canvas.height / 10) * 9;
+  app.noteSpeedPxPerSec = app.checkHitLineY / Number(app.noteSpeedInSec);
 }
 
-for (keyBind of trackKeyBind) {
-  dropTrackArr.push(new DropTrack(0, trackMaxWidth, keyBind));
+for (let keyBind of trackKeyBind) {
+  dropTrackArr.push(new DropTrack(0, trackMaxWidth, keyBind, app));
 }
+
 reposition();
 
-window.addEventListener("resize", function (event) {
+window.addEventListener("resize", function(event) {
   console.log("resize");
   reposition();
 });
@@ -112,7 +117,7 @@ function onKeyDown(key) {
   }
 }
 
-window.onload = function () {
+window.onload = function() {
   document.addEventListener(
     "keydown",
     (event) => {
@@ -123,13 +128,13 @@ window.onload = function () {
 
   canvas.addEventListener(
     "touchstart",
-    function (e) {
+    function(e) {
       for (var c = 0; c < e.changedTouches.length; c++) {
         // touchInf[e.changedTouches[c].identifier] = {"x":e.changedTouches[c].clientX,"y":e.changedTouches[c].clientY};
         let x = e.changedTouches[c].clientX,
           y = e.changedTouches[c].clientY;
 
-        dropTrackArr.forEach(function (track) {
+        dropTrackArr.forEach(function(track) {
           if (x > track.x && x < track.x + track.width) {
             onKeyDown(track.keyBind);
           }
@@ -148,14 +153,14 @@ function animate() {
   requestAnimationFrame(animate);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   renderVisualizer();
-  for (track of dropTrackArr) {
+  for (let track of dropTrackArr) {
     track.update();
   }
 }
 
 //render visualizer
 function renderVisualizer() {
-  if (!visualizerLoaded) return;
+  if (!app.visualizerLoaded) return;
   switch (app.visualizer) {
     case 1:
       renderSpaceVisualizer();
@@ -187,7 +192,7 @@ function playGame() {
   let startTime = Date.now();
   app.playMode = true;
 
-  let intervalPrePlay = setInterval(async function () {
+  let intervalPrePlay = setInterval(async function() {
     let elapsedTime = Date.now() - startTime;
     playTime = Number(elapsedTime / 1000);
     console.log(playTime, Number(app.noteSpeedInSec));
@@ -229,7 +234,7 @@ function startSong(song) {
   resetPlaying();
   app.currentSong = song.url;
   audio.load();
-  loadFromDemo(song.noteName);
+  window.loadFromDemo(song.noteName);
   app.visualizer = song.visualizerNo ? song.visualizerNo : app.visualizer;
   playGame();
 }

@@ -1,14 +1,17 @@
-function DropTrack(x, width, keyBind) {
+export function DropTrack(x, width, keyBind, app) {
   this.x = x;
   this.width = width;
   this.keyBind = keyBind;
+  let ctx = app.canvasCtx;
+  let canvas = app.canvas;
+  let hitGradient = getHitGradient(ctx, canvas);
 
   this.particleEffect = new HitParticleEffect();
 
   this.hitIndicatorOpacity = 0;
   this.noteArr = [];
 
-  this.keyDown = function(key) {
+  this.keyDown = function (key) {
     if (keyBind == key) {
       this.hitIndicatorOpacity = 1;
       if (!app.playMode) {
@@ -28,12 +31,12 @@ function DropTrack(x, width, keyBind) {
     }
   };
 
-  this.resizeTrack = function(x, width) {
+  this.resizeTrack = function (x, width) {
     this.x = x;
     this.width = width;
   };
 
-  this.update = function() {
+  this.update = function () {
     //track bg
     ctx.globalAlpha = 0.6;
     ctx.fillStyle = "#212121";
@@ -87,13 +90,21 @@ function DropTrack(x, width, keyBind) {
   };
 }
 
+function getHitGradient(ctx, canvas) {
+  //hit indicator gradient
+  let hitGradient = ctx.createLinearGradient(0, (canvas.height / 10) * 7, 0, canvas.height);
+  hitGradient.addColorStop(0, "rgba(0,0,0,0)");
+  hitGradient.addColorStop(1, "yellow");
+  return hitGradient;
+}
+
 // ref https://css-tricks.com/adding-particle-effects-to-dom-elements-with-canvas/
 
 function HitParticleEffect() {
   let colorData = ["yellow", "#DED51F", "#EBA400", "#FCC138"];
   let reductionFactor = 50;
 
-  this.create = function(x, y, width, height) {
+  this.create = function (x, y, width, height) {
     let count = 0;
 
     // Go through every location of our button and create a particle
@@ -111,14 +122,14 @@ function HitParticleEffect() {
   };
 
   /* An "exploding" particle effect that uses circles */
-  let ExplodingParticle = function() {
+  let ExplodingParticle = function () {
     // Set how long we want our particle to animate for
     this.animationDuration = 1000; // in ms
 
     // Set the speed for our particle
     this.speed = {
       x: -5 + Math.random() * 10,
-      y: -5 + Math.random() * 10
+      y: -5 + Math.random() * 10,
     };
 
     // Size our particle
@@ -129,7 +140,7 @@ function HitParticleEffect() {
     this.remainingLife = this.life;
 
     // This function will be called by our animation logic later on
-    this.draw = ctx => {
+    this.draw = (ctx) => {
       let p = this;
 
       if (this.remainingLife > 0 && this.radius > 0) {
@@ -150,7 +161,7 @@ function HitParticleEffect() {
   };
 
   let particles = [];
-  this.createParticleAtPoint = function(x, y, colorData) {
+  this.createParticleAtPoint = function (x, y, colorData) {
     let particle = new ExplodingParticle();
     particle.rgbArray = colorData;
     particle.startX = x;
@@ -160,7 +171,7 @@ function HitParticleEffect() {
     particles.push(particle);
   };
 
-  this.update = function() {
+  this.update = function () {
     // Clear out the old particles
     // if (typeof ctx !== "undefined") {
     //   ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);

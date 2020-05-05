@@ -1,10 +1,10 @@
-function saveToLocal(name) {
+export function saveToLocal(name) {
   let local = JSON.parse(localStorage.getItem("localTimeline")) || {};
   local[name] = { timeline: timeArr };
   localStorage.setItem("localTimeline", JSON.stringify(local));
 }
 
-function loadFromLocal(name) {
+export function loadFromLocal(name) {
   let local = localStorage.getItem("localTimeline");
   if (local) {
     local = JSON.parse(local);
@@ -12,7 +12,7 @@ function loadFromLocal(name) {
   }
 }
 
-function loadFromDemo(name) {
+export function loadFromDemo(name) {
   if (demo && demo[name]) {
     timeArr = demo[name].timeline;
   }

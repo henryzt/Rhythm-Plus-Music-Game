@@ -1,3 +1,6 @@
+const HtmlWebpackPlugin = require("html-webpack-plugin"); // Require  html-webpack-plugin plugin
+const VueLoaderPlugin = require("vue-loader/lib/plugin");
+
 module.exports = {
   entry: __dirname + "/src/app/javascript/main.js", // webpack entry point. Module to start building dependency graph
   output: {
@@ -7,8 +10,21 @@ module.exports = {
   },
   module: {
     // where we defined file patterns and their loaders
-    rules: [],
+    rules: [
+      {
+        test: /\.vue$/,
+        loader: "vue-loader",
+      },
+    ],
   },
+  plugins: [
+    // Array of plugins to apply to build chunk
+    new HtmlWebpackPlugin({
+      template: __dirname + "/src/public/index.html",
+      inject: "body",
+    }),
+    new VueLoaderPlugin(),
+  ],
   devServer: {
     // configuration for webpack-dev-server
     contentBase: "./src/public", //source of static assets

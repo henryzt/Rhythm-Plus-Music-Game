@@ -12,26 +12,28 @@ function onYouTubeIframeAPIReady() {
   addWmode();
 }
 
+window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
+
 function onPlayerReady(event) {
   console.log("Player Ready.");
   //   event.target.playVideo();
 }
 
-function loadYoutubeVideo(id) {
+export function loadYoutubeVideo(id) {
   ytPlayer.loadVideoByUrl(id, 0);
   ytPlayer.setVolume(100);
 }
 
-function playVideo() {
+export function playVideo() {
   ytPlayer.playVideo();
 }
 
-function resetVideo() {
+export function resetVideo() {
   ytPlayer.seekTo(0);
   ytPlayer.pauseVideo();
 }
 
-function getPlayerTime() {
+export function getPlayerTime() {
   return ytPlayer.getCurrentTime();
 }
 

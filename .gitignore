@@ -115,5 +115,5 @@ dist
 .pnp.*
 
 # lockfiles (yarn/npm), not needed because we're not an executable
-.yarn.lock
+yarn.lock
 package-lock.json

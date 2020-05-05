@@ -39,7 +39,7 @@ export function DropTrack(x, width, keyBind, app) {
   this.update = function () {
     //track bg
     ctx.globalAlpha = 0.6;
-    ctx.fillStyle = "#212121";
+    ctx.fillStyle = '#212121';
     ctx.fillRect(this.x, 0, this.width, canvas.height);
     ctx.globalAlpha = 1;
 
@@ -53,7 +53,7 @@ export function DropTrack(x, width, keyBind, app) {
     }
     //hit indicator
     if (this.hitIndicatorOpacity > 0) {
-      ctx.fillStyle = "rgba(255,255,255," + this.hitIndicatorOpacity / 20 + ")";
+      ctx.fillStyle = 'rgba(255,255,255,' + this.hitIndicatorOpacity / 20 + ')';
       // let rectWidth = this.width * this.hitIndicatorOpacity;
       // ctx.fillRect(this.x + this.width / 2 - rectWidth / 2, 0, rectWidth, canvas.height);
       ctx.fillRect(this.x, 0, this.width, canvas.height);
@@ -66,7 +66,7 @@ export function DropTrack(x, width, keyBind, app) {
     }
 
     //hit line
-    ctx.fillStyle = "#ffffff";
+    ctx.fillStyle = '#ffffff';
     let hitLineY = app.playMode ? checkHitLineY : 0;
     ctx.fillRect(this.x, hitLineY, this.width, 10);
 
@@ -93,15 +93,15 @@ export function DropTrack(x, width, keyBind, app) {
 function getHitGradient(ctx, canvas) {
   //hit indicator gradient
   let hitGradient = ctx.createLinearGradient(0, (canvas.height / 10) * 7, 0, canvas.height);
-  hitGradient.addColorStop(0, "rgba(0,0,0,0)");
-  hitGradient.addColorStop(1, "yellow");
+  hitGradient.addColorStop(0, 'rgba(0,0,0,0)');
+  hitGradient.addColorStop(1, 'yellow');
   return hitGradient;
 }
 
 // ref https://css-tricks.com/adding-particle-effects-to-dom-elements-with-canvas/
 
 function HitParticleEffect() {
-  let colorData = ["yellow", "#DED51F", "#EBA400", "#FCC138"];
+  let colorData = ['yellow', '#DED51F', '#EBA400', '#FCC138'];
   let reductionFactor = 50;
 
   this.create = function (x, y, width, height) {
@@ -140,7 +140,7 @@ function HitParticleEffect() {
     this.remainingLife = this.life;
 
     // This function will be called by our animation logic later on
-    this.draw = (ctx) => {
+    this.draw = ctx => {
       let p = this;
 
       if (this.remainingLife > 0 && this.radius > 0) {

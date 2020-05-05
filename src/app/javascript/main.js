@@ -1,20 +1,20 @@
-import { demo } from "./demo.js";
-import { DropTrack } from "./track.js";
-import { getPlayerTime, resetVideo, playVideo, loadYoutubeVideo } from "./youtube.js";
-require("./control.js");
+import { demo } from './demo.js';
+import { DropTrack } from './track.js';
+import { getPlayerTime, resetVideo, playVideo, loadYoutubeVideo } from './youtube.js';
+require('./control.js');
 
 //visualizers
 const visualizerArr = [
-  "Visualizer Off",
-  "Space Visualizer",
-  "Bar Visualizer",
-  "Space with Polygon",
-  "Space Blurred",
+  'Visualizer Off',
+  'Space Visualizer',
+  'Bar Visualizer',
+  'Space with Polygon',
+  'Space Blurred',
 ];
 
 //vue app
 let app = new Vue({
-  el: "#app",
+  el: '#app',
   data: {
     audio: null,
     canvas: null,
@@ -24,38 +24,38 @@ let app = new Vue({
     visualizerLoaded: false, //visualizer loaded indicator
     playMode: false, //play or edit mode
     noteSpeedInSec: 2,
-    currentSong: "",
-    loadFrom: "",
-    saveTo: "",
+    currentSong: '',
+    loadFrom: '',
+    saveTo: '',
     score: 0,
     combo: 0,
     maxCombo: 0,
     marks: { perfect: 0, good: 0, offbeat: 0, miss: 0 },
-    lastMark: "",
+    lastMark: '',
     demoList: Object.keys(demo),
-    currentDemoNotes: "",
+    currentDemoNotes: '',
     showControl: false,
     visualizer: 2,
     visualizerArr: visualizerArr,
-    srcMode: "youtube",
+    srcMode: 'youtube',
   },
   computed: {
-    mode: function() {
-      return this.playMode ? "Play Mode" : "Create Mode";
+    mode: function () {
+      return this.playMode ? 'Play Mode' : 'Create Mode';
     },
   },
-  mounted: function() {
-    this.$watch("currentSong", () => {
+  mounted: function () {
+    this.$watch('currentSong', () => {
       audio.load();
     });
-    this.$watch("noteSpeedInSec", () => {
+    this.$watch('noteSpeedInSec', () => {
       reposition();
     });
   },
 });
 
 app.canvas = app.$refs.mainCanvas;
-app.canvasCtx = app.canvas.getContext("2d");
+app.canvasCtx = app.canvas.getContext('2d');
 let canvas = app.canvas;
 let ctx = app.canvasCtx;
 canvas.width = window.innerWidth;
@@ -75,7 +75,7 @@ let audio = app.audio;
 let dropTrackArr = [];
 
 let trackNum = 4;
-let trackKeyBind = ["d", "f", "j", "k"];
+let trackKeyBind = ['d', 'f', 'j', 'k'];
 let trackMaxWidth = 150;
 
 function reposition() {
@@ -100,8 +100,8 @@ for (let keyBind of trackKeyBind) {
 
 reposition();
 
-window.addEventListener("resize", function(event) {
-  console.log("resize");
+window.addEventListener('resize', function (event) {
+  console.log('resize');
   reposition();
 });
 
@@ -117,24 +117,24 @@ function onKeyDown(key) {
   }
 }
 
-window.onload = function() {
+window.onload = function () {
   document.addEventListener(
-    "keydown",
-    (event) => {
+    'keydown',
+    event => {
       onKeyDown(event.key);
     },
     false
   );
 
   canvas.addEventListener(
-    "touchstart",
-    function(e) {
+    'touchstart',
+    function (e) {
       for (var c = 0; c < e.changedTouches.length; c++) {
         // touchInf[e.changedTouches[c].identifier] = {"x":e.changedTouches[c].clientX,"y":e.changedTouches[c].clientY};
         let x = e.changedTouches[c].clientX,
           y = e.changedTouches[c].clientY;
 
-        dropTrackArr.forEach(function(track) {
+        dropTrackArr.forEach(function (track) {
           if (x > track.x && x < track.x + track.width) {
             onKeyDown(track.keyBind);
           }
@@ -167,7 +167,7 @@ function renderVisualizer() {
       break;
     case 2:
       renderBarVisualizer();
-      ctx.fillStyle = "rgba(10,10,44,0.2)";
+      ctx.fillStyle = 'rgba(10,10,44,0.2)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       break;
     case 3:
@@ -177,7 +177,7 @@ function renderVisualizer() {
       renderSpaceVisualizer(true);
       break;
     default:
-      ctx.fillStyle = "black";
+      ctx.fillStyle = 'black';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
 }
@@ -192,16 +192,16 @@ function playGame() {
   let startTime = Date.now();
   app.playMode = true;
 
-  let intervalPrePlay = setInterval(async function() {
+  let intervalPrePlay = setInterval(async function () {
     let elapsedTime = Date.now() - startTime;
     playTime = Number(elapsedTime / 1000);
     console.log(playTime, Number(app.noteSpeedInSec));
     if (playTime > Number(app.noteSpeedInSec)) {
       try {
-        if (app.srcMode == "url") {
+        if (app.srcMode == 'url') {
           res = await audio.play();
-          console.log("audio playing", res, audio.canplay);
-        } else if (app.srcMode == "youtube") {
+          console.log('audio playing', res, audio.canplay);
+        } else if (app.srcMode == 'youtube') {
           playVideo();
         }
       } catch (e) {
@@ -217,7 +217,7 @@ function playGame() {
 }
 
 function getCurrentTime() {
-  return app.srcMode == "youtube" ? getPlayerTime() : audio.currentTime;
+  return app.srcMode == 'youtube' ? getPlayerTime() : audio.currentTime;
 }
 
 function resetPlaying() {

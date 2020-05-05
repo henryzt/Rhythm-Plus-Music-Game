@@ -31,13 +31,13 @@ export function Note(x, width) {
     app.maxCombo = app.combo > app.maxCombo ? app.combo : app.maxCombo;
     if (percentage < 0.3) {
       app.marks.perfect += 1;
-      app.lastMark = "Perfect";
+      app.lastMark = 'Perfect';
     } else if (percentage < 0.6) {
       app.marks.good += 1;
-      app.lastMark = "Good";
+      app.lastMark = 'Good';
     } else if (percentage < 0.9) {
       app.marks.offbeat += 1;
-      app.lastMark = "Offbeat";
+      app.lastMark = 'Offbeat';
     }
     hitIndicator();
   };
@@ -47,7 +47,7 @@ export function Note(x, width) {
     if (app.playMode && isOut) {
       app.marks.miss += 1;
       app.combo = 0;
-      app.lastMark = "Miss";
+      app.lastMark = 'Miss';
       hitIndicator();
     }
     return isOut;
@@ -55,19 +55,19 @@ export function Note(x, width) {
 
   this.update = function () {
     this.setDelta();
-    let color = this.y > checkHitLineY + 10 ? "red" : "yellow";
+    let color = this.y > checkHitLineY + 10 ? 'red' : 'yellow';
     //Make note blur when get missed.
-    ctx.filter = this.y > checkHitLineY + 10 ? "blur(5px)" : "blur(0px)";
+    ctx.filter = this.y > checkHitLineY + 10 ? 'blur(5px)' : 'blur(0px)';
     ctx.fillStyle = color;
     ctx.fillRect(x, this.y, this.width, 10);
-    ctx.filter = "none";
+    ctx.filter = 'none';
     this.y += noteSpeedPxPerSec * this.delta;
   };
 }
 
 function hitIndicator() {
-  app.$refs.hitIndicator.classList.remove("hitAnimation");
+  app.$refs.hitIndicator.classList.remove('hitAnimation');
   setTimeout(() => {
-    app.$refs.hitIndicator.classList.add("hitAnimation");
+    app.$refs.hitIndicator.classList.add('hitAnimation');
   }, 1);
 }

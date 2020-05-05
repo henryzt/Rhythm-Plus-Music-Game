@@ -35,7 +35,7 @@ function renderBarVisualizer() {
 
   analyser.getByteFrequencyData(dataArray);
 
-  ctx.fillStyle = "#000";
+  ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
   for (let i = 0; i < bufferLength; i++) {
@@ -50,7 +50,7 @@ function renderBarVisualizer() {
     if (barHeight != 0) {
       for (let j = 0; j <= barHeight; j += transValue) {
         temp += 1 / (barHeight / 50) / 2;
-        ctx.fillStyle = "rgba(" + r + "," + g + "," + b + "," + temp + ")";
+        ctx.fillStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + temp + ')';
         ctx.fillRect(barX, HEIGHT - barHeight + j + 10, barWidth, barHeight / transValue);
       }
       barX += barWidth;

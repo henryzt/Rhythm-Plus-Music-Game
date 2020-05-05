@@ -4,7 +4,7 @@
  * original repo: https://github.com/michaelbromley/soundcloud-visualizer
  */
 
-let PlayerAudioSource = function(player) {
+let PlayerAudioSource = function (player) {
   let self = this;
   //   let analyser;
   //   let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -15,7 +15,7 @@ let PlayerAudioSource = function(player) {
   // let source = src;
   // source.connect(analyser);
   // analyser.connect(audioCtx.destination);
-  let sampleAudioStream = function() {
+  let sampleAudioStream = function () {
     analyser.getByteFrequencyData(dataArray);
     // calculate an overall volume value
     let total = 0;
@@ -35,7 +35,7 @@ let PlayerAudioSource = function(player) {
  * which takes an options object specifying the element to append the canvases to and the audiosource which will
  * provide the data to be visualized.
  */
-let Visualizer = function() {
+let Visualizer = function () {
   let tileSize;
   let tiles = [];
   let stars = [];
@@ -74,7 +74,7 @@ let Visualizer = function() {
       this.vertices.push([x, y]);
     }
   }
-  Polygon.prototype.rotateVertices = function() {
+  Polygon.prototype.rotateVertices = function () {
     // rotate all the vertices to achieve the overall rotational effect
     let rotation = fgRotation;
     rotation -= getVolume() > 10000 ? Math.sin(getVolume() / 800000) : 0;
@@ -85,7 +85,7 @@ let Visualizer = function() {
   };
   let minMental = 0,
     maxMental = 0;
-  Polygon.prototype.calculateOffset = function(coords) {
+  Polygon.prototype.calculateOffset = function (coords) {
     let angle = Math.atan(coords[1] / coords[0]);
     let distance = Math.sqrt(Math.pow(coords[0], 2) + Math.pow(coords[1], 2)); // a bit of pythagoras
     let mentalFactor = Math.min(Math.max(Math.tan(getVolume() / 6000) * 0.5, -20), 2); // this factor makes the visualization go crazy wild
@@ -104,7 +104,7 @@ let Visualizer = function() {
     offsetY *= coords[0] < 0 ? -1 : 1;
     return [offsetX, offsetY];
   };
-  Polygon.prototype.drawPolygon = function() {
+  Polygon.prototype.drawPolygon = function () {
     let bucket = Math.ceil((dataArray.length / tiles.length) * this.num);
     let val = Math.pow(dataArray[bucket] / 255, 2) * 255;
     val *= this.num > 42 ? 1.1 : 1;
@@ -153,12 +153,12 @@ let Visualizer = function() {
       a = 0.5 / (1 + 40 * Math.pow(e, -val / 8)) + 0.5 / (1 + 40 * Math.pow(e, -val / 20));
 
       this.ctx.fillStyle =
-        "rgba(" + Math.round(r) + ", " + Math.round(g) + ", " + Math.round(b) + ", " + a + ")";
+        'rgba(' + Math.round(r) + ', ' + Math.round(g) + ', ' + Math.round(b) + ', ' + a + ')';
       this.ctx.fill();
       // stroke
       if (val > 20) {
         let strokeVal = 20;
-        this.ctx.strokeStyle = "rgba(" + strokeVal + ", " + strokeVal + ", " + strokeVal + ", 0.5)";
+        this.ctx.strokeStyle = 'rgba(' + strokeVal + ', ' + strokeVal + ', ' + strokeVal + ', 0.5)';
         this.ctx.lineWidth = 1;
         this.ctx.stroke();
       }
@@ -168,7 +168,7 @@ let Visualizer = function() {
          this.ctx.fillStyle = 'grey';
          this.ctx.fillText(this.num, this.vertices[0][0], this.vertices[0][1]);*/
   };
-  Polygon.prototype.drawHighlight = function() {
+  Polygon.prototype.drawHighlight = function () {
     this.ctx.beginPath();
     // draw the highlight
     let offset = this.calculateOffset(this.vertices[0]);
@@ -180,13 +180,13 @@ let Visualizer = function() {
     }
     this.ctx.closePath();
     let a = this.highlight / 100;
-    this.ctx.strokeStyle = "rgba(255, 255, 255, " + a + ")";
+    this.ctx.strokeStyle = 'rgba(255, 255, 255, ' + a + ')';
     this.ctx.lineWidth = 1;
     this.ctx.stroke();
     this.highlight -= 0.5;
   };
 
-  let makePolygonArray = function() {
+  let makePolygonArray = function () {
     tiles = [];
     /**
      * Arrange into a grid x, y, with the y axis at 60 degrees to the x, rather than
@@ -228,13 +228,13 @@ let Visualizer = function() {
     this.ctx = ctx;
     this.high = 0;
   }
-  Star.prototype.drawStar = function() {
+  Star.prototype.drawStar = function () {
     let distanceFromCentre = Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
 
     // stars as lines
     let brightness = 200 + Math.min(Math.round(this.high * 5), 55);
     this.ctx.lineWidth = 0.5 + (distanceFromCentre / 2000) * Math.max(this.starSize / 2, 1);
-    this.ctx.strokeStyle = "rgba(" + brightness + ", " + brightness + ", " + brightness + ", 1)";
+    this.ctx.strokeStyle = 'rgba(' + brightness + ', ' + brightness + ', ' + brightness + ', 1)';
     this.ctx.beginPath();
     this.ctx.moveTo(this.x, this.y);
     let lengthFactor =
@@ -272,7 +272,7 @@ let Visualizer = function() {
     }
   };
 
-  let makeStarArray = function() {
+  let makeStarArray = function () {
     let x, y, starSize;
     stars = [];
     let limit = fgCanvas.width / 15; // how many stars?
@@ -284,7 +284,7 @@ let Visualizer = function() {
     }
   };
 
-  let drawBg = function() {
+  let drawBg = function () {
     bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
     let r, g, b, a;
     let val = getVolume() / 1000;
@@ -303,10 +303,10 @@ let Visualizer = function() {
       bgCanvas.height / 2,
       bgCanvas.width - Math.min(Math.pow(val, 2.7), bgCanvas.width - 20)
     );
-    grd.addColorStop(0, "rgba(0,0,0,0)"); // centre is transparent black
+    grd.addColorStop(0, 'rgba(0,0,0,0)'); // centre is transparent black
     grd.addColorStop(
       0.8,
-      "rgba(" + Math.round(r) + ", " + Math.round(g) + ", " + Math.round(b) + ", 0.4)"
+      'rgba(' + Math.round(r) + ', ' + Math.round(g) + ', ' + Math.round(b) + ', 0.4)'
     ); // edges are reddish
 
     bgCtx.fillStyle = grd;
@@ -322,7 +322,7 @@ let Visualizer = function() {
          bgCtx.fillText("a: " + a , 30, 150);*/
   };
 
-  this.resizeCanvas = function() {
+  this.resizeCanvas = function () {
     if (fgCanvas) {
       // resize the foreground canvas
       fgCanvas.width = window.innerWidth;
@@ -345,25 +345,25 @@ let Visualizer = function() {
     }
   };
 
-  let rotateForeground = function() {
-    tiles.forEach(function(tile) {
+  let rotateForeground = function () {
+    tiles.forEach(function (tile) {
       tile.rotateVertices();
     });
   };
 
-  let draw = function(drawPolygon) {
+  let draw = function (drawPolygon) {
     fgCtx.clearRect(-fgCanvas.width, -fgCanvas.height, fgCanvas.width * 2, fgCanvas.height * 2);
     sfCtx.clearRect(-fgCanvas.width / 2, -fgCanvas.height / 2, fgCanvas.width, fgCanvas.height);
 
-    stars.forEach(function(star) {
+    stars.forEach(function (star) {
       star.drawStar();
     });
     if (drawPolygon) {
-      tiles.forEach(function(tile) {
+      tiles.forEach(function (tile) {
         tile.drawPolygon();
       });
     }
-    tiles.forEach(function(tile) {
+    tiles.forEach(function (tile) {
       if (tile.highlight > 0) {
         tile.drawHighlight();
       }
@@ -377,26 +377,26 @@ let Visualizer = function() {
     // requestAnimationFrame(draw);
   };
 
-  this.init = function(options) {
+  this.init = function (options) {
     audioSource = options.audioSource;
     // let container = document.getElementById(options.containerId);
     let container = app.$refs.visualizerSpace;
 
     // foreground hexagons layer
-    fgCanvas = document.createElement("canvas");
-    fgCanvas.setAttribute("style", "position: absolute; z-index: 10");
-    fgCtx = fgCanvas.getContext("2d");
+    fgCanvas = document.createElement('canvas');
+    fgCanvas.setAttribute('style', 'position: absolute; z-index: 10');
+    fgCtx = fgCanvas.getContext('2d');
     container.appendChild(fgCanvas);
 
     // middle starfield layer
-    sfCanvas = document.createElement("canvas");
-    sfCtx = sfCanvas.getContext("2d");
-    sfCanvas.setAttribute("style", "position: absolute; z-index: 5");
+    sfCanvas = document.createElement('canvas');
+    sfCtx = sfCanvas.getContext('2d');
+    sfCanvas.setAttribute('style', 'position: absolute; z-index: 5');
     container.appendChild(sfCanvas);
 
     // background image layer
-    bgCanvas = document.createElement("canvas");
-    bgCtx = bgCanvas.getContext("2d");
+    bgCanvas = document.createElement('canvas');
+    bgCtx = bgCanvas.getContext('2d');
     container.appendChild(bgCanvas);
 
     makePolygonArray();
@@ -408,7 +408,7 @@ let Visualizer = function() {
     setInterval(drawBg, 100);
     setInterval(rotateForeground, 20);
     // resize the canvas to fill browser window dynamically
-    window.addEventListener("resize", this.resizeCanvas, false);
+    window.addEventListener('resize', this.resizeCanvas, false);
   };
 
   this.render = drawPolygon => {
@@ -425,8 +425,8 @@ function initSpaceVisualizer() {
   audioSource = new PlayerAudioSource();
 
   visualizer.init({
-    containerId: "visualizer",
-    audioSource: audioSource
+    containerId: 'visualizer',
+    audioSource: audioSource,
   });
 }
 

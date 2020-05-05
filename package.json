@@ -1,17 +1,36 @@
 {
   "scripts": {
-    "start": "webpack-dev-server --mode development --history-api-fallback --inline --progress"
+    "start": "webpack-dev-server --mode development --history-api-fallback --inline --progress",
+    "format": "prettier --write \"src/**/*.js\" && eslint --fix \"src/**/*.js\""
   },
   "dependencies": {
     "vue": "^2.6.11",
     "vue-youtube": "^1.4.0"
   },
   "devDependencies": {
+    "eslint": "^6.8.0",
     "html-webpack-plugin": "^4.3.0",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.2.2",
+    "prettier": "^2.0.5",
     "vue-loader": "^15.9.2",
     "vue-template-compiler": "^2.6.11",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{html,css,json}": [
+      "prettier --write"
+    ]
   }
 }

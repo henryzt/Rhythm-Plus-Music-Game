@@ -1,33 +1,62 @@
-const HtmlWebpackPlugin = require("html-webpack-plugin"); // Require  html-webpack-plugin plugin
+const path = require("path");
+const webpack = require("webpack");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 const VueLoaderPlugin = require("vue-loader/lib/plugin");
+const CopyPlugin = require('copy-webpack-plugin');
+
+const isProduction = () => process.env.NODE_ENV === 'production';
 
 module.exports = {
-  entry: __dirname + "/src/app/javascript/main.js", // webpack entry point. Module to start building dependency graph
-  output: {
-    path: __dirname + "/dist", // Folder to store generated bundle
-    filename: "bundle.js", // Name of generated bundle after build
-    publicPath: "/", // public URL of the output directory when referenced in a browser
-  },
-  module: {
-    // where we defined file patterns and their loaders
-    rules: [
-      {
-        test: /\.vue$/,
-        loader: "vue-loader",
-      },
-    ],
-  },
-  plugins: [
-    // Array of plugins to apply to build chunk
-    new HtmlWebpackPlugin({
-      template: __dirname + "/src/public/index.html",
-      inject: "body",
-    }),
-    new VueLoaderPlugin(),
-  ],
-  devServer: {
-    // configuration for webpack-dev-server
-    contentBase: "./src/public", //source of static assets
-    port: 7700, // port to run dev-server
-  },
+	entry: path.resolve(__dirname, "src", "app", "javascript", "main.js"),
+	mode: "development",
+	devtool: "source-map",
+	resolve: { extensions: ["*", ".js"] },
+	output: {
+		path: path.resolve(__dirname, "dist"),
+		filename: "[name].bundle.js"
+	},
+	devServer: {
+		contentBase: path.resolve(__dirname, "src", "public"),
+		port: 3000,
+		publicPath: "http://localhost:3000/dist/",
+		hotOnly: true,
+		historyApiFallback: true
+	},
+	optimization: isProduction() ? {
+		concatenateModules: true,
+		mergeDuplicateChunks: true,
+		minimize: true,
+		nodeEnv: "production",
+		providedExports: true,
+		removeAvailableModules: true,
+		removeEmptyChunks: true,
+		sideEffects: true,
+		usedExports: true
+	}: {}, module: {
+		rules: [
+			{
+				test: /\.vue$/,
+				loader: "vue-loader",
+			}
+		],
+	},
+	plugins: [
+		new webpack.HotModuleReplacementPlugin(),
+		new webpack.DefinePlugin({
+			'process.env': {
+				'NODE_ENV': JSON.stringify('production')
+			}
+		}),
+		new HtmlWebpackPlugin({
+			template: path.resolve(__dirname, "src", "public", "index.html"),
+			inject: "body"
+		}),
+		new VueLoaderPlugin(),
+		new CopyPlugin([
+			{
+				from: path.resolve(__dirname, "src", "public", "style.css"),
+				to: path.resolve(__dirname, "dist", "style.css")
+			}
+		]),
+	],
 };

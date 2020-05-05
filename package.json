@@ -1,14 +1,32 @@
 {
   "scripts": {
-    "start": "webpack-dev-server --mode development --history-api-fallback --inline --progress",
-    "format": "prettier --write \"src/**/*.js\" && eslint --fix \"src/**/*.js\""
+    "format": "prettier --write \"src/**/*.js\" && eslint --fix \"src/**/*.js\"",
+    "start": "NODE_ENV=development webpack-dev-server --mode development --progress",
+    "build:dev": "NODE_ENV=development webpack --mode development",
+    "build": "NODE_ENV=production webpack --mode production",
+    "clean": "rm -rf ./dist",
+    "serve": "yarn run build && serve ."
   },
   "dependencies": {
+    "css-loader": "^3.5.3",
     "vue": "^2.6.11",
     "vue-youtube": "^1.4.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.6",
+    "@babel/preset-env": "^7.9.6",
+    "babel-eslint": "^10.1.0",
+    "babel-loader": "^8.1.0",
+    "copy-webpack-plugin": "^5.1.1",
     "eslint": "^6.8.0",
+    "eslint-config-airbnb": "^18.1.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-prettier": "^3.1.3",
+    "eslint-plugin-react": "^7.19.0",
+    "eslint-plugin-react-hooks": "2",
     "html-webpack-plugin": "^4.3.0",
     "husky": "^4.2.5",
     "lint-staged": "^10.2.2",

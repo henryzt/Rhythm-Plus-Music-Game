@@ -1,9 +1,9 @@
 var ytPlayer;
 function onYouTubeIframeAPIReady() {
-  ytPlayer = new YT.Player("ytPlayer", {
-    height: "100%",
-    width: "100%",
-    videoId: "ALZHF5UqnU4",
+  ytPlayer = new YT.Player('ytPlayer', {
+    height: '100%',
+    width: '100%',
+    videoId: 'ALZHF5UqnU4',
     playerVars: { autoplay: 0, controls: 0, rel: 0 },
     events: {
       onReady: onPlayerReady,
@@ -15,7 +15,7 @@ function onYouTubeIframeAPIReady() {
 window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
 
 function onPlayerReady(event) {
-  console.log("Player Ready.");
+  console.log('Player Ready.');
   //   event.target.playVideo();
 }
 
@@ -38,7 +38,7 @@ export function getPlayerTime() {
 }
 
 function addWmode() {
-  let url = document.getElementById("ytPlayer").getAttribute("src");
-  let char = url.indexOf("?") != -1 ? "&" : "?";
-  document.getElementById("ytPlayer").setAttribute("src", url + char + "wmode=transparent");
+  let url = document.getElementById('ytPlayer').getAttribute('src');
+  let char = url.indexOf('?') != -1 ? '&' : '?';
+  document.getElementById('ytPlayer').setAttribute('src', url + char + 'wmode=transparent');
 }

@@ -2,9 +2,9 @@ let demoJson = `{"21p":{"timeline":[{"time":0.984595,"key":"k"},{"time":0.985222
 export const demo = JSON.parse(demoJson);
 
 window.startDemo1 = function startDemo1() {
-  window.startSong({ url: "songs/whywelose.mp3", noteName: "whywelose", visualizerNo: 3 });
+  window.startSong({ url: 'songs/whywelose.mp3', noteName: 'whywelose', visualizerNo: 3 });
 };
 
 window.startDemo2 = function startDemo2() {
-  window.startSong({ url: "songs/sheepdog.mp3", noteName: "sheepdog", visualizerNo: 2 });
+  window.startSong({ url: 'songs/sheepdog.mp3', noteName: 'sheepdog', visualizerNo: 2 });
 };

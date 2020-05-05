@@ -1,4 +1,4 @@
-Vue.component("play-control", {
+Vue.component('play-control', {
   template: `
         <div class="control">
         <a onclick="toggleControl()">Toggle Control</a> | <a onclick="startDemo1()">Demo 1</a> |

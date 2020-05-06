@@ -1,5 +1,4 @@
-Vue.component('play-control', {
-  template: `
+<template>
         <div class="control">
         <a onclick="toggleControl()">Toggle Control</a> | <a onclick="startDemo1()">Demo 1</a> |
         <a onclick="startDemo2()">Demo 2</a> |
@@ -60,10 +59,23 @@ Vue.component('play-control', {
           </div>
         </div>
       </div>
-        `,
-  data: function () {
+</template>
+
+<script>
+console.log("OK")
+export default {
+  name: 'PlayControl',
+  props: {
+    msg: String,
+  },
+  data() {
     return {
       count: 0,
     };
   },
-});
+};
+</script>
+
+<style scoped>
+
+</style>

@@ -8,7 +8,8 @@ import {
   playVideo,
   loadYoutubeVideo,
 } from "./youtube.js";
-import "./control.js";
+
+console.log("OK");
 
 // visualizers
 const visualizerArr = [
@@ -47,11 +48,11 @@ const app = new Vue({
     srcMode: "youtube",
   },
   computed: {
-    mode () {
+    mode() {
       return this.playMode ? "Play Mode" : "Create Mode";
     },
   },
-  mounted () {
+  mounted() {
     this.$watch("currentSong", () => {
       audio.load();
     });
@@ -63,7 +64,7 @@ const app = new Vue({
 
 app.canvas = app.$refs.mainCanvas;
 app.canvasCtx = app.canvas.getContext("2d");
-const {canvas} = app;
+const { canvas } = app;
 const ctx = app.canvasCtx;
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -76,7 +77,7 @@ let playTime = 0;
 
 // get audio element
 app.audio = app.$refs.control.$refs.audioElement;
-let {audio} = app;
+let { audio } = app;
 
 // init play tracks
 const dropTrackArr = [];
@@ -144,7 +145,7 @@ window.onload = function () {
       for (let c = 0; c < e.changedTouches.length; c++) {
         // touchInf[e.changedTouches[c].identifier] = {"x":e.changedTouches[c].clientX,"y":e.changedTouches[c].clientY};
         const x = e.changedTouches[c].clientX;
-          const y = e.changedTouches[c].clientY;
+        const y = e.changedTouches[c].clientY;
 
         dropTrackArr.forEach(function (track) {
           if (x > track.x && x < track.x + track.width) {

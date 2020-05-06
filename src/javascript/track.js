@@ -2,9 +2,9 @@ export function DropTrack(x, width, keyBind, app) {
   this.x = x;
   this.width = width;
   this.keyBind = keyBind;
-  let ctx = app.canvasCtx;
-  let canvas = app.canvas;
-  let hitGradient = getHitGradient(ctx, canvas);
+  const ctx = app.canvasCtx;
+  const { canvas } = app;
+  const hitGradient = getHitGradient(ctx, canvas);
 
   this.particleEffect = new HitParticleEffect();
 
@@ -15,12 +15,12 @@ export function DropTrack(x, width, keyBind, app) {
     if (keyBind == key) {
       this.hitIndicatorOpacity = 1;
       if (!app.playMode) {
-        //create mode
+        // create mode
         this.noteArr.push(new Note(this.x, this.width));
       } else {
-        //play mode
+        // play mode
         if (this.noteArr && this.noteArr[0]) {
-          let noteToDismiss = this.noteArr[0];
+          const noteToDismiss = this.noteArr[0];
           if (noteToDismiss.getDistPercentage() < 2) {
             noteToDismiss.hitAndCountScore();
             this.noteArr.shift();
@@ -37,13 +37,13 @@ export function DropTrack(x, width, keyBind, app) {
   };
 
   this.update = function () {
-    //track bg
+    // track bg
     ctx.globalAlpha = 0.6;
-    ctx.fillStyle = '#212121';
+    ctx.fillStyle = "#212121";
     ctx.fillRect(this.x, 0, this.width, canvas.height);
     ctx.globalAlpha = 1;
 
-    //note update
+    // note update
     for (let i = 0; i < this.noteArr.length; ++i) {
       this.noteArr[i].update();
       if (this.noteArr[i].isOutOfCanvas()) {
@@ -51,30 +51,35 @@ export function DropTrack(x, width, keyBind, app) {
         --i; // Correct the index value
       }
     }
-    //hit indicator
+    // hit indicator
     if (this.hitIndicatorOpacity > 0) {
-      ctx.fillStyle = 'rgba(255,255,255,' + this.hitIndicatorOpacity / 20 + ')';
+      ctx.fillStyle = `rgba(255,255,255,${this.hitIndicatorOpacity / 20})`;
       // let rectWidth = this.width * this.hitIndicatorOpacity;
       // ctx.fillRect(this.x + this.width / 2 - rectWidth / 2, 0, rectWidth, canvas.height);
       ctx.fillRect(this.x, 0, this.width, canvas.height);
-      //yellow gradient
+      // yellow gradient
       ctx.fillStyle = hitGradient;
       ctx.globalAlpha = this.hitIndicatorOpacity;
-      ctx.fillRect(this.x, (canvas.height / 10) * 6, this.width, (canvas.height / 10) * 4);
+      ctx.fillRect(
+        this.x,
+        (canvas.height / 10) * 6,
+        this.width,
+        (canvas.height / 10) * 4
+      );
       this.hitIndicatorOpacity -= 0.02;
       ctx.globalAlpha = 1;
     }
 
-    //hit line
-    ctx.fillStyle = '#ffffff';
-    let hitLineY = app.playMode ? checkHitLineY : 0;
+    // hit line
+    ctx.fillStyle = "#ffffff";
+    const hitLineY = app.playMode ? checkHitLineY : 0;
     ctx.fillRect(this.x, hitLineY, this.width, 10);
 
-    //particel effect
+    // particel effect
     this.particleEffect.update();
 
-    //create note
-    let needNote =
+    // create note
+    const needNote =
       app.playMode &&
       timeArrIdx < timeArr.length &&
       playTime >= timeArr[timeArrIdx].time &&
@@ -91,18 +96,23 @@ export function DropTrack(x, width, keyBind, app) {
 }
 
 function getHitGradient(ctx, canvas) {
-  //hit indicator gradient
-  let hitGradient = ctx.createLinearGradient(0, (canvas.height / 10) * 7, 0, canvas.height);
-  hitGradient.addColorStop(0, 'rgba(0,0,0,0)');
-  hitGradient.addColorStop(1, 'yellow');
+  // hit indicator gradient
+  const hitGradient = ctx.createLinearGradient(
+    0,
+    (canvas.height / 10) * 7,
+    0,
+    canvas.height
+  );
+  hitGradient.addColorStop(0, "rgba(0,0,0,0)");
+  hitGradient.addColorStop(1, "yellow");
   return hitGradient;
 }
 
 // ref https://css-tricks.com/adding-particle-effects-to-dom-elements-with-canvas/
 
 function HitParticleEffect() {
-  let colorData = ['yellow', '#DED51F', '#EBA400', '#FCC138'];
-  let reductionFactor = 50;
+  const colorData = ["yellow", "#DED51F", "#EBA400", "#FCC138"];
+  const reductionFactor = 50;
 
   this.create = function (x, y, width, height) {
     let count = 0;
@@ -111,8 +121,8 @@ function HitParticleEffect() {
     for (let localX = 0; localX < width; localX++) {
       for (let localY = 0; localY < height; localY++) {
         if (count % reductionFactor === 0) {
-          let globalX = x + localX;
-          let globalY = y + localY;
+          const globalX = x + localX;
+          const globalY = y + localY;
 
           this.createParticleAtPoint(globalX, globalY, colorData);
         }
@@ -122,7 +132,7 @@ function HitParticleEffect() {
   };
 
   /* An "exploding" particle effect that uses circles */
-  let ExplodingParticle = function () {
+  const ExplodingParticle = function () {
     // Set how long we want our particle to animate for
     this.animationDuration = 1000; // in ms
 
@@ -140,14 +150,16 @@ function HitParticleEffect() {
     this.remainingLife = this.life;
 
     // This function will be called by our animation logic later on
-    this.draw = ctx => {
-      let p = this;
+    this.draw = (ctx) => {
+      const p = this;
 
       if (this.remainingLife > 0 && this.radius > 0) {
         // Draw a circle at the current location
         ctx.beginPath();
         // ctx.arc(p.startX, p.startY, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = this.rgbArray[Math.floor(Math.random() * this.rgbArray.length)];
+        ctx.fillStyle = this.rgbArray[
+          Math.floor(Math.random() * this.rgbArray.length)
+        ];
         ctx.fillRect(p.startX, p.startY, p.radius, p.radius);
         // ctx.fill();
 
@@ -162,7 +174,7 @@ function HitParticleEffect() {
 
   let particles = [];
   this.createParticleAtPoint = function (x, y, colorData) {
-    let particle = new ExplodingParticle();
+    const particle = new ExplodingParticle();
     particle.rgbArray = colorData;
     particle.startX = x;
     particle.startY = y;
@@ -184,7 +196,9 @@ function HitParticleEffect() {
       ctx.globalAlpha = 1;
       // Simple way to clean up if the last particle is done animating
       if (i === particles.length - 1) {
-        let percent = (Date.now() - particles[i].startTime) / particles[i].animationDuration;
+        const percent =
+          (Date.now() - particles[i].startTime) /
+          particles[i].animationDuration;
 
         if (percent > 1) {
           particles = [];

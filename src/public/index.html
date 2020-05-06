@@ -21,23 +21,7 @@
       gtag("config", "UA-113940817-5");
     </script>
   </head>
-  <body class="unselectable">
-    <div id="app">
-      <play-control ref="control"></play-control>
-
-      <div class="center" ref="hitIndicator">
-        {{lastMark}} {{combo>=5?combo:''}}
-      </div>
-
-      <canvas ref="mainCanvas"></canvas>
-
-      <!-- visualizer space -->
-      <div class="visualizer">
-        <div class="blurFilter" v-if="visualizer==4"></div>
-        <div ref="visualizerSpace" id="visualizer"></div>
-      </div>
-
-      <div id="ytPlayer" v-show="srcMode=='youtube'"></div>
-    </div>
+  <body>
+    <div id="app"></div>
   </body>
 </html>

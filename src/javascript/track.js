@@ -1,9 +1,8 @@
-export function DropTrack(x, width, keyBind, app) {
+export function DropTrack(x, width, keyBind, vm) {
   this.x = x;
   this.width = width;
   this.keyBind = keyBind;
-  const ctx = app.canvasCtx;
-  const { canvas } = app;
+  const { ctx, canvas } = vm;
   const hitGradient = getHitGradient(ctx, canvas);
 
   this.particleEffect = new HitParticleEffect();
@@ -14,7 +13,7 @@ export function DropTrack(x, width, keyBind, app) {
   this.keyDown = function (key) {
     if (keyBind == key) {
       this.hitIndicatorOpacity = 1;
-      if (!app.playMode) {
+      if (!vm.playMode) {
         // create mode
         this.noteArr.push(new Note(this.x, this.width));
       } else {
@@ -60,19 +59,14 @@ export function DropTrack(x, width, keyBind, app) {
       // yellow gradient
       ctx.fillStyle = hitGradient;
       ctx.globalAlpha = this.hitIndicatorOpacity;
-      ctx.fillRect(
-        this.x,
-        (canvas.height / 10) * 6,
-        this.width,
-        (canvas.height / 10) * 4
-      );
+      ctx.fillRect(this.x, (canvas.height / 10) * 6, this.width, (canvas.height / 10) * 4);
       this.hitIndicatorOpacity -= 0.02;
       ctx.globalAlpha = 1;
     }
 
     // hit line
     ctx.fillStyle = "#ffffff";
-    const hitLineY = app.playMode ? checkHitLineY : 0;
+    const hitLineY = vm.playMode ? checkHitLineY : 0;
     ctx.fillRect(this.x, hitLineY, this.width, 10);
 
     // particel effect
@@ -80,7 +74,7 @@ export function DropTrack(x, width, keyBind, app) {
 
     // create note
     const needNote =
-      app.playMode &&
+      vm.playMode &&
       timeArrIdx < timeArr.length &&
       playTime >= timeArr[timeArrIdx].time &&
       timeArr[timeArrIdx].key == keyBind;
@@ -97,12 +91,7 @@ export function DropTrack(x, width, keyBind, app) {
 
 function getHitGradient(ctx, canvas) {
   // hit indicator gradient
-  const hitGradient = ctx.createLinearGradient(
-    0,
-    (canvas.height / 10) * 7,
-    0,
-    canvas.height
-  );
+  const hitGradient = ctx.createLinearGradient(0, (canvas.height / 10) * 7, 0, canvas.height);
   hitGradient.addColorStop(0, "rgba(0,0,0,0)");
   hitGradient.addColorStop(1, "yellow");
   return hitGradient;
@@ -157,9 +146,7 @@ function HitParticleEffect() {
         // Draw a circle at the current location
         ctx.beginPath();
         // ctx.arc(p.startX, p.startY, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = this.rgbArray[
-          Math.floor(Math.random() * this.rgbArray.length)
-        ];
+        ctx.fillStyle = this.rgbArray[Math.floor(Math.random() * this.rgbArray.length)];
         ctx.fillRect(p.startX, p.startY, p.radius, p.radius);
         // ctx.fill();
 
@@ -196,9 +183,7 @@ function HitParticleEffect() {
       ctx.globalAlpha = 1;
       // Simple way to clean up if the last particle is done animating
       if (i === particles.length - 1) {
-        const percent =
-          (Date.now() - particles[i].startTime) /
-          particles[i].animationDuration;
+        const percent = (Date.now() - particles[i].startTime) / particles[i].animationDuration;
 
         if (percent > 1) {
           particles = [];

@@ -1,5 +1,5 @@
 <template>
-        <div class="control">
+    <div class="control">
         <a onclick="toggleControl()">Toggle Control</a> | <a onclick="startDemo1()">Demo 1</a> |
         <a onclick="startDemo2()">Demo 2</a> |
         <a onclick="toggleVisualizer()">{{$parent.visualizerArr[$parent.visualizer]}}</a>

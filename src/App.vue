@@ -1,30 +1,17 @@
 <template>
    <div id="app" class="unselectable">
-      <PlayControl ref="control"></PlayControl>
+        <Game></Game>
+   </div>
 
-      <div class="center" ref="hitIndicator">
-        {{lastMark}} {{combo>=5?combo:''}}
-      </div>
-
-      <canvas ref="mainCanvas"></canvas>
-
-      <!-- visualizer space -->
-      <div class="visualizer">
-        <div class="blurFilter" v-if="visualizer==4"></div>
-        <div ref="visualizerSpace" id="visualizer"></div>
-      </div>
-
-      <div id="ytPlayer" v-show="srcMode=='youtube'"></div>
-    </div>
 </template>
 
 <script>
-import PlayControl from './components/PlayControl.vue';
+import Game from './routes/Game.vue';
 
 export default {
   name: 'App',
   components: {
-    PlayControl,
+    Game,
   },
 };
 </script>

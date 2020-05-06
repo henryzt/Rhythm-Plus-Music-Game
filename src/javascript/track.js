@@ -1,11 +1,13 @@
-export function DropTrack(x, width, keyBind, vm) {
+import Note from "./note";
+
+export default function DropTrack(vm, game, x, width, keyBind) {
   this.x = x;
   this.width = width;
   this.keyBind = keyBind;
   const { ctx, canvas } = vm;
   const hitGradient = getHitGradient(ctx, canvas);
 
-  this.particleEffect = new HitParticleEffect();
+  this.particleEffect = new HitParticleEffect(ctx);
 
   this.hitIndicatorOpacity = 0;
   this.noteArr = [];
@@ -15,7 +17,7 @@ export function DropTrack(x, width, keyBind, vm) {
       this.hitIndicatorOpacity = 1;
       if (!vm.playMode) {
         // create mode
-        this.noteArr.push(new Note(this.x, this.width));
+        this.noteArr.push(new Note(vm, this.x, this.width));
       } else {
         // play mode
         if (this.noteArr && this.noteArr[0]) {
@@ -23,7 +25,7 @@ export function DropTrack(x, width, keyBind, vm) {
           if (noteToDismiss.getDistPercentage() < 2) {
             noteToDismiss.hitAndCountScore();
             this.noteArr.shift();
-            this.particleEffect.create(this.x, checkHitLineY, this.width, 10);
+            this.particleEffect.create(this.x, vm.checkHitLineY, this.width, 10);
           }
         }
       }
@@ -35,7 +37,7 @@ export function DropTrack(x, width, keyBind, vm) {
     this.width = width;
   };
 
-  this.update = function () {
+  this.update = () => {
     // track bg
     ctx.globalAlpha = 0.6;
     ctx.fillStyle = "#212121";
@@ -66,7 +68,7 @@ export function DropTrack(x, width, keyBind, vm) {
 
     // hit line
     ctx.fillStyle = "#ffffff";
-    const hitLineY = vm.playMode ? checkHitLineY : 0;
+    const hitLineY = vm.playMode ? vm.checkHitLineY : 0;
     ctx.fillRect(this.x, hitLineY, this.width, 10);
 
     // particel effect
@@ -75,16 +77,16 @@ export function DropTrack(x, width, keyBind, vm) {
     // create note
     const needNote =
       vm.playMode &&
-      timeArrIdx < timeArr.length &&
-      playTime >= timeArr[timeArrIdx].time &&
-      timeArr[timeArrIdx].key == keyBind;
+      game.timeArrIdx < game.timeArr.length &&
+      game.playTime >= game.timeArr[game.timeArrIdx].time &&
+      game.timeArr[game.timeArrIdx].key == keyBind;
 
     if (needNote) {
-      if (playTime - timeArr[timeArrIdx].time < 1) {
-        console.log(playTime);
-        this.noteArr.push(new Note(this.x, this.width));
+      if (game.playTime - game.timeArr[game.timeArrIdx].time < 1) {
+        console.log(game.playTime);
+        this.noteArr.push(new Note(vm, this.x, this.width));
       }
-      timeArrIdx++;
+      game.timeArrIdx++;
     }
   };
 }
@@ -99,7 +101,7 @@ function getHitGradient(ctx, canvas) {
 
 // ref https://css-tricks.com/adding-particle-effects-to-dom-elements-with-canvas/
 
-function HitParticleEffect() {
+function HitParticleEffect(ctx) {
   const colorData = ["yellow", "#DED51F", "#EBA400", "#FCC138"];
   const reductionFactor = 50;
 
@@ -161,7 +163,7 @@ function HitParticleEffect() {
 
   let particles = [];
   this.createParticleAtPoint = function (x, y, colorData) {
-    const particle = new ExplodingParticle();
+    const particle = new ExplodingParticle(ctx);
     particle.rgbArray = colorData;
     particle.startX = x;
     particle.startY = y;

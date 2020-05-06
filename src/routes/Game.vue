@@ -21,7 +21,7 @@
 <script>
 import PlayControl from '../components/PlayControl.vue';
 import GameInstance from '../javascript/gameInstance.js';
-import { demo } from "../javascript/demo.js";
+import { demo, startDemo1 } from "../javascript/demo.js";
 
 
 // visualizers
@@ -62,7 +62,7 @@ export default {
             showControl: false,
             visualizer: 2,
             visualizerArr,
-            srcMode: "youtube",
+            srcMode: "url",
             instance: null
         }
     },
@@ -73,10 +73,10 @@ export default {
     },
     watch: {
         currentSong: function() {
-            audio.load();
+            this.audio.load();
         },
         noteSpeedInSec: function() {
-            reposition();
+            this.instance.reposition();
         }
     },
     mounted() {
@@ -93,6 +93,12 @@ export default {
         this.instance = new GameInstance(this);
 
     },
+    methods:{
+        startDemo(num){
+            if(num===1)
+                startDemo1(this.instance)
+        }
+    }
 };
 </script>
 

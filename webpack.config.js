@@ -2,7 +2,7 @@ const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const VueLoaderPlugin = require("vue-loader/lib/plugin");
-const CopyPlugin = require("copy-webpack-plugin");
+// const CopyPlugin = require("copy-webpack-plugin");
 
 const isProduction = () => process.env.NODE_ENV === "production";
 
@@ -18,7 +18,7 @@ module.exports = {
   devServer: {
     contentBase: path.resolve(__dirname, "src", "public"),
     port: 3000,
-    publicPath: "http://localhost:3000/dist/",
+    // publicPath: "http://localhost:3000/dist/",
     hotOnly: true,
     historyApiFallback: true,
   },
@@ -55,11 +55,11 @@ module.exports = {
       inject: "body",
     }),
     new VueLoaderPlugin(),
-    new CopyPlugin([
-      {
-        from: path.resolve(__dirname, "src", "public", "style.css"),
-        to: path.resolve(__dirname, "dist", "style.css"),
-      },
-    ]),
+    // new CopyPlugin([
+    //   {
+    //     from: path.resolve(__dirname, "src", "public", "style.css"),
+    //     to: path.resolve(__dirname, "dist", "style.css"),
+    //   },
+    // ]),
   ],
 };

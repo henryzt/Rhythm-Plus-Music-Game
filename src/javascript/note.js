@@ -1,6 +1,7 @@
-export function Note(x, width) {
+export default function Note(vm, x, width) {
   this.x = x;
   this.width = width;
+  const { ctx, canvas } = vm;
 
   this.y = 0;
 
@@ -17,7 +18,7 @@ export function Note(x, width) {
   };
 
   this.getDistPercentage = function () {
-    const dist = checkHitLineY - this.y;
+    const dist = vm.checkHitLineY - this.y;
     const percentage = Math.abs(dist) / (canvas.height / 10); // the lower the better
 
     console.log(dist, percentage);
@@ -26,48 +27,48 @@ export function Note(x, width) {
 
   this.hitAndCountScore = function () {
     const percentage = this.getDistPercentage();
-    app.score += 1000 * (3 - percentage);
-    app.combo += 1;
-    app.maxCombo = app.combo > app.maxCombo ? app.combo : app.maxCombo;
+    vm.score += 1000 * (3 - percentage);
+    vm.combo += 1;
+    vm.maxCombo = vm.combo > vm.maxCombo ? vm.combo : vm.maxCombo;
     if (percentage < 0.3) {
-      app.marks.perfect += 1;
-      app.lastMark = "Perfect";
+      vm.marks.perfect += 1;
+      vm.lastMark = "Perfect";
     } else if (percentage < 0.6) {
-      app.marks.good += 1;
-      app.lastMark = "Good";
+      vm.marks.good += 1;
+      vm.lastMark = "Good";
     } else if (percentage < 0.9) {
-      app.marks.offbeat += 1;
-      app.lastMark = "Offbeat";
+      vm.marks.offbeat += 1;
+      vm.lastMark = "Offbeat";
     }
-    hitIndicator();
+    hitIndicator(vm);
   };
 
   this.isOutOfCanvas = function () {
     const isOut = this.y > canvas.height;
-    if (app.playMode && isOut) {
-      app.marks.miss += 1;
-      app.combo = 0;
-      app.lastMark = "Miss";
-      hitIndicator();
+    if (vm.playMode && isOut) {
+      vm.marks.miss += 1;
+      vm.combo = 0;
+      vm.lastMark = "Miss";
+      hitIndicator(vm);
     }
     return isOut;
   };
 
   this.update = function () {
     this.setDelta();
-    const color = this.y > checkHitLineY + 10 ? "red" : "yellow";
+    const color = this.y > vm.checkHitLineY + 10 ? "red" : "yellow";
     // Make note blur when get missed.
-    ctx.filter = this.y > checkHitLineY + 10 ? "blur(5px)" : "blur(0px)";
+    ctx.filter = this.y > vm.checkHitLineY + 10 ? "blur(5px)" : "blur(0px)";
     ctx.fillStyle = color;
     ctx.fillRect(x, this.y, this.width, 10);
     ctx.filter = "none";
-    this.y += noteSpeedPxPerSec * this.delta;
+    this.y += vm.noteSpeedPxPerSec * this.delta;
   };
 }
 
-function hitIndicator() {
-  app.$refs.hitIndicator.classList.remove("hitAnimation");
+function hitIndicator(vm) {
+  vm.$refs.hitIndicator.classList.remove("hitAnimation");
   setTimeout(() => {
-    app.$refs.hitIndicator.classList.add("hitAnimation");
+    vm.$refs.hitIndicator.classList.add("hitAnimation");
   }, 1);
 }

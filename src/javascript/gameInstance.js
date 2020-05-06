@@ -1,262 +1,199 @@
-import Vue from "vue";
+import DropTrack from "./track";
+import { getPlayerTime, resetVideo, playVideo, loadYoutubeVideo } from "./youtube";
+import { saveToLocal, loadFromLocal, loadFromDemo } from "./storage";
 
-import { demo } from "./demo.js";
-import { DropTrack } from "./track.js";
-import {
-  getPlayerTime,
-  resetVideo,
-  playVideo,
-  loadYoutubeVideo,
-} from "./youtube.js";
+export default class GameInstance {
+  constructor(vm) {
+    this.canvas = vm.canvas;
+    this.ctx = vm.ctx;
+    this.audio = vm.audio;
+    this.vm = vm;
 
-console.log("OK");
+    this.timeArr = [];
+    this.timeArrIdx = 0;
 
-// visualizers
-const visualizerArr = [
-  "Visualizer Off",
-  "Space Visualizer",
-  "Bar Visualizer",
-  "Space with Polygon",
-  "Space Blurred",
-];
+    // time elapsed relative to audio play time (+Number(vm.noteSpeedInSec))
+    this.playTime = 0;
 
-// vue app
-const app = new Vue({
-  el: "#app",
-  data: {
-    audio: null,
-    canvas: null,
-    canvasCtx: null,
-    checkHitLineY: null, // hit line postion (white line)
-    noteSpeedPxPerSec: null, // note speed
-    visualizerLoaded: false, // visualizer loaded indicator
-    playMode: false, // play or edit mode
-    noteSpeedInSec: 2,
-    currentSong: "",
-    loadFrom: "",
-    saveTo: "",
-    score: 0,
-    combo: 0,
-    maxCombo: 0,
-    marks: { perfect: 0, good: 0, offbeat: 0, miss: 0 },
-    lastMark: "",
-    demoList: Object.keys(demo),
-    currentDemoNotes: "",
-    showControl: false,
-    visualizer: 2,
-    visualizerArr,
-    srcMode: "youtube",
-  },
-  computed: {
-    mode() {
-      return this.playMode ? "Play Mode" : "Create Mode";
-    },
-  },
-  mounted() {
-    this.$watch("currentSong", () => {
-      audio.load();
-    });
-    this.$watch("noteSpeedInSec", () => {
-      reposition();
-    });
-  },
-});
+    // init play tracks
+    this.dropTrackArr = [];
 
-app.canvas = app.$refs.mainCanvas;
-app.canvasCtx = app.canvas.getContext("2d");
-const { canvas } = app;
-const ctx = app.canvasCtx;
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+    this.trackNum = 4;
+    this.trackKeyBind = ["d", "f", "j", "k"];
+    this.trackMaxWidth = 150;
 
-let timeArr = [];
-let timeArrIdx = 0;
+    // clock for counting time
+    this.intervalPlay = null;
 
-// time elapsed relative to audio play time (+Number(app.noteSpeedInSec))
-let playTime = 0;
+    // init
 
-// get audio element
-app.audio = app.$refs.control.$refs.audioElement;
-let { audio } = app;
-
-// init play tracks
-const dropTrackArr = [];
-
-const trackNum = 4;
-const trackKeyBind = ["d", "f", "j", "k"];
-const trackMaxWidth = 150;
-
-function reposition() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  const trackWidth =
-    canvas.width / trackNum > trackMaxWidth
-      ? trackMaxWidth
-      : canvas.width / trackNum;
-  const startX = canvas.width / 2 - (trackNum * trackWidth) / 2;
-  let counter = 0;
-  for (const track of dropTrackArr) {
-    dropTrackArr[counter].resizeTrack(
-      startX + trackWidth * counter + counter,
-      trackWidth
-    );
-    counter++;
-  }
-
-  app.checkHitLineY = (canvas.height / 10) * 9;
-  app.noteSpeedPxPerSec = app.checkHitLineY / Number(app.noteSpeedInSec);
-}
-
-for (const keyBind of trackKeyBind) {
-  dropTrackArr.push(new DropTrack(0, trackMaxWidth, keyBind, app));
-}
-
-reposition();
-
-window.addEventListener("resize", function (event) {
-  console.log("resize");
-  reposition();
-});
-
-// log key and touch events
-function onKeyDown(key) {
-  if (!app.playMode) {
-    const cTime = getCurrentTime();
-    console.log(cTime, key);
-    timeArr.push({ time: cTime, key });
-  }
-  for (track of dropTrackArr) {
-    track.keyDown(key);
-  }
-}
-
-window.onload = function () {
-  document.addEventListener(
-    "keydown",
-    (event) => {
-      onKeyDown(event.key);
-    },
-    false
-  );
-
-  canvas.addEventListener(
-    "touchstart",
-    function (e) {
-      for (let c = 0; c < e.changedTouches.length; c++) {
-        // touchInf[e.changedTouches[c].identifier] = {"x":e.changedTouches[c].clientX,"y":e.changedTouches[c].clientY};
-        const x = e.changedTouches[c].clientX;
-        const y = e.changedTouches[c].clientY;
-
-        dropTrackArr.forEach(function (track) {
-          if (x > track.x && x < track.x + track.width) {
-            onKeyDown(track.keyBind);
-          }
-        });
-      }
-    },
-    false
-  );
-
-  // start animate
-  animate();
-};
-
-// animate all
-function animate() {
-  requestAnimationFrame(animate);
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  renderVisualizer();
-  for (const track of dropTrackArr) {
-    track.update();
-  }
-}
-
-// render visualizer
-function renderVisualizer() {
-  if (!app.visualizerLoaded) return;
-  switch (app.visualizer) {
-    case 1:
-      renderSpaceVisualizer();
-      break;
-    case 2:
-      renderBarVisualizer();
-      ctx.fillStyle = "rgba(10,10,44,0.2)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      break;
-    case 3:
-      renderSpaceVisualizer(true);
-      break;
-    case 4:
-      renderSpaceVisualizer(true);
-      break;
-    default:
-      ctx.fillStyle = "black";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }
-}
-
-// clock for counting time
-let intervalPlay = null;
-
-function playGame() {
-  timeArrIdx = 0;
-  audio.currentTime = 0;
-  resetVideo();
-  const startTime = Date.now();
-  app.playMode = true;
-
-  const intervalPrePlay = setInterval(async function () {
-    const elapsedTime = Date.now() - startTime;
-    playTime = Number(elapsedTime / 1000);
-    console.log(playTime, Number(app.noteSpeedInSec));
-    if (playTime > Number(app.noteSpeedInSec)) {
-      try {
-        if (app.srcMode == "url") {
-          res = await audio.play();
-          console.log("audio playing", res, audio.canplay);
-        } else if (app.srcMode == "youtube") {
-          playVideo();
-        }
-      } catch (e) {
-        console.error(e);
-      }
-      initAllVisualizersIfRequried();
-      clearInterval(intervalPrePlay);
-      intervalPlay = setInterval(() => {
-        playTime = getCurrentTime() + Number(app.noteSpeedInSec);
-      }, 100);
+    for (const keyBind of this.trackKeyBind) {
+      this.dropTrackArr.push(new DropTrack(vm, this, 0, this.trackMaxWidth, keyBind));
     }
-  }, 100);
-}
 
-function getCurrentTime() {
-  return app.srcMode == "youtube" ? getPlayerTime() : audio.currentTime;
-}
+    this.reposition();
 
-function resetPlaying() {
-  clearInterval(intervalPlay);
-  timeArr = [];
-  timeArrIdx = 0;
-  playTime = 0;
-  app.playMode = false;
-  audio.pause();
-  audio.currentTime = 0;
-}
+    this.registerInput();
 
-function startSong(song) {
-  resetPlaying();
-  app.currentSong = song.url;
-  audio.load();
-  window.loadFromDemo(song.noteName);
-  app.visualizer = song.visualizerNo ? song.visualizerNo : app.visualizer;
-  playGame();
-}
+    // start animate
+    this.update();
+  }
 
-function toggleControl() {
-  app.showControl = !app.showControl;
-}
+  reposition() {
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
+    const trackWidth =
+      this.canvas.width / this.trackNum > this.trackMaxWidth
+        ? this.trackMaxWidth
+        : this.canvas.width / this.trackNum;
+    const startX = this.canvas.width / 2 - (this.trackNum * trackWidth) / 2;
+    let counter = 0;
+    for (const track of this.dropTrackArr) {
+      this.dropTrackArr[counter].resizeTrack(startX + trackWidth * counter + counter, trackWidth);
+      counter++;
+    }
 
-function toggleVisualizer() {
-  app.visualizer =
-    app.visualizer == visualizerArr.length - 1 ? 0 : app.visualizer + 1;
+    this.vm.checkHitLineY = (this.canvas.height / 10) * 9;
+    this.vm.noteSpeedPxPerSec = this.vm.checkHitLineY / Number(this.vm.noteSpeedInSec);
+  }
+
+  registerInput() {
+    window.addEventListener("resize", (event) => {
+      console.log("resize");
+      this.reposition();
+    });
+
+    document.addEventListener(
+      "keydown",
+      (event) => {
+        this.onKeyDown(event.key);
+      },
+      false
+    );
+
+    this.canvas.addEventListener(
+      "touchstart",
+      function (e) {
+        for (let c = 0; c < e.changedTouches.length; c++) {
+          // touchInf[e.changedTouches[c].identifier] = {"x":e.changedTouches[c].clientX,"y":e.changedTouches[c].clientY};
+          const x = e.changedTouches[c].clientX;
+          const y = e.changedTouches[c].clientY;
+
+          this.dropTrackArr.forEach(function (track) {
+            if (x > track.x && x < track.x + track.width) {
+              this.onKeyDown(track.keyBind);
+            }
+          });
+        }
+      },
+      false
+    );
+  }
+
+  // log key and touch events
+  onKeyDown(key) {
+    if (!this.vm.playMode) {
+      const cTime = this.getCurrentTime();
+      console.log(cTime, key);
+      this.timeArr.push({ time: cTime, key });
+    }
+    for (const track of this.dropTrackArr) {
+      track.keyDown(key);
+    }
+  }
+
+  // animate all
+  update() {
+    requestAnimationFrame(this.update.bind(this));
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.renderVisualizer();
+    for (const track of this.dropTrackArr) {
+      track.update();
+    }
+  }
+
+  // render visualizer
+  renderVisualizer() {
+    if (!this.vm.visualizerLoaded) return;
+    switch (this.vm.visualizer) {
+      case 1:
+        // renderSpaceVisualizer();
+        break;
+      case 2:
+        // renderBarVisualizer();
+        this.ctx.fillStyle = "rgba(10,10,44,0.2)";
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        break;
+      case 3:
+        // renderSpaceVisualizer(true);
+        break;
+      case 4:
+        // renderSpaceVisualizer(true);
+        break;
+      default:
+        this.ctx.fillStyle = "black";
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+  }
+
+  playGame() {
+    const startTime = Date.now();
+    this.vm.playMode = true;
+
+    const intervalPrePlay = setInterval(async () => {
+      const elapsedTime = Date.now() - startTime;
+      this.playTime = Number(elapsedTime / 1000);
+      console.log(this.playTime, Number(this.vm.noteSpeedInSec));
+      if (this.playTime > Number(this.vm.noteSpeedInSec)) {
+        try {
+          if (this.vm.srcMode == "url") {
+            const res = await this.audio.play();
+            console.log("audio playing", res, this.audio.canplay);
+          } else if (this.vm.srcMode == "youtube") {
+            playVideo();
+          }
+        } catch (e) {
+          console.error(e);
+        }
+        // initAllVisualizersIfRequried();
+        clearInterval(intervalPrePlay);
+        this.intervalPlay = setInterval(() => {
+          this.playTime = this.getCurrentTime() + Number(this.vm.noteSpeedInSec);
+        }, 100);
+      }
+    }, 100);
+  }
+
+  getCurrentTime() {
+    return this.vm.srcMode == "youtube" ? getPlayerTime() : this.audio.currentTime;
+  }
+
+  resetPlaying() {
+    clearInterval(this.intervalPlay);
+    // resetVideo();
+    this.timeArr = [];
+    this.timeArrIdx = 0;
+    this.playTime = 0;
+    this.vm.playMode = false;
+    this.audio.pause();
+    this.audio.currentTime = 0;
+  }
+
+  startSong(song) {
+    this.resetPlaying();
+    this.vm.currentSong = song.url;
+    this.audio.load();
+    this.timeArr = loadFromDemo(song.noteName);
+    this.vm.visualizer = song.visualizerNo ? song.visualizerNo : this.vm.visualizer;
+    this.playGame();
+  }
+
+  toggleControl() {
+    this.vm.showControl = !this.vm.showControl;
+  }
+
+  toggleVisualizer() {
+    this.vm.visualizer =
+      this.vm.visualizer == this.visualizerArr.length - 1 ? 0 : this.vm.visualizer + 1;
+  }
 }

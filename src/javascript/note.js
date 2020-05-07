@@ -32,13 +32,13 @@ export default function Note(vm, x, width) {
     vm.maxCombo = vm.combo > vm.maxCombo ? vm.combo : vm.maxCombo;
     if (percentage < 0.3) {
       vm.marks.perfect += 1;
-      vm.lastMark = "Perfect";
+      vm.markJudge = "Perfect";
     } else if (percentage < 0.6) {
       vm.marks.good += 1;
-      vm.lastMark = "Good";
+      vm.markJudge = "Good";
     } else if (percentage < 0.9) {
       vm.marks.offbeat += 1;
-      vm.lastMark = "Offbeat";
+      vm.markJudge = "Offbeat";
     }
     hitIndicator(vm);
   };
@@ -48,7 +48,7 @@ export default function Note(vm, x, width) {
     if (vm.playMode && isOut) {
       vm.marks.miss += 1;
       vm.combo = 0;
-      vm.lastMark = "Miss";
+      vm.markJudge = "Miss";
       hitIndicator(vm);
     }
     return isOut;

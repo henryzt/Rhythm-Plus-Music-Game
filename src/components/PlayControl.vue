@@ -1,7 +1,7 @@
 <template>
     <div class="control">
-        <a @click="$parent.showControl = !$parent.showControl">Toggle Control</a> | <a @click="$parent.startDemo(1)">Demo 1</a> |
-        <a @click="$parent.startDemo(1)">Demo 2</a> |
+        <a @click="$parent.showControl = !$parent.showControl">Toggle Control</a> | <a @click="startDemo(1)">Demo 1</a> |
+        <a @click="startDemo(2)">Demo 2</a> |
         <a @click="toggleVisualizer">{{$parent.visualizerArr[$parent.visualizer]}}</a>
         <div :class="{hidden: !$parent.showControl}" style="transition: opacity 1s ease-in-out;">
           <br />
@@ -26,30 +26,30 @@
           <br />
           <!-- load song -->
           <div>
-            <input v-model="$parent.loadFrom" placeholder="enter local saves" />
-            <button onclick="loadFromLocal(app.loadFrom)">Load</button>
+            <input v-model="loadFrom" placeholder="enter local saves" />
+            <button @click="$parent.instance.saveCurrentTimeArrToLocal(loadFrom)">Load</button>
           </div>
           <div>
-            <select id="loadFromDemo" v-model="$parent.currentDemoNotes">
+            <select id="loadFromDemo" v-model="currentDemoNotes">
               <option disabled value="">Or select demo note</option>
-              <option v-for="option in $parent.demoList" :value="option">{{option}}</option>
+              <option v-for="option in demoList" :value="option">{{option}}</option>
             </select>
-            <button onclick="loadFromDemo(app.currentDemoNotes)">Load</button>
+            <button @click="$parent.instance.loadTimeArrFromDemo(currentDemoNotes)">Load</button>
           </div>
           <br />
           <!-- save song -->
           <div>
-            <input v-model="$parent.saveTo" placeholder="enter name to save" />
-            <button onclick="saveToLocal(app.saveTo)">Save</button>
+            <input v-model="saveTo" placeholder="enter name to save" />
+            <button @click="$parent.instance.loadTimeArrFromLocal(saveTo)">Save</button>
           </div>
           <br />
-          Current Mode {{$parent.srcMode}}<br>
+          Current Mode - {{$parent.srcMode}}<br>
           <button @click="$parent.srcMode='youtube'">Youtube Mode</button>
           <button @click="$parent.srcMode='url'">URL Mode</button>
-          <button onclick="playVideo()">Play Youtube</button>
+          <button @click="$parent.instance.playVideo()">Play Youtube</button>
           <br /><br />
-          <button onclick="playGame()">Start</button>
-          <button onclick="resetPlaying()">Reset</button>
+          <button @click="$parent.instance.playGame()">Start</button>
+          <button @click="$parent.instance.resetPlaying()">Reset</button>
           <!-- score -->
           <br />
           <div>
@@ -62,13 +62,28 @@
 </template>
 
 <script>
-console.log("OK")
+import { demo, startDemo1, startDemo2 } from "../javascript/demo";
+
 export default {
   name: 'PlayControl',
   props: [],
+  data: function(){
+    return {
+        loadFrom: "",
+        saveTo: "",
+        demoList: Object.keys(demo),
+        currentDemoNotes: "",
+    }
+  },
   methods: {
-      toggleVisualizer() {
-        this.$parent.visualizer = this.$parent.visualizer == this.$parent.visualizerArr.length - 1 ? 0 : this.$parent.visualizer + 1;
+    toggleVisualizer() {
+      this.$parent.visualizer = this.$parent.visualizer == this.$parent.visualizerArr.length - 1 ? 0 : this.$parent.visualizer + 1;
+    },
+    startDemo(num){
+      if(num===1)
+          startDemo1(this.$parent.instance)
+      if(num===2)
+          startDemo2(this.$parent.instance)
     }
   }
 };

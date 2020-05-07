@@ -3,7 +3,7 @@
       <PlayControl ref="control"></PlayControl>
 
       <div class="center" ref="hitIndicator">
-        {{lastMark}} {{combo>=5?combo:''}}
+        {{markJudge}} {{combo>=5?combo:''}}
       </div>
 
       <canvas ref="mainCanvas"></canvas>
@@ -21,7 +21,6 @@
 <script>
 import PlayControl from '../components/PlayControl.vue';
 import GameInstance from '../javascript/gameInstance';
-import { demo, startDemo1, startDemo2 } from "../javascript/demo";
 
 
 // visualizers
@@ -50,15 +49,11 @@ export default {
             playMode: false, // play or edit mode
             noteSpeedInSec: 2,
             currentSong: "",
-            loadFrom: "",
-            saveTo: "",
             score: 0,
             combo: 0,
             maxCombo: 0,
             marks: { perfect: 0, good: 0, offbeat: 0, miss: 0 },
-            lastMark: "",
-            demoList: Object.keys(demo),
-            currentDemoNotes: "",
+            markJudge: "",
             showControl: false,
             visualizer: 2,
             visualizerArr,
@@ -94,12 +89,7 @@ export default {
 
     },
     methods:{
-        startDemo(num){
-            if(num===1)
-                startDemo1(this.instance)
-            if(num===2)
-                startDemo2(this.instance)
-        }
+
     }
 };
 </script>

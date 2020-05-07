@@ -187,4 +187,16 @@ export default class GameInstance {
     this.vm.visualizer = song.visualizerNo ? song.visualizerNo : this.vm.visualizer;
     this.playGame();
   }
+
+  saveCurrentTimeArrToLocal(name) {
+    saveToLocal(name, this.timeArr);
+  }
+
+  loadTimeArrFromLocal(name) {
+    this.timeArr = loadFromLocal(name);
+  }
+
+  loadTimeArrFromDemo(name) {
+    this.timeArr = loadFromDemo(name);
+  }
 }

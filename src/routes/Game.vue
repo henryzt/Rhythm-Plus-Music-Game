@@ -14,8 +14,8 @@
         <div ref="visualizerSpace" id="visualizer"></div>
       </div>
 
-    <div v-if="srcMode==='youtube'">
-        <Youtube id="ytPlayer" ref="youtube" :video-id="youtubeId"></Youtube>
+    <div v-show="srcMode==='youtube'">
+        <Youtube id="ytPlayer" ref="youtube" :video-id="youtubeId" :player-vars="{controls: 0, rel: 0 }"></Youtube>
     </div>
       
     </div>
@@ -72,7 +72,7 @@ export default {
             return this.playMode ? "Play Mode" : "Create Mode";
         },
         ytPlayer() {
-            return this.$refs.youtube.player
+            return this.$refs.youtube.player;
         }
     },
     watch: {

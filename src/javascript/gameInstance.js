@@ -25,7 +25,7 @@ export default class GameInstance {
     // clock for counting time
     this.intervalPlay = null;
 
-    this.ytPlayer = new YoutubePlayer(vm.ytPlayer);
+    this.ytPlayer = new YoutubePlayer(vm);
 
     // init
 
@@ -190,7 +190,7 @@ export default class GameInstance {
     this.vm.currentSong = song.url;
     this.vm.srcMode = song.srcMode;
     this.audio.load();
-    this.timeArr = loadFromDemo(song.noteName);
+    this.timeArr = song.timeArr;
     this.vm.visualizer = song.visualizerNo ? song.visualizerNo : this.vm.visualizer;
     this.playGame();
   }

@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import { demo, startDemo1, startDemo2 } from "../javascript/demo";
+import { demo, startDemo } from "../javascript/demo";
 
 export default {
   name: 'PlayControl',
@@ -80,10 +80,7 @@ export default {
       this.$parent.visualizer = this.$parent.visualizer == this.$parent.visualizerArr.length - 1 ? 0 : this.$parent.visualizer + 1;
     },
     startDemo(num){
-      if(num===1)
-          startDemo1(this.$parent.instance)
-      if(num===2)
-          startDemo2(this.$parent.instance)
+      startDemo(this.$parent.instance, num)
     }
   }
 };

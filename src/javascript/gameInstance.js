@@ -1,6 +1,7 @@
 import DropTrack from "./track";
 import YoutubePlayer from "./youtube";
-import { saveToLocal, loadFromLocal, loadFromDemo } from "./storage";
+import { saveToLocal, loadFromLocal } from "./storage";
+import { loadFromDemo } from "./demo";
 
 export default class GameInstance {
   constructor(vm) {
@@ -51,13 +52,13 @@ export default class GameInstance {
         ? this.trackMaxWidth
         : this.canvas.width / this.trackNum;
     const startX = this.canvas.width / 2 - (this.trackNum * trackWidth) / 2;
-    let counter = 0;
-    for (const track of this.dropTrackArr) {
+
+    for (let counter = 0; counter < this.dropTrackArr.length; counter++) {
+      const trackWidthWithOffset = trackWidth + 1;
       this.dropTrackArr[counter].resizeTrack(
-        startX + trackWidth * counter + counter,
+        startX + trackWidthWithOffset * counter,
         trackWidth
       );
-      counter++;
     }
 
     this.vm.checkHitLineY = (this.canvas.height / 10) * 9;
@@ -66,8 +67,7 @@ export default class GameInstance {
   }
 
   registerInput() {
-    window.addEventListener("resize", (event) => {
-      console.log("resize");
+    window.addEventListener("resize", (_) => {
       this.reposition();
     });
 
@@ -84,8 +84,7 @@ export default class GameInstance {
       (e) => {
         for (let c = 0; c < e.changedTouches.length; c++) {
           // touchInf[e.changedTouches[c].identifier] = {"x":e.changedTouches[c].clientX,"y":e.changedTouches[c].clientY};
-          const x = e.changedTouches[c].clientX;
-          const y = e.changedTouches[c].clientY;
+          const x = event.changedTouches[c].clientX;
 
           this.dropTrackArr.forEach((track) => {
             if (x > track.x && x < track.x + track.width) {
@@ -102,7 +101,6 @@ export default class GameInstance {
   async onKeyDown(key) {
     if (!this.vm.playMode) {
       const cTime = await this.getCurrentTime();
-      console.log(cTime, key);
       if (this.trackKeyBind.includes(key))
         this.timeArr.push({ time: cTime, key });
     }
@@ -125,18 +123,15 @@ export default class GameInstance {
     this.resetPlaying();
     const startTime = Date.now();
     this.vm.playMode = true;
-    console.log(this.timeArr);
 
     const intervalPrePlay = setInterval(async () => {
       const elapsedTime = Date.now() - startTime;
       this.playTime = Number(elapsedTime / 1000);
-      console.log(this.playTime, Number(this.vm.noteSpeedInSec));
       if (this.playTime > Number(this.vm.noteSpeedInSec)) {
         try {
-          if (this.vm.srcMode == "url") {
-            const res = await this.audio.play();
-            console.log("audio playing", res, this.audio.canplay);
-          } else if (this.vm.srcMode == "youtube") {
+          if (this.vm.srcMode === "url") {
+            await this.audio.play();
+          } else if (this.vm.srcMode === "youtube") {
             this.ytPlayer.playVideo();
           }
         } catch (e) {
@@ -154,7 +149,7 @@ export default class GameInstance {
 
   getCurrentTime() {
     // it seems that 'getPlayerTime' is async, thus all places calling this func need to await res [help wanted]
-    return this.vm.srcMode == "youtube"
+    return this.vm.srcMode === "youtube"
       ? this.ytPlayer.getPlayerTime()
       : this.audio.currentTime;
   }

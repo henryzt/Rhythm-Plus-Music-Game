@@ -1,5 +1,4 @@
 import demoJson from "./timelineDemo.json";
-import { loadFromDemo } from "./storage";
 
 export const demo = demoJson;
 
@@ -31,5 +30,15 @@ export function startDemo(instance, demoNum) {
         timeArr: loadFromDemo("bronson"),
       });
       break;
+
+    default:
+      throw new Error("unexpected demo number: must be between 1 and 3");
   }
+}
+
+export function loadFromDemo(name) {
+  if (demoJson && demoJson[name]) {
+    return demoJson[name].timeline;
+  }
+  throw new Error(`unexpected demo name: "{name}" not found`);
 }

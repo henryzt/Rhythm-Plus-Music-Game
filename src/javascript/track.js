@@ -116,10 +116,11 @@ export default class DropTrack {
 
 // ref https://css-tricks.com/adding-particle-effects-to-dom-elements-with-canvas/
 export class HitParticleEffect {
-  constructor() {
+  constructor(ctx) {
     this.colorData = ["yellow", "#DED51F", "#EBA400", "#FCC138"];
     this.reductionFactor = 50;
     this.particles = [];
+    this.ctx = ctx;
   }
 
   create(x, y, width, height) {

@@ -9,7 +9,6 @@ export function startDemo(instance, demoNum) {
       instance.startSong({
         url: "songs/whywelose.mp3",
         srcMode: "url",
-        noteName: "whywelose",
         visualizerNo: 3,
         timeArr: loadFromDemo("whywelose"),
       });
@@ -19,9 +18,17 @@ export function startDemo(instance, demoNum) {
       instance.startSong({
         url: "songs/sheepdog.mp3",
         srcMode: "url",
-        noteName: "sheepdog",
         visualizerNo: 2,
         timeArr: loadFromDemo("sheepdog"),
+      });
+      break;
+
+    case 3:
+      instance.startSong({
+        youtubeId: "OFS3OYNs7U4",
+        srcMode: "youtube",
+        visualizerNo: 2,
+        timeArr: loadFromDemo("bronson"),
       });
       break;
   }

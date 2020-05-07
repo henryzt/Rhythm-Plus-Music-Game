@@ -6,7 +6,7 @@ export default class YoutubePlayer {
 
   loadYoutubeVideo(id) {
     if (this.vm.srcMode !== "youtube") return;
-    this.ytPlayer.loadVideoByUrl(id, 0);
+    this.vm.youtubeId = id;
     this.ytPlayer.setVolume(100);
   }
 

@@ -1,7 +1,8 @@
 <template>
     <div class="control">
         <a @click="$parent.showControl = !$parent.showControl">Toggle Control</a> | <a @click="startDemo(1)">Demo 1</a> |
-        <a @click="startDemo(2)">Demo 2</a> |
+        <a @click="startDemo(2)">2</a> |
+        <a @click="startDemo(3)">3</a> |
         <a @click="toggleVisualizer">{{$parent.visualizerArr[$parent.visualizer]}}</a>
         <div :class="{hidden: !$parent.showControl}" style="transition: opacity 1s ease-in-out;">
           <br />
@@ -43,6 +44,12 @@
             <button @click="$parent.instance.saveCurrentTimeArrToLocal(saveTo)">Save</button>
           </div>
           <br />
+          <!-- load youtube -->
+          <div>
+            <input v-model="youtubeId" placeholder="enter youtube id" />
+            <button @click="$parent.instance.loadYoutubeVideo(youtubeId)">Load</button>
+          </div>
+          <br />
           Current Mode - {{$parent.srcMode}}<br>
           <button @click="$parent.srcMode='youtube'">Youtube Mode</button>
           <button @click="$parent.srcMode='url'">URL Mode</button>
@@ -73,6 +80,7 @@ export default {
         saveTo: "",
         demoList: Object.keys(demo),
         currentDemoNotes: "",
+        youtubeId: "",
     }
   },
   methods: {

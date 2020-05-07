@@ -62,9 +62,9 @@ export default {
             showControl: false,
             visualizer: 2,
             visualizerArr,
-            srcMode: "youtube",
+            srcMode: "url",
             instance: null,
-            youtubeId: "ALZHF5UqnU4"
+            youtubeId: "jNQXAC9IVRw"
         }
     },
     computed: {

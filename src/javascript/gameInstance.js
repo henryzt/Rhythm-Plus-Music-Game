@@ -189,9 +189,13 @@ export default class GameInstance {
     this.resetPlaying(true);
     this.vm.currentSong = song.url;
     this.vm.srcMode = song.srcMode;
-    this.audio.load();
     this.timeArr = song.timeArr;
     this.vm.visualizer = song.visualizerNo ? song.visualizerNo : this.vm.visualizer;
+    if (song.srcMode === "youtube") {
+      this.loadYoutubeVideo(song.youtubeId);
+    } else {
+      this.audio.load();
+    }
     this.playGame();
   }
 
@@ -211,5 +215,9 @@ export default class GameInstance {
   // youtube
   playVideo() {
     this.ytPlayer.playVideo();
+  }
+
+  loadYoutubeVideo(id) {
+    this.ytPlayer.loadYoutubeVideo(id);
   }
 }

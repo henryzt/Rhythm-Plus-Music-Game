@@ -1,46 +1,23 @@
-let ytPlayer;
-function onYouTubeIframeAPIReady() {
-  ytPlayer = new YT.Player("ytPlayer", {
-    height: "100%",
-    width: "100%",
-    videoId: "ALZHF5UqnU4",
-    playerVars: { autoplay: 0, controls: 0, rel: 0 },
-    events: {
-      onReady: onPlayerReady,
-    },
-  });
-  addWmode();
-}
+export default class YoutubePlayer {
+  constructor(ytPlayer) {
+    this.ytPlayer = ytPlayer;
+  }
 
-window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
+  loadYoutubeVideo(id) {
+    this.ytPlayer.loadVideoByUrl(id, 0);
+    this.ytPlayer.setVolume(100);
+  }
 
-function onPlayerReady(event) {
-  console.log("Player Ready.");
-  //   event.target.playVideo();
-}
+  playVideo() {
+    this.ytPlayer.playVideo();
+  }
 
-export function loadYoutubeVideo(id) {
-  ytPlayer.loadVideoByUrl(id, 0);
-  ytPlayer.setVolume(100);
-}
+  resetVideo() {
+    this.ytPlayer.seekTo(0);
+    this.ytPlayer.pauseVideo();
+  }
 
-export function playVideo() {
-  ytPlayer.playVideo();
-}
-
-export function resetVideo() {
-  ytPlayer.seekTo(0);
-  ytPlayer.pauseVideo();
-}
-
-export function getPlayerTime() {
-  return ytPlayer.getCurrentTime();
-}
-
-function addWmode() {
-  const url = document.getElementById("ytPlayer").getAttribute("src");
-  const char = url.indexOf("?") != -1 ? "&" : "?";
-  document
-    .getElementById("ytPlayer")
-    .setAttribute("src", `${url + char}wmode=transparent`);
+  getPlayerTime() {
+    return this.ytPlayer.getCurrentTime();
+  }
 }

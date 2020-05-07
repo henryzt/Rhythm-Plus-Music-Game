@@ -14,13 +14,17 @@
         <div ref="visualizerSpace" id="visualizer"></div>
       </div>
 
-      <div id="ytPlayer" v-show="srcMode=='youtube'"></div>
+    <div v-if="srcMode==='youtube'">
+        <Youtube id="ytPlayer" ref="youtube" :video-id="youtubeId"></Youtube>
+    </div>
+      
     </div>
 </template>
 
 <script>
 import PlayControl from '../components/PlayControl.vue';
 import GameInstance from '../javascript/gameInstance';
+import { Youtube } from 'vue-youtube'
 
 
 // visualizers
@@ -37,6 +41,7 @@ export default {
     name: 'Game',
     components: {
         PlayControl,
+        Youtube
     },
     data(){
         return {
@@ -57,14 +62,18 @@ export default {
             showControl: false,
             visualizer: 2,
             visualizerArr,
-            srcMode: "url",
-            instance: null
+            srcMode: "youtube",
+            instance: null,
+            youtubeId: "ALZHF5UqnU4"
         }
     },
     computed: {
         mode() {
             return this.playMode ? "Play Mode" : "Create Mode";
         },
+        ytPlayer() {
+            return this.$refs.youtube.player
+        }
     },
     watch: {
         currentSong: function() {
@@ -77,13 +86,10 @@ export default {
     mounted() {
         this.canvas = this.$refs.mainCanvas;
         this.ctx = this.canvas.getContext("2d");
-        // const { canvas } = app;
-        // const ctx = app.canvasCtx;
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
         // get audio element
         this.audio = this.$refs.control.$refs.audioElement;
-        // let { audio } = app;
 
         this.instance = new GameInstance(this);
 

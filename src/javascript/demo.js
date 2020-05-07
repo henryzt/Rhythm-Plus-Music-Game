@@ -4,6 +4,7 @@ export const demo = JSON.parse(demoJson);
 export function startDemo1(instance) {
   instance.startSong({
     url: "songs/whywelose.mp3",
+    srcMode: "url",
     noteName: "whywelose",
     visualizerNo: 3,
   });
@@ -12,6 +13,7 @@ export function startDemo1(instance) {
 export function startDemo2(instance) {
   instance.startSong({
     url: "songs/sheepdog.mp3",
+    srcMode: "url",
     noteName: "sheepdog",
     visualizerNo: 2,
   });

@@ -27,7 +27,7 @@
           <!-- load song -->
           <div>
             <input v-model="loadFrom" placeholder="enter local saves" />
-            <button @click="$parent.instance.saveCurrentTimeArrToLocal(loadFrom)">Load</button>
+            <button @click="$parent.instance.loadTimeArrFromLocal(loadFrom)">Load</button>
           </div>
           <div>
             <select id="loadFromDemo" v-model="currentDemoNotes">
@@ -40,7 +40,7 @@
           <!-- save song -->
           <div>
             <input v-model="saveTo" placeholder="enter name to save" />
-            <button @click="$parent.instance.loadTimeArrFromLocal(saveTo)">Save</button>
+            <button @click="$parent.instance.saveCurrentTimeArrToLocal(saveTo)">Save</button>
           </div>
           <br />
           Current Mode - {{$parent.srcMode}}<br>
@@ -49,7 +49,7 @@
           <button @click="$parent.instance.playVideo()">Play Youtube</button>
           <br /><br />
           <button @click="$parent.instance.playGame()">Start</button>
-          <button @click="$parent.instance.resetPlaying()">Reset</button>
+          <button @click="$parent.instance.resetPlaying(true)">Reset</button>
           <!-- score -->
           <br />
           <div>

@@ -1,5 +1,5 @@
 import DropTrack from "./track";
-import { getPlayerTime, resetVideo, playVideo, loadYoutubeVideo } from "./youtube";
+import YoutubePlayer from "./youtube";
 import { saveToLocal, loadFromLocal, loadFromDemo } from "./storage";
 
 export default class GameInstance {
@@ -24,6 +24,8 @@ export default class GameInstance {
 
     // clock for counting time
     this.intervalPlay = null;
+
+    this.ytPlayer = new YoutubePlayer(vm.ytPlayer);
 
     // init
 
@@ -91,11 +93,11 @@ export default class GameInstance {
   }
 
   // log key and touch events
-  onKeyDown(key) {
+  async onKeyDown(key) {
     if (!this.vm.playMode) {
-      const cTime = this.getCurrentTime();
+      const cTime = await this.getCurrentTime();
       console.log(cTime, key);
-      this.timeArr.push({ time: cTime, key });
+      if (this.trackKeyBind.includes(key)) this.timeArr.push({ time: cTime, key });
     }
     for (const track of this.dropTrackArr) {
       track.keyDown(key);
@@ -137,8 +139,10 @@ export default class GameInstance {
   }
 
   playGame() {
+    this.resetPlaying();
     const startTime = Date.now();
     this.vm.playMode = true;
+    console.log(this.timeArr);
 
     const intervalPrePlay = setInterval(async () => {
       const elapsedTime = Date.now() - startTime;
@@ -150,28 +154,30 @@ export default class GameInstance {
             const res = await this.audio.play();
             console.log("audio playing", res, this.audio.canplay);
           } else if (this.vm.srcMode == "youtube") {
-            playVideo();
+            this.ytPlayer.playVideo();
           }
         } catch (e) {
           console.error(e);
         }
         // initAllVisualizersIfRequried();
         clearInterval(intervalPrePlay);
-        this.intervalPlay = setInterval(() => {
-          this.playTime = this.getCurrentTime() + Number(this.vm.noteSpeedInSec);
+        this.intervalPlay = setInterval(async () => {
+          const cTime = await this.getCurrentTime();
+          this.playTime = cTime + Number(this.vm.noteSpeedInSec);
         }, 100);
       }
     }, 100);
   }
 
   getCurrentTime() {
-    return this.vm.srcMode == "youtube" ? getPlayerTime() : this.audio.currentTime;
+    // it seems that 'getPlayerTime' is async, thus all places calling this func need to await res [help wanted]
+    return this.vm.srcMode == "youtube" ? this.ytPlayer.getPlayerTime() : this.audio.currentTime;
   }
 
-  resetPlaying() {
+  resetPlaying(resetTimeArr) {
     clearInterval(this.intervalPlay);
-    // resetVideo();
-    this.timeArr = [];
+    this.ytPlayer.resetVideo();
+    if (resetTimeArr) this.timeArr = [];
     this.timeArrIdx = 0;
     this.playTime = 0;
     this.vm.playMode = false;
@@ -180,14 +186,16 @@ export default class GameInstance {
   }
 
   startSong(song) {
-    this.resetPlaying();
+    this.resetPlaying(true);
     this.vm.currentSong = song.url;
+    this.vm.srcMode = song.srcMode;
     this.audio.load();
     this.timeArr = loadFromDemo(song.noteName);
     this.vm.visualizer = song.visualizerNo ? song.visualizerNo : this.vm.visualizer;
     this.playGame();
   }
 
+  // local storage
   saveCurrentTimeArrToLocal(name) {
     saveToLocal(name, this.timeArr);
   }
@@ -198,5 +206,10 @@ export default class GameInstance {
 
   loadTimeArrFromDemo(name) {
     this.timeArr = loadFromDemo(name);
+  }
+
+  // youtube
+  playVideo() {
+    this.ytPlayer.playVideo();
   }
 }

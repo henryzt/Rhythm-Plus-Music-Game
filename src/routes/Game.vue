@@ -8,7 +8,7 @@
 
     <canvas ref="mainCanvas"></canvas>
 
-    <Visualizer :audio="audio" :canvas="canvas" :ctx="ctx" ref="visualizer"></Visualizer>
+    <Visualizer ref="visualizer" :audio="audio" :canvas="canvas" :ctx="ctx"></Visualizer>
 
     <div v-show="srcMode==='youtube'">
         <Youtube id="ytPlayer" ref="youtube" :video-id="youtubeId" :player-vars="{controls: 0, rel: 0 }"></Youtube>
@@ -22,16 +22,6 @@ import PlayControl from '../components/PlayControl.vue';
 import Visualizer from '../components/Visualizer.vue';
 import GameInstance from '../javascript/gameInstance';
 import { Youtube } from 'vue-youtube'
-
-
-// visualizers
-const visualizerArr = [
-  "Visualizer Off",
-  "Space Visualizer",
-  "Bar Visualizer",
-  "Space with Polygon",
-  "Space Blurred",
-];
 
 
 export default {
@@ -48,7 +38,6 @@ export default {
             ctx: null,
             checkHitLineY: null, // hit line postion (white line)
             noteSpeedPxPerSec: null, // note speed
-            visualizerLoaded: false, // visualizer loaded indicator
             playMode: false, // play or edit mode
             noteSpeedInSec: 2,
             currentSong: "",
@@ -58,10 +47,9 @@ export default {
             marks: { perfect: 0, good: 0, offbeat: 0, miss: 0 },
             markJudge: "",
             showControl: false,
-            visualizer: 2,
-            visualizerArr,
             srcMode: "url",
             instance: null,
+            visualizerInstance: null,
             youtubeId: "jNQXAC9IVRw"
         }
     },
@@ -71,9 +59,6 @@ export default {
         },
         ytPlayer() {
             return this.$refs.youtube.player;
-        },
-        visualizerInstance() {
-            return this.$refs.visualizer;
         }
     },
     watch: {
@@ -89,6 +74,7 @@ export default {
         this.ctx = this.canvas.getContext("2d");
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
+        this.visualizerInstance = this.$refs.visualizer;
         // get audio element
         this.audio = this.$refs.control.$refs.audioElement;
 

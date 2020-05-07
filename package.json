@@ -39,7 +39,7 @@
   },
   "husky": {
     "hooks": {
-      "@IgnoreForNow pre-commit": "lint-staged"
+      "pre-commit": "lint-staged"
     }
   },
   "lint-staged": {

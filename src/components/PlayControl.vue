@@ -3,7 +3,7 @@
         <a @click="$parent.showControl = !$parent.showControl">Toggle Control</a> | <a @click="startDemo(1)">Demo 1</a> |
         <a @click="startDemo(2)">2</a> |
         <a @click="startDemo(3)">3</a> |
-        <a @click="toggleVisualizer">{{$parent.visualizerArr[$parent.visualizer]}}</a>
+        <a @click="toggleVisualizer">{{$parent.visualizerInstance?$parent.visualizerInstance.currentVisualizer:''}}</a>
         <div :class="{hidden: !$parent.showControl}" style="transition: opacity 1s ease-in-out;">
           <br />
           <audio ref="audioElement" :src="$parent.currentSong" volume="0.5" controls preload="auto"></audio>
@@ -85,7 +85,7 @@ export default {
   },
   methods: {
     toggleVisualizer() {
-      this.$parent.visualizer = this.$parent.visualizer == this.$parent.visualizerArr.length - 1 ? 0 : this.$parent.visualizer + 1;
+      this.$parent.visualizerInstance.switchNextVisualizer()
     },
     startDemo(num){
       startDemo(this.$parent.instance, num)

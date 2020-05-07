@@ -1,16 +1,25 @@
 <template>
     <!-- visualizer space -->
     <div class="visualizer">
-        <div class="blurFilter" v-if="$parent.visualizer===4"></div>
-        <div ref="visualizerSpace" id="visualizer" v-show="$parent.visualizer!=0 && $parent.visualizer!=2"></div>
+        <div class="blurFilter" v-if="visualizer===4"></div>
+        <div ref="visualizerSpace" id="visualizer" v-show="visualizer!=0 && visualizer!=2"></div>
     </div>
 </template>
 
 
 <script>
-
-import {renderBarVisualizer} from '../visualizers/visualizerBar';
+import { renderBarVisualizer } from '../visualizers/visualizerBar';
 import { initSpaceVisualizer, renderSpaceVisualizer } from '../visualizers/visualizerSpace';
+
+// visualizers
+const visualizerArr = [
+  "Visualizer Off",
+  "Space Visualizer",
+  "Bar Visualizer",
+  "Space with Polygon",
+  "Space Blurred",
+];
+
 
 export default {
   name: 'Visualizer',
@@ -26,7 +35,10 @@ export default {
         },
         canvas: null,
         ctx: null,
-        audio: null
+        audio: null,
+        visualizer: 2,
+        visualizerArr,
+        visualizerLoaded: false, // visualizer loaded indicator
     }
   },
   methods: {
@@ -49,15 +61,15 @@ export default {
         this.audioData.analyser = analyser;
     },
     initAllVisualizersIfRequried() {
-        if (!this.audioData.audioCtx && !this.$parent.visualizerLoaded) {
+        if (!this.audioData.audioCtx && !this.visualizerLoaded) {
             this.initVisualizerData();
             initSpaceVisualizer(this.audioData, this.$refs.visualizerSpace);
-            this.$parent.visualizerLoaded = true;
+            this.visualizerLoaded = true;
         }
     },
     renderVisualizer() {
-        if (!this.$parent.visualizerLoaded) return;
-        switch (this.$parent.visualizer) {
+        if (!this.visualizerLoaded) return;
+        switch (this.visualizer) {
         case 1:
             renderSpaceVisualizer();
             break;
@@ -77,10 +89,18 @@ export default {
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         }
     },
+    switchNextVisualizer(){
+        this.visualizer = this.visualizer == this.visualizerArr.length - 1 ? 0 : this.visualizer + 1;
+    }
   },
     watch : {
         audio: function(){
             this.initAllVisualizersIfRequried()
+        }
+    },
+    computed:{
+        currentVisualizer: function(){
+            return this.visualizerArr[this.visualizer]
         }
     }
 };

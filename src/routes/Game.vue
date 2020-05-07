@@ -20,8 +20,8 @@
 
 <script>
 import PlayControl from '../components/PlayControl.vue';
-import GameInstance from '../javascript/gameInstance.js';
-import { demo, startDemo1 } from "../javascript/demo.js";
+import GameInstance from '../javascript/gameInstance';
+import { demo, startDemo1, startDemo2 } from "../javascript/demo";
 
 
 // visualizers
@@ -97,6 +97,8 @@ export default {
         startDemo(num){
             if(num===1)
                 startDemo1(this.instance)
+            if(num===2)
+                startDemo2(this.instance)
         }
     }
 };

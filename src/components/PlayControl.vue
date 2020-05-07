@@ -1,8 +1,8 @@
 <template>
     <div class="control">
-        <a onclick="toggleControl()">Toggle Control</a> | <a @click="$parent.startDemo(1)">Demo 1</a> |
-        <a onclick="startDemo2()">Demo 2</a> |
-        <a onclick="toggleVisualizer()">{{$parent.visualizerArr[$parent.visualizer]}}</a>
+        <a @click="$parent.showControl = !$parent.showControl">Toggle Control</a> | <a @click="$parent.startDemo(1)">Demo 1</a> |
+        <a @click="$parent.startDemo(1)">Demo 2</a> |
+        <a @click="toggleVisualizer">{{$parent.visualizerArr[$parent.visualizer]}}</a>
         <div :class="{hidden: !$parent.showControl}" style="transition: opacity 1s ease-in-out;">
           <br />
           <audio ref="audioElement" :src="$parent.currentSong" volume="0.5" controls preload="auto"></audio>
@@ -65,14 +65,12 @@
 console.log("OK")
 export default {
   name: 'PlayControl',
-  props: {
-    msg: String,
-  },
-  data() {
-    return {
-      count: 0,
-    };
-  },
+  props: [],
+  methods: {
+      toggleVisualizer() {
+        this.$parent.visualizer = this.$parent.visualizer == this.$parent.visualizerArr.length - 1 ? 0 : this.$parent.visualizer + 1;
+    }
+  }
 };
 </script>
 

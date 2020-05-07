@@ -187,13 +187,4 @@ export default class GameInstance {
     this.vm.visualizer = song.visualizerNo ? song.visualizerNo : this.vm.visualizer;
     this.playGame();
   }
-
-  toggleControl() {
-    this.vm.showControl = !this.vm.showControl;
-  }
-
-  toggleVisualizer() {
-    this.vm.visualizer =
-      this.vm.visualizer == this.visualizerArr.length - 1 ? 0 : this.vm.visualizer + 1;
-  }
 }

@@ -9,8 +9,8 @@ export function startDemo1(instance) {
   });
 }
 
-export function startDemo2() {
-  this.startSong({
+export function startDemo2(instance) {
+  instance.startSong({
     url: "songs/sheepdog.mp3",
     noteName: "sheepdog",
     visualizerNo: 2,

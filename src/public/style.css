@@ -60,7 +60,6 @@ body {
   width: 100vw;
   height: 100vh;
   left: 0;
-  left: 0;
   top: 0;
   z-index: 10;
   filter: blur(8px);
@@ -68,6 +67,15 @@ body {
   opacity: 0.25;
   background-color: midnightblue;
   pointer-events: none;
+}
+
+#ytPlayer {
+  position: fixed;
+  width: 100vw;
+  height: 140vh;
+  left: 0;
+  top: -20vh;
+  z-index: -100;
 }
 
 .visualizer {

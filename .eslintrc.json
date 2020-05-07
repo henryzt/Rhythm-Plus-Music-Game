@@ -8,7 +8,7 @@
     }
   },
   "plugins": ["prettier"],
-  "extends": ["eslint:recommended", "airbnb", "prettier"],
+  "extends": ["eslint:recommended", "prettier"],
   "settings": {
     "import/resolver": {
       "node": {

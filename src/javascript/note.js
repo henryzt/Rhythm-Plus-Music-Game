@@ -11,7 +11,7 @@ export default function Note(vm, x, width) {
   this.then = 0;
 
   this.setDelta = function () {
-    if (this.then == 0) this.then = this.now;
+    if (this.then === 0) this.then = this.now;
     this.now = Date.now();
     this.delta = (parseFloat(this.now) - parseFloat(this.then)) / 1000; // seconds since last frame
     this.then = this.now;
@@ -21,7 +21,6 @@ export default function Note(vm, x, width) {
     const dist = vm.checkHitLineY - this.y;
     const percentage = Math.abs(dist) / (canvas.height / 10); // the lower the better
 
-    console.log(dist, percentage);
     return percentage;
   };
 

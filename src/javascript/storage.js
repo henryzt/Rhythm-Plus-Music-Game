@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-import { demo } from "./demo";
-
-=======
->>>>>>> 8c074d5... fix: fix lint errors
 export function saveToLocal(name, timeArr) {
   const local = JSON.parse(localStorage.getItem("localTimeline")) || {};
   local[name] = { timeline: timeArr };

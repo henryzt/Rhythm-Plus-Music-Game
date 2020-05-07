@@ -1,7 +1,7 @@
 let barHeight;
 let barX = 0;
 
-export function renderBarVisualizer(canvas, ctx, audioData) {
+export default function renderBarVisualizer(canvas, ctx, audioData) {
   const { analyser, dataArray, bufferLength } = audioData;
   const WIDTH = canvas.width;
   const HEIGHT = canvas.height;
@@ -22,7 +22,7 @@ export function renderBarVisualizer(canvas, ctx, audioData) {
 
     let temp = 0;
     const transValue = 10;
-    if (barHeight != 0) {
+    if (barHeight !== 0) {
       for (let j = 0; j <= barHeight; j += transValue) {
         temp += 1 / (barHeight / 50) / 2;
         ctx.fillStyle = `rgba(${r},${g},${b},${temp})`;

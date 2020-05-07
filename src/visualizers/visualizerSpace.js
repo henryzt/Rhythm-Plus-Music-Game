@@ -1,3 +1,4 @@
+/* eslint-disable */
 /**
  * Created by Michael on 31/12/13.
  * modified by henryz00

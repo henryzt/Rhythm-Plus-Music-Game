@@ -11,7 +11,6 @@ export default class YoutubePlayer {
   }
 
   playVideo() {
-    console.log(this.ytPlayer);
     if (this.vm.srcMode !== "youtube") return;
     this.ytPlayer.playVideo();
   }

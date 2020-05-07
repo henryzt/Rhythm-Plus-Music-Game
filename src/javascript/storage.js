@@ -1,4 +1,4 @@
-import { demo } from "./demo.js";
+import { demo } from "./demo";
 
 export function saveToLocal(name, timeArr) {
   const local = JSON.parse(localStorage.getItem("localTimeline")) || {};

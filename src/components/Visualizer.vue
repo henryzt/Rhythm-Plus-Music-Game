@@ -8,7 +8,7 @@
 
 
 <script>
-import { renderBarVisualizer } from '../visualizers/visualizerBar';
+import renderBarVisualizer from '../visualizers/visualizerBar';
 import { initSpaceVisualizer, renderSpaceVisualizer } from '../visualizers/visualizerSpace';
 
 // visualizers

@@ -30,7 +30,9 @@ export default class GameInstance {
     // init
 
     for (const keyBind of this.trackKeyBind) {
-      this.dropTrackArr.push(new DropTrack(vm, this, 0, this.trackMaxWidth, keyBind));
+      this.dropTrackArr.push(
+        new DropTrack(vm, this, 0, this.trackMaxWidth, keyBind)
+      );
     }
 
     this.reposition();
@@ -51,12 +53,16 @@ export default class GameInstance {
     const startX = this.canvas.width / 2 - (this.trackNum * trackWidth) / 2;
     let counter = 0;
     for (const track of this.dropTrackArr) {
-      this.dropTrackArr[counter].resizeTrack(startX + trackWidth * counter + counter, trackWidth);
+      this.dropTrackArr[counter].resizeTrack(
+        startX + trackWidth * counter + counter,
+        trackWidth
+      );
       counter++;
     }
 
     this.vm.checkHitLineY = (this.canvas.height / 10) * 9;
-    this.vm.noteSpeedPxPerSec = this.vm.checkHitLineY / Number(this.vm.noteSpeedInSec);
+    this.vm.noteSpeedPxPerSec =
+      this.vm.checkHitLineY / Number(this.vm.noteSpeedInSec);
   }
 
   registerInput() {
@@ -75,13 +81,13 @@ export default class GameInstance {
 
     this.canvas.addEventListener(
       "touchstart",
-      function (e) {
+      (e) => {
         for (let c = 0; c < e.changedTouches.length; c++) {
           // touchInf[e.changedTouches[c].identifier] = {"x":e.changedTouches[c].clientX,"y":e.changedTouches[c].clientY};
           const x = e.changedTouches[c].clientX;
           const y = e.changedTouches[c].clientY;
 
-          this.dropTrackArr.forEach(function (track) {
+          this.dropTrackArr.forEach((track) => {
             if (x > track.x && x < track.x + track.width) {
               this.onKeyDown(track.keyBind);
             }
@@ -97,7 +103,8 @@ export default class GameInstance {
     if (!this.vm.playMode) {
       const cTime = await this.getCurrentTime();
       console.log(cTime, key);
-      if (this.trackKeyBind.includes(key)) this.timeArr.push({ time: cTime, key });
+      if (this.trackKeyBind.includes(key))
+        this.timeArr.push({ time: cTime, key });
     }
     for (const track of this.dropTrackArr) {
       track.keyDown(key);
@@ -147,7 +154,9 @@ export default class GameInstance {
 
   getCurrentTime() {
     // it seems that 'getPlayerTime' is async, thus all places calling this func need to await res [help wanted]
-    return this.vm.srcMode == "youtube" ? this.ytPlayer.getPlayerTime() : this.audio.currentTime;
+    return this.vm.srcMode == "youtube"
+      ? this.ytPlayer.getPlayerTime()
+      : this.audio.currentTime;
   }
 
   resetPlaying(resetTimeArr) {

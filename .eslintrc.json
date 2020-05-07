@@ -36,7 +36,8 @@
     ],
     "no-use-before-define": 0,
     "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
-    "func-names": 0
+    "func-names": 0,
+    "no-console": ["error", { "allow": ["warn", "error"] }]
   },
   "env": {
     "es6": true,

@@ -33,9 +33,6 @@ export default {
             bufferLength: null,
             dataArray: null
         },
-        canvas: null,
-        ctx: null,
-        audio: null,
         visualizer: 2,
         visualizerArr,
         visualizerLoaded: false, // visualizer loaded indicator

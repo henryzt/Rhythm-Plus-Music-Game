@@ -1,4 +1,11 @@
 {
+  "name": "rhythm-plus-game",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "author": {
+    "name": "henryz00"
+  },
   "scripts": {
     "format": "prettier --write \"src/**/*.js\" && eslint --fix \"src/**/*.js\"",
     "start": "NODE_ENV=development webpack-dev-server --mode development --progress",
@@ -50,5 +57,6 @@
     "*.{html,css,json}": [
       "prettier --write"
     ]
-  }
+  },
+  "license": "ISC"
 }

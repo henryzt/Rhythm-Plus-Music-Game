@@ -2,7 +2,7 @@ const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const VueLoaderPlugin = require("vue-loader/lib/plugin");
-// const CopyPlugin = require("copy-webpack-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
 
 const isProduction = () => process.env.NODE_ENV === "production";
 
@@ -47,7 +47,7 @@ module.exports = {
     new webpack.HotModuleReplacementPlugin(),
     new webpack.DefinePlugin({
       "process.env": {
-        NODE_ENV: JSON.stringify("production"),
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV),
       },
     }),
     new HtmlWebpackPlugin({
@@ -55,11 +55,10 @@ module.exports = {
       inject: "body",
     }),
     new VueLoaderPlugin(),
-    // new CopyPlugin([
-    //   {
-    //     from: path.resolve(__dirname, "src", "public", "style.css"),
-    //     to: path.resolve(__dirname, "dist", "style.css"),
-    //   },
-    // ]),
+    new CopyPlugin([
+      {
+        from: path.resolve(__dirname, "src", "public"),
+      },
+    ]),
   ],
 };

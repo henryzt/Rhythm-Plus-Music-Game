@@ -1,14 +1,16 @@
 <template>
     <!-- visualizer space -->
     <div class="visualizer">
-        <div class="blurFilter" v-if="$parent.visualizer==4"></div>
-        <div ref="visualizerSpace" id="visualizer"></div>
+        <div class="blurFilter" v-if="$parent.visualizer===4"></div>
+        <div ref="visualizerSpace" id="visualizer" v-show="$parent.visualizer!=0 && $parent.visualizer!=2"></div>
     </div>
 </template>
+
 
 <script>
 
 import {renderBarVisualizer} from '../visualizers/visualizerBar';
+import { initSpaceVisualizer, renderSpaceVisualizer } from '../visualizers/visualizerSpace';
 
 export default {
   name: 'Visualizer',
@@ -26,12 +28,6 @@ export default {
         ctx: null,
         audio: null
     }
-  },
-  mounted(){
-    //   this.audio = this.$parent.audio;
-    //   this.canvas = this.$parent.canvas;
-    //   this.ctx = this.$parent.ctx;
-    
   },
   methods: {
     initVisualizerData() {
@@ -53,10 +49,9 @@ export default {
         this.audioData.analyser = analyser;
     },
     initAllVisualizersIfRequried() {
-        console.log("NO")
         if (!this.audioData.audioCtx && !this.$parent.visualizerLoaded) {
             this.initVisualizerData();
-            // initSpaceVisualizer();
+            initSpaceVisualizer(this.audioData, this.$refs.visualizerSpace);
             this.$parent.visualizerLoaded = true;
         }
     },
@@ -64,7 +59,7 @@ export default {
         if (!this.$parent.visualizerLoaded) return;
         switch (this.$parent.visualizer) {
         case 1:
-            // renderSpaceVisualizer();
+            renderSpaceVisualizer();
             break;
         case 2:
             renderBarVisualizer(this.canvas, this.ctx, this.audioData);
@@ -72,16 +67,16 @@ export default {
             this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
             break;
         case 3:
-            // renderSpaceVisualizer(true);
+            renderSpaceVisualizer(true);
             break;
         case 4:
-            // renderSpaceVisualizer(true);
+            renderSpaceVisualizer(true);
             break;
         default:
             this.ctx.fillStyle = "black";
-            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         }
-    }
+    },
   },
     watch : {
         audio: function(){

@@ -26,7 +26,12 @@ export function renderBarVisualizer(canvas, ctx, audioData) {
       for (let j = 0; j <= barHeight; j += transValue) {
         temp += 1 / (barHeight / 50) / 2;
         ctx.fillStyle = `rgba(${r},${g},${b},${temp})`;
-        ctx.fillRect(barX, HEIGHT - barHeight + j + 10, barWidth, barHeight / transValue);
+        ctx.fillRect(
+          barX,
+          HEIGHT - barHeight + j + 10,
+          barWidth,
+          barHeight / transValue
+        );
       }
       barX += barWidth;
     }

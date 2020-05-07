@@ -13,9 +13,8 @@ export function loadFromLocal(name) {
     local = JSON.parse(local);
     console.log("loaded");
     return local[name].timeline;
-  } 
-    return [];
-  
+  }
+  return [];
 }
 
 export function loadFromDemo(name) {

@@ -27,7 +27,7 @@ export function startDemo(instance, demoNum) {
       instance.startSong({
         youtubeId: "OFS3OYNs7U4",
         srcMode: "youtube",
-        visualizerNo: 2,
+        visualizerNo: 0,
         timeArr: loadFromDemo("bronson"),
       });
       break;

@@ -3,6 +3,11 @@
  * modified by henryz00
  * original repo: https://github.com/michaelbromley/soundcloud-visualizer
  */
+let visualizer;
+let audioSource;
+let analyser;
+let dataArray;
+let container;
 
 const PlayerAudioSource = function (player) {
   const self = this;
@@ -35,7 +40,7 @@ const PlayerAudioSource = function (player) {
  * which takes an options object specifying the element to append the canvases to and the audiosource which will
  * provide the data to be visualized.
  */
-export default SpaceVisualizer = function () {
+const SpaceVisualizer = function () {
   let tileSize;
   let tiles = [];
   let stars = [];
@@ -384,7 +389,7 @@ export default SpaceVisualizer = function () {
   this.init = function (options) {
     audioSource = options.audioSource;
     // let container = document.getElementById(options.containerId);
-    const container = app.$refs.visualizerSpace;
+    // const container = app.$refs.visualizerSpace;
 
     // foreground hexagons layer
     fgCanvas = document.createElement("canvas");
@@ -420,12 +425,12 @@ export default SpaceVisualizer = function () {
   };
 };
 
-let visualizer;
-let audioSource;
-
-function initSpaceVisualizer() {
-  visualizer = new Visualizer();
+export function initSpaceVisualizer(audioData, canvasContainer) {
+  visualizer = new SpaceVisualizer();
   // let player = audio;
+  analyser = audioData.analyser;
+  dataArray = audioData.dataArray;
+  container = canvasContainer;
 
   audioSource = new PlayerAudioSource();
 
@@ -435,7 +440,7 @@ function initSpaceVisualizer() {
   });
 }
 
-function renderSpaceVisualizer(drawPolygon) {
+export function renderSpaceVisualizer(drawPolygon) {
   visualizer.render(drawPolygon);
 }
 

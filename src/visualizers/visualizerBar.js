@@ -1,37 +1,8 @@
-// audio.crossOrigin = "anonymous";
-let audioCtx;
-let src;
-let analyser;
-let bufferLength;
-let dataArray;
-
-function initVisualizerData() {
-  audioCtx = new AudioContext();
-  src = audioCtx.createMediaElementSource(audio);
-  analyser = audioCtx.createAnalyser();
-
-  src.connect(analyser);
-  analyser.connect(audioCtx.destination);
-
-  analyser.fftSize = 256;
-
-  bufferLength = analyser.frequencyBinCount;
-
-  dataArray = new Uint8Array(bufferLength);
-}
-
-function initAllVisualizersIfRequried() {
-  if (!audioCtx) {
-    initVisualizerData();
-    initSpaceVisualizer();
-    visualizerLoaded = true;
-  }
-}
-
 let barHeight;
 let barX = 0;
 
-function renderBarVisualizer() {
+export function renderBarVisualizer(canvas, ctx, audioData) {
+  const { analyser, dataArray, bufferLength } = audioData;
   const WIDTH = canvas.width;
   const HEIGHT = canvas.height;
   const barWidth = (WIDTH / bufferLength) * 2.5;
@@ -55,12 +26,7 @@ function renderBarVisualizer() {
       for (let j = 0; j <= barHeight; j += transValue) {
         temp += 1 / (barHeight / 50) / 2;
         ctx.fillStyle = `rgba(${r},${g},${b},${temp})`;
-        ctx.fillRect(
-          barX,
-          HEIGHT - barHeight + j + 10,
-          barWidth,
-          barHeight / transValue
-        );
+        ctx.fillRect(barX, HEIGHT - barHeight + j + 10, barWidth, barHeight / transValue);
       }
       barX += barWidth;
     }

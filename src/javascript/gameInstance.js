@@ -108,33 +108,9 @@ export default class GameInstance {
   update() {
     requestAnimationFrame(this.update.bind(this));
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.renderVisualizer();
+    this.vm.visualizerInstance.renderVisualizer();
     for (const track of this.dropTrackArr) {
       track.update();
-    }
-  }
-
-  // render visualizer
-  renderVisualizer() {
-    if (!this.vm.visualizerLoaded) return;
-    switch (this.vm.visualizer) {
-      case 1:
-        // renderSpaceVisualizer();
-        break;
-      case 2:
-        // renderBarVisualizer();
-        this.ctx.fillStyle = "rgba(10,10,44,0.2)";
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-        break;
-      case 3:
-        // renderSpaceVisualizer(true);
-        break;
-      case 4:
-        // renderSpaceVisualizer(true);
-        break;
-      default:
-        this.ctx.fillStyle = "black";
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
   }
 
@@ -159,7 +135,7 @@ export default class GameInstance {
         } catch (e) {
           console.error(e);
         }
-        // initAllVisualizersIfRequried();
+        // this.vm.visualizerInstance.initAllVisualizersIfRequried();
         clearInterval(intervalPrePlay);
         this.intervalPlay = setInterval(async () => {
           const cTime = await this.getCurrentTime();

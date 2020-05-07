@@ -35,7 +35,7 @@ const PlayerAudioSource = function (player) {
  * which takes an options object specifying the element to append the canvases to and the audiosource which will
  * provide the data to be visualized.
  */
-const Visualizer = function () {
+export default SpaceVisualizer = function () {
   let tileSize;
   let tiles = [];
   let stars = [];
@@ -69,12 +69,8 @@ const Visualizer = function () {
     // calculate the vertices of the polygon
     this.vertices = [];
     for (let i = 1; i <= this.sides; i += 1) {
-      x =
-        this.x +
-        this.tileSize * Math.cos((i * 2 * Math.PI) / this.sides + Math.PI / 6);
-      y =
-        this.y +
-        this.tileSize * Math.sin((i * 2 * Math.PI) / this.sides + Math.PI / 6);
+      x = this.x + this.tileSize * Math.cos((i * 2 * Math.PI) / this.sides + Math.PI / 6);
+      y = this.y + this.tileSize * Math.sin((i * 2 * Math.PI) / this.sides + Math.PI / 6);
       this.vertices.push([x, y]);
     }
   }
@@ -83,10 +79,8 @@ const Visualizer = function () {
     let rotation = fgRotation;
     rotation -= getVolume() > 10000 ? Math.sin(getVolume() / 800000) : 0;
     for (let i = 0; i <= this.sides - 1; i += 1) {
-      this.vertices[i][0] =
-        this.vertices[i][0] - this.vertices[i][1] * Math.sin(rotation);
-      this.vertices[i][1] =
-        this.vertices[i][1] + this.vertices[i][0] * Math.sin(rotation);
+      this.vertices[i][0] = this.vertices[i][0] - this.vertices[i][1] * Math.sin(rotation);
+      this.vertices[i][1] = this.vertices[i][1] + this.vertices[i][0] * Math.sin(rotation);
     }
   };
   const minMental = 0;
@@ -94,10 +88,7 @@ const Visualizer = function () {
   Polygon.prototype.calculateOffset = function (coords) {
     const angle = Math.atan(coords[1] / coords[0]);
     const distance = Math.sqrt(Math.pow(coords[0], 2) + Math.pow(coords[1], 2)); // a bit of pythagoras
-    const mentalFactor = Math.min(
-      Math.max(Math.tan(getVolume() / 6000) * 0.5, -20),
-      2
-    ); // this factor makes the visualization go crazy wild
+    const mentalFactor = Math.min(Math.max(Math.tan(getVolume() / 6000) * 0.5, -20), 2); // this factor makes the visualization go crazy wild
     /*
         // debug
         minMental = mentalFactor < minMental ? mentalFactor : minMental;
@@ -133,26 +124,17 @@ const Visualizer = function () {
     if (val > 0) {
       this.ctx.beginPath();
       let offset = this.calculateOffset(this.vertices[0]);
-      this.ctx.moveTo(
-        this.vertices[0][0] + offset[0],
-        this.vertices[0][1] + offset[1]
-      );
+      this.ctx.moveTo(this.vertices[0][0] + offset[0], this.vertices[0][1] + offset[1]);
       // draw the polygon
       for (let i = 1; i <= this.sides - 1; i += 1) {
         offset = this.calculateOffset(this.vertices[i]);
-        this.ctx.lineTo(
-          this.vertices[i][0] + offset[0],
-          this.vertices[i][1] + offset[1]
-        );
+        this.ctx.lineTo(this.vertices[i][0] + offset[0], this.vertices[i][1] + offset[1]);
       }
       this.ctx.closePath();
 
       if (val > 128) {
         r = (val - 128) * 2;
-        g =
-          (Math.cos((((2 * val) / 128) * Math.PI) / 2 - (4 * Math.PI) / 3) +
-            1) *
-          128;
+        g = (Math.cos((((2 * val) / 128) * Math.PI) / 2 - (4 * Math.PI) / 3) + 1) * 128;
         b = (val - 105) * 3;
       } else if (val > 175) {
         r = (val - 128) * 2;
@@ -160,14 +142,8 @@ const Visualizer = function () {
         b = (val - 105) * 3;
       } else {
         r = (Math.cos((((2 * val) / 128) * Math.PI) / 2) + 1) * 128;
-        g =
-          (Math.cos((((2 * val) / 128) * Math.PI) / 2 - (4 * Math.PI) / 3) +
-            1) *
-          128;
-        b =
-          (Math.cos((((2.4 * val) / 128) * Math.PI) / 2 - (2 * Math.PI) / 3) +
-            1) *
-          128;
+        g = (Math.cos((((2 * val) / 128) * Math.PI) / 2 - (4 * Math.PI) / 3) + 1) * 128;
+        b = (Math.cos((((2.4 * val) / 128) * Math.PI) / 2 - (2 * Math.PI) / 3) + 1) * 128;
       }
       if (val > 210) {
         this.cubed = val; // add the cube effect if it's really loud
@@ -177,13 +153,9 @@ const Visualizer = function () {
       }
       // set the alpha
       const e = 2.7182;
-      a =
-        0.5 / (1 + 40 * Math.pow(e, -val / 8)) +
-        0.5 / (1 + 40 * Math.pow(e, -val / 20));
+      a = 0.5 / (1 + 40 * Math.pow(e, -val / 8)) + 0.5 / (1 + 40 * Math.pow(e, -val / 20));
 
-      this.ctx.fillStyle = `rgba(${Math.round(r)}, ${Math.round(
-        g
-      )}, ${Math.round(b)}, ${a})`;
+      this.ctx.fillStyle = `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, ${a})`;
       this.ctx.fill();
       // stroke
       if (val > 20) {
@@ -202,17 +174,11 @@ const Visualizer = function () {
     this.ctx.beginPath();
     // draw the highlight
     let offset = this.calculateOffset(this.vertices[0]);
-    this.ctx.moveTo(
-      this.vertices[0][0] + offset[0],
-      this.vertices[0][1] + offset[1]
-    );
+    this.ctx.moveTo(this.vertices[0][0] + offset[0], this.vertices[0][1] + offset[1]);
     // draw the polygon
     for (let i = 0; i <= this.sides - 1; i += 1) {
       offset = this.calculateOffset(this.vertices[i]);
-      this.ctx.lineTo(
-        this.vertices[i][0] + offset[0],
-        this.vertices[i][1] + offset[1]
-      );
+      this.ctx.lineTo(this.vertices[i][0] + offset[0], this.vertices[i][1] + offset[1]);
     }
     this.ctx.closePath();
     const a = this.highlight / 100;
@@ -265,22 +231,18 @@ const Visualizer = function () {
     this.high = 0;
   }
   Star.prototype.drawStar = function () {
-    const distanceFromCentre = Math.sqrt(
-      Math.pow(this.x, 2) + Math.pow(this.y, 2)
-    );
+    const distanceFromCentre = Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
 
     // stars as lines
     const brightness = 200 + Math.min(Math.round(this.high * 5), 55);
-    this.ctx.lineWidth =
-      0.5 + (distanceFromCentre / 2000) * Math.max(this.starSize / 2, 1);
+    this.ctx.lineWidth = 0.5 + (distanceFromCentre / 2000) * Math.max(this.starSize / 2, 1);
     this.ctx.strokeStyle = `rgba(${brightness}, ${brightness}, ${brightness}, 1)`;
     this.ctx.beginPath();
     this.ctx.moveTo(this.x, this.y);
     const lengthFactor =
       1 +
       Math.min(
-        ((Math.pow(distanceFromCentre, 2) / 30000) * Math.pow(getVolume(), 2)) /
-          6000000,
+        ((Math.pow(distanceFromCentre, 2) / 30000) * Math.pow(getVolume(), 2)) / 6000000,
         distanceFromCentre
       );
     let toX = Math.cos(this.angle) * -lengthFactor;
@@ -304,12 +266,7 @@ const Visualizer = function () {
 
     const limitY = fgCanvas.height / 2 + 500;
     const limitX = fgCanvas.width / 2 + 500;
-    if (
-      this.y > limitY ||
-      this.y < -limitY ||
-      this.x > limitX ||
-      this.x < -limitX
-    ) {
+    if (this.y > limitY || this.y < -limitY || this.x > limitX || this.x < -limitX) {
       // it has gone off the edge so respawn it somewhere near the middle.
       this.x = ((Math.random() - 0.5) * fgCanvas.width) / 3;
       this.y = ((Math.random() - 0.5) * fgCanvas.height) / 3;
@@ -354,10 +311,7 @@ const Visualizer = function () {
       bgCanvas.width - Math.min(Math.pow(val, 2.7), bgCanvas.width - 20)
     );
     grd.addColorStop(0, "rgba(0,0,0,0)"); // centre is transparent black
-    grd.addColorStop(
-      0.8,
-      `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, 0.4)`
-    ); // edges are reddish
+    grd.addColorStop(0.8, `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, 0.4)`); // edges are reddish
 
     bgCtx.fillStyle = grd;
     bgCtx.fill();
@@ -387,10 +341,7 @@ const Visualizer = function () {
       sfCanvas.height = window.innerHeight;
       sfCtx.translate(fgCanvas.width / 2, fgCanvas.height / 2);
 
-      tileSize =
-        fgCanvas.width > fgCanvas.height
-          ? fgCanvas.width / 25
-          : fgCanvas.height / 25;
+      tileSize = fgCanvas.width > fgCanvas.height ? fgCanvas.width / 25 : fgCanvas.height / 25;
 
       drawBg();
       makePolygonArray();
@@ -405,18 +356,8 @@ const Visualizer = function () {
   };
 
   const draw = function (drawPolygon) {
-    fgCtx.clearRect(
-      -fgCanvas.width,
-      -fgCanvas.height,
-      fgCanvas.width * 2,
-      fgCanvas.height * 2
-    );
-    sfCtx.clearRect(
-      -fgCanvas.width / 2,
-      -fgCanvas.height / 2,
-      fgCanvas.width,
-      fgCanvas.height
-    );
+    fgCtx.clearRect(-fgCanvas.width, -fgCanvas.height, fgCanvas.width * 2, fgCanvas.height * 2);
+    sfCtx.clearRect(-fgCanvas.width / 2, -fgCanvas.height / 2, fgCanvas.width, fgCanvas.height);
 
     stars.forEach(function (star) {
       star.drawStar();

@@ -1,18 +1,14 @@
 <template>
    <div class="game">
-      <PlayControl ref="control"></PlayControl>
+    <PlayControl ref="control"></PlayControl>
 
-      <div class="center" ref="hitIndicator">
-        {{markJudge}} {{combo>=5?combo:''}}
-      </div>
+    <div class="center" ref="hitIndicator">
+    {{markJudge}} {{combo>=5?combo:''}}
+    </div>
 
-      <canvas ref="mainCanvas"></canvas>
+    <canvas ref="mainCanvas"></canvas>
 
-      <!-- visualizer space -->
-      <div class="visualizer">
-        <div class="blurFilter" v-if="visualizer==4"></div>
-        <div ref="visualizerSpace" id="visualizer"></div>
-      </div>
+    <Visualizer :audio="audio" :canvas="canvas" :ctx="ctx" ref="visualizer"></Visualizer>
 
     <div v-show="srcMode==='youtube'">
         <Youtube id="ytPlayer" ref="youtube" :video-id="youtubeId" :player-vars="{controls: 0, rel: 0 }"></Youtube>
@@ -23,6 +19,7 @@
 
 <script>
 import PlayControl from '../components/PlayControl.vue';
+import Visualizer from '../components/Visualizer.vue';
 import GameInstance from '../javascript/gameInstance';
 import { Youtube } from 'vue-youtube'
 
@@ -41,6 +38,7 @@ export default {
     name: 'Game',
     components: {
         PlayControl,
+        Visualizer,
         Youtube
     },
     data(){
@@ -73,6 +71,9 @@ export default {
         },
         ytPlayer() {
             return this.$refs.youtube.player;
+        },
+        visualizerInstance() {
+            return this.$refs.visualizer;
         }
     },
     watch: {

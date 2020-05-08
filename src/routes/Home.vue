@@ -1,8 +1,12 @@
 <template>
    <div>
-        <audio ref="audioElement" src="songs/whywelose.mp3" volume="0.5" controls preload="auto"></audio>
+        <audio ref="audioElement" src="songs/opening.mp3" autoplay preload="auto"></audio>
 
-        <Visualizer ref="visualizer" :audio="audio" :setVisualizerNo="2" :autoUpdate="true"></Visualizer>
+        <div class="center_logo">
+            <img src="assets/logo.png" style="max-width: 500px; padding: 50px;"/>
+        </div>
+
+        <Visualizer ref="visualizer" :audio="audio" :setVisualizerNo="1" :autoUpdate="true"></Visualizer>
     </div>
 </template>
 
@@ -38,5 +42,13 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+    .center_logo{
+        text-align: center;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%)
+    }
+
 </style>

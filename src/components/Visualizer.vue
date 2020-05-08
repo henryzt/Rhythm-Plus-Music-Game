@@ -48,6 +48,8 @@ export default {
         this.canvas.height = window.innerHeight;
         if(this.autoUpdate)
             this.update();
+        if(this.setVisualizerNo)
+            this.visualizer = this.setVisualizerNo;
     },
   methods: {
     initVisualizerData() {

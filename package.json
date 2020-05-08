@@ -16,7 +16,6 @@
     "serve": "yarn run build && serve ."
   },
   "dependencies": {
-    "css-loader": "^3.5.3",
     "firebase": "^7.14.3",
     "firebaseui": "^4.5.0",
     "vue": "^2.6.11",
@@ -42,7 +41,8 @@
     "vue-template-compiler": "^2.6.11",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.10.3"
+    "webpack-dev-server": "^3.10.3",
+    "css-loader": "^3.5.3"
   },
   "husky": {
     "hooks": {

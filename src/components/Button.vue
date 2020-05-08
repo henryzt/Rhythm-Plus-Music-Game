@@ -84,7 +84,7 @@ button:focus::before {
   opacity: 1;
 }
 
-button::after {
+.wrap::after {
   content: "";
   width: 30px;
   height: 30px;
@@ -95,7 +95,7 @@ button::after {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  animation: ring 1.5s infinite;
+  animation: ring 1s infinite;
 }
 
 button:hover::after,

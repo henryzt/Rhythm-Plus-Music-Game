@@ -69,6 +69,14 @@ body {
   pointer-events: none;
 }
 
+.center_logo {
+  text-align: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 #ytPlayer {
   position: fixed;
   width: 100vw;

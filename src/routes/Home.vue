@@ -1,19 +1,17 @@
 <template>
   <div>
-    <audio ref="audioElement" src="songs/opening.mp3" autoplay preload="auto"></audio>
+    <PageBackground songSrc="songs/opening.mp3"></PageBackground>
 
     <div class="center_logo">
       <img src="assets/logo.png" style="max-width: 550px; padding: 50px;" />
       <Button text="Start Game" @click="goToGame"></Button>
       <div class="login" @click="goToAuth">Login or Reigster</div>
     </div>
-
-    <Visualizer ref="visualizer" :audio="audio" :setVisualizerNo="1" :autoUpdate="true"></Visualizer>
   </div>
 </template>
 
 <script>
-import Visualizer from '../components/Visualizer.vue';
+import PageBackground from '../components/PageBackground.vue';
 import Button from '../components/Button.vue';
 
 
@@ -21,12 +19,12 @@ import Button from '../components/Button.vue';
 export default {
     name: 'Home',
     components: {
-        Visualizer,
+        PageBackground,
         Button
     },
     data(){
         return {
-            audio: null
+            
         }
     },
     computed: {
@@ -36,8 +34,6 @@ export default {
 
     },
     mounted() {
-        this.audio = this.$refs.audioElement;
-        this.audio.load();
 
     },
     methods:{

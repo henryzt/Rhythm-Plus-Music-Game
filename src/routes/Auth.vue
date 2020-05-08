@@ -1,19 +1,17 @@
 <template>
   <div>
-    <audio ref="audioElement" src="songs/login.mp3" autoplay preload="auto"></audio>
+    <PageBackground songSrc="songs/login.mp3"></PageBackground>
 
     <div class="center_logo">
       <h3>Signin or Register Now for Complete Experience!</h3>
       <div id="firebaseui-auth-container"></div>
     </div>
-
-    <Visualizer ref="visualizer" :audio="audio" :setVisualizerNo="1" :autoUpdate="true"></Visualizer>
   </div>
 </template>
 
 
 <script>
-import Visualizer from '../components/Visualizer.vue';
+import PageBackground from '../components/PageBackground.vue';
 import firebase from 'firebase';
 import * as firebaseui from "firebaseui"
 import "firebaseui/dist/firebaseui.css";
@@ -21,11 +19,11 @@ import "firebaseui/dist/firebaseui.css";
 export default {
   name: 'Auth',
   components:{
-      Visualizer
+      PageBackground
   },
   data(){
         return {
-            audio: null
+            
         }
     },
     computed: {
@@ -35,9 +33,6 @@ export default {
 
     },
     mounted() {
-        this.audio = this.$refs.audioElement;
-        this.audio.load();
-
         const uiConfig = {
             signInSuccessUrl: '/game',
             signInOptions: [

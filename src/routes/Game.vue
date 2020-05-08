@@ -8,7 +8,7 @@
 
     <canvas ref="mainCanvas"></canvas>
 
-    <Visualizer ref="visualizer" :audio="audio" :canvas="canvas" :ctx="ctx"></Visualizer>
+    <Visualizer ref="visualizer" :audio="audio"></Visualizer>
 
     <div v-show="srcMode==='youtube'">
         <Youtube id="ytPlayer" ref="youtube" :video-id="youtubeId" :player-vars="{controls: 0, rel: 0 }"></Youtube>

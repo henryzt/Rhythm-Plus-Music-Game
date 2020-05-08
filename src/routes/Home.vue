@@ -1,6 +1,8 @@
 <template>
    <div>
-        Hello world
+        <audio ref="audioElement" src="songs/whywelose.mp3" volume="0.5" controls preload="auto"></audio>
+
+        <Visualizer ref="visualizer" :audio="audio" :setVisualizerNo="2" :autoUpdate="true"></Visualizer>
     </div>
 </template>
 
@@ -16,9 +18,7 @@ export default {
     },
     data(){
         return {
-            audio: null,
-            canvas: null,
-            ctx: null,
+            audio: null
         }
     },
     computed: {
@@ -28,7 +28,8 @@ export default {
 
     },
     mounted() {
-
+        this.audio = this.$refs.audioElement;
+        this.audio.load();
 
     },
     methods:{

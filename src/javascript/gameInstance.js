@@ -180,6 +180,10 @@ export default class GameInstance {
     this.playGame();
   }
 
+  destroyInstance() {
+    this.resetPlaying();
+  }
+
   // local storage
   saveCurrentTimeArrToLocal(name) {
     saveToLocal(name, this.timeArr);

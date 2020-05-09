@@ -7,7 +7,7 @@
     <a
       @click="toggleVisualizer"
     >{{$parent.visualizerInstance?$parent.visualizerInstance.currentVisualizer:''}}</a>
-    <div :class="{hidden: !$parent.showControl}" style="transition: opacity 1s ease-in-out;">
+    <div v-show="$parent.showControl">
       <br />
       <audio ref="audioElement" :src="$parent.currentSong" volume="0.5" controls preload="auto"></audio>
       <div id="mode">{{$parent.playMode ? "Play Mode" : "Create Mode"}}</div>
@@ -52,6 +52,11 @@
         <input v-model="youtubeId" placeholder="enter youtube id" />
         <button @click="$parent.instance.loadYoutubeVideo(youtubeId)">Load</button>
       </div>
+      <br />
+      <!-- 3d -->
+      <input type="checkbox" id="3d" name="3d" value="3d" v-model="$parent.perspective" />
+      <label for="3d">3D Perspective</label>
+      <br />
       <br />
       Current Mode - {{$parent.srcMode}}
       <br />

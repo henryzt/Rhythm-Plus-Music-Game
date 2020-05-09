@@ -1,20 +1,24 @@
 <template>
-   <div class="game">
+  <div class="game">
     <PlayControl ref="control"></PlayControl>
 
-    <div class="center" ref="hitIndicator">
-    {{markJudge}} {{combo>=5?combo:''}}
-    </div>
+    <div class="center" ref="hitIndicator">{{markJudge}} {{combo>=5?combo:''}}</div>
 
-    <canvas ref="mainCanvas"></canvas>
+    <div class="gameWrapper">
+      <canvas ref="mainCanvas" id="gameCanvas" :class="{perspective}"></canvas>
+    </div>
 
     <Visualizer ref="visualizer" :audio="audio"></Visualizer>
 
     <div v-show="srcMode==='youtube'">
-        <Youtube id="ytPlayer" ref="youtube" :video-id="youtubeId" :player-vars="{controls: 0, rel: 0 }"></Youtube>
+      <Youtube
+        id="ytPlayer"
+        ref="youtube"
+        :video-id="youtubeId"
+        :player-vars="{controls: 0, rel: 0 }"
+      ></Youtube>
     </div>
-      
-    </div>
+  </div>
 </template>
 
 <script>
@@ -50,7 +54,8 @@ export default {
             srcMode: "url",
             instance: null,
             visualizerInstance: null,
-            youtubeId: "jNQXAC9IVRw"
+            youtubeId: "jNQXAC9IVRw",
+            perspective: false
         }
     },
     computed: {
@@ -81,11 +86,26 @@ export default {
         this.instance = new GameInstance(this);
 
     },
+    destroyed(){
+        this.instance.destroyInstance()
+    },
     methods:{
 
     }
 };
 </script>
 
-<style>
+<style scoped>
+.gameWrapper {
+  perspective: 600px;
+}
+
+#gameCanvas {
+  transition: 2s;
+}
+
+.perspective {
+  transform: rotateX(30deg) scaleY(1.5);
+  transform-origin: 50% 100%;
+}
 </style>

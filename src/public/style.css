@@ -13,6 +13,7 @@ body {
   left: 20px;
   opacity: 0.5;
   transition: opacity 2s ease-in-out;
+  z-index: 100;
 }
 
 .center {
@@ -30,6 +31,8 @@ body {
   margin-top: -40px;
   margin-left: -200px;
   user-select: none;
+  z-index: 100;
+  pointer-events: none;
 
   opacity: 0;
   /* transition: opacity 2s ease-in-out; */
@@ -75,6 +78,7 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  width: 90%;
 }
 
 #ytPlayer {

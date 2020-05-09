@@ -109,4 +109,10 @@ export default {
   transform: rotateX(30deg) scaleY(1.5);
   transform-origin: 50% 100%;
 }
+
+@media only screen and (min-width: 800px) {
+  .perspective {
+    transform: rotateX(30deg) scale(1.5);
+  }
+}
 </style>

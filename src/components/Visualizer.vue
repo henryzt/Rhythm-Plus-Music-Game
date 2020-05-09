@@ -1,10 +1,10 @@
 <template>
-    <div class="visualizer">
-        <!-- visualizer space -->
-        <div class="blurFilter" v-if="visualizer===4"></div>
-        <canvas ref="visualizerCanvas" v-show="visualizer===2"></canvas>
-        <div ref="visualizerSpace" id="visualizer" v-show="visualizer!=0 && visualizer!=2"></div>
-    </div>
+  <div class="visualizer">
+    <!-- visualizer space -->
+    <div class="blurFilter" v-if="visualizer===4"></div>
+    <canvas ref="visualizerCanvas" v-show="visualizer===2"></canvas>
+    <div ref="visualizerSpace" id="visualizer" v-show="visualizer!=0 && visualizer!=2"></div>
+  </div>
 </template>
 
 
@@ -54,7 +54,7 @@ export default {
   methods: {
     initVisualizerData() {
         this.audio.crossOrigin = "anonymous"
-        let audioCtx = new AudioContext();
+        let audioCtx = new (window.AudioContext || window.webkitAudioContext);
         this.audioData.src = audioCtx.createMediaElementSource(this.audio);
         let analyser = audioCtx.createAnalyser();
         
@@ -125,5 +125,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

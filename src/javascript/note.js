@@ -25,7 +25,7 @@ export default function Note(vm, x, width) {
   };
 
   this.hitAndCountScore = function () {
-    if (vm.vibrate) window.navigator.vibrate(25);
+    this.vibrate(25);
     const percentage = this.getDistPercentage();
     vm.score += 1000 * (3 - percentage);
     vm.combo += 1;
@@ -40,7 +40,7 @@ export default function Note(vm, x, width) {
       vm.marks.offbeat += 1;
       vm.markJudge = "Offbeat";
     }
-    hitIndicator(vm);
+    this.hitIndicator(vm);
   };
 
   this.isOutOfCanvas = function () {
@@ -49,8 +49,8 @@ export default function Note(vm, x, width) {
       vm.marks.miss += 1;
       vm.combo = 0;
       vm.markJudge = "Miss";
-      if (vm.vibrate) window.navigator.vibrate([20, 20, 50]);
-      hitIndicator(vm);
+      this.vibrate([20, 20, 50]);
+      this.hitIndicator(vm);
     }
     return isOut;
   };
@@ -65,11 +65,16 @@ export default function Note(vm, x, width) {
     ctx.filter = "none";
     this.y += vm.noteSpeedPxPerSec * this.delta;
   };
-}
 
-function hitIndicator(vm) {
-  vm.$refs.hitIndicator.classList.remove("hitAnimation");
-  setTimeout(() => {
-    vm.$refs.hitIndicator.classList.add("hitAnimation");
-  }, 1);
+  this.vibrate = function (pattern) {
+    if (vm.vibrate && window.navigator.vibrate)
+      window.navigator.vibrate(pattern);
+  };
+
+  this.hitIndicator = function () {
+    vm.$refs.hitIndicator.classList.remove("hitAnimation");
+    setTimeout(() => {
+      vm.$refs.hitIndicator.classList.add("hitAnimation");
+    }, 1);
+  };
 }

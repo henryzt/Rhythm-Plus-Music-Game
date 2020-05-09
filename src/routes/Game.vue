@@ -55,7 +55,8 @@ export default {
             instance: null,
             visualizerInstance: null,
             youtubeId: "jNQXAC9IVRw",
-            perspective: false
+            perspective: false,
+            vibrate: true
         }
     },
     computed: {

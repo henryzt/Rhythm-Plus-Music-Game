@@ -56,6 +56,8 @@
       <!-- 3d -->
       <input type="checkbox" id="3d" name="3d" value="3d" v-model="$parent.perspective" />
       <label for="3d">3D Perspective</label>
+      <input type="checkbox" id="vibrate" name="vibrate" value="vibrate" v-model="$parent.vibrate" />
+      <label for="vibrate">Vibration</label>
       <br />
       <br />
       Current Mode - {{$parent.srcMode}}

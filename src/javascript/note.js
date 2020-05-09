@@ -25,6 +25,7 @@ export default function Note(vm, x, width) {
   };
 
   this.hitAndCountScore = function () {
+    if (vm.vibrate) window.navigator.vibrate(25);
     const percentage = this.getDistPercentage();
     vm.score += 1000 * (3 - percentage);
     vm.combo += 1;
@@ -48,6 +49,7 @@ export default function Note(vm, x, width) {
       vm.marks.miss += 1;
       vm.combo = 0;
       vm.markJudge = "Miss";
+      if (vm.vibrate) window.navigator.vibrate([20, 20, 50]);
       hitIndicator(vm);
     }
     return isOut;

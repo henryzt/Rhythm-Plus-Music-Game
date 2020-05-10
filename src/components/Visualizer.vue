@@ -10,6 +10,7 @@
 
 <script>
 import renderBarVisualizer from '../visualizers/visualizerBar';
+import fixAudioContext from '../helpers/fixAudioContext';
 import { initSpaceVisualizer, renderSpaceVisualizer } from '../visualizers/visualizerSpace';
 
 // visualizers
@@ -60,6 +61,7 @@ export default {
         
         this.audioData.src.connect(analyser);
         analyser.connect(audioCtx.destination);
+        // this.audioData.src.connect(audioCtx.destination);
 
         analyser.fftSize = 256;
 
@@ -69,6 +71,7 @@ export default {
 
         this.audioData.audioCtx = audioCtx;
         this.audioData.analyser = analyser;
+        fixAudioContext(audioCtx);
     },
     initAllVisualizersIfRequried() {
         if (!this.audioData.audioCtx && !this.visualizerLoaded) {

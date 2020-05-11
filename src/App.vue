@@ -1,17 +1,23 @@
 <template>
   <div id="app" class="unselectable">
-    <transition name="fade">
+    <AudioPlayback ref="audioElement"></AudioPlayback>
+    <transition name="fade" v-if="$store.state.audio">
       <router-view />
     </transition>
   </div>
 </template>
 
 <script>
+import AudioPlayback from './components/AudioPlayback.vue';
 
 export default {
   name: 'App',
   components: {
+    AudioPlayback
   },
+  mounted(){
+    this.$store.state.audio = this.$refs.audioElement;
+  }
 };
 </script>
 

@@ -1,7 +1,6 @@
 <template>
   <div>
     <!-- <audio ref="audioElement" :src="songSrc" autoplay loop preload="auto"></audio> -->
-    <AudioPlayback ref="audioElement" :songSrc="songSrc"></AudioPlayback>
 
     <Visualizer
       ref="visualizer"
@@ -15,7 +14,6 @@
 
 <script>
 import Visualizer from '../components/Visualizer.vue';
-import AudioPlayback from '../components/AudioPlayback.vue';
 
 export default {
   name: 'PageBackground',
@@ -31,7 +29,6 @@ export default {
   },
   components:{
       Visualizer,
-      AudioPlayback
   },
   data(){
         return {
@@ -39,8 +36,10 @@ export default {
         }
     },
     mounted() {
-        this.audio = this.$refs.audioElement;
-        // this.audio.load();
+        this.$store.state.audio.loadSong(this.songSrc, true)
+    },
+    destroyed(){
+        this.$store.state.audio.stop()
     }
 };
 </script>

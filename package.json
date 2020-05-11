@@ -17,6 +17,7 @@
     "deploy": "yarn build && firebase deploy && git push"
   },
   "dependencies": {
+    "axios": "^0.19.2",
     "firebase": "^7.14.3",
     "firebaseui": "^4.5.0",
     "vue": "^2.6.11",

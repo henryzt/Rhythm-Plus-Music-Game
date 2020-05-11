@@ -10,7 +10,6 @@
 
 <script>
 import renderBarVisualizer from '../visualizers/visualizerBar';
-import fixAudioContext from '../helpers/fixAudioContext';
 import { initSpaceVisualizer, renderSpaceVisualizer } from '../visualizers/visualizerSpace';
 
 // visualizers
@@ -53,9 +52,9 @@ export default {
             this.visualizer = this.setVisualizerNo;
     },
   methods: {
-    initVisualizerData() {
+    async initVisualizerData() {
         this.audio.crossOrigin = "anonymous"
-        let audioCtx = new (window.AudioContext || window.webkitAudioContext);
+        let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         this.audioData.src = audioCtx.createMediaElementSource(this.audio);
         let analyser = audioCtx.createAnalyser();
         
@@ -71,7 +70,8 @@ export default {
 
         this.audioData.audioCtx = audioCtx;
         this.audioData.analyser = analyser;
-        fixAudioContext(audioCtx);
+
+
     },
     initAllVisualizersIfRequried() {
         if (!this.audioData.audioCtx && !this.visualizerLoaded) {

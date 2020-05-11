@@ -1,7 +1,7 @@
 // Fix iOS Audio Context by Blake Kus https://gist.github.com/kus/3f01d60569eeadefe3a1
 // MIT license
 export default function (audioContext) {
-  var fixAudioContext = function () {
+  var fixAudioContext = async function () {
     if (audioContext) {
       //   console.log(audioContext);
       // Create empty buffer

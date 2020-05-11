@@ -8,7 +8,7 @@
         style="max-width: 550px; padding: 50px 0; width:100%;box-sizing: border-box;"
       />
       <Button text="Start Game" @click="goToGame"></Button>
-      <div class="login" @click="goToAuth">Login or Reigster</div>
+      <div class="text_button" @click="goToAuth">Login or Reigster</div>
     </div>
   </div>
 </template>
@@ -51,16 +51,4 @@ export default {
 </script>
 
 <style scoped>
-.login {
-  padding: 10px;
-  cursor: pointer;
-  z-index: 100;
-  transition: 1s;
-  opacity: 0.5;
-}
-
-.login:hover {
-  transform: scale(1.2);
-  opacity: 1;
-}
 </style>

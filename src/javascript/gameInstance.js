@@ -41,6 +41,7 @@ export default class GameInstance {
     this.registerInput();
 
     // start animate
+    this.destoryed = false;
     this.update();
   }
 
@@ -111,6 +112,7 @@ export default class GameInstance {
 
   // animate all
   update() {
+    if (this.destoryed) return;
     requestAnimationFrame(this.update.bind(this));
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.vm.visualizerInstance.renderVisualizer();
@@ -124,13 +126,13 @@ export default class GameInstance {
     const startTime = Date.now();
     this.vm.playMode = true;
 
-    const intervalPrePlay = setInterval(async () => {
+    const intervalPrePlay = setInterval(() => {
       const elapsedTime = Date.now() - startTime;
       this.playTime = Number(elapsedTime / 1000);
       if (this.playTime > Number(this.vm.noteSpeedInSec)) {
         try {
           if (this.vm.srcMode === "url") {
-            await this.audio.play();
+            this.audio.play();
           } else if (this.vm.srcMode === "youtube") {
             this.ytPlayer.playVideo();
           }
@@ -178,6 +180,7 @@ export default class GameInstance {
   }
 
   destroyInstance() {
+    this.destoryed = true;
     this.resetPlaying();
   }
 

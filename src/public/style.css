@@ -97,6 +97,19 @@ body {
   z-index: -1;
 }
 
+.text_button {
+  padding: 10px;
+  cursor: pointer;
+  z-index: 100;
+  transition: 1s;
+  opacity: 0.5;
+}
+
+.text_button:hover {
+  transform: scale(1.2);
+  opacity: 1;
+}
+
 *.unselectable {
   -moz-user-select: -moz-none;
   -khtml-user-select: none;

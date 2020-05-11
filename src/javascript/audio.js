@@ -11,7 +11,7 @@ export default class Audio {
     this.player = null;
   }
 
-  loadSong(songSrc, asBackground) {
+  async loadSong(songSrc, asBackground) {
     if (this.player) this.player.unload();
 
     this.player = new Howl({
@@ -48,7 +48,10 @@ export default class Audio {
   }
 
   play() {
-    if (this.player) this.player.play();
+    if (this.player) {
+      this.player.pause();
+      this.player.play();
+    }
   }
 
   getCurrentTime() {

@@ -2,6 +2,7 @@
 // MIT license
 export default function (audioContext) {
   var fixAudioContext = async function () {
+    // console.log(audioContext);
     if (audioContext) {
       //   console.log(audioContext);
       // Create empty buffer
@@ -18,6 +19,7 @@ export default function (audioContext) {
       } else if (source.noteOn) {
         source.noteOn(0);
       }
+      //   console.log(source);
 
       if (audioContext.state === "running") {
         // Remove events

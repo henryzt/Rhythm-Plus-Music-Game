@@ -27,13 +27,7 @@ export default {
   props: ["audio", "autoUpdate", "setVisualizerNo"],
   data: function(){
     return {
-        audioData:{
-            audioCtx: null,
-            src: null,
-            analyser: null,
-            bufferLength: null,
-            dataArray: null
-        },
+
         visualizer: 2,
         visualizerArr,
         visualizerLoaded: false, // visualizer loaded indicator
@@ -50,34 +44,14 @@ export default {
             this.update();
         if(this.setVisualizerNo)
             this.visualizer = this.setVisualizerNo;
+        this.initAllVisualizersIfRequried()
     },
   methods: {
-    async initVisualizerData() {
-        this.audio.crossOrigin = "anonymous"
-        let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        this.audioData.src = audioCtx.createMediaElementSource(this.audio);
-        let analyser = audioCtx.createAnalyser();
-        
-        this.audioData.src.connect(analyser);
-        analyser.connect(audioCtx.destination);
-        // this.audioData.src.connect(audioCtx.destination);
-
-        analyser.fftSize = 256;
-
-        this.audioData.bufferLength = analyser.frequencyBinCount;
-
-        this.audioData.dataArray = new Uint8Array(this.audioData.bufferLength);
-
-        this.audioData.audioCtx = audioCtx;
-        this.audioData.analyser = analyser;
-
-
-    },
     initAllVisualizersIfRequried() {
-        if (!this.audioData.audioCtx && !this.visualizerLoaded) {
-            this.initVisualizerData();
+        if ( !this.visualizerLoaded ) {
             initSpaceVisualizer(this.audioData, this.$refs.visualizerSpace);
-            this.visualizerLoaded = true;
+            if(this.audioData.analyser)
+                this.visualizerLoaded = true;
         }
     },
     renderVisualizer() {
@@ -107,12 +81,13 @@ export default {
     },
     update() {
         if(!this.autoUpdate) return;
+        if(this.audioData.analyser) this.initAllVisualizersIfRequried()
         requestAnimationFrame(this.update.bind(this));
         this.renderVisualizer();
     }
   },
     watch : {
-        audio: function(){
+        audioData: function(){
             this.initAllVisualizersIfRequried()
         },
         setVisualizerNo: function(){
@@ -120,8 +95,12 @@ export default {
         }
     },
     computed:{
-        currentVisualizer: function(){
+        currentVisualizer(){
             return this.visualizerArr[this.visualizer]
+        },
+        audioData(){
+            console.log(this.$store.state.audio.audioData)
+            return this.$store.state.audio.audioData;
         }
     }
 };

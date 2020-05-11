@@ -8,27 +8,35 @@ import axios from "axios"
 
 export default {
     name: "AudioPlayback",
-    props: ["songSrc"],
+    props: [],
     data:function(){
         return {
-            audioContext: null,
-            source: null
+            audioData:{
+                audioCtx: null,
+                src: null,
+                analyser: null,
+                bufferLength: null,
+                dataArray: null
+            },
         }
     },
     mounted(){
-        this.loadSong()
+        // this.loadSong()
     },
     destroyed(){
         this.audioContext.close()
     },
     methods: {
-        async loadSong(){
+        async loadSong(songSrc, loop){
+            if(this.audioContext){
+                this.audioContext.close()
+            }
             // load audio file from server
-            const response = await axios.get(this.songSrc, {
+            const response = await axios.get(songSrc, {
                 responseType: 'arraybuffer',
             });
             // create audio context
-            const audioContext = this.audioContext ? this.audioContext : new (window.AudioContext || window.webkitAudioContext);
+            const audioContext =  new (window.AudioContext || window.webkitAudioContext);
             // create audioBuffer (decode audio file)
             // Safari doesn't know the promise based decodeAudioData. You will have to use callbacks.
             audioContext.decodeAudioData(response.data,(buffer)=>{
@@ -36,21 +44,37 @@ export default {
                 const source = audioContext.createBufferSource();
                 source.buffer = buffer;
                 source.connect(audioContext.destination);
+                source.loop = loop;
 
                 // play audio
                 source.start();
-                this.audioContext = audioContext;
-                this.source = source;
+
+                
+
+                this.audioData.src = source;
+
+                let analyser = audioContext.createAnalyser();
+        
+                source.connect(analyser);
+
+                analyser.fftSize = 256;
+
+                this.audioData.bufferLength = analyser.frequencyBinCount;
+
+                this.audioData.dataArray = new Uint8Array(this.audioData.bufferLength);
+
+                this.audioData.analyser = analyser;
+                this.audioData.audioCtx = audioContext;
 
                 //fix context on iOS
-                fixAudioContext(this.audioContext);
+                fixAudioContext(this.audioData.audioCtx);
+                
 
-                setTimeout(()=>{
-                    console.log(this.source)
-                    this.source.start();
-                },5000)
             });
 
+        },
+        stop(){
+            this.audioData.src.stop()
         }
     }
 }

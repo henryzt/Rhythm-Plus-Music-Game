@@ -27,7 +27,6 @@ export default {
   props: ["audio", "autoUpdate", "setVisualizerNo"],
   data: function(){
     return {
-
         visualizer: 2,
         visualizerArr,
         visualizerLoaded: false, // visualizer loaded indicator
@@ -44,14 +43,14 @@ export default {
             this.update();
         if(this.setVisualizerNo)
             this.visualizer = this.setVisualizerNo;
-        this.initAllVisualizersIfRequried()
+        if(this.audioData && this.audioData.analyser)
+            this.initAllVisualizersIfRequried()
     },
   methods: {
     initAllVisualizersIfRequried() {
         if ( !this.visualizerLoaded ) {
+            this.visualizerLoaded = true;
             initSpaceVisualizer(this.audioData, this.$refs.visualizerSpace);
-            if(this.audioData.analyser)
-                this.visualizerLoaded = true;
         }
     },
     renderVisualizer() {
@@ -80,15 +79,14 @@ export default {
         this.visualizer = this.visualizer == this.visualizerArr.length - 1 ? 0 : this.visualizer + 1;
     },
     update() {
-        if(!this.autoUpdate) return;
-        if(this.audioData.analyser) this.initAllVisualizersIfRequried()
+        if(!this.autoUpdate || !this.ctx) return;
         requestAnimationFrame(this.update.bind(this));
         this.renderVisualizer();
     }
   },
     watch : {
         audioData: function(){
-            this.initAllVisualizersIfRequried()
+            // required to watch vuex change
         },
         setVisualizerNo: function(){
             this.visualizer = this.setVisualizerNo;
@@ -99,9 +97,14 @@ export default {
             return this.visualizerArr[this.visualizer]
         },
         audioData(){
-            console.log(this.$store.state.audio.audioData)
-            return this.$store.state.audio.audioData;
+            let data = this.$store.state.audio.audioData;
+            if(!this.visualizerLoaded && this.ctx && data.analyser)
+                this.initAllVisualizersIfRequried()
+            return data;
         }
+    },
+    beforeDestroy(){
+        this.ctx = null;
     }
 };
 </script>

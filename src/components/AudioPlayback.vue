@@ -5,6 +5,7 @@
 <script>
 import fixAudioContext from '../helpers/fixAudioContext';
 import axios from "axios"
+import {Howl, Howler} from 'howler';
 
 export default {
     name: "AudioPlayback",
@@ -13,49 +14,36 @@ export default {
         return {
             audioData:{
                 audioCtx: null,
-                src: null,
                 analyser: null,
                 bufferLength: null,
                 dataArray: null
             },
+            player: null
         }
     },
     mounted(){
         // this.loadSong()
     },
     destroyed(){
-        this.audioContext.close()
+        
     },
     methods: {
         async loadSong(songSrc, loop){
-            if(this.audioContext){
-                this.audioContext.close()
-            }
-            // load audio file from server
-            const response = await axios.get(songSrc, {
-                responseType: 'arraybuffer',
-            });
-            // create audio context
-            const audioContext =  new (window.AudioContext || window.webkitAudioContext);
-            // create audioBuffer (decode audio file)
-            // Safari doesn't know the promise based decodeAudioData. You will have to use callbacks.
-            audioContext.decodeAudioData(response.data,(buffer)=>{
-                // create audio source
-                const source = audioContext.createBufferSource();
-                source.buffer = buffer;
-                source.connect(audioContext.destination);
-                source.loop = loop;
+                if(this.player)
+                    this.player.unload()
 
-                // play audio
-                source.start();
-
+                this.player = new Howl({
+                    src: [songSrc],
+                    loop: loop
+                });
                 
+                // ref https://stackoverflow.com/questions/32460123/connect-analyzer-to-howler-sound
 
-                this.audioData.src = source;
+                // Create an analyser node in the Howler WebAudio context
+                let analyser = Howler.ctx.createAnalyser();
 
-                let analyser = audioContext.createAnalyser();
-        
-                source.connect(analyser);
+                // Connect the masterGain -> analyser (disconnecting masterGain -> destination)
+                Howler.masterGain.connect(analyser);
 
                 analyser.fftSize = 256;
 
@@ -64,17 +52,13 @@ export default {
                 this.audioData.dataArray = new Uint8Array(this.audioData.bufferLength);
 
                 this.audioData.analyser = analyser;
-                this.audioData.audioCtx = audioContext;
+                this.audioData.audioCtx = Howler.ctx;
 
-                //fix context on iOS
-                fixAudioContext(this.audioData.audioCtx);
-                
-
-            });
+                this.player.play();
 
         },
         stop(){
-            this.audioData.src.stop()
+            this.player.stop()
         }
     }
 }

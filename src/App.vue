@@ -1,6 +1,5 @@
 <template>
   <div id="app" class="unselectable">
-    <AudioPlayback ref="audioElement"></AudioPlayback>
     <transition name="fade" v-if="$store.state.audio">
       <router-view />
     </transition>
@@ -8,15 +7,14 @@
 </template>
 
 <script>
-import AudioPlayback from './components/AudioPlayback.vue';
+import Audio from './javascript/audio.js';
 
 export default {
   name: 'App',
   components: {
-    AudioPlayback
   },
   mounted(){
-    this.$store.state.audio = this.$refs.audioElement;
+    this.$store.state.audio = new Audio();
   }
 };
 </script>

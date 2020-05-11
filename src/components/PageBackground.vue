@@ -1,13 +1,6 @@
 <template>
   <div>
-    <!-- <audio ref="audioElement" :src="songSrc" autoplay loop preload="auto"></audio> -->
-
-    <Visualizer
-      ref="visualizer"
-      :audioSrc="songSrc"
-      :setVisualizerNo="visualizerNo"
-      :autoUpdate="true"
-    ></Visualizer>
+    <Visualizer ref="visualizer" :setVisualizerNo="visualizerNo" :autoUpdate="true"></Visualizer>
   </div>
 </template>
 

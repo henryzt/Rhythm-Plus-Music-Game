@@ -9,7 +9,9 @@
     >{{$parent.visualizerInstance?$parent.visualizerInstance.currentVisualizer:''}}</a>
     <div v-show="$parent.showControl">
       <br />
-      <audio ref="audioElement" :src="$parent.currentSong" volume="0.5" controls preload="auto"></audio>
+      <button @click="$parent.audio.play()">Play</button>
+      <button @click="$parent.audio.pause()">Pause</button>
+      <br />
       <div id="mode">{{$parent.playMode ? "Play Mode" : "Create Mode"}}</div>
       <br />
       <div id="speed">

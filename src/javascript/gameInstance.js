@@ -151,7 +151,7 @@ export default class GameInstance {
     // it seems that 'getPlayerTime' is async, thus all places calling this func need to await res [help wanted]
     return this.vm.srcMode === "youtube"
       ? this.ytPlayer.getPlayerTime()
-      : this.audio.currentTime;
+      : this.audio.getCurrentTime();
   }
 
   resetPlaying(resetTimeArr) {
@@ -161,8 +161,7 @@ export default class GameInstance {
     this.timeArrIdx = 0;
     this.playTime = 0;
     this.vm.playMode = false;
-    this.audio.pause();
-    this.audio.currentTime = 0;
+    this.audio.stop();
   }
 
   startSong(song) {
@@ -174,8 +173,6 @@ export default class GameInstance {
       song.visualizerNo !== null ? song.visualizerNo : this.vm.visualizer;
     if (song.srcMode === "youtube") {
       this.loadYoutubeVideo(song.youtubeId);
-    } else {
-      this.audio.load();
     }
     this.playGame();
   }

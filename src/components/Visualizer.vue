@@ -24,7 +24,7 @@ const visualizerArr = [
 
 export default {
   name: 'Visualizer',
-  props: ["audio", "autoUpdate", "setVisualizerNo"],
+  props: ["autoUpdate", "setVisualizerNo"],
   data: function(){
     return {
         visualizer: 2,

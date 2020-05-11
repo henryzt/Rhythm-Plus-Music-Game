@@ -8,7 +8,7 @@
       <canvas ref="mainCanvas" id="gameCanvas" :class="{perspective}"></canvas>
     </div>
 
-    <Visualizer ref="visualizer" :audio="audio"></Visualizer>
+    <Visualizer ref="visualizer"></Visualizer>
 
     <div v-show="srcMode==='youtube'">
       <Youtube
@@ -69,7 +69,8 @@ export default {
     },
     watch: {
         currentSong: function() {
-            this.audio.load();
+            if(this.srcMode === "url")
+                this.audio.loadSong(this.currentSong, false);
         },
         noteSpeedInSec: function() {
             this.instance.reposition();
@@ -82,7 +83,7 @@ export default {
         this.canvas.height = window.innerHeight;
         this.visualizerInstance = this.$refs.visualizer;
         // get audio element
-        this.audio = this.$refs.control.$refs.audioElement;
+        this.audio = this.$store.state.audio;
 
         this.instance = new GameInstance(this);
 

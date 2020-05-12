@@ -15,7 +15,7 @@ export default {
         profilePicture(){
             let hash = md5(this.$store.state.currentUser.email);
             let gravatar_link = 'http://www.gravatar.com/avatar/' + hash + '?s=50';
-            return gravatar_link
+            return gravatar_link;
         }
     }
 }

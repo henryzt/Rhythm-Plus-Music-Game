@@ -1,5 +1,5 @@
 <template>
-  <div class="profile_card" @click="$router.push('/login')" v-if="$store.state.currentUser">
+  <div class="profile_card" @click="$router.push('/account')" v-if="$store.state.currentUser">
     <img :src="profilePicture" />
     <div class="detail">
       <div>{{$store.state.currentUser.displayName}}</div>

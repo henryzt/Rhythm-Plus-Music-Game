@@ -48,10 +48,8 @@ export default class Audio {
   }
 
   play() {
-    if (this.player) {
-      this.player.pause();
-      this.player.play();
-    }
+    this.player?.pause();
+    this.player?.play();
   }
 
   getCurrentTime() {

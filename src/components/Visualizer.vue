@@ -79,7 +79,7 @@ export default {
         this.visualizer = this.visualizer == this.visualizerArr.length - 1 ? 0 : this.visualizer + 1;
     },
     update() {
-        if(!this.autoUpdate || !this.ctx) return;
+        if(!this.autoUpdate) return;
         requestAnimationFrame(this.update.bind(this));
         this.renderVisualizer();
     }
@@ -102,9 +102,6 @@ export default {
                 this.initAllVisualizersIfRequried()
             return data;
         }
-    },
-    beforeDestroy() {
-        this.ctx = null;
     }
 };
 </script>

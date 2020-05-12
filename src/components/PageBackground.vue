@@ -1,5 +1,6 @@
 <template>
   <div>
+    <UserProfileCard></UserProfileCard>
     <Visualizer ref="visualizer" :setVisualizerNo="visualizerNo" :autoUpdate="true"></Visualizer>
   </div>
 </template>
@@ -7,6 +8,7 @@
 
 <script>
 import Visualizer from '../components/Visualizer.vue';
+import UserProfileCard from './UserProfileCard.vue';
 
 export default {
   name: 'PageBackground',
@@ -22,6 +24,7 @@ export default {
   },
   components:{
       Visualizer,
+      UserProfileCard
   },
   data(){
         return {

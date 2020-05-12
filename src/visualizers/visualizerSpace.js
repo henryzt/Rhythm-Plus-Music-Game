@@ -11,22 +11,13 @@ let container;
 
 const PlayerAudioSource = function (player) {
   const self = this;
-  //   let analyser;
-  //   let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  //   analyser = audioCtx.createAnalyser();
-  //   analyser.fftSize = 256;
-  //   player.crossOrigin = "anonymous";
-  //   let source = audioCtx.createMediaElementSource(player);
-  // let source = src;
-  // source.connect(analyser);
-  // analyser.connect(audioCtx.destination);
   const sampleAudioStream = function () {
     if(!audioData.analyser) return;
     audioData.analyser.getByteFrequencyData(audioData.dataArray);
     // calculate an overall volume value
     let total = 0;
     for (let i = 0; i < 50; i++) {
-      // get the volume from the first 80 bins, else it gets too loud with treble
+      // get the volume from the first 50 bins, else it gets too loud with treble
       total += audioData.dataArray[i];
     }
     self.volume = total;

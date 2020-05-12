@@ -19,16 +19,23 @@ const db = firebase.firestore();
 const auth = firebase.auth();
 const currentUser = auth.currentUser;
 
+// Initialize Performance Monitoring and get a reference to the service
+const perf = firebase.performance();
+
+// Init analytics
+firebase.analytics();
+
 // firebase collections
 const usersCollection = db.collection("users");
-const songssCollection = db.collection("songs");
+const songsCollection = db.collection("songs");
 const sheetsCollection = db.collection("sheets");
 
 export {
   db,
   auth,
   currentUser,
+  perf,
   usersCollection,
-  songssCollection,
+  songsCollection,
   sheetsCollection,
 };

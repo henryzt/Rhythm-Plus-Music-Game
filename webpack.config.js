@@ -7,7 +7,7 @@ const CopyPlugin = require("copy-webpack-plugin");
 const isProduction = () => process.env.NODE_ENV === "production";
 
 module.exports = {
-  entry: path.resolve(__dirname, "src", "index.js"),
+  entry: ["babel-polyfill", path.resolve(__dirname, "src", "index.js")],
   mode: "development",
   devtool: "source-map",
   resolve: { extensions: ["*", ".js"] },
@@ -37,6 +37,16 @@ module.exports = {
     : {},
   module: {
     rules: [
+      {
+        test: /\.m?js$/,
+        exclude: /(node_modules|bower_components)/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-env"],
+          },
+        },
+      },
       {
         test: /\.vue$/,
         loader: "vue-loader",

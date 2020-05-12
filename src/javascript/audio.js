@@ -12,7 +12,7 @@ export default class Audio {
   }
 
   async loadSong(songSrc, asBackground) {
-    if (this.player) this.player.unload();
+    this.player?.unload();
 
     this.player = new Howl({
       src: [songSrc],
@@ -40,11 +40,11 @@ export default class Audio {
   }
 
   stop() {
-    if (this.player) this.player.stop();
+    this.player?.stop();
   }
 
   pause() {
-    if (this.player) this.player.pause();
+    this.player?.pause();
   }
 
   play() {
@@ -59,6 +59,6 @@ export default class Audio {
   }
 
   seek(sec) {
-    if (this.player) this.player.seek(sec);
+    this.player?.seek(sec);
   }
 }

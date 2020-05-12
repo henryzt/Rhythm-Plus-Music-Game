@@ -52,7 +52,11 @@ export default {
     },
   methods: {
       signOut(){
-        firebase.auth().signOut();
+        try{
+          firebase.auth().signOut();
+        }catch(err){
+          console.error(err)
+        }
       }
   }
 };

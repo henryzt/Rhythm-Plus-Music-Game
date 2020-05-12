@@ -44,7 +44,7 @@ export default {
             this.$router.push('/game')
         },
         goToAuth(){
-            this.$router.push('/login')
+            this.$router.push('/account')
         },
     }
 };

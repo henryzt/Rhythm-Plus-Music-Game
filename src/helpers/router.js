@@ -7,7 +7,7 @@ const router = new VueRouter({
   routes: [
     { path: "/", component: Home },
     { path: "/game", component: Game },
-    { path: "/login", component: Auth },
+    { path: "/account", component: Auth },
   ],
 });
 export default router;

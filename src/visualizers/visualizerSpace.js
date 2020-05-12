@@ -2,7 +2,7 @@
 /**
  * Created by Michael on 31/12/13.
  * modified by henryz00
- * original repo: https://github.canalyserom/michaelbromley/soundcloud-visualizer
+ * original repo: https://github.com/michaelbromley/soundcloud-visualizer
  */
 let visualizer;
 let audioSource;

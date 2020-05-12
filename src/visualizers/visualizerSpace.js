@@ -500,7 +500,7 @@ export function initSpaceVisualizer(audioDataRaw, canvasContainer) {
 }
 
 export function renderSpaceVisualizer(drawPolygon) {
-    visualizer.render(drawPolygon);
+  visualizer.render(drawPolygon);
 }
 
 //   function keyControls(e) {

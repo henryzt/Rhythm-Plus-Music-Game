@@ -15,7 +15,7 @@ new Vue({
   store,
   created() {
     fb.auth.onAuthStateChanged((user) => {
-      console.log("State changed", user);
+      console.log("User state changed", user);
       this.$store.commit("setCurrentUser", user);
       this.$store.dispatch("fetchUserProfile");
     });

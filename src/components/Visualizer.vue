@@ -85,7 +85,7 @@ export default {
     }
   },
     watch : {
-        audioData: function(){
+        audioData: () => {
             // required to watch vuex change
         },
         setVisualizerNo: function(){
@@ -93,17 +93,17 @@ export default {
         }
     },
     computed:{
-        currentVisualizer(){
+        currentVisualizer() {
             return this.visualizerArr[this.visualizer]
         },
-        audioData(){
+        audioData() {
             let data = this.$store.state.audio.audioData;
             if(!this.visualizerLoaded && this.ctx && data.analyser)
                 this.initAllVisualizersIfRequried()
             return data;
         }
     },
-    beforeDestroy(){
+    beforeDestroy() {
         this.ctx = null;
     }
 };

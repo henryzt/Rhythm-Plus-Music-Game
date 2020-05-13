@@ -16,6 +16,7 @@ firebase.initializeApp(config);
 
 // firebase utils
 const db = firebase.firestore();
+const dbi = firebase.firestore; //db instance
 const auth = firebase.auth();
 const currentUser = auth.currentUser;
 
@@ -30,12 +31,4 @@ const usersCollection = db.collection("users");
 const songsCollection = db.collection("songs");
 const sheetsCollection = db.collection("sheets");
 
-export {
-  db,
-  auth,
-  currentUser,
-  perf,
-  usersCollection,
-  songsCollection,
-  sheetsCollection,
-};
+export { db, dbi, auth, currentUser, perf, usersCollection, songsCollection, sheetsCollection };

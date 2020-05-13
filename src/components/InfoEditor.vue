@@ -16,7 +16,7 @@
 
 
 <script>
-import { createSong } from "../javascript/db"
+import { createSong, getSongList } from "../javascript/db"
 
 export default {
   name: 'InfoEditor',
@@ -30,7 +30,8 @@ export default {
                image: null, 
                youtubeId: null, 
                url: null 
-               }
+            },
+            songList: null
         }
     },
     computed: {
@@ -39,7 +40,8 @@ export default {
     watch: {
 
     },
-    mounted() {
+    async mounted() {
+        this.songList = await getSongList();
 
     },
     methods: {

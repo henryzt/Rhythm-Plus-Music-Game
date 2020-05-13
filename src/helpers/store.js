@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import * as fb from "./firebaseConfig";
+import md5 from "js-md5";
 
 Vue.use(Vuex);
 

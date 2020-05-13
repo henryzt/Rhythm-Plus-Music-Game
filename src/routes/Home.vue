@@ -44,7 +44,7 @@ export default {
     },
     methods:{
         goToGame(){
-            this.$router.push('/game')
+            this.$router.push('/song-select')
         },
         goToAuth(){
             this.$router.push('/account')

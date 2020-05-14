@@ -170,7 +170,7 @@ export default class GameInstance {
     this.resetPlaying(true);
     this.vm.currentSong = song.url;
     this.vm.srcMode = song.srcMode;
-    this.timeArr = song.timeArr;
+    this.timeArr = song.sheet;
     this.vm.visualizerInstance.visualizer =
       song.visualizerNo !== null ? song.visualizerNo : this.vm.visualizer;
     if (song.srcMode === "youtube") {

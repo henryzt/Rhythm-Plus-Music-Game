@@ -2,13 +2,30 @@
   <div>
     <PageBackground songSrc="songs/select.mp3"></PageBackground>
 
-    <div class="center_logo"></div>
+    <div class="center_logo">
+      <form @submit.prevent="submitForm">
+        <select id="songSelect" v-model="selectedSong" style="width:150px">
+          <option
+            v-for="song in songList"
+            :value="song.id"
+            :key="song.id"
+          >{{song.title + " - " + song.artist}}</option>
+        </select>
+        <br />
+        <select id="sheetSelect" v-model="selectedSheet" style="width:150px">
+          <option v-for="sheet in sheetList" :value="sheet.id" :key="sheet.id">{{sheet.id}}</option>
+        </select>
+        <br />
+        <input type="submit" value="Start Game!" />
+      </form>
+    </div>
   </div>
 </template>
 
 
 <script>
 import PageBackground from '../components/PageBackground.vue';
+import { getSheetList, getSongList } from "../javascript/db"
 
 
 export default {
@@ -18,20 +35,27 @@ export default {
   },
   data(){
         return {
-            
+            songList: null,
+            sheetList: null,
+            selectedSong: null,
+            selectedSheet: null
         }
     },
     computed: {
 
     },
     watch: {
-
+      async selectedSong(){
+        this.sheetList = await getSheetList(this.selectedSong);
+      }
     },
-    mounted() {
-
+    async mounted() {
+        this.songList = await getSongList();
     },
     methods: {
-
+        submitForm(){
+            this.$router.push("/game/"+this.selectedSheet);
+        }
     }
 };
 </script>

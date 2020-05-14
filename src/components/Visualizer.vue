@@ -1,7 +1,7 @@
 <template>
   <div class="visualizer">
     <!-- visualizer space -->
-    <div class="blurFilter" v-if="visualizer===4"></div>
+    <div class="blurFilter" v-if="visualizer===4||visualizer===5"></div>
     <canvas ref="visualizerCanvas" v-show="visualizer===2"></canvas>
     <div ref="visualizerSpace" id="visualizer" v-show="visualizer!=0 && visualizer!=2"></div>
   </div>
@@ -19,6 +19,7 @@ const visualizerArr = [
   "Bar Visualizer",
   "Space with Polygon",
   "Space Blurred",
+  "Blurred",
 ];
 
 

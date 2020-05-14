@@ -58,7 +58,7 @@ export function getSong(songId) {
       .then(function (doc) {
         if (doc.exists) {
           console.log("Song data:", doc.data());
-          resolve(doc.data);
+          resolve(doc.data());
         } else {
           // doc.data() will be undefined in this case
           console.log("No such document!");
@@ -99,6 +99,25 @@ export function createSheet(sheetInfo) {
       .catch(function (error) {
         console.error("Error writing document: ", error);
         reject();
+      });
+  });
+}
+
+export function getSheetList(songId) {
+  return new Promise((resolve, reject) => {
+    sheetsCollection
+      .where("songId", "==", songId)
+      .get()
+      .then(function (querySnapshot) {
+        let res = [];
+        querySnapshot.forEach((doc) => {
+          let sheet = doc.data();
+          sheet.id = doc.id;
+          res.push(sheet);
+          // doc.data() is never undefined for query doc snapshots
+          console.log(doc.id, " => ", doc.data());
+        });
+        resolve(res);
       });
   });
 }

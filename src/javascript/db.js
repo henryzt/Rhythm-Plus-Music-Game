@@ -37,11 +37,46 @@ export function createSong(songInfo) {
 export function getSongList() {
   return new Promise((resolve, reject) => {
     songsCollection.get().then(function (querySnapshot) {
-      querySnapshot.forEach(function (doc) {
+      let res = [];
+      querySnapshot.forEach((doc) => {
+        let song = doc.data();
+        song.id = doc.id;
+        res.push(song);
         // doc.data() is never undefined for query doc snapshots
         console.log(doc.id, " => ", doc.data());
       });
-      resolve(querySnapshot);
+      resolve(res);
     });
+  });
+}
+
+export function createSheet(sheetInfo) {
+  const { title, song, visualizerNo, srcMode, youtubeId, url, sheet } = sheetInfo;
+  let dateCreated = dbi.Timestamp.now();
+  let dateUpdated = dateCreated;
+  let createdBy = store.state.currentUser?.uid;
+  return new Promise((resolve, reject) => {
+    sheetsCollection
+      .doc()
+      .set({
+        songId: song,
+        title: title ?? null,
+        visualizerNo: visualizerNo ?? null,
+        srcMode: srcMode ?? null,
+        youtubeId: youtubeId ?? null,
+        url: url ?? null,
+        sheet: JSON.stringify(sheet),
+        dateCreated,
+        dateUpdated,
+        createdBy,
+      })
+      .then(function () {
+        console.log("Document successfully written!");
+        resolve();
+      })
+      .catch(function (error) {
+        console.error("Error writing document: ", error);
+        reject();
+      });
   });
 }

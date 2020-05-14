@@ -50,6 +50,28 @@ export function getSongList() {
   });
 }
 
+export function getSong(songId) {
+  return new Promise((resolve, reject) => {
+    songsCollection
+      .doc(songId)
+      .get()
+      .then(function (doc) {
+        if (doc.exists) {
+          console.log("Song data:", doc.data());
+          resolve(doc.data);
+        } else {
+          // doc.data() will be undefined in this case
+          console.log("No such document!");
+          reject();
+        }
+      })
+      .catch(function (error) {
+        console.log("Error getting document:", error);
+        reject();
+      });
+  });
+}
+
 export function createSheet(sheetInfo) {
   const { title, song, visualizerNo, srcMode, youtubeId, url, sheet } = sheetInfo;
   let dateCreated = dbi.Timestamp.now();
@@ -79,4 +101,28 @@ export function createSheet(sheetInfo) {
         reject();
       });
   });
+}
+
+export async function getSheet(sheetId) {
+  try {
+    let doc = await sheetsCollection.doc(sheetId).get();
+    if (doc.exists) {
+      let sheet = doc.data();
+      let song = await getSong(sheet.songId);
+      // fallback sheet data
+      sheet.youtubeId = sheet.youtubeId ?? song.youtubeId;
+      sheet.url = sheet.url ?? song.url;
+      sheet.title = sheet.title ?? song.title + " - " + song.artist;
+      sheet.image = song.image;
+      sheet.sheet = JSON.parse(sheet.sheet);
+      console.log("Sheet data:", sheet);
+      return sheet;
+    } else {
+      console.error("No such document");
+      return new Error("No such document");
+    }
+  } catch (error) {
+    console.error(error);
+    return new Error("Error reading document");
+  }
 }

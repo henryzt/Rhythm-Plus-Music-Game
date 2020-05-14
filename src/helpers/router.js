@@ -9,9 +9,14 @@ const router = new VueRouter({
   routes: [
     { path: "/", component: Home },
     { path: "/menu", component: SongSelect },
-    { path: "/game", component: Game },
+    {
+      path: "/game",
+      component: Game,
+      children: [{ path: ":sheet", component: Game }],
+    },
     { path: "/account", component: Auth },
     { path: "/editor", component: SheetEditor },
+    { path: "*", component: Home },
   ],
 });
 export default router;

@@ -9,7 +9,7 @@
   "scripts": {
     "format": "prettier --write \"src/**/*.js\" && eslint --fix \"src/**/*.js\"",
     "lint": "eslint --fix \"src/**/*.js\"",
-    "start": "NODE_ENV=development webpack-dev-server --mode development --progress",
+    "start": "NODE_ENV=development webpack-dev-server --mode development --progress --history-api-fallback",
     "build:dev": "NODE_ENV=development webpack --mode development",
     "build": "NODE_ENV=production webpack --mode production",
     "clean": "rm -rf ./dist",

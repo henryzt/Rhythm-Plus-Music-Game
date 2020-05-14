@@ -26,7 +26,7 @@ import PlayControl from '../components/PlayControl.vue';
 import Visualizer from '../components/Visualizer.vue';
 import GameInstance from '../javascript/gameInstance';
 import { Youtube } from 'vue-youtube'
-
+import { getSheet } from "../javascript/db"
 
 export default {
     name: 'Game',
@@ -87,11 +87,19 @@ export default {
 
         this.instance = new GameInstance(this);
 
+        if(this.$route.params.sheet){
+          this.playWithId()
+        }
+
     },
     destroyed(){
         this.instance.destroyInstance()
     },
     methods:{
+      async playWithId(){
+        let song = await getSheet(this.$route.params.sheet);
+        this.instance.startSong(song);
+      }
 
     }
 };

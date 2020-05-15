@@ -19,6 +19,7 @@
 
     <div style="padding: 20px 0;">
       <Button text="Play!" @click="startSelected"></Button>
+      <div class="text_button" @click="$emit('cancel')">Cancel</div>
     </div>
   </div>
 </template>
@@ -57,6 +58,8 @@ export default {
 
 <style scoped>
 .song_item {
+  position: sticky;
+  top: 80px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -65,12 +68,12 @@ export default {
   backdrop-filter: blur(20px);
   cursor: pointer;
   width: 100%;
-  max-width: 300px;
+  max-width: 800px;
   margin: 10px auto;
   padding: 0;
   transition: 0.5s;
-  margin: 0 20px;
   text-align: center;
+  overflow: hidden;
 }
 .song_item:hover {
   background: rgba(255, 255, 255, 0.35);
@@ -85,7 +88,8 @@ export default {
   overflow: hidden;
 }
 .image img {
-  max-height: 300px;
+  width: 100%;
+  max-height: 900px;
 }
 .sheet {
   margin-top: 10px;

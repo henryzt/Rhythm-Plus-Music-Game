@@ -32,6 +32,7 @@ export default {
   margin: 10px auto;
   padding: 0;
   transition: 0.5s;
+  overflow: hidden;
 }
 .song_item:hover {
   transform: scale(1.2);

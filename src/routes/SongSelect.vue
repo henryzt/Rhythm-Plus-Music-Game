@@ -2,7 +2,12 @@
   <div>
     <PageBackground songSrc="songs/select.mp3"></PageBackground>
 
-    <div class="center_logo">
+    <div style="overflow:scroll">
+      <div class="song_list">
+        <div v-for="song in songList" :key="song.id">
+          <SongListItem :song="song" @selected="selectedSong = $event.id"></SongListItem>
+        </div>
+      </div>
       <form @submit.prevent="submitForm">
         <select id="songSelect" v-model="selectedSong" style="width:150px">
           <option
@@ -25,13 +30,15 @@
 
 <script>
 import PageBackground from '../components/PageBackground.vue';
+import SongListItem from '../components/SongListItem.vue';
 import { getSheetList, getSongList } from "../javascript/db"
 
 
 export default {
   name: 'SongSelect',
   components:{
-      PageBackground
+      PageBackground,
+      SongListItem
   },
   data(){
         return {

@@ -41,6 +41,9 @@ export function getSongList() {
       querySnapshot.forEach((doc) => {
         let song = doc.data();
         song.id = doc.id;
+        song.image = song.youtubeId
+          ? `https://img.youtube.com/vi/${song.youtubeId}/mqdefault.jpg`
+          : song.image;
         res.push(song);
         // doc.data() is never undefined for query doc snapshots
         console.log(doc.id, " => ", doc.data());

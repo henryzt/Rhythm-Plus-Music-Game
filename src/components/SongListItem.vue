@@ -1,7 +1,7 @@
 <template>
   <div class="song_item" @click="$emit('selected', song)" v-if="song">
     <div class="image">
-      <img :src="imgSrc" />
+      <img :src="song.image" />
     </div>
     <div class="detail">
       <div style="font-size:1.3em; font-weight: bold;">{{song.title}}</div>
@@ -15,9 +15,6 @@ export default {
     name:"SongListItem",
     props: ["song"],
     computed: {
-        imgSrc(){
-            return this.song.youtubeId ? `https://img.youtube.com/vi/${this.song.youtubeId}/mqdefault.jpg` : this.song.image;
-        }
     }
 }
 </script>
@@ -38,7 +35,7 @@ export default {
 }
 .song_item:hover {
   transform: scale(1.2);
-  z-index: 50;
+  z-index: 500;
 }
 .detail {
   display: flex;

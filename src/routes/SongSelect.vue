@@ -2,27 +2,18 @@
   <div>
     <PageBackground songSrc="songs/select.mp3"></PageBackground>
 
-    <div style="overflow:scroll">
+    <div style="font-size:2.3em; font-weight: bold;text-align:center;padding:40px;">Song Select</div>
+
+    <div class="mContainer">
       <div class="song_list">
         <div v-for="song in songList" :key="song.id">
-          <SongListItem :song="song" @selected="selectedSong = $event.id"></SongListItem>
+          <SongListItem :song="song" @selected="selectedSong = $event"></SongListItem>
         </div>
       </div>
-      <form @submit.prevent="submitForm">
-        <select id="songSelect" v-model="selectedSong" style="width:150px">
-          <option
-            v-for="song in songList"
-            :value="song.id"
-            :key="song.id"
-          >{{song.title + " - " + song.artist}}</option>
-        </select>
-        <br />
-        <select id="sheetSelect" v-model="selectedSheet" style="width:150px">
-          <option v-for="sheet in sheetList" :value="sheet.id" :key="sheet.id">{{sheet.id}}</option>
-        </select>
-        <br />
-        <input type="submit" value="Start Game!" />
-      </form>
+
+      <div v-if="selectedSong">
+        <SongDetailPanel :song="selectedSong" :sheets="sheetList"></SongDetailPanel>
+      </div>
     </div>
   </div>
 </template>
@@ -31,6 +22,7 @@
 <script>
 import PageBackground from '../components/PageBackground.vue';
 import SongListItem from '../components/SongListItem.vue';
+import SongDetailPanel from '../components/SongDetailPanel.vue';
 import { getSheetList, getSongList } from "../javascript/db"
 
 
@@ -38,14 +30,14 @@ export default {
   name: 'SongSelect',
   components:{
       PageBackground,
-      SongListItem
+      SongListItem,
+      SongDetailPanel
   },
   data(){
         return {
             songList: null,
             sheetList: null,
-            selectedSong: null,
-            selectedSheet: null
+            selectedSong: null
         }
     },
     computed: {
@@ -53,19 +45,27 @@ export default {
     },
     watch: {
       async selectedSong(){
-        this.sheetList = await getSheetList(this.selectedSong);
+        this.sheetList = await getSheetList(this.selectedSong.id);
       }
     },
     async mounted() {
         this.songList = await getSongList();
     },
     methods: {
-        submitForm(){
-            this.$router.push("/game/"+this.selectedSheet);
-        }
     }
 };
 </script>
 
 <style scoped>
+.mContainer {
+  perspective: 30em;
+  display: flex;
+  justify-content: space-evenly;
+  transition: 2s;
+}
+.song_list {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 20px;
+}
 </style>

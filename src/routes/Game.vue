@@ -106,6 +106,9 @@ export default {
 </script>
 
 <style scoped>
+* {
+  overflow: hidden;
+}
 .gameWrapper {
   perspective: 600px;
 }

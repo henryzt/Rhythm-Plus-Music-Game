@@ -47,10 +47,12 @@ export default {
     },
     watch:{
       song(){
-        this.selectedSheet = null;
+        if(this.song)
+          this.selectedSheet = null;
       },
       sheets(){
-        this.selectedSheet = null;
+        if(this.song)
+          this.selectedSheet = null;
       }
     }
 }

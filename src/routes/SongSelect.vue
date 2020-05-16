@@ -7,7 +7,7 @@
     <div class="mContainer">
       <div class="song_list" :class="{'list_collapsed': selectedSong}" v-if="songList">
         <transition-group appear tag="div" name="slide-in" :style="{ '--total': songList.length }">
-          <div v-for="(song,i) in songList" :key="i" :style="{'--i': i}">
+          <div v-for="(song,i) in songList" :key="song.id" :style="{'--i': i}">
             <SongListItem :song="song" @selected="selectedSong = $event"></SongListItem>
           </div>
         </transition-group>
@@ -95,6 +95,7 @@ export default {
     visibility: hidden;
     margin: 0;
     padding: 0;
+    transform: none;
   }
 
   .detail {

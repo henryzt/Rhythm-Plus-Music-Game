@@ -68,7 +68,6 @@ export default {
   padding: 5px;
   background: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(20px);
-  cursor: pointer;
   width: 100%;
   max-width: 800px;
   margin: 10px auto;
@@ -76,6 +75,7 @@ export default {
   transition: 0.5s;
   text-align: center;
   overflow: hidden;
+  min-width: 300px;
 }
 .song_item:hover {
   background: rgba(255, 255, 255, 0.35);
@@ -98,6 +98,7 @@ export default {
   padding: 5px 0;
   width: 100%;
   transition: 1s;
+  cursor: pointer;
 }
 .active {
   background: rgba(255, 255, 255, 0.3);

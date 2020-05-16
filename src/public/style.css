@@ -4,6 +4,7 @@ body {
   background: black;
   color: white;
   font-family: "Raleway";
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0.3);
 }
 
 .control {

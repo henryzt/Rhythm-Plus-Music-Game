@@ -14,8 +14,12 @@
 export default {
     name:"SongListItem",
     props: ["song"],
+    data(){
+        return {
+        }
+    },
     computed: {
-    }
+    },
 }
 </script>
 
@@ -50,8 +54,20 @@ export default {
   overflow: hidden;
   background: rgba(0, 0, 0, 0.473);
   text-align: center;
+  min-width: 200px;
 }
 .image img {
   height: 100%;
+}
+@media only screen and (max-width: 800px) {
+  .image {
+    width: 150px;
+    min-width: 150px;
+    height: 90px;
+  }
+  .song_item:hover {
+    transform: none;
+    z-index: 500;
+  }
 }
 </style>

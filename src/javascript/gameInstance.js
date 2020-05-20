@@ -2,6 +2,8 @@ import DropTrack from "./track";
 import YoutubePlayer from "./youtube";
 import { saveToLocal, loadFromLocal } from "./storage";
 import { loadFromDemo } from "./demo";
+import Hammer from "hammerjs";
+import ZingTouch from "zingtouch";
 
 export default class GameInstance {
   constructor(vm) {
@@ -31,7 +33,9 @@ export default class GameInstance {
     // init
 
     for (const keyBind of this.trackKeyBind) {
-      this.dropTrackArr.push(new DropTrack(vm, this, 0, this.trackMaxWidth, keyBind));
+      this.dropTrackArr.push(
+        new DropTrack(vm, this, 0, this.trackMaxWidth, keyBind)
+      );
     }
 
     this.reposition();
@@ -54,11 +58,15 @@ export default class GameInstance {
 
     for (let counter = 0; counter < this.dropTrackArr.length; counter++) {
       const trackWidthWithOffset = trackWidth + 1;
-      this.dropTrackArr[counter].resizeTrack(startX + trackWidthWithOffset * counter, trackWidth);
+      this.dropTrackArr[counter].resizeTrack(
+        startX + trackWidthWithOffset * counter,
+        trackWidth
+      );
     }
 
     this.vm.checkHitLineY = (this.canvas.height / 10) * 9;
-    this.vm.noteSpeedPxPerSec = this.vm.checkHitLineY / Number(this.vm.noteSpeedInSec);
+    this.vm.noteSpeedPxPerSec =
+      this.vm.checkHitLineY / Number(this.vm.noteSpeedInSec);
   }
 
   registerInput() {
@@ -74,29 +82,43 @@ export default class GameInstance {
       false
     );
 
-    this.canvas.addEventListener(
-      "touchstart",
-      (e) => {
-        for (let c = 0; c < e.changedTouches.length; c++) {
-          // touchInf[e.changedTouches[c].identifier] = {"x":e.changedTouches[c].clientX,"y":e.changedTouches[c].clientY};
-          const x = event.changedTouches[c].clientX;
+    const tapEvent = (e) => {
+      this.vm.testTap = e.tapCount;
+      console.log(e);
+      for (let pointer of e.detail.events) {
+        // touchInf[e.changedTouches[c].identifier] = {"x":e.changedTouches[c].clientX,"y":e.changedTouches[c].clientY};
+        const x = pointer.clientX;
 
-          this.dropTrackArr.forEach((track) => {
-            if (x > track.x && x < track.x + track.width) {
-              this.onKeyDown(track.keyBind);
-            }
-          });
-        }
-      },
-      false
-    );
+        this.dropTrackArr.forEach((track) => {
+          if (x > track.x && x < track.x + track.width) {
+            this.onKeyDown(track.keyBind);
+          }
+        });
+      }
+    };
+
+    // this.hammer = new Hammer(this.canvas, { transform: false });
+
+    // this.hammer.get("tap").set({ threshold: 20, posThreshold: 20, interval: 100 });
+    // let doubleTap = new Hammer.Tap({ event: "doubletap", pointers: 2 });
+    // this.hammer.add([doubleTap]);
+
+    this.touchRegion = ZingTouch.Region(this.canvas);
+
+    for (let numInputs of [1, 2, 3, 4])
+      this.touchRegion.bind(
+        this.canvas,
+        new ZingTouch.Tap({ numInputs }),
+        tapEvent
+      );
   }
 
   // log key and touch events
   async onKeyDown(key) {
     if (!this.vm.playMode) {
       const cTime = await this.getCurrentTime();
-      if (this.trackKeyBind.includes(key)) this.timeArr.push({ time: cTime, key });
+      if (this.trackKeyBind.includes(key))
+        this.timeArr.push({ time: cTime, key });
     }
     for (const track of this.dropTrackArr) {
       track.keyDown(key);
@@ -164,7 +186,8 @@ export default class GameInstance {
     this.vm.currentSong = song.url;
     this.vm.srcMode = song.srcMode;
     this.timeArr = song.sheet;
-    this.vm.visualizerInstance.visualizer = song.visualizerNo !== null ? song.visualizerNo : 0;
+    this.vm.visualizerInstance.visualizer =
+      song.visualizerNo !== null ? song.visualizerNo : 0;
     if (song.srcMode === "youtube") {
       this.loadYoutubeVideo(song.youtubeId);
     }

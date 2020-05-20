@@ -4,6 +4,7 @@
 
     <div class="center" ref="hitIndicator">{{markJudge}} {{combo>=5?combo:''}}</div>
 
+    <div></div>
     <div class="gameWrapper">
       <canvas ref="mainCanvas" id="gameCanvas" :class="{perspective}"></canvas>
     </div>
@@ -15,7 +16,7 @@
         id="ytPlayer"
         ref="youtube"
         :video-id="youtubeId"
-        :player-vars="{controls: 0, rel: 0 }"
+        :player-vars="{controls: 0, rel: 0, playsinline: 1 }"
       ></Youtube>
     </div>
   </div>
@@ -56,7 +57,7 @@ export default {
             visualizerInstance: null,
             youtubeId: "jNQXAC9IVRw",
             perspective: false,
-            vibrate: true
+            vibrate: true,
         }
     },
     computed: {

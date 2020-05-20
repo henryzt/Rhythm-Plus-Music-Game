@@ -31,4 +31,13 @@ const usersCollection = db.collection("users");
 const songsCollection = db.collection("songs");
 const sheetsCollection = db.collection("sheets");
 
-export { db, dbi, auth, currentUser, perf, usersCollection, songsCollection, sheetsCollection };
+export {
+  db,
+  dbi,
+  auth,
+  currentUser,
+  perf,
+  usersCollection,
+  songsCollection,
+  sheetsCollection,
+};

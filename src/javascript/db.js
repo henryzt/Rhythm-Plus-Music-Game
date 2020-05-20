@@ -1,11 +1,17 @@
-import { dbi, usersCollection, songsCollection, sheetsCollection } from "../helpers/firebaseConfig";
+import {
+  dbi,
+  usersCollection,
+  songsCollection,
+  sheetsCollection,
+} from "../helpers/firebaseConfig";
 import { store } from "../helpers/store";
 
 export function createSong(songInfo) {
   const { title, artist, image, youtubeId, url } = songInfo;
   let randomId = btoa(parseInt(Date.now() * Math.random())).slice(0, 9);
   let songId = songInfo.title.trim() + "-" + songInfo.artist.trim();
-  songId = songId.replace(/ /gi, "-").replace(/[^a-z0-9-]/gi, "") + "-" + randomId;
+  songId =
+    songId.replace(/ /gi, "-").replace(/[^a-z0-9-]/gi, "") + "-" + randomId;
   let dateCreated = dbi.Timestamp.now();
   let dateUpdated = dateCreated;
   let createdBy = store.state.currentUser?.uid;
@@ -76,7 +82,15 @@ export function getSong(songId) {
 }
 
 export function createSheet(sheetInfo) {
-  const { title, song, visualizerNo, srcMode, youtubeId, url, sheet } = sheetInfo;
+  const {
+    title,
+    song,
+    visualizerNo,
+    srcMode,
+    youtubeId,
+    url,
+    sheet,
+  } = sheetInfo;
   let dateCreated = dbi.Timestamp.now();
   let dateUpdated = dateCreated;
   let createdBy = store.state.currentUser?.uid;

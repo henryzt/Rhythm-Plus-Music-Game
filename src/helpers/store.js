@@ -34,7 +34,8 @@ export const store = new Vuex.Store({
           commit("setProfilePciture", url);
         } else {
           let hash = md5(state.currentUser.email);
-          let gravatar_link = "http://www.gravatar.com/avatar/" + hash + "?s=50&d=404";
+          let gravatar_link =
+            "http://www.gravatar.com/avatar/" + hash + "?s=50&d=404";
           let response = await fetch(gravatar_link);
           if (response.status === 200) {
             commit("setProfilePciture", gravatar_link);

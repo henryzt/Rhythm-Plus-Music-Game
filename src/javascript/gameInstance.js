@@ -2,7 +2,6 @@ import DropTrack from "./track";
 import YoutubePlayer from "./youtube";
 import { saveToLocal, loadFromLocal } from "./storage";
 import { loadFromDemo } from "./demo";
-import Hammer from "hammerjs";
 import ZingTouch from "zingtouch";
 
 export default class GameInstance {
@@ -97,18 +96,12 @@ export default class GameInstance {
       }
     };
 
-    // this.hammer = new Hammer(this.canvas, { transform: false });
-
-    // this.hammer.get("tap").set({ threshold: 20, posThreshold: 20, interval: 100 });
-    // let doubleTap = new Hammer.Tap({ event: "doubletap", pointers: 2 });
-    // this.hammer.add([doubleTap]);
-
     this.touchRegion = ZingTouch.Region(this.canvas);
 
-    for (let numInputs of [1, 2, 3, 4])
+    for (let idx of this.trackKeyBind)
       this.touchRegion.bind(
         this.canvas,
-        new ZingTouch.Tap({ numInputs }),
+        new ZingTouch.Tap({ numInputs: idx + 1 }),
         tapEvent
       );
   }

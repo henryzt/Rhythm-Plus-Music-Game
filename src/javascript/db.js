@@ -64,7 +64,7 @@ export function getSong(songId) {
     songsCollection
       .doc(songId)
       .get()
-      .then(function (doc) {
+      .then((doc) => {
         if (doc.exists) {
           console.log("Song data:", doc.data());
           resolve(doc.data());
@@ -109,11 +109,11 @@ export function createSheet(sheetInfo) {
         dateUpdated,
         createdBy,
       })
-      .then(function () {
+      .then(() => {
         console.log("Document successfully written!");
         resolve();
       })
-      .catch(function (error) {
+      .catch((error) => {
         console.error("Error writing document: ", error);
         reject();
       });
@@ -125,7 +125,7 @@ export function getSheetList(songId) {
     sheetsCollection
       .where("songId", "==", songId)
       .get()
-      .then(function (querySnapshot) {
+      .then((querySnapshot) => {
         let res = [];
         querySnapshot.forEach((doc) => {
           let sheet = doc.data();

@@ -5,7 +5,7 @@ export const demo = demoJson;
 export function startDemo(instance, demoNum) {
   switch (demoNum) {
     case 1:
-      instance.startSong({
+      instance.loadSong({
         url: "songs/whywelose.mp3",
         srcMode: "url",
         visualizerNo: 3,
@@ -14,7 +14,7 @@ export function startDemo(instance, demoNum) {
       break;
 
     case 2:
-      instance.startSong({
+      instance.loadSong({
         url: "songs/sheepdog.mp3",
         srcMode: "url",
         visualizerNo: 2,
@@ -23,7 +23,7 @@ export function startDemo(instance, demoNum) {
       break;
 
     case 3:
-      instance.startSong({
+      instance.loadSong({
         youtubeId: "OFS3OYNs7U4",
         srcMode: "youtube",
         visualizerNo: 0,

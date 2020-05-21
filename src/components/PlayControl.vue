@@ -69,7 +69,7 @@
       <button @click="$parent.instance.playVideo()">Play Youtube</button>
       <br />
       <br />
-      <button @click="$parent.instance.playGame()">Start</button>
+      <button @click="$parent.instance.startSong()">Start</button>
       <button @click="$parent.instance.resetPlaying(true)">Reset</button>
       <!-- score -->
       <br />

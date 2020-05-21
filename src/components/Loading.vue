@@ -1,6 +1,6 @@
 <template>
   <transition name="modal-fade">
-    <div class="modal-backdrop" v-if="showModal">
+    <div class="modal-backdrop" v-if="show">
       <div class="modal blurBackground">
         <section class="modal-body">
           <Loader color="white" style="display:inline;float:left" />
@@ -23,22 +23,19 @@ import Loader from 'vue-spinner/src/FadeLoader.vue'
             type: String,
             default: "Loading..."
         },
+        show:{
+            type: Boolean,
+            default: false
+        }
     },
     components:{
         Loader
     },
     data: function(){
         return {
-            showModal: false
         }
     },
     methods: {
-        show(){
-            this.showModal = true
-        },
-        hide(){
-            this.showModal = false
-        }
     },
     watch:{
     }

@@ -17,9 +17,11 @@
         ref="youtube"
         :video-id="youtubeId"
         :player-vars="{controls: 0, rel: 0, playsinline: 1 }"
+        @playing="songLoaded"
+        @cued="videoCued"
       ></Youtube>
     </div>
-    <Loading ref="loading"></Loading>
+    <Loading :show="instance && instance.loading"></Loading>
   </div>
 </template>
 
@@ -81,7 +83,6 @@ export default {
         }
     },
     mounted() {
-        this.$refs.loading.show()
         this.canvas = this.$refs.mainCanvas;
         this.ctx = this.canvas.getContext("2d");
         this.canvas.width = window.innerWidth;
@@ -94,6 +95,7 @@ export default {
 
         //FIXME add id and route validation
         if(this.$route.params.sheet && this.$route.params.sheet!="null"){
+          this.instance.loading = true
           this.playWithId()
         }
 
@@ -104,12 +106,16 @@ export default {
     methods:{
       async playWithId(){
         let song = await getSheet(this.$route.params.sheet);
-        this.instance.startSong(song);
+        this.instance.loadSong(song);
       },
       songLoaded(){
-        this.$refs.loading.hide()
+        if(this.instance.loading == true)
+          this.instance.startSong()
+        this.instance.loading = false;
+      },
+      videoCued(){
+        this.ytPlayer.playVideo();
       }
-
     }
 };
 </script>

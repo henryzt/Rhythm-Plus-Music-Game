@@ -14,7 +14,7 @@ export default class Audio {
     });
   }
 
-  async loadSong(songSrc, asBackground) {
+  async loadSong(songSrc, asBackground, loadedCallback) {
     this.player?.unload();
 
     this.player = new Howl({
@@ -40,6 +40,11 @@ export default class Audio {
     this.audioData.audioCtx = Howler.ctx;
 
     if (asBackground) this.player.play();
+
+    this.player.on("load", () => {
+      if (loadedCallback) loadedCallback();
+      console.log("Audio loaded");
+    });
   }
 
   stop() {

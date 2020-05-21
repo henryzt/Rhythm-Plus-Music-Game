@@ -67,7 +67,7 @@
 </script>
 
 
-<style>
+<style scoped>
 /* part ref https://www.digitalocean.com/community/tutorials/vuejs-vue-modal-component */
 .modal-backdrop {
   position: fixed;
@@ -86,7 +86,7 @@
   overflow-x: auto;
   display: flex;
   flex-direction: column;
-  width: 60%;
+  width: 80%;
   max-width: 500px;
 }
 

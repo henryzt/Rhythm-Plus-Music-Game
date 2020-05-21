@@ -19,12 +19,14 @@
         :player-vars="{controls: 0, rel: 0, playsinline: 1 }"
       ></Youtube>
     </div>
+    <Loading ref="loading"></Loading>
   </div>
 </template>
 
 <script>
 import PlayControl from '../components/PlayControl.vue';
 import Visualizer from '../components/Visualizer.vue';
+import Loading from '../components/Loading.vue';
 import GameInstance from '../javascript/gameInstance';
 import { Youtube } from 'vue-youtube'
 import { getSheet } from "../javascript/db"
@@ -34,7 +36,8 @@ export default {
     components: {
         PlayControl,
         Visualizer,
-        Youtube
+        Youtube,
+        Loading
     },
     data(){
         return {
@@ -71,13 +74,14 @@ export default {
     watch: {
         currentSong: function() {
             if(this.srcMode === "url")
-                this.audio.loadSong(this.currentSong, false);
+                this.audio.loadSong(this.currentSong, false, this.songLoaded);
         },
         noteSpeedInSec: function() {
             this.instance.reposition();
         }
     },
     mounted() {
+        this.$refs.loading.show()
         this.canvas = this.$refs.mainCanvas;
         this.ctx = this.canvas.getContext("2d");
         this.canvas.width = window.innerWidth;
@@ -101,6 +105,9 @@ export default {
       async playWithId(){
         let song = await getSheet(this.$route.params.sheet);
         this.instance.startSong(song);
+      },
+      songLoaded(){
+        this.$refs.loading.hide()
       }
 
     }

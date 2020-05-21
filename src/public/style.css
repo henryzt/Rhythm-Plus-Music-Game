@@ -59,6 +59,11 @@ body {
   z-index: 100;
 }
 
+.blurBackground{
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
 #visualizerBarBG {
   position: absolute;
   width: 100vw;

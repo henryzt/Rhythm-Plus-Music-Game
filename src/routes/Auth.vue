@@ -9,15 +9,23 @@
       </div>
       <div v-show="$store.state.currentUser">
         You are already logged in!
-        <div class="text_button" @click="signOut">Logout</div>
+        <div class="text_button" @click="confirmSignOut">Logout</div>
       </div>
     </div>
+    <Modal
+      ref="modal"
+      :show="showModal"
+      bodyText="Are you sure you want to log out?"
+      okText="Logout"
+      @ok="signOut"
+    ></Modal>
   </div>
 </template>
 
 
 <script>
 import PageBackground from '../components/PageBackground.vue';
+import Modal from '../components/Modal.vue';
 import firebase from 'firebase';
 import * as firebaseui from "firebaseui"
 import "firebaseui/dist/firebaseui.css";
@@ -25,11 +33,12 @@ import "firebaseui/dist/firebaseui.css";
 export default {
   name: 'Auth',
   components:{
-      PageBackground
+      PageBackground,
+      Modal
   },
   data(){
         return {
-            
+            showModal: false
         }
     },
     computed: {
@@ -51,6 +60,9 @@ export default {
 
     },
   methods: {
+      confirmSignOut(){
+        this.$refs.modal.show()
+      },
       signOut(){
         try{
           firebase.auth().signOut();

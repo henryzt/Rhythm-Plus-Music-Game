@@ -12,6 +12,7 @@ export default class YoutubePlayer {
 
   playVideo() {
     if (this.vm.srcMode !== "youtube") return;
+    this.ytPlayer.setVolume(100);
     this.ytPlayer.playVideo();
   }
 

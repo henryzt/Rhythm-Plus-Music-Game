@@ -1,9 +1,8 @@
 import {
   dbi,
-  usersCollection,
   songsCollection,
   sheetsCollection,
-} from "../helpers/firebaseConfig";
+} from "../helpers/firebaseConfig"; //usersCollection
 import { store } from "../helpers/store";
 
 export function createSong(songInfo) {
@@ -41,7 +40,7 @@ export function createSong(songInfo) {
 }
 
 export function getSongList() {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     songsCollection.get().then((querySnapshot) => {
       let res = [];
       querySnapshot.forEach((doc) => {
@@ -121,7 +120,7 @@ export function createSheet(sheetInfo) {
 }
 
 export function getSheetList(songId) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     sheetsCollection
       .where("songId", "==", songId)
       .get()

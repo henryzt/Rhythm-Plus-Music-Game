@@ -37,7 +37,7 @@
     "no-use-before-define": 0,
     "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
     "func-names": 0,
-    "no-console": ["error", { "allow": ["warn", "error"] }],
+    "no-console": ["error", { "allow": ["warn", "error", "log"] }],
     "max-classes-per-file": 0
   },
   "env": {

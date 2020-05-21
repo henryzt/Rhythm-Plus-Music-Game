@@ -114,6 +114,7 @@ export default {
         this.instance.loading = false;
       },
       videoCued(){
+        this.ytPlayer.setVolume(0);
         this.ytPlayer.playVideo();
       }
     }

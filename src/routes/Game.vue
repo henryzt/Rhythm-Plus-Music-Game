@@ -88,6 +88,7 @@ export default {
 
         this.instance = new GameInstance(this);
 
+        //FIXME add id and route validation
         if(this.$route.params.sheet && this.$route.params.sheet!="null"){
           this.playWithId()
         }

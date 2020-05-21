@@ -42,7 +42,7 @@ export function createSong(songInfo) {
 
 export function getSongList() {
   return new Promise((resolve, reject) => {
-    songsCollection.get().then(function (querySnapshot) {
+    songsCollection.get().then((querySnapshot) => {
       let res = [];
       querySnapshot.forEach((doc) => {
         let song = doc.data();

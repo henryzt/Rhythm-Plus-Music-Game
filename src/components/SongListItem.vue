@@ -14,7 +14,7 @@
 export default {
     name:"SongListItem",
     props: ["song"],
-    data(){
+    data() {
         return {
         }
     },

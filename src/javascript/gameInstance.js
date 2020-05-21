@@ -85,7 +85,6 @@ export default class GameInstance {
       this.vm.testTap = e.tapCount;
       console.log(e);
       for (let pointer of e.detail.events) {
-        // touchInf[e.changedTouches[c].identifier] = {"x":e.changedTouches[c].clientX,"y":e.changedTouches[c].clientY};
         const x = pointer.clientX;
 
         this.dropTrackArr.forEach((track) => {

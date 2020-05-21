@@ -68,6 +68,7 @@ export default {
   padding: 5px;
   background: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   width: 100%;
   max-width: 800px;
   margin: 10px auto;

@@ -3,7 +3,11 @@
     <!-- visualizer space -->
     <div class="blurFilter" v-if="visualizer===4||visualizer===5"></div>
     <canvas ref="visualizerCanvas" v-show="visualizer===2"></canvas>
-    <div ref="visualizerSpace" id="visualizer" v-show="visualizer!=0 && visualizer!=2"></div>
+    <div
+      ref="visualizerSpace"
+      id="visualizer"
+      v-show="visualizer===1 || visualizer===3 || visualizer===4"
+    ></div>
   </div>
 </template>
 

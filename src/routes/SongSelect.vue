@@ -109,6 +109,9 @@ export default {
     transform: rotateY(-30deg);
     margin: 0 20px;
   }
+  .mContainer {
+    margin: 50px;
+  }
 }
 
 .detail_collapsed {

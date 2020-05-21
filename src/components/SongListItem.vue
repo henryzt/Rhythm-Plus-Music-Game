@@ -30,6 +30,7 @@ export default {
   padding: 5px;
   background: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   cursor: pointer;
   width: 100%;
   max-width: 800px;
@@ -39,6 +40,7 @@ export default {
   overflow: hidden;
 }
 .song_item:hover {
+  background: rgba(255, 255, 255, 0.4);
   transform: scale(1.2);
   z-index: 500;
 }
@@ -59,15 +61,16 @@ export default {
 .image img {
   height: 100%;
 }
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 1000px) {
   .image {
     width: 150px;
     min-width: 150px;
     height: 90px;
   }
+}
+@media only screen and (max-width: 1300px) {
   .song_item:hover {
     transform: none;
-    z-index: 500;
   }
 }
 </style>

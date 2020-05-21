@@ -9,6 +9,9 @@ export default class Audio {
       dataArray: null,
     };
     this.player = null;
+    document.addEventListener("visibilitychange", () => {
+      if (this.player) this.mute(document.hidden);
+    });
   }
 
   async loadSong(songSrc, asBackground) {
@@ -50,6 +53,11 @@ export default class Audio {
   play() {
     this.player?.pause();
     this.player?.play();
+  }
+
+  mute(mute) {
+    if (mute) this.player.fade(1, 0, 500);
+    else this.player.fade(0, 1, 2000);
   }
 
   getCurrentTime() {

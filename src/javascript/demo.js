@@ -9,7 +9,7 @@ export function startDemo(instance, demoNum) {
         url: "songs/whywelose.mp3",
         srcMode: "url",
         visualizerNo: 3,
-        timeArr: loadFromDemo("whywelose"),
+        sheet: loadFromDemo("whywelose"),
       });
       break;
 
@@ -18,7 +18,7 @@ export function startDemo(instance, demoNum) {
         url: "songs/sheepdog.mp3",
         srcMode: "url",
         visualizerNo: 2,
-        timeArr: loadFromDemo("sheepdog"),
+        sheet: loadFromDemo("sheepdog"),
       });
       break;
 
@@ -27,7 +27,7 @@ export function startDemo(instance, demoNum) {
         youtubeId: "OFS3OYNs7U4",
         srcMode: "youtube",
         visualizerNo: 0,
-        timeArr: loadFromDemo("bronson"),
+        sheet: loadFromDemo("bronson"),
       });
       break;
 
@@ -38,7 +38,7 @@ export function startDemo(instance, demoNum) {
 
 export function loadFromDemo(name) {
   if (demoJson && demoJson[name]) {
-    return demoJson[name].timeline;
+    return demoJson[name].sheet;
   }
   throw new Error(`unexpected demo name: "{name}" not found`);
 }

@@ -1,9 +1,10 @@
 <template>
+  <div class="visualizer">
     <!-- visualizer space -->
-    <div class="visualizer">
-        <div class="blurFilter" v-if="visualizer===4"></div>
-        <div ref="visualizerSpace" id="visualizer" v-show="visualizer!=0 && visualizer!=2"></div>
-    </div>
+    <div class="blurFilter" v-if="visualizer===4||visualizer===5"></div>
+    <canvas ref="visualizerCanvas" v-show="visualizer===2"></canvas>
+    <div ref="visualizerSpace" id="visualizer" v-show="visualizer!=0 && visualizer!=2"></div>
+  </div>
 </template>
 
 
@@ -18,50 +19,39 @@ const visualizerArr = [
   "Bar Visualizer",
   "Space with Polygon",
   "Space Blurred",
+  "Blurred",
 ];
 
 
 export default {
   name: 'Visualizer',
-  props: ["audio", "canvas", "ctx"],
+  props: ["autoUpdate", "setVisualizerNo"],
   data: function(){
     return {
-        audioData:{
-            audioCtx: null,
-            src: null,
-            analyser: null,
-            bufferLength: null,
-            dataArray: null
-        },
         visualizer: 2,
         visualizerArr,
         visualizerLoaded: false, // visualizer loaded indicator
+        canvas: null,
+        ctx: null
     }
   },
-  methods: {
-    initVisualizerData() {
-        this.audio.crossOrigin = "anonymous"
-        let audioCtx = new AudioContext();
-        this.audioData.src = audioCtx.createMediaElementSource(this.audio);
-        let analyser = audioCtx.createAnalyser();
-        
-        this.audioData.src.connect(analyser);
-        analyser.connect(audioCtx.destination);
-
-        analyser.fftSize = 256;
-
-        this.audioData.bufferLength = analyser.frequencyBinCount;
-
-        this.audioData.dataArray = new Uint8Array(this.audioData.bufferLength);
-
-        this.audioData.audioCtx = audioCtx;
-        this.audioData.analyser = analyser;
+  mounted() {
+        this.canvas = this.$refs.visualizerCanvas;
+        this.ctx = this.canvas.getContext("2d");
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+        if(this.autoUpdate)
+            this.update();
+        if(this.setVisualizerNo)
+            this.visualizer = this.setVisualizerNo;
+        if(this.audioData && this.audioData.analyser)
+            this.initAllVisualizersIfRequried()
     },
+  methods: {
     initAllVisualizersIfRequried() {
-        if (!this.audioData.audioCtx && !this.visualizerLoaded) {
-            this.initVisualizerData();
-            initSpaceVisualizer(this.audioData, this.$refs.visualizerSpace);
+        if ( !this.visualizerLoaded ) {
             this.visualizerLoaded = true;
+            initSpaceVisualizer(this.audioData, this.$refs.visualizerSpace);
         }
     },
     renderVisualizer() {
@@ -71,9 +61,9 @@ export default {
             renderSpaceVisualizer();
             break;
         case 2:
-            renderBarVisualizer(this.canvas, this.ctx, this.audioData);
             this.ctx.fillStyle = "rgba(10,10,44,0.2)";
             this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            renderBarVisualizer(this.canvas, this.ctx, this.audioData);
             break;
         case 3:
             renderSpaceVisualizer(true);
@@ -88,21 +78,34 @@ export default {
     },
     switchNextVisualizer(){
         this.visualizer = this.visualizer == this.visualizerArr.length - 1 ? 0 : this.visualizer + 1;
+    },
+    update() {
+        if(!this.autoUpdate) return;
+        requestAnimationFrame(this.update.bind(this));
+        this.renderVisualizer();
     }
   },
     watch : {
-        audio: function(){
-            this.initAllVisualizersIfRequried()
+        audioData: () => {
+            // required to watch vuex change
+        },
+        setVisualizerNo: function(){
+            this.visualizer = this.setVisualizerNo;
         }
     },
     computed:{
-        currentVisualizer: function(){
+        currentVisualizer() {
             return this.visualizerArr[this.visualizer]
+        },
+        audioData() {
+            let data = this.$store.state.audio.audioData;
+            if(!this.visualizerLoaded && this.ctx && data.analyser)
+                this.initAllVisualizersIfRequried()
+            return data;
         }
     }
 };
 </script>
 
 <style scoped>
-
 </style>

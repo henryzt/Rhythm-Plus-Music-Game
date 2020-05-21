@@ -9,16 +9,25 @@
   "scripts": {
     "format": "prettier --write \"src/**/*.js\" && eslint --fix \"src/**/*.js\"",
     "lint": "eslint --fix \"src/**/*.js\"",
-    "start": "NODE_ENV=development webpack-dev-server --mode development --progress",
+    "start": "NODE_ENV=development webpack-dev-server --mode development --progress --history-api-fallback",
     "build:dev": "NODE_ENV=development webpack --mode development",
     "build": "NODE_ENV=production webpack --mode production",
     "clean": "rm -rf ./dist",
-    "serve": "yarn run build && serve ."
+    "serve": "yarn run build && serve .",
+    "deploy": "yarn build && firebase deploy && git push"
   },
   "dependencies": {
-    "css-loader": "^3.5.3",
+    "axios": "^0.19.2",
+    "firebase": "^7.14.3",
+    "firebaseui": "^4.5.0",
+    "hammerjs": "^2.0.8",
+    "howler": "^2.1.3",
+    "js-md5": "^0.7.3",
     "vue": "^2.6.11",
-    "vue-youtube": "^1.4.0"
+    "vue-router": "^3.1.6",
+    "vue-youtube": "^1.4.0",
+    "vuex": "^3.3.0",
+    "zingtouch": "^1.0.6"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
@@ -26,7 +35,10 @@
     "@babel/preset-env": "^7.9.6",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.1.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-es2020": "^1.0.2",
     "copy-webpack-plugin": "^5.1.1",
+    "css-loader": "^3.5.3",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.3",

@@ -117,3 +117,5 @@ dist
 # lockfiles (yarn/npm), not needed because we're not an executable
 yarn.lock
 package-lock.json
+
+.firebase/

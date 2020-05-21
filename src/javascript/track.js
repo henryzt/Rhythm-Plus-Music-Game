@@ -90,11 +90,11 @@ export default class DropTrack {
     const needNote =
       playMode &&
       this.game.timeArrIdx < timeArr.length &&
-      playTime >= timeArr[this.game.timeArrIdx].time &&
-      timeArr[this.game.timeArrIdx].key === this.keyBind;
+      playTime >= timeArr[this.game.timeArrIdx].t &&
+      timeArr[this.game.timeArrIdx].k === this.keyBind;
 
     if (needNote) {
-      if (playTime - timeArr[this.game.timeArrIdx].time < 1) {
+      if (playTime - timeArr[this.game.timeArrIdx].t < 1) {
         this.noteArr.push(new Note(this.vm, this.x, this.width));
       }
       this.game.timeArrIdx++;

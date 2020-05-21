@@ -6,28 +6,19 @@
  */
 let visualizer;
 let audioSource;
-let analyser;
-let dataArray;
+let audioData;
 let container;
 
 const PlayerAudioSource = function (player) {
   const self = this;
-  //   let analyser;
-  //   let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  //   analyser = audioCtx.createAnalyser();
-  //   analyser.fftSize = 256;
-  //   player.crossOrigin = "anonymous";
-  //   let source = audioCtx.createMediaElementSource(player);
-  // let source = src;
-  // source.connect(analyser);
-  // analyser.connect(audioCtx.destination);
   const sampleAudioStream = function () {
-    analyser.getByteFrequencyData(dataArray);
+    if(!audioData.analyser) return;
+    audioData.analyser.getByteFrequencyData(audioData.dataArray);
     // calculate an overall volume value
     let total = 0;
     for (let i = 0; i < 50; i++) {
-      // get the volume from the first 80 bins, else it gets too loud with treble
-      total += dataArray[i];
+      // get the volume from the first 50 bins, else it gets too loud with treble
+      total += audioData.dataArray[i];
     }
     self.volume = total;
   };
@@ -120,8 +111,8 @@ const SpaceVisualizer = function () {
     return [offsetX, offsetY];
   };
   Polygon.prototype.drawPolygon = function () {
-    const bucket = Math.ceil((dataArray.length / tiles.length) * this.num);
-    let val = Math.pow(dataArray[bucket] / 255, 2) * 255;
+    const bucket = Math.ceil((audioData.dataArray.length / tiles.length) * this.num);
+    let val = Math.pow(audioData.dataArray[bucket] / 255, 2) * 255;
     val *= this.num > 42 ? 1.1 : 1;
     // establish the value for this tile
     if (val > this.high) {
@@ -485,11 +476,10 @@ const SpaceVisualizer = function () {
   };
 };
 
-export function initSpaceVisualizer(audioData, canvasContainer) {
+export function initSpaceVisualizer(audioDataRaw, canvasContainer) {
   visualizer = new SpaceVisualizer();
   // let player = audio;
-  analyser = audioData.analyser;
-  dataArray = audioData.dataArray;
+  audioData = audioDataRaw;
   container = canvasContainer;
 
   audioSource = new PlayerAudioSource();

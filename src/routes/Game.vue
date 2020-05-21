@@ -1,20 +1,25 @@
 <template>
-   <div class="game">
+  <div class="game">
     <PlayControl ref="control"></PlayControl>
 
-    <div class="center" ref="hitIndicator">
-    {{markJudge}} {{combo>=5?combo:''}}
+    <div class="center" ref="hitIndicator">{{markJudge}} {{combo>=5?combo:''}}</div>
+
+    <div></div>
+    <div class="gameWrapper">
+      <canvas ref="mainCanvas" id="gameCanvas" :class="{perspective}"></canvas>
     </div>
 
-    <canvas ref="mainCanvas"></canvas>
-
-    <Visualizer ref="visualizer" :audio="audio" :canvas="canvas" :ctx="ctx"></Visualizer>
+    <Visualizer ref="visualizer"></Visualizer>
 
     <div v-show="srcMode==='youtube'">
-        <Youtube id="ytPlayer" ref="youtube" :video-id="youtubeId" :player-vars="{controls: 0, rel: 0 }"></Youtube>
+      <Youtube
+        id="ytPlayer"
+        ref="youtube"
+        :video-id="youtubeId"
+        :player-vars="{controls: 0, rel: 0, playsinline: 1 }"
+      ></Youtube>
     </div>
-      
-    </div>
+  </div>
 </template>
 
 <script>
@@ -22,7 +27,7 @@ import PlayControl from '../components/PlayControl.vue';
 import Visualizer from '../components/Visualizer.vue';
 import GameInstance from '../javascript/gameInstance';
 import { Youtube } from 'vue-youtube'
-
+import { getSheet } from "../javascript/db"
 
 export default {
     name: 'Game',
@@ -50,7 +55,9 @@ export default {
             srcMode: "url",
             instance: null,
             visualizerInstance: null,
-            youtubeId: "jNQXAC9IVRw"
+            youtubeId: "jNQXAC9IVRw",
+            perspective: false,
+            vibrate: true,
         }
     },
     computed: {
@@ -63,7 +70,8 @@ export default {
     },
     watch: {
         currentSong: function() {
-            this.audio.load();
+            if(this.srcMode === "url")
+                this.audio.loadSong(this.currentSong, false);
         },
         noteSpeedInSec: function() {
             this.instance.reposition();
@@ -76,16 +84,49 @@ export default {
         this.canvas.height = window.innerHeight;
         this.visualizerInstance = this.$refs.visualizer;
         // get audio element
-        this.audio = this.$refs.control.$refs.audioElement;
+        this.audio = this.$store.state.audio;
 
         this.instance = new GameInstance(this);
 
+        //FIXME add id and route validation
+        if(this.$route.params.sheet && this.$route.params.sheet!="null"){
+          this.playWithId()
+        }
+
+    },
+    destroyed(){
+        this.instance.destroyInstance()
     },
     methods:{
+      async playWithId(){
+        let song = await getSheet(this.$route.params.sheet);
+        this.instance.startSong(song);
+      }
 
     }
 };
 </script>
 
-<style>
+<style scoped>
+* {
+  overflow: hidden;
+}
+.gameWrapper {
+  perspective: 600px;
+}
+
+#gameCanvas {
+  transition: 2s;
+}
+
+.perspective {
+  transform: rotateX(30deg) scaleY(1.5);
+  transform-origin: 50% 100%;
+}
+
+@media only screen and (min-width: 800px) {
+  .perspective {
+    transform: rotateX(30deg) scale(1.5);
+  }
+}
 </style>

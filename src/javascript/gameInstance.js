@@ -2,6 +2,7 @@ import DropTrack from "./track";
 import YoutubePlayer from "./youtube";
 import { saveToLocal, loadFromLocal } from "./storage";
 import { loadFromDemo } from "./demo";
+import ZingTouch from "zingtouch";
 
 export default class GameInstance {
   constructor(vm) {
@@ -41,6 +42,7 @@ export default class GameInstance {
     this.registerInput();
 
     // start animate
+    this.destoryed = false;
     this.update();
   }
 
@@ -79,22 +81,28 @@ export default class GameInstance {
       false
     );
 
-    this.canvas.addEventListener(
-      "touchstart",
-      (e) => {
-        for (let c = 0; c < e.changedTouches.length; c++) {
-          // touchInf[e.changedTouches[c].identifier] = {"x":e.changedTouches[c].clientX,"y":e.changedTouches[c].clientY};
-          const x = event.changedTouches[c].clientX;
+    const tapEvent = (e) => {
+      this.vm.testTap = e.tapCount;
+      console.log(e);
+      for (let pointer of e.detail.events) {
+        const x = pointer.clientX;
 
-          this.dropTrackArr.forEach((track) => {
-            if (x > track.x && x < track.x + track.width) {
-              this.onKeyDown(track.keyBind);
-            }
-          });
-        }
-      },
-      false
-    );
+        this.dropTrackArr.forEach((track) => {
+          if (x > track.x && x < track.x + track.width) {
+            this.onKeyDown(track.keyBind);
+          }
+        });
+      }
+    };
+
+    this.touchRegion = ZingTouch.Region(this.canvas);
+
+    for (let idx of this.trackKeyBind)
+      this.touchRegion.bind(
+        this.canvas,
+        new ZingTouch.Tap({ numInputs: idx + 1 }),
+        tapEvent
+      );
   }
 
   // log key and touch events
@@ -111,6 +119,7 @@ export default class GameInstance {
 
   // animate all
   update() {
+    if (this.destoryed) return;
     requestAnimationFrame(this.update.bind(this));
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.vm.visualizerInstance.renderVisualizer();
@@ -124,13 +133,13 @@ export default class GameInstance {
     const startTime = Date.now();
     this.vm.playMode = true;
 
-    const intervalPrePlay = setInterval(async () => {
+    const intervalPrePlay = setInterval(() => {
       const elapsedTime = Date.now() - startTime;
       this.playTime = Number(elapsedTime / 1000);
       if (this.playTime > Number(this.vm.noteSpeedInSec)) {
         try {
           if (this.vm.srcMode === "url") {
-            await this.audio.play();
+            this.audio.play();
           } else if (this.vm.srcMode === "youtube") {
             this.ytPlayer.playVideo();
           }
@@ -151,7 +160,7 @@ export default class GameInstance {
     // it seems that 'getPlayerTime' is async, thus all places calling this func need to await res [help wanted]
     return this.vm.srcMode === "youtube"
       ? this.ytPlayer.getPlayerTime()
-      : this.audio.currentTime;
+      : this.audio.getCurrentTime();
   }
 
   resetPlaying(resetTimeArr) {
@@ -161,23 +170,25 @@ export default class GameInstance {
     this.timeArrIdx = 0;
     this.playTime = 0;
     this.vm.playMode = false;
-    this.audio.pause();
-    this.audio.currentTime = 0;
+    this.audio.stop();
   }
 
   startSong(song) {
     this.resetPlaying(true);
     this.vm.currentSong = song.url;
     this.vm.srcMode = song.srcMode;
-    this.timeArr = song.timeArr;
+    this.timeArr = song.sheet;
     this.vm.visualizerInstance.visualizer =
-      song.visualizerNo !== null ? song.visualizerNo : this.vm.visualizer;
+      song.visualizerNo !== null ? song.visualizerNo : 0;
     if (song.srcMode === "youtube") {
       this.loadYoutubeVideo(song.youtubeId);
-    } else {
-      this.audio.load();
     }
     this.playGame();
+  }
+
+  destroyInstance() {
+    this.destoryed = true;
+    this.resetPlaying();
   }
 
   // local storage

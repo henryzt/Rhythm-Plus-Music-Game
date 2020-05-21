@@ -14,7 +14,7 @@ export default {
   components: {
   },
   mounted(){
-    this.$store.state.audio = new Audio();
+    this.$store.commit("setAudio", new Audio());
   }
 };
 </script>

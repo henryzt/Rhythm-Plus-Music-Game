@@ -1,10 +1,11 @@
 body {
   padding: 0;
   margin: 0;
-  overflow: hidden;
   background: black;
   color: white;
   font-family: "Raleway";
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0.3);
+  overflow: hidden;
 }
 
 .control {
@@ -79,6 +80,8 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   width: 90%;
+  animation-name: enter;
+  animation-duration: 1s;
 }
 
 #ytPlayer {
@@ -124,7 +127,7 @@ body {
     opacity: 0;
   }
   to {
-    opacity: 0.7;
+    opacity: 1;
   }
 }
 

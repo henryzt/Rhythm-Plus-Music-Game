@@ -4,6 +4,7 @@
 
     <div class="center" ref="hitIndicator">{{markJudge}} {{combo>=5?combo:''}}</div>
 
+    <div></div>
     <div class="gameWrapper">
       <canvas ref="mainCanvas" id="gameCanvas" :class="{perspective}"></canvas>
     </div>
@@ -15,7 +16,7 @@
         id="ytPlayer"
         ref="youtube"
         :video-id="youtubeId"
-        :player-vars="{controls: 0, rel: 0 }"
+        :player-vars="{controls: 0, rel: 0, playsinline: 1 }"
       ></Youtube>
     </div>
   </div>
@@ -26,7 +27,7 @@ import PlayControl from '../components/PlayControl.vue';
 import Visualizer from '../components/Visualizer.vue';
 import GameInstance from '../javascript/gameInstance';
 import { Youtube } from 'vue-youtube'
-
+import { getSheet } from "../javascript/db"
 
 export default {
     name: 'Game',
@@ -56,7 +57,7 @@ export default {
             visualizerInstance: null,
             youtubeId: "jNQXAC9IVRw",
             perspective: false,
-            vibrate: true
+            vibrate: true,
         }
     },
     computed: {
@@ -87,17 +88,29 @@ export default {
 
         this.instance = new GameInstance(this);
 
+        //FIXME add id and route validation
+        if(this.$route.params.sheet && this.$route.params.sheet!="null"){
+          this.playWithId()
+        }
+
     },
     destroyed(){
         this.instance.destroyInstance()
     },
     methods:{
+      async playWithId(){
+        let song = await getSheet(this.$route.params.sheet);
+        this.instance.startSong(song);
+      }
 
     }
 };
 </script>
 
 <style scoped>
+* {
+  overflow: hidden;
+}
 .gameWrapper {
   perspective: 600px;
 }

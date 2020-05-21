@@ -8,7 +8,10 @@
         style="max-width: 550px; padding: 50px 0; width:100%;box-sizing: border-box;"
       />
       <Button text="Start Game" @click="goToGame"></Button>
-      <div class="text_button" @click="goToAuth">Login or Reigster</div>
+      <div
+        class="text_button"
+        @click="goToAuth"
+      >{{$store.state.currentUser ? "Welcome, "+$store.state.currentUser.displayName:"Login or Reigster"}}</div>
     </div>
   </div>
 </template>
@@ -41,7 +44,7 @@ export default {
     },
     methods:{
         goToGame(){
-            this.$router.push('/game')
+            this.$router.push('/menu')
         },
         goToAuth(){
             this.$router.push('/account')

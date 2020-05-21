@@ -16,6 +16,7 @@ firebase.initializeApp(config);
 
 // firebase utils
 const db = firebase.firestore();
+const dbi = firebase.firestore; //db instance
 const auth = firebase.auth();
 const currentUser = auth.currentUser;
 
@@ -32,6 +33,7 @@ const sheetsCollection = db.collection("sheets");
 
 export {
   db,
+  dbi,
   auth,
   currentUser,
   perf,

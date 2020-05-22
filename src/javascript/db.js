@@ -34,27 +34,33 @@ export function createSong(songInfo) {
       })
       .catch(function (error) {
         console.error("Error writing document: ", error);
-        reject();
+        reject(error);
       });
   });
 }
 
 export function getSongList() {
-  return new Promise((resolve) => {
-    songsCollection.get().then((querySnapshot) => {
-      let res = [];
-      querySnapshot.forEach((doc) => {
-        let song = doc.data();
-        song.id = doc.id;
-        song.image = song.youtubeId
-          ? `https://img.youtube.com/vi/${song.youtubeId}/mqdefault.jpg`
-          : song.image;
-        res.push(song);
-        // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, " => ", doc.data());
+  return new Promise((resolve, reject) => {
+    songsCollection
+      .get()
+      .then((querySnapshot) => {
+        let res = [];
+        querySnapshot.forEach((doc) => {
+          let song = doc.data();
+          song.id = doc.id;
+          song.image = song.youtubeId
+            ? `https://img.youtube.com/vi/${song.youtubeId}/mqdefault.jpg`
+            : song.image;
+          res.push(song);
+          // doc.data() is never undefined for query doc snapshots
+          console.log(doc.id, " => ", doc.data());
+        });
+        resolve(res);
+      })
+      .catch(function (error) {
+        console.error("Error getting document:", error);
+        reject(error);
       });
-      resolve(res);
-    });
   });
 }
 
@@ -69,13 +75,13 @@ export function getSong(songId) {
           resolve(doc.data());
         } else {
           // doc.data() will be undefined in this case
-          console.log("No such document!");
+          console.error("No such document!");
           reject();
         }
       })
       .catch(function (error) {
-        console.log("Error getting document:", error);
-        reject();
+        console.error("Error getting document:", error);
+        reject(error);
       });
   });
 }
@@ -120,7 +126,7 @@ export function createSheet(sheetInfo) {
 }
 
 export function getSheetList(songId) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     sheetsCollection
       .where("songId", "==", songId)
       .get()
@@ -134,6 +140,10 @@ export function getSheetList(songId) {
           console.log(doc.id, " => ", doc.data());
         });
         resolve(res);
+      })
+      .catch(function (error) {
+        console.error("Error getting document:", error);
+        reject(error);
       });
   });
 }

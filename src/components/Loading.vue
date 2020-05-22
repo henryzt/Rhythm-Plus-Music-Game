@@ -69,15 +69,4 @@ import Loader from 'vue-spinner/src/FadeLoader.vue'
   display: felx;
   padding: 30px;
 }
-
-.modal-fade-enter,
-.modal-fade-leave-active {
-  transform: scale(1.2);
-  opacity: 0;
-}
-
-.modal-fade-enter-active,
-.modal-fade-leave-active {
-  transition: 0.5s;
-}
 </style>

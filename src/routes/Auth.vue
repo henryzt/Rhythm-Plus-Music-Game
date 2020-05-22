@@ -50,6 +50,7 @@ export default {
     mounted() {
         const uiConfig = {
             signInSuccessUrl: '/',
+            signInFlow: 'popup',
             signInOptions: [
                 firebase.auth.GoogleAuthProvider.PROVIDER_ID,
                 firebase.auth.EmailAuthProvider.PROVIDER_ID

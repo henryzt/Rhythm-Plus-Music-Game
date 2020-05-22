@@ -469,6 +469,7 @@ const SpaceVisualizer = function () {
     setInterval(rotateForeground, 20);
     // resize the canvas to fill browser window dynamically
     window.addEventListener("resize", this.resizeCanvas, false);
+    window.addEventListener("orientationchange",this.resizeCanvas,false);
   };
 
   this.render = (drawPolygon) => {

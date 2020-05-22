@@ -110,40 +110,4 @@
   position: relative;
   padding: 20px 30px;
 }
-
-.btn-action {
-  cursor: pointer;
-  color: white;
-  background: transparent;
-  padding: 10px;
-  min-width: 80px;
-  margin: 0 10px;
-  text-align: center;
-  transition: 0.5s;
-}
-
-.btn-action:hover {
-  color: gray;
-  background: rgba(255, 255, 255, 0.527);
-}
-
-.btn-close {
-  border: none;
-  font-size: 20px;
-  font-weight: bold;
-  padding: 2px;
-  margin: 0;
-  min-width: 20px;
-}
-
-.modal-fade-enter,
-.modal-fade-leave-active {
-  transform: scale(1.2);
-  opacity: 0;
-}
-
-.modal-fade-enter-active,
-.modal-fade-leave-active {
-  transition: 0.5s;
-}
 </style>

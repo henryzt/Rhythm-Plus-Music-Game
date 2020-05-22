@@ -21,7 +21,7 @@
         @cued="videoCued"
       ></Youtube>
     </div>
-    <Loading :show="instance && instance.loading"></Loading>
+    <Loading :show="instance && instance.loading">Song Loading...</Loading>
   </div>
 </template>
 

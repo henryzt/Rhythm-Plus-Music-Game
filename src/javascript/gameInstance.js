@@ -74,6 +74,14 @@ export default class GameInstance {
       this.reposition();
     });
 
+    window.addEventListener(
+      "orientationchange",
+      (_) => {
+        this.reposition();
+      },
+      false
+    );
+
     document.addEventListener(
       "keydown",
       (event) => {

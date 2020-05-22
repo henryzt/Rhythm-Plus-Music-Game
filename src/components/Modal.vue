@@ -2,7 +2,7 @@
   <transition name="modal-fade">
     <div class="modal-backdrop" v-if="showModal">
       <div class="modal blurBackground">
-        <header class="modal-header">
+        <header class="modal-header" :class="{'modal-darker':hideFooter}">
           <slot name="header">
             {{titleText}}
             <div class="btn-action btn-close" @click="close">x</div>
@@ -11,7 +11,7 @@
         <section class="modal-body">
           <slot>{{bodyText}}</slot>
         </section>
-        <footer class="modal-footer">
+        <footer class="modal-footer" v-if="!hideFooter">
           <slot name="footer">
             <div class="btn-action" @click="ok">{{okText}}</div>
             <div class="btn-action" @click="close">{{cancelText}}</div>
@@ -41,7 +41,11 @@
         bodyText:{
             type: String,
             default: ""
-        }
+        },
+        hideFooter:{
+            type: Boolean,
+            default: false
+        },
     },
     data: function(){
         return {
@@ -104,6 +108,10 @@
 .modal-footer {
   background: rgba(114, 114, 114, 0.4);
   justify-content: flex-end;
+}
+
+.modal-darker {
+  background: rgba(114, 114, 114, 0.4);
 }
 
 .modal-body {

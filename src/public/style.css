@@ -7,12 +7,12 @@ body {
   -webkit-tap-highlight-color: rgba(255, 255, 255, 0.3);
 }
 
-.control {
+.pause_button {
+  cursor: pointer;
   position: absolute;
   top: 20px;
   left: 20px;
   opacity: 0.5;
-  transition: opacity 2s ease-in-out;
   z-index: 100;
 }
 

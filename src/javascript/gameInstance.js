@@ -15,6 +15,7 @@ export default class GameInstance {
     // time elapsed relative to audio play time (+Number(vm.noteSpeedInSec))
     this.playTime = 0;
     this.loading = false;
+    this.paused = false;
 
     // init play tracks
     this.dropTrackArr = [];
@@ -127,6 +128,7 @@ export default class GameInstance {
   update() {
     if (this.destoryed) return;
     requestAnimationFrame(this.update.bind(this));
+    if (this.paused) return;
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.vm.visualizerInstance.renderVisualizer();
     for (const track of this.dropTrackArr) {
@@ -195,6 +197,24 @@ export default class GameInstance {
   destroyInstance() {
     this.destoryed = true;
     this.resetPlaying();
+  }
+
+  pauseGame() {
+    this.paused = true;
+    if (this.vm.srcMode === "url") {
+      this.audio.pause();
+    } else if (this.vm.srcMode === "youtube") {
+      this.ytPlayer.pauseVideo();
+    }
+  }
+
+  resumeGame() {
+    this.paused = false;
+    if (this.vm.srcMode === "url") {
+      this.audio.play();
+    } else if (this.vm.srcMode === "youtube") {
+      this.ytPlayer.playVideo();
+    }
   }
 
   // youtube

@@ -1,6 +1,6 @@
 <template>
   <div class="game">
-    <PlayControl ref="control"></PlayControl>
+    <a class="pause_button" @click="pauseGame">Pause</a>
 
     <div class="center" ref="hitIndicator">{{markJudge}} {{combo>=5?combo:''}}</div>
 
@@ -22,6 +22,33 @@
       ></Youtube>
     </div>
     <Loading :show="instance && instance.loading">Song Loading...</Loading>
+
+    <Modal ref="menu" :hideFooter="true" style="text-align:center;z-index:1000">
+      <template v-slot:header>
+        <div style="width:100%;font-size:23px">Pause Menu</div>
+      </template>
+
+      <template>
+        <div v-if="!advancedMenuOptions">
+          <div class="btn-action" @click="resumeGame">Resume</div>
+          <div class="btn-action" @click="restartGame">Restart</div>
+          <div class="btn-action" @click="advancedMenuOptions=true">Advanced</div>
+          <div class="btn-action" @click="exitGame">Exit Game</div>
+        </div>
+
+        <div v-else>
+          <PlayControl :playData="$data"></PlayControl>
+          <br />
+          <hr />
+          <div
+            class="btn-action"
+            style="display:inline-block"
+            @click="advancedMenuOptions=false"
+          >Back</div>
+          <div class="btn-action" style="display:inline-block" @click="resumeGame">Done</div>
+        </div>
+      </template>
+    </Modal>
   </div>
 </template>
 
@@ -29,6 +56,7 @@
 import PlayControl from '../components/PlayControl.vue';
 import Visualizer from '../components/Visualizer.vue';
 import Loading from '../components/Loading.vue';
+import Modal from '../components/Modal.vue';
 import GameInstance from '../javascript/gameInstance';
 import { Youtube } from 'vue-youtube'
 import { getSheet } from "../javascript/db"
@@ -39,7 +67,8 @@ export default {
         PlayControl,
         Visualizer,
         Youtube,
-        Loading
+        Loading,
+        Modal
     },
     data(){
         return {
@@ -63,6 +92,7 @@ export default {
             youtubeId: "jNQXAC9IVRw",
             perspective: false,
             vibrate: true,
+            advancedMenuOptions: false
         }
     },
     computed: {
@@ -116,6 +146,28 @@ export default {
       videoCued(){
         this.ytPlayer.setVolume(0);
         this.ytPlayer.playVideo();
+      },
+      pauseGame(){
+        this.instance.pauseGame()
+        this.$refs.menu.show()
+      },
+      hideMenu(){
+        this.advancedMenuOptions=false;
+        this.$refs.menu.close()
+      },
+      resumeGame(){
+        this.hideMenu()
+        this.instance.resumeGame()
+      },
+      restartGame(){
+        this.hideMenu()
+        this.instance.paused = false
+        this.instance.resetPlaying()
+        this.instance.startSong()
+      },
+      exitGame(){
+        this.hideMenu()
+        this.$router.push('/menu')
       }
     }
 };
@@ -142,5 +194,11 @@ export default {
   .perspective {
     transform: rotateX(30deg) scale(1.5);
   }
+}
+
+.btn-action {
+  max-width: 200px;
+  margin: 10px auto;
+  border: rgba(114, 114, 114, 0.4);
 }
 </style>

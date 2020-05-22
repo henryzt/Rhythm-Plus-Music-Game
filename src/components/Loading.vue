@@ -17,7 +17,7 @@
 import Loader from 'vue-spinner/src/FadeLoader.vue'
 
   export default {
-    name: 'Modal',
+    name: 'Loading',
     props: {
         text:{
             type: String,

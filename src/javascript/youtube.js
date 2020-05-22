@@ -16,6 +16,11 @@ export default class YoutubePlayer {
     this.ytPlayer.playVideo();
   }
 
+  pauseVideo() {
+    if (this.vm.srcMode !== "youtube") return;
+    this.ytPlayer.pauseVideo();
+  }
+
   resetVideo() {
     if (this.vm.srcMode !== "youtube") return;
     this.ytPlayer.seekTo(0);

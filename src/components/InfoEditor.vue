@@ -17,9 +17,6 @@
         <option v-for="song in songList" :value="song" :key="song.id">{{song.title}}</option>
       </select>
       <br />
-      <select id="sheetSelect" v-model="selectedSheet" style="width:130px">
-        <option v-for="option in demoList" :value="option" :key="option">{{option}}</option>
-      </select>
       <br />
       <input type="submit" />
     </form>
@@ -29,7 +26,6 @@
 
 <script>
 import { createSong, createSheet, getSongList } from "../javascript/db"
-import { demo, startDemo } from "../javascript/demo";
 
 export default {
   name: 'InfoEditor',
@@ -45,7 +41,6 @@ export default {
                url: null 
             },
             songList: null,
-            demoList: Object.keys(demo),
             selectedSong: null,
             selectedSheet: null
         }
@@ -67,7 +62,6 @@ export default {
         submitSheetForm(){
             let sheetInfo = {};
             sheetInfo.song = this.selectedSong.id;
-            sheetInfo.sheet = demo[this.selectedSheet].sheet;
             createSheet(sheetInfo)
         }
     }

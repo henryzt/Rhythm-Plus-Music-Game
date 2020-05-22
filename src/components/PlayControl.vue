@@ -1,9 +1,6 @@
 <template>
   <div class="control">
     <a @click="$parent.showControl = !$parent.showControl">Toggle Control</a> |
-    <a @click="startDemo(1)">Demo 1</a> |
-    <a @click="startDemo(2)">2</a> |
-    <a @click="startDemo(3)">3</a> |
     <a
       @click="toggleVisualizer"
     >{{$parent.visualizerInstance?$parent.visualizerInstance.currentVisualizer:''}}</a>
@@ -18,37 +15,6 @@
         Speed
         <input v-model="$parent.noteSpeedInSec" placeholder="Speed" type="number" />
       </div>
-      <!-- select song -->
-      <div>
-        <select id="song" v-model="$parent.currentSong">
-          <option disabled value>Please select song to play</option>
-          <option value="songs/myblood.mp3">My Blood - 21P</option>
-          <option value="songs/police.mp3">Karma Police - RH</option>
-          <option value="songs/nanana.mp3">NANANA - MCR</option>
-          <option value="songs/sheepdog.mp3">Sheepdog MTV - MD</option>
-          <option value="songs/whywelose.mp3">Why We Lose - CT</option>
-        </select>
-      </div>
-      <br />
-      <!-- load song -->
-      <div>
-        <input v-model="loadFrom" placeholder="enter local saves" />
-        <button @click="$parent.instance.loadTimeArrFromLocal(loadFrom)">Load</button>
-      </div>
-      <div>
-        <select id="loadFromDemo" v-model="currentDemoNotes">
-          <option disabled value>Or select demo note</option>
-          <option v-for="option in demoList" :value="option" :key="option">{{option}}</option>
-        </select>
-        <button @click="$parent.instance.loadTimeArrFromDemo(currentDemoNotes)">Load</button>
-      </div>
-      <br />
-      <!-- save song -->
-      <div>
-        <input v-model="saveTo" placeholder="enter name to save" />
-        <button @click="$parent.instance.saveCurrentTimeArrToLocal(saveTo)">Save</button>
-      </div>
-      <br />
       <!-- load youtube -->
       <div>
         <input v-model="youtubeId" placeholder="enter youtube id" />
@@ -84,26 +50,19 @@
 </template>
 
 <script>
-import { demo, startDemo } from "../javascript/demo";
+
 
 export default {
   name: 'PlayControl',
   props: [],
   data: function(){
     return {
-        loadFrom: "",
-        saveTo: "",
-        demoList: Object.keys(demo),
-        currentDemoNotes: "",
         youtubeId: "",
     }
   },
   methods: {
     toggleVisualizer() {
       this.$parent.visualizerInstance.switchNextVisualizer()
-    },
-    startDemo(num){
-      startDemo(this.$parent.instance, num)
     }
   }
 };

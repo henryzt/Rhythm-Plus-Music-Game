@@ -1,7 +1,5 @@
 import DropTrack from "./track";
 import YoutubePlayer from "./youtube";
-import { saveToLocal, loadFromLocal } from "./storage";
-import { loadFromDemo } from "./demo";
 import ZingTouch from "zingtouch";
 
 export default class GameInstance {
@@ -91,8 +89,6 @@ export default class GameInstance {
     );
 
     const tapEvent = (e) => {
-      this.vm.testTap = e.tapCount;
-      console.log(e);
       for (let pointer of e.detail.events) {
         const x = pointer.clientX;
 
@@ -199,19 +195,6 @@ export default class GameInstance {
   destroyInstance() {
     this.destoryed = true;
     this.resetPlaying();
-  }
-
-  // local storage
-  saveCurrentTimeArrToLocal(name) {
-    saveToLocal(name, this.timeArr);
-  }
-
-  loadTimeArrFromLocal(name) {
-    this.timeArr = loadFromLocal(name);
-  }
-
-  loadTimeArrFromDemo(name) {
-    this.timeArr = loadFromDemo(name);
   }
 
   // youtube

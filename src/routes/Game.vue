@@ -1,6 +1,8 @@
 <template>
   <div class="game">
-    <a class="pause_button" @click="pauseGame">Pause</a>
+    <a class="pause_button" @click="pauseGame">
+      <v-icon name="regular/pause-circle" scale="1.5" />
+    </a>
 
     <div class="center" ref="hitIndicator">{{markJudge}} {{combo>=5?combo:''}}</div>
 
@@ -21,7 +23,8 @@
         @cued="videoCued"
       ></Youtube>
     </div>
-    <Loading :show="instance && instance.loading">Song Loading...</Loading>
+
+    <Loading style="z-index:200" :show="instance && instance.loading">Song Loading...</Loading>
 
     <Modal ref="menu" :hideFooter="true" style="text-align:center;z-index:1000">
       <template v-slot:header>
@@ -29,24 +32,26 @@
       </template>
 
       <template>
-        <div v-if="!advancedMenuOptions">
-          <div class="btn-action" @click="resumeGame">Resume</div>
-          <div class="btn-action" @click="restartGame">Restart</div>
-          <div class="btn-action" @click="advancedMenuOptions=true">Advanced</div>
-          <div class="btn-action" @click="exitGame">Exit Game</div>
-        </div>
+        <transition name="slide-fade" mode="out-in">
+          <div v-if="!advancedMenuOptions" key="1">
+            <div class="btn-action" @click="resumeGame">Resume</div>
+            <div class="btn-action" @click="restartGame">Restart</div>
+            <div class="btn-action" @click="advancedMenuOptions=true">Advanced</div>
+            <div class="btn-action" @click="exitGame">Exit Game</div>
+          </div>
 
-        <div v-else>
-          <PlayControl :playData="$data"></PlayControl>
-          <br />
-          <hr />
-          <div
-            class="btn-action"
-            style="display:inline-block"
-            @click="advancedMenuOptions=false"
-          >Back</div>
-          <div class="btn-action" style="display:inline-block" @click="resumeGame">Done</div>
-        </div>
+          <div v-else key="2">
+            <PlayControl :playData="$data"></PlayControl>
+            <br />
+            <hr />
+            <div
+              class="btn-action"
+              style="display:inline-block"
+              @click="advancedMenuOptions=false"
+            >Back</div>
+            <div class="btn-action" style="display:inline-block" @click="resumeGame">Done</div>
+          </div>
+        </transition>
       </template>
     </Modal>
   </div>
@@ -60,6 +65,7 @@ import Modal from '../components/Modal.vue';
 import GameInstance from '../javascript/gameInstance';
 import { Youtube } from 'vue-youtube'
 import { getSheet } from "../javascript/db"
+import 'vue-awesome/icons/regular/pause-circle'
 
 export default {
     name: 'Game',
@@ -129,8 +135,11 @@ export default {
           this.playWithId()
         }
 
+        window.addEventListener("blur", this.pauseGame);
+
     },
     destroyed(){
+        window.removeEventListener("blur", this.pauseGame);
         this.instance.destroyInstance()
     },
     methods:{
@@ -185,6 +194,12 @@ export default {
   transition: 2s;
 }
 
+.game {
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
 .perspective {
   transform: rotateX(30deg) scaleY(1.5);
   transform-origin: 50% 100%;
@@ -199,6 +214,22 @@ export default {
 .btn-action {
   max-width: 200px;
   margin: 10px auto;
-  border: rgba(114, 114, 114, 0.4);
+  background: rgba(78, 78, 78, 0.192);
+}
+
+.btn-action:hover {
+  background: rgb(255, 255, 255);
+}
+
+.slide-fade-enter-active {
+  transition: all 0.3s ease;
+}
+.slide-fade-leave-active {
+  transition: all 0.3s ease;
+}
+.slide-fade-enter,
+.slide-fade-leave-to {
+  transform: scaleX(0.1);
+  opacity: 0;
 }
 </style>

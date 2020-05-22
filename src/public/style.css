@@ -60,8 +60,8 @@ body {
 }
 
 .blurBackground{
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 #visualizerBarBG {

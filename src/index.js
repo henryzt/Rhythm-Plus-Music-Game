@@ -4,11 +4,13 @@ import App from "./App.vue";
 import router from "./helpers/router";
 import { store } from "./helpers/store";
 import * as fb from "./helpers/firebaseConfig";
+import Icon from "vue-awesome/components/Icon.vue";
 
 Vue.config.productionTip = false;
 Vue.config.devtools = process.env.NODE_ENV === "development";
 
 Vue.use(VueRouter);
+Vue.component("v-icon", Icon);
 
 new Vue({
   router,

@@ -145,15 +145,7 @@ export default class GameInstance {
       const elapsedTime = Date.now() - startTime;
       this.playTime = Number(elapsedTime / 1000);
       if (this.playTime > Number(this.vm.noteSpeedInSec)) {
-        try {
-          if (this.vm.srcMode === "url") {
-            this.audio.play();
-          } else if (this.vm.srcMode === "youtube") {
-            this.ytPlayer.playVideo();
-          }
-        } catch (e) {
-          console.error(e);
-        }
+        if (!this.paused) this.resumeGame();
         // this.vm.visualizerInstance.initAllVisualizersIfRequried();
         clearInterval(intervalPrePlay);
         this.intervalPlay = setInterval(async () => {
@@ -190,7 +182,7 @@ export default class GameInstance {
     this.vm.visualizerInstance.visualizer =
       song.visualizerNo !== null ? song.visualizerNo : 0;
     if (song.srcMode === "youtube") {
-      this.loadYoutubeVideo(song.youtubeId);
+      this.ytPlayer.loadYoutubeVideo(song.youtubeId);
     }
   }
 
@@ -215,14 +207,5 @@ export default class GameInstance {
     } else if (this.vm.srcMode === "youtube") {
       this.ytPlayer.playVideo();
     }
-  }
-
-  // youtube
-  playVideo() {
-    this.ytPlayer.playVideo();
-  }
-
-  loadYoutubeVideo(id) {
-    this.ytPlayer.loadYoutubeVideo(id);
   }
 }

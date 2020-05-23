@@ -42,8 +42,8 @@ export default {
   mounted() {
         this.canvas = this.$refs.visualizerCanvas;
         this.ctx = this.canvas.getContext("2d");
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
+        this.resizeCanvas()
+        window.addEventListener("resize", this.resizeCanvas, false);
         if(this.autoUpdate)
             this.update();
         if(this.setVisualizerNo)
@@ -87,6 +87,10 @@ export default {
         if(!this.autoUpdate) return;
         requestAnimationFrame(this.update.bind(this));
         this.renderVisualizer();
+    },
+    resizeCanvas(){
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
     }
   },
     watch : {

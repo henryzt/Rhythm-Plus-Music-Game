@@ -21,7 +21,7 @@ export default class DropTrack {
         this.noteArr.push(new Note(this.vm, this.x, this.width));
       } else if (this.noteArr && this.noteArr[0]) {
         const noteToDismiss = this.noteArr[0];
-        if (noteToDismiss.getDistPercentage() < 2) {
+        if (noteToDismiss.getDiffPercentage() < 0.5) {
           noteToDismiss.hitAndCountScore();
           this.noteArr.shift();
           this.particleEffect.create(

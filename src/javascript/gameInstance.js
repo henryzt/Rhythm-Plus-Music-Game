@@ -204,6 +204,7 @@ export default class GameInstance {
 
   resumeGame() {
     this.paused = false;
+    this.reposition();
     if (this.vm.srcMode === "url") {
       this.audio.play();
     } else if (this.vm.srcMode === "youtube") {

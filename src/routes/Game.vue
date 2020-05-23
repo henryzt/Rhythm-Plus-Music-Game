@@ -20,6 +20,9 @@
 
     <!-- score panel -->
     <div class="score">
+      <div style="font-size:0.5em">
+        <ICountUp :endVal="percentage" :options="{decimalPlaces:2,duration:1}" />%
+      </div>
       <ICountUp :endVal="score" :options="{decimalPlaces:0,duration:1}" />
     </div>
 
@@ -125,6 +128,7 @@ export default {
             noteSpeedInSec: 2,
             currentSong: "",
             score: 0,
+            percentage: 0,
             combo: 0,
             maxCombo: 0,
             marks: { perfect: 0, good: 0, offbeat: 0, miss: 0 },
@@ -286,6 +290,8 @@ export default {
   font-size: 3.5em;
   opacity: 0.3;
   font-family: "Dosis", sans-serif;
+  display: flex;
+  flex-direction: column;
 }
 
 .perspective {
@@ -308,7 +314,20 @@ export default {
     bottom: auto;
     left: auto;
     font-size: 1.5em;
+    font-family: "Nova Mono", monospace;
+    flex-direction: column-reverse;
+    text-align: right;
   }
+}
+
+.pause_button {
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0.5;
+  z-index: 100;
+  padding: 20px 30px 30px 20px;
 }
 
 .modal-body {

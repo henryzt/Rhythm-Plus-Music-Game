@@ -9,6 +9,7 @@ export default function Note(vm, x, width) {
   this.now = Date.now();
   this.delta = 0;
   this.then = 0;
+  this.timeStarted = this.now;
 
   this.setDelta = function () {
     if (this.then === 0) this.then = this.now;
@@ -17,26 +18,36 @@ export default function Note(vm, x, width) {
     this.then = this.now;
   };
 
-  this.getDistPercentage = function () {
-    const dist = vm.checkHitLineY - this.y;
-    const percentage = Math.abs(dist) / (canvas.height / 10); // the lower the better
+  this.getDiffPercentage = function () {
+    // const dist = vm.checkHitLineY - this.y;
+    // const percentage = Math.abs(dist) / (canvas.height / 10); // the lower the better
+    let hitTimeSinceStartInSec =
+      (parseFloat(Date.now()) - parseFloat(this.timeStarted)) / 1000;
+    const diff = Math.abs(vm.noteSpeedInSec - hitTimeSinceStartInSec);
+    let percentage = diff / vm.noteSpeedInSec; // the lower the better
+
+    console.log(percentage);
 
     return percentage;
   };
 
   this.hitAndCountScore = function () {
     this.vibrate(25);
-    const percentage = this.getDistPercentage();
-    vm.score += 1000 * (3 - percentage);
+    const percentage = this.getDiffPercentage();
+    let accuracyPercent = 100 * (1 - percentage);
+    vm.percentage = vm.percentage
+      ? (vm.percentage + accuracyPercent) / 2
+      : accuracyPercent;
+    vm.score += 500 * (1 - percentage);
     vm.combo += 1;
     vm.maxCombo = vm.combo > vm.maxCombo ? vm.combo : vm.maxCombo;
-    if (percentage < 0.3) {
+    if (percentage < 0.05) {
       vm.marks.perfect += 1;
       vm.markJudge = "Perfect";
-    } else if (percentage < 0.6) {
+    } else if (percentage < 0.25) {
       vm.marks.good += 1;
       vm.markJudge = "Good";
-    } else if (percentage < 0.9) {
+    } else if (percentage < 0.5) {
       vm.marks.offbeat += 1;
       vm.markJudge = "Offbeat";
     }

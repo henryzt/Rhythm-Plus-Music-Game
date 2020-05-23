@@ -1,20 +1,24 @@
 <template>
   <div class="game">
     <!-- pause button -->
-    <a class="pause_button" @click="pauseGame">
-      <v-icon name="regular/pause-circle" scale="1.5" />
-    </a>
+    <transition name="modal-fade">
+      <a class="pause_button" @click="pauseGame" v-if="started && (instance && !instance.paused)">
+        <v-icon name="regular/pause-circle" scale="1.5" />
+      </a>
+    </transition>
 
     <!-- mark indicator -->
     <div class="center" ref="hitIndicator">{{markJudge}} {{combo>=5?combo:''}}</div>
 
     <!-- game canvas -->
-    <div class="gameWrapper">
-      <canvas ref="mainCanvas" id="gameCanvas" :class="{perspective}"></canvas>
-    </div>
+    <transition name="modal-fade">
+      <div class="gameWrapper" v-show="!hideGameForYtButton">
+        <canvas ref="mainCanvas" id="gameCanvas" :class="{perspective}"></canvas>
+      </div>
+    </transition>
 
     <!-- visualizer canvas -->
-    <Visualizer ref="visualizer"></Visualizer>
+    <Visualizer ref="visualizer" v-show="!hideGameForYtButton"></Visualizer>
 
     <!-- youtube player -->
     <div v-show="srcMode==='youtube'">
@@ -22,7 +26,7 @@
         id="ytPlayer"
         ref="youtube"
         :video-id="youtubeId"
-        :player-vars="{controls: 0, rel: 0, playsinline: 1 }"
+        :player-vars="{controls: 0, rel: 0, playsinline: 1, disablekb: 1 }"
         @playing="songLoaded"
         @cued="videoCued"
         @buffering="ytBuffering"
@@ -32,11 +36,20 @@
     </div>
 
     <!-- play button -->
-    <!-- <div class="modal blurBackground center_logo">
-      <div class="modal-body">
-        <v-icon name="play" scale="1.5" />Play
+    <transition name="modal-fade">
+      <div
+        class="modal-backdrop"
+        @click="startGame"
+        :class="{'no-events':hideGameForYtButton}"
+        v-if="showStartButton"
+      >
+        <div class="modal blurBackground" :class="{'darker':hideGameForYtButton}">
+          <div class="modal-body">
+            <v-icon name="play" scale="1.5" />Play
+          </div>
+        </div>
       </div>
-    </div>-->
+    </transition>
 
     <!-- loading popup -->
     <Loading style="z-index:200" :show="instance && instance.loading">Song Loading...</Loading>
@@ -116,15 +129,19 @@ export default {
             perspective: false,
             vibrate: true,
             advancedMenuOptions: false,
-            initialized: false
+            started: false,
+            showStartButton: false
         }
     },
     computed: {
         mode() {
-            return this.playMode ? "Play Mode" : "Create Mode";
+          return this.playMode ? "Play Mode" : "Create Mode";
         },
         ytPlayer() {
-            return this.$refs.youtube.player;
+          return this.$refs.youtube.player;
+        },
+        hideGameForYtButton(){
+          return this.srcMode==='youtube' && this.showStartButton;
         }
     },
     watch: {
@@ -167,30 +184,50 @@ export default {
       },
       songLoaded(){
         console.log("playing")
-        if(!this.initialized){
-          this.instance.loading = false
+        this.instance.loading = false
+        if(!this.started){
+          // first loaded
+          this.showStartButton = true
+          if(this.srcMode !== "youtube") return
+          this.ytPlayer.setVolume(0)
           this.instance.startSong()
+          this.showStartButton = false
         }else{
           this.resumeGame()
         }
       },
       videoCued(){
+        if(this.srcMode !== "youtube") return
         console.log("cued")
-        this.ytPlayer.setVolume(0);
-        this.ytPlayer.playVideo()
+        this.instance.loading = false
+        this.showStartButton = true
       },
       ytBuffering(){
         console.log("buffering")
+        if(this.showStartButton){
+          this.startGame()
+        }
       },
       ytPaused(){
         console.log("pasued")
-        if(this.initialized)
+        if(this.started)
           this.pauseGame()
       },
       ytError(){
-        console.log("error")
+        console.error("youtube error")
+      },
+      startGame(){
+        this.showStartButton = false
+        if(this.srcMode === "youtube"){
+          this.instance.loading = true
+          this.ytPlayer.playVideo();
+          this.ytPlayer.setVolume(0);
+        }else{
+          this.instance.startSong()
+        }
       },
       pauseGame(){
+        if(!this.started) return;
         this.instance.pauseGame()
         this.$refs.menu.show()
       },
@@ -254,6 +291,15 @@ export default {
   transition: 0;
   animation: none;
   width: auto;
+}
+
+.darker {
+  backdrop-filter: blur(50px);
+  -webkit-backdrop-filter: blur(50px);
+}
+
+.no-events {
+  pointer-events: none;
 }
 
 .btn-action {

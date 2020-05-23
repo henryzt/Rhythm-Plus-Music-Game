@@ -84,6 +84,7 @@ export default class GameInstance {
     document.addEventListener(
       "keydown",
       (event) => {
+        console.log(event.key);
         this.onKeyDown(event.key);
       },
       false
@@ -140,6 +141,7 @@ export default class GameInstance {
     this.resetPlaying();
     const startTime = Date.now();
     this.vm.playMode = true;
+    window.focus();
 
     const intervalPrePlay = setInterval(() => {
       const elapsedTime = Date.now() - startTime;
@@ -148,7 +150,7 @@ export default class GameInstance {
         if (!this.paused) this.resumeGame();
         // this.vm.visualizerInstance.initAllVisualizersIfRequried();
         clearInterval(intervalPrePlay);
-        this.vm.initialized = true;
+        this.vm.started = true;
         this.intervalPlay = setInterval(async () => {
           const cTime = await this.getCurrentTime();
           this.playTime = cTime + Number(this.vm.noteSpeedInSec);

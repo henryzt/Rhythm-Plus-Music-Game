@@ -44,25 +44,10 @@ import Loader from 'vue-spinner/src/FadeLoader.vue'
 
 
 <style scoped>
-.modal-backdrop {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .modal {
-  background: rgba(255, 255, 255, 0.5);
-  overflow-x: auto;
-  display: flex;
-  flex-direction: column;
   margin: 30px;
   max-width: 500px;
+  width: auto;
 }
 
 .modal-body {

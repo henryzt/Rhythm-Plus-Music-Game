@@ -1,18 +1,22 @@
 <template>
   <div class="game">
+    <!-- pause button -->
     <a class="pause_button" @click="pauseGame">
       <v-icon name="regular/pause-circle" scale="1.5" />
     </a>
 
+    <!-- mark indicator -->
     <div class="center" ref="hitIndicator">{{markJudge}} {{combo>=5?combo:''}}</div>
 
-    <div></div>
+    <!-- game canvas -->
     <div class="gameWrapper">
       <canvas ref="mainCanvas" id="gameCanvas" :class="{perspective}"></canvas>
     </div>
 
+    <!-- visualizer canvas -->
     <Visualizer ref="visualizer"></Visualizer>
 
+    <!-- youtube player -->
     <div v-show="srcMode==='youtube'">
       <Youtube
         id="ytPlayer"
@@ -21,11 +25,23 @@
         :player-vars="{controls: 0, rel: 0, playsinline: 1 }"
         @playing="songLoaded"
         @cued="videoCued"
+        @buffering="ytBuffering"
+        @error="ytError"
+        @paused="ytPaused"
       ></Youtube>
     </div>
 
+    <!-- play button -->
+    <!-- <div class="modal blurBackground center_logo">
+      <div class="modal-body">
+        <v-icon name="play" scale="1.5" />Play
+      </div>
+    </div>-->
+
+    <!-- loading popup -->
     <Loading style="z-index:200" :show="instance && instance.loading">Song Loading...</Loading>
 
+    <!-- pause menu modal -->
     <Modal ref="menu" :hideFooter="true" style="text-align:center;z-index:1000">
       <template v-slot:header>
         <div style="width:100%;font-size:23px">Pause Menu</div>
@@ -66,6 +82,7 @@ import GameInstance from '../javascript/gameInstance';
 import { Youtube } from 'vue-youtube'
 import { getSheet } from "../javascript/db"
 import 'vue-awesome/icons/regular/pause-circle'
+import 'vue-awesome/icons/play'
 
 export default {
     name: 'Game',
@@ -98,7 +115,8 @@ export default {
             youtubeId: "jNQXAC9IVRw",
             perspective: false,
             vibrate: true,
-            advancedMenuOptions: false
+            advancedMenuOptions: false,
+            initialized: false
         }
     },
     computed: {
@@ -148,13 +166,29 @@ export default {
         this.instance.loadSong(song);
       },
       songLoaded(){
-        if(this.instance.loading == true)
+        console.log("playing")
+        if(!this.initialized){
+          this.instance.loading = false
           this.instance.startSong()
-        this.instance.loading = false;
+        }else{
+          this.resumeGame()
+        }
       },
       videoCued(){
+        console.log("cued")
         this.ytPlayer.setVolume(0);
-        this.ytPlayer.playVideo();
+        this.ytPlayer.playVideo()
+      },
+      ytBuffering(){
+        console.log("buffering")
+      },
+      ytPaused(){
+        console.log("pasued")
+        if(this.initialized)
+          this.pauseGame()
+      },
+      ytError(){
+        console.log("error")
       },
       pauseGame(){
         this.instance.pauseGame()
@@ -209,6 +243,17 @@ export default {
   .perspective {
     transform: rotateX(30deg) scale(1.5);
   }
+}
+
+.modal-body {
+  display: felx;
+  padding: 30px;
+}
+
+.modal {
+  transition: 0;
+  animation: none;
+  width: auto;
 }
 
 .btn-action {

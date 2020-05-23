@@ -148,6 +148,7 @@ export default class GameInstance {
         if (!this.paused) this.resumeGame();
         // this.vm.visualizerInstance.initAllVisualizersIfRequried();
         clearInterval(intervalPrePlay);
+        this.vm.initialized = true;
         this.intervalPlay = setInterval(async () => {
           const cTime = await this.getCurrentTime();
           this.playTime = cTime + Number(this.vm.noteSpeedInSec);

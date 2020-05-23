@@ -84,7 +84,6 @@ export default class GameInstance {
     document.addEventListener(
       "keydown",
       (event) => {
-        console.log(event.key);
         this.onKeyDown(event.key);
       },
       false

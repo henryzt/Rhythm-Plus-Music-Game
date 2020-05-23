@@ -11,14 +11,17 @@
     <div class="center" ref="hitIndicator">{{markJudge}} {{combo>=5?combo:''}}</div>
 
     <!-- game canvas -->
-    <transition name="modal-fade">
-      <div class="gameWrapper" v-show="!hideGameForYtButton">
-        <canvas ref="mainCanvas" id="gameCanvas" :class="{perspective}"></canvas>
-      </div>
-    </transition>
+    <div class="gameWrapper" :class="{'no-events':hideGameForYtButton}">
+      <canvas ref="mainCanvas" id="gameCanvas" :class="{perspective}"></canvas>
+    </div>
 
     <!-- visualizer canvas -->
     <Visualizer ref="visualizer" v-show="!hideGameForYtButton"></Visualizer>
+
+    <!-- score panel -->
+    <div class="score">
+      <ICountUp :endVal="score" :options="{decimalPlaces:0,duration:1}" />
+    </div>
 
     <!-- youtube player -->
     <div v-show="srcMode==='youtube'">
@@ -45,7 +48,10 @@
       >
         <div class="modal blurBackground" :class="{'darker':hideGameForYtButton}">
           <div class="modal-body">
-            <v-icon name="play" scale="1.5" />Play
+            <div class="flex_hori">
+              <v-icon name="play" scale="1.5" />
+              <div style="font-size:20px;margin-left:20px">Start</div>
+            </div>
           </div>
         </div>
       </div>
@@ -94,6 +100,7 @@ import Modal from '../components/Modal.vue';
 import GameInstance from '../javascript/gameInstance';
 import { Youtube } from 'vue-youtube'
 import { getSheet } from "../javascript/db"
+import ICountUp from 'vue-countup-v2';
 import 'vue-awesome/icons/regular/pause-circle'
 import 'vue-awesome/icons/play'
 
@@ -104,7 +111,8 @@ export default {
         Visualizer,
         Youtube,
         Loading,
-        Modal
+        Modal,
+        ICountUp
     },
     data(){
         return {
@@ -271,19 +279,41 @@ export default {
   left: 0;
 }
 
+.score {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  font-size: 3.5em;
+  opacity: 0.3;
+  font-family: "Dosis", sans-serif;
+}
+
 .perspective {
   transform: rotateX(30deg) scaleY(1.5);
   transform-origin: 50% 100%;
 }
 
 @media only screen and (min-width: 800px) {
+  /* desktop */
   .perspective {
     transform: rotateX(30deg) scale(1.5);
   }
 }
 
+@media only screen and (max-width: 1000px) {
+  /* mobile */
+  .score {
+    top: 10px;
+    right: 10px;
+    bottom: auto;
+    left: auto;
+    font-size: 1.5em;
+  }
+}
+
 .modal-body {
-  display: felx;
+  display: flex;
+  align-items: center;
   padding: 30px;
 }
 
@@ -291,6 +321,13 @@ export default {
   transition: 0;
   animation: none;
   width: auto;
+  cursor: pointer;
+}
+
+.flex_hori {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
 }
 
 .darker {

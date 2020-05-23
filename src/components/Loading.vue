@@ -51,7 +51,7 @@ import Loader from 'vue-spinner/src/FadeLoader.vue'
 }
 
 .modal-body {
-  display: felx;
+  display: flex;
   padding: 30px;
 }
 </style>

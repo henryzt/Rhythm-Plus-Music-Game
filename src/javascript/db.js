@@ -42,6 +42,7 @@ export function createSong(songInfo) {
 export function getSongList() {
   return new Promise((resolve, reject) => {
     songsCollection
+      .where("visibility", "==", "public")
       .get()
       .then((querySnapshot) => {
         let res = [];
@@ -129,6 +130,7 @@ export function getSheetList(songId) {
   return new Promise((resolve, reject) => {
     sheetsCollection
       .where("songId", "==", songId)
+      .where("visibility", "==", "public")
       .get()
       .then((querySnapshot) => {
         let res = [];

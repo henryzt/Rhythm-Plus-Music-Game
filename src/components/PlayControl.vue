@@ -38,10 +38,10 @@
     <!-- score -->
     <br />
     <div>
-      score - {{playData.score}} | combo - {{playData.combo}} | max combo - {{playData.maxCombo}}
+      score - {{playData.result.score}} | combo - {{playData.result.combo}} | max combo - {{playData.result.maxCombo}}
       <br />
-      perfect - {{playData.marks.perfect}} | good - {{playData.marks.good}} | offbeat - {{playData.marks.offbeat}} | miss
-      - {{playData.marks.miss}}
+      perfect - {{playData.result.marks.perfect}} | good - {{playData.result.marks.good}} | offbeat - {{playData.result.marks.offbeat}} | miss
+      - {{playData.result.marks.miss}}
     </div>
   </div>
 </template>

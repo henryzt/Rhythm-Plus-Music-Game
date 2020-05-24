@@ -8,7 +8,7 @@
     </transition>
 
     <!-- mark indicator -->
-    <div class="center" ref="hitIndicator">{{markJudge}} {{combo>=5?combo:''}}</div>
+    <div class="center" ref="hitIndicator">{{markJudge}} {{result.combo>=5?result.combo:''}}</div>
 
     <!-- game canvas -->
     <div class="gameWrapper" :class="{'no-events':hideGameForYtButton}">
@@ -23,7 +23,7 @@
       <div style="font-size:0.5em">
         <ICountUp :endVal="percentage" :options="{decimalPlaces:2,duration:1}" />%
       </div>
-      <ICountUp :endVal="score" :options="{decimalPlaces:0,duration:1}" />
+      <ICountUp :endVal="result.score" :options="{decimalPlaces:0,duration:1}" />
     </div>
 
     <!-- youtube player -->
@@ -123,17 +123,19 @@ export default {
             canvas: null,
             ctx: null,
             checkHitLineY: null, // hit line postion (white line)
+            noteSpeedInSec: 2,
             noteSpeedPxPerSec: null, // note speed
             playMode: false, // play or edit mode
-            noteSpeedInSec: 2,
-            currentSong: "",
-            score: 0,
-            percentage: 0,
-            combo: 0,
-            maxCombo: 0,
-            marks: { perfect: 0, good: 0, offbeat: 0, miss: 0 },
+            currentSong: null,
+            result: {
+              score: 0,
+              totalPercentage: 0,
+              totalHitNotes: 0,
+              combo: 0,
+              maxCombo: 0,
+              marks: { perfect: 0, good: 0, offbeat: 0, miss: 0 }
+            },
             markJudge: "",
-            showControl: false,
             srcMode: "url",
             instance: null,
             visualizerInstance: null,
@@ -154,13 +156,12 @@ export default {
         },
         hideGameForYtButton(){
           return this.srcMode==='youtube' && this.showStartButton;
+        },
+        percentage(){
+          return this.result.totalHitNotes !== 0 ? (this.result.totalPercentage / this.result.totalHitNotes) : 0;
         }
     },
     watch: {
-        currentSong: function() {
-            if(this.srcMode === "url")
-                this.audio.loadSong(this.currentSong, false, this.songLoaded);
-        },
         noteSpeedInSec: function() {
             this.instance.reposition();
         }

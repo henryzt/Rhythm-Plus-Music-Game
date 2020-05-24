@@ -26,8 +26,6 @@ export default function Note(vm, x, width) {
     const diff = Math.abs(vm.noteSpeedInSec - hitTimeSinceStartInSec);
     let percentage = diff / vm.noteSpeedInSec; // the lower the better
 
-    console.log(percentage);
-
     return percentage;
   };
 
@@ -35,20 +33,22 @@ export default function Note(vm, x, width) {
     this.vibrate(25);
     const percentage = this.getDiffPercentage();
     let accuracyPercent = 100 * (1 - percentage);
-    vm.percentage = vm.percentage
-      ? (vm.percentage + accuracyPercent) / 2
-      : accuracyPercent;
-    vm.score += 500 * (1 - percentage);
-    vm.combo += 1;
-    vm.maxCombo = vm.combo > vm.maxCombo ? vm.combo : vm.maxCombo;
+    vm.result.totalPercentage += accuracyPercent;
+    vm.result.totalHitNotes += 1;
+    vm.result.score += 3 * accuracyPercent;
+    vm.result.combo += 1;
+    vm.result.maxCombo =
+      vm.result.combo > vm.result.maxCombo
+        ? vm.result.combo
+        : vm.result.maxCombo;
     if (percentage < 0.05) {
-      vm.marks.perfect += 1;
+      vm.result.marks.perfect += 1;
       vm.markJudge = "Perfect";
     } else if (percentage < 0.25) {
-      vm.marks.good += 1;
+      vm.result.marks.good += 1;
       vm.markJudge = "Good";
     } else if (percentage < 0.5) {
-      vm.marks.offbeat += 1;
+      vm.result.marks.offbeat += 1;
       vm.markJudge = "Offbeat";
     }
     this.hitIndicator(vm);
@@ -57,8 +57,9 @@ export default function Note(vm, x, width) {
   this.isOutOfCanvas = function () {
     const isOut = this.y > canvas.height;
     if (vm.playMode && isOut) {
-      vm.marks.miss += 1;
-      vm.combo = 0;
+      vm.result.marks.miss += 1;
+      vm.result.totalHitNotes += 1;
+      vm.result.combo = 0;
       vm.markJudge = "Miss";
       this.vibrate([20, 20, 50]);
       this.hitIndicator(vm);

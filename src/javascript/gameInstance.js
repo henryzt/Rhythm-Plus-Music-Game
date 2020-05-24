@@ -178,13 +178,15 @@ export default class GameInstance {
   loadSong(song) {
     this.loading = true;
     this.resetPlaying(true);
-    this.vm.currentSong = song.url;
+    this.vm.currentSong = song;
     this.vm.srcMode = song.srcMode;
     this.timeArr = song.sheet;
     this.vm.visualizerInstance.visualizer =
       song.visualizerNo !== null ? song.visualizerNo : 0;
     if (song.srcMode === "youtube") {
       this.ytPlayer.loadYoutubeVideo(song.youtubeId);
+    } else if (song.srcMode === "url") {
+      this.vm.audio.loadSong(song.url, false, this.vm.songLoaded);
     }
   }
 

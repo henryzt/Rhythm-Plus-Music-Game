@@ -49,7 +49,7 @@
         :class="{'no-events':hideGameForYtButton}"
         v-if="showStartButton"
       >
-        <div class="modal blurBackground" :class="{'darker':hideGameForYtButton}">
+        <div class="modal blurBackground" :class="{'darker':hideGameForYtButton}" ref="playButton">
           <div class="modal-body">
             <div class="flex_hori">
               <v-icon name="play" scale="1.5" />
@@ -164,6 +164,9 @@ export default {
     watch: {
         noteSpeedInSec: function() {
             this.instance.reposition();
+        },
+        showStartButton(){
+          if(this.showStartButton) this.$nextTick(this.addTilt);
         }
     },
     mounted() {
@@ -261,6 +264,16 @@ export default {
       exitGame(){
         this.hideMenu()
         this.$router.push('/menu')
+      },
+      addTilt(){
+        if(this.$refs.playButton){
+            VanillaTilt.init(this.$refs.playButton, {
+              max: 8,
+              glare: true,
+              "max-glare": 0.5,
+              scale:1.1
+            });
+          }
       }
     }
 };

@@ -8,6 +8,7 @@ export default class Audio {
       bufferLength: null,
       dataArray: null,
     };
+    this.maxVolume = 0.5;
     this.player = null;
     document.addEventListener("visibilitychange", () => {
       if (this.player) this.mute(document.hidden);
@@ -18,6 +19,7 @@ export default class Audio {
     this.player?.unload();
 
     this.player = new Howl({
+      volume: this.maxVolume,
       src: [songSrc],
       loop: asBackground,
     });
@@ -61,8 +63,8 @@ export default class Audio {
   }
 
   mute(mute) {
-    if (mute) this.player.fade(1, 0, 500);
-    else this.player.fade(0, 1, 2000);
+    if (mute) this.player.fade(this.maxVolume, 0, 500);
+    else this.player.fade(0, this.maxVolume, 2000);
   }
 
   getCurrentTime() {

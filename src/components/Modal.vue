@@ -1,14 +1,14 @@
 <template>
   <transition name="modal-fade">
     <div class="modal-backdrop" v-if="showModal">
-      <div class="modal blurBackground">
+      <div class="modal blurBackground" ref="modal">
         <header class="modal-header" :class="{'modal-darker':hideFooter}">
           <slot name="header">
             {{titleText}}
             <div class="btn-action btn-close" @click="close">x</div>
           </slot>
         </header>
-        <section class="modal-body">
+        <section class="modal-body" style="transform: translateZ(100px)">
           <slot>{{bodyText}}</slot>
         </section>
         <footer class="modal-footer" v-if="!hideFooter">
@@ -23,6 +23,7 @@
 </template>
 
 <script>
+import VanillaTilt from "vanilla-tilt";
   export default {
     name: 'Modal',
     props: {
@@ -55,6 +56,7 @@
     methods: {
         show(){
             this.showModal = true
+            this.$nextTick(this.addTilt)
         },
         ok() {
             this.showModal = false
@@ -64,6 +66,17 @@
             this.showModal = false
             this.$emit('close');
         },
+        addTilt(){
+          if(this.$refs.modal){
+              VanillaTilt.init(this.$refs.modal, {
+                max: 0,
+                glare: true,
+                "max-glare": 0.5
+              });
+            }
+        }
+    },
+    mounted(){
     },
     watch:{
     }

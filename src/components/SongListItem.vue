@@ -1,5 +1,5 @@
 <template>
-  <div class="song_item" @click="$emit('selected', song)" v-if="song">
+  <div class="song_item" ref="item" @click="$emit('selected', song)" v-if="song">
     <div class="image">
       <img :src="song.image" />
     </div>
@@ -17,6 +17,8 @@ export default {
     data() {
         return {
         }
+    },
+    mounted(){
     },
     computed: {
     },

@@ -193,7 +193,12 @@ export default class GameInstance {
     if (song.srcMode === "youtube") {
       this.ytPlayer.loadYoutubeVideo(song.youtubeId);
     } else if (song.srcMode === "url") {
-      this.vm.audio.loadSong(song.url, false, this.vm.songLoaded);
+      this.vm.audio.loadSong(
+        song.url,
+        false,
+        this.vm.songLoaded,
+        this.vm.gameEnded
+      );
     }
   }
 

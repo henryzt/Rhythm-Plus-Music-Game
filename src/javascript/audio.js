@@ -15,7 +15,7 @@ export default class Audio {
     });
   }
 
-  async loadSong(songSrc, asBackground, loadedCallback) {
+  async loadSong(songSrc, asBackground, loadedCallback, finishedCallback) {
     this.player?.unload();
 
     this.player = new Howl({
@@ -46,6 +46,9 @@ export default class Audio {
     this.player.on("load", () => {
       if (loadedCallback) loadedCallback();
       console.log("Audio loaded");
+    });
+    this.player.on("end", () => {
+      if (finishedCallback) finishedCallback();
     });
   }
 

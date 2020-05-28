@@ -1,7 +1,12 @@
 <template>
   <div>
     <UserProfileCard></UserProfileCard>
-    <Visualizer ref="visualizer" :setVisualizerNo="visualizerNo" :autoUpdate="true"></Visualizer>
+    <div
+      v-if="imageSrc"
+      class="bgImage"
+      :style="{ background: `url('${imageSrc}') no-repeat fixed center`, backgroundSize: 'cover' }"
+    ></div>
+    <Visualizer v-else ref="visualizer" :setVisualizerNo="visualizerNo" :autoUpdate="true"></Visualizer>
   </div>
 </template>
 
@@ -20,6 +25,10 @@ export default {
     visualizerNo : {
       type: Number,
       default: 1
+    },
+    imageSrc : {
+      type: String,
+      default: null
     },
   },
   components:{
@@ -41,4 +50,13 @@ export default {
 </script>
 
 <style scoped>
+.bgImage {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  opacity: 0.5;
+  z-index: -1;
+}
 </style>

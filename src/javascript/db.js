@@ -3,6 +3,7 @@ import {
   songsCollection,
   sheetsCollection,
   functions,
+  resultsCollection,
 } from "../helpers/firebaseConfig"; //usersCollection
 import { store } from "../helpers/store";
 
@@ -48,11 +49,8 @@ export function getSongList() {
       .then((querySnapshot) => {
         let res = [];
         querySnapshot.forEach((doc) => {
-          let song = doc.data();
-          song.id = doc.id;
-          song.image = song.youtubeId
-            ? `https://img.youtube.com/vi/${song.youtubeId}/mqdefault.jpg`
-            : song.image;
+          let song = filterSongData(doc);
+
           res.push(song);
           // doc.data() is never undefined for query doc snapshots
           console.log(doc.id, " => ", doc.data());
@@ -66,6 +64,15 @@ export function getSongList() {
   });
 }
 
+function filterSongData(doc) {
+  let song = doc.data();
+  song.id = doc.id;
+  song.image = song.youtubeId
+    ? `https://img.youtube.com/vi/${song.youtubeId}/mqdefault.jpg`
+    : song.image;
+  return song;
+}
+
 export function getSong(songId) {
   return new Promise((resolve, reject) => {
     songsCollection
@@ -74,7 +81,7 @@ export function getSong(songId) {
       .then((doc) => {
         if (doc.exists) {
           console.log("Song data:", doc.data());
-          resolve(doc.data());
+          resolve(filterSongData(doc));
         } else {
           // doc.data() will be undefined in this case
           console.error("No such document!");
@@ -179,4 +186,20 @@ export async function getSheet(sheetId) {
 export function uploadResult(data) {
   let uploader = functions.httpsCallable("uploadResult");
   return uploader(data);
+}
+
+export async function getResult(resultId) {
+  try {
+    let doc = await resultsCollection.doc(resultId).get();
+    if (doc.exists) {
+      let result = doc.data();
+      return result;
+    } else {
+      console.error("No such document");
+      return new Error("No such document");
+    }
+  } catch (error) {
+    console.error(error);
+    return new Error("Error reading document");
+  }
 }

@@ -31,6 +31,7 @@ export default {
     rgba(0, 0, 0, 0) 70%
   );
   cursor: pointer;
+  z-index: 500;
 }
 .detail {
   display: flex;

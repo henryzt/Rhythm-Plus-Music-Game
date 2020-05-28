@@ -276,12 +276,17 @@ export default {
       async gameEnded(){
         this.instance.destroyInstance()
         this.isGameEnded = true;
-        const expChange = await uploadResult({
-          result: this.result,
-          songId: this.currentSong.songId,
-          sheetId: this.currentSong.sheetId
-          });
-        console.log(expChange)
+        try{
+          const res = await uploadResult({
+            result: this.result,
+            songId: this.currentSong.songId,
+            sheetId: this.currentSong.sheetId
+            });
+          console.log(res)
+          this.$router.push('/result/'+res.data.resultId)
+        }catch(error){
+          console.error(error)
+        }
       },
       clearResult(){
         this.result = {

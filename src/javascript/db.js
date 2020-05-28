@@ -2,6 +2,7 @@ import {
   dbi,
   songsCollection,
   sheetsCollection,
+  functions,
 } from "../helpers/firebaseConfig"; //usersCollection
 import { store } from "../helpers/store";
 
@@ -162,6 +163,7 @@ export async function getSheet(sheetId) {
       sheet.title = sheet.title ?? song.title + " - " + song.artist;
       sheet.image = song.image;
       sheet.sheet = JSON.parse(sheet.sheet);
+      sheet.sheetId = doc.id;
       console.log("Sheet data:", sheet);
       return sheet;
     } else {
@@ -172,4 +174,9 @@ export async function getSheet(sheetId) {
     console.error(error);
     return new Error("Error reading document");
   }
+}
+
+export function uploadResult(data) {
+  let uploader = functions.httpsCallable("uploadResult");
+  return uploader(data);
 }

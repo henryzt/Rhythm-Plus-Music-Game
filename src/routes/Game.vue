@@ -2,7 +2,11 @@
   <div class="game">
     <!-- pause button -->
     <transition name="modal-fade">
-      <a class="pause_button" @click="pauseGame" v-if="started && (instance && !instance.paused)">
+      <a
+        class="pause_button"
+        @click="pauseGame"
+        v-if="started && (instance && !instance.paused) && !isGameEnded"
+      >
         <v-icon name="regular/pause-circle" scale="1.5" />
       </a>
     </transition>
@@ -27,7 +31,7 @@
     </div>
 
     <!-- youtube player -->
-    <div v-show="srcMode==='youtube'">
+    <div v-show="srcMode==='youtube'" v-if="!isGameEnded">
       <Youtube
         id="ytPlayer"
         ref="youtube"
@@ -38,6 +42,7 @@
         @buffering="ytBuffering"
         @error="ytError"
         @paused="ytPaused"
+        @ended="gameEnded"
       ></Youtube>
     </div>
 
@@ -62,6 +67,7 @@
 
     <!-- loading popup -->
     <Loading style="z-index:200" :show="instance && instance.loading">Song Loading...</Loading>
+    <Loading style="z-index:500" :show="isGameEnded">Syncing Results...</Loading>
 
     <!-- pause menu modal -->
     <Modal ref="menu" :hideFooter="true" style="text-align:center;z-index:1000">
@@ -102,7 +108,7 @@ import Loading from '../components/Loading.vue';
 import Modal from '../components/Modal.vue';
 import GameInstance from '../javascript/gameInstance';
 import { Youtube } from 'vue-youtube'
-import { getSheet } from "../javascript/db"
+import { getSheet, uploadResult } from "../javascript/db"
 import ICountUp from 'vue-countup-v2';
 import 'vue-awesome/icons/regular/pause-circle'
 import 'vue-awesome/icons/play'
@@ -144,7 +150,8 @@ export default {
             vibrate: true,
             advancedMenuOptions: false,
             started: false,
-            showStartButton: false
+            showStartButton: false,
+            isGameEnded: false
         }
     },
     computed: {
@@ -243,7 +250,7 @@ export default {
         }
       },
       pauseGame(){
-        if(!this.started) return;
+        if(!this.started || this.isGameEnded) return;
         this.instance.pauseGame()
         this.$refs.menu.show()
       },
@@ -257,6 +264,7 @@ export default {
       },
       restartGame(){
         this.hideMenu()
+        this.clearResult()
         this.instance.paused = false
         this.instance.resetPlaying()
         this.instance.startSong()
@@ -264,6 +272,26 @@ export default {
       exitGame(){
         this.hideMenu()
         this.$router.push('/menu')
+      },
+      async gameEnded(){
+        this.instance.destroyInstance()
+        this.isGameEnded = true;
+        const expChange = await uploadResult({
+          result: this.result,
+          songId: this.currentSong.songId,
+          sheetId: this.currentSong.sheetId
+          });
+        console.log(expChange)
+      },
+      clearResult(){
+        this.result = {
+              score: 0,
+              totalPercentage: 0,
+              totalHitNotes: 0,
+              combo: 0,
+              maxCombo: 0,
+              marks: { perfect: 0, good: 0, offbeat: 0, miss: 0 }
+            }
       },
       addTilt(){
         if(this.$refs.playButton){

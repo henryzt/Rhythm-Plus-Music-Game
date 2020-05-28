@@ -18,6 +18,7 @@ firebase.initializeApp(config);
 const db = firebase.firestore();
 const dbi = firebase.firestore; //db instance
 const auth = firebase.auth();
+const functions = firebase.functions();
 const currentUser = auth.currentUser;
 
 // Initialize Performance Monitoring and get a reference to the service
@@ -30,6 +31,7 @@ firebase.analytics();
 const usersCollection = db.collection("users");
 const songsCollection = db.collection("songs");
 const sheetsCollection = db.collection("sheets");
+const resultsCollection = db.collection("results");
 
 export {
   db,
@@ -37,7 +39,9 @@ export {
   auth,
   currentUser,
   perf,
+  functions,
   usersCollection,
   songsCollection,
   sheetsCollection,
+  resultsCollection,
 };

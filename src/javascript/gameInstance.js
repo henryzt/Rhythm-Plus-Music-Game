@@ -153,6 +153,13 @@ export default class GameInstance {
         this.intervalPlay = setInterval(async () => {
           const cTime = await this.getCurrentTime();
           this.playTime = cTime + Number(this.vm.noteSpeedInSec);
+          const lastIdx = this.timeArr.length - 1;
+          if (
+            this.timeArrIdx >= lastIdx &&
+            this.playTime > this.timeArr[lastIdx].t + 5
+          ) {
+            this.vm.gameEnded();
+          }
         }, 100);
       }
     }, 100);

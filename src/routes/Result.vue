@@ -6,8 +6,9 @@
       <div class="center_logo darker flex_hori">
         <div>
           <VueCircle
+            class="scoreCircle"
             :progress="result.result.percentage"
-            :size="260"
+            :size="windowWidth > 1000 ? 260 : 180"
             :fill="{ gradient: ['darkorange', '#ffab2d'] }"
             empty-fill="rgba(100, 100, 100, .5)"
             :thickness="10"
@@ -15,7 +16,8 @@
             insert-mode="append"
             :show-percent="false"
           >
-            <div class="score scoreShadow" style="margin-top:-20px">{{result.rank}}</div>
+            <div class="circleBg"></div>
+            <div class="score scoreShadow">{{result.rank}}</div>
             <div style="margin-top:-20px">
               <ICountUp :endVal="result.result.percentage" :options="{decimalPlaces:2}" />%
             </div>
@@ -38,21 +40,21 @@
           </div>
         </div>
 
-        <div class="rightScore">
+        <div class="rightScore" style="text-align:left">
           <div>
-            Perfect -
+            <div class="markChip perfect">Perfect</div>
             <ICountUp :endVal="result.result.marks.perfect" />
           </div>
           <div>
-            Good -
+            <div class="markChip good">Good</div>
             <ICountUp :endVal="result.result.marks.good" />
           </div>
           <div>
-            Offbeat -
+            <div class="markChip offbeat">Offbeat</div>
             <ICountUp :endVal="result.result.marks.offbeat" />
           </div>
           <div>
-            Miss -
+            <div class="markChip miss">Miss</div>
             <ICountUp :endVal="result.result.marks.miss" />
           </div>
         </div>
@@ -84,7 +86,8 @@ export default {
         return {
             showModal: false,
             result: null,
-            sheet: null
+            sheet: null,
+            windowWidth: window.innerWidth
         }
     },
     computed: {
@@ -98,6 +101,10 @@ export default {
       if(this.$route.params.resultId && this.$route.params.resultId!="null"){
         this.result = await getResult(this.$route.params.resultId)
         this.sheet = await getSheet(this.result.sheetId)
+      }
+
+      window.onresize = () => {
+        this.windowWidth = window.innerWidth
       }
     },
     methods: {
@@ -115,7 +122,7 @@ export default {
 }
 .center_logo {
   background: rgba(0, 0, 0, 0.4);
-  height: 30vh;
+  height: 20vh;
   width: 100vw;
   animation: none;
 }
@@ -128,6 +135,7 @@ export default {
 }
 .score {
   font-size: 10em;
+  margin-top: -20px;
 }
 .scoreShadow {
   color: #ffffff;
@@ -137,7 +145,44 @@ export default {
 .rightScore {
   text-align: left;
   font-size: 1.2em;
+  width: 25%;
 }
+.circleBg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 260px;
+  width: 260px;
+  background-color: rgb(41, 41, 41);
+  border-radius: 50%;
+  display: inline-block;
+  z-index: -1;
+}
+.markChip {
+  background: #ffab2d;
+  display: inline-block;
+  padding: 0px 10px;
+  color: rgba(255, 255, 255, 0.8);
+  border-radius: 50px;
+  width: 70px;
+  text-align: center;
+  font-size: 15px;
+  line-height: 20px;
+  margin: 5px;
+}
+.perfect {
+  background: rgba(0, 146, 172, 0.8);
+}
+.good {
+  background: rgba(11, 131, 0, 0.8);
+}
+.offbeat {
+  background: rgba(190, 92, 0, 0.8);
+}
+.miss {
+  background: rgba(112, 0, 0, 0.8);
+}
+
 @media only screen and (max-width: 1000px) {
   /* mobile */
   .flex_hori {
@@ -145,7 +190,32 @@ export default {
   }
 
   .center_logo {
+    position: relative;
+    transform: none;
     height: auto;
+    top: 0;
+    left: 0;
+    margin-top: 180px;
+  }
+
+  .rightScore {
+    text-align: center;
+    width: auto;
+    padding: 30px;
+  }
+  .rightScore + .rightScore {
+    padding-top: 0;
+  }
+
+  .circleBg {
+    width: 180px;
+    height: 180px;
+  }
+  .scoreCircle {
+    margin-top: -90px;
+  }
+  .score {
+    font-size: 6em;
   }
 }
 </style>

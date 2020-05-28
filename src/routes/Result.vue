@@ -1,20 +1,58 @@
 <template>
-  <div>
-    <PageBackground v-if="sheet" songSrc="/songs/login.mp3" :imageSrc="sheet.image"></PageBackground>
+  <div v-if="sheet">
+    <PageBackground songSrc="/songs/login.mp3" :imageSrc="sheet.image"></PageBackground>
     <div class="blurFilter"></div>
     <div class="center_logo darker flex_hori">
       <div>
-        <div>{{result.rank}}</div>
-        <div>{{result.result.percentage}}</div>
+        <VueCircle
+          :progress="result.result.percentage"
+          :size="270"
+          line-cap="round"
+          :fill="{ gradient: ['orange', 'yellow'] }"
+          empty-fill="rgba(100, 100, 100, .5)"
+          :thickness="10"
+          insert-mode="append"
+          :show-percent="false"
+        >
+          <div class="score scoreShadow">{{result.rank}}</div>
+          <div>
+            <ICountUp :endVal="result.result.percentage" :options="{decimalPlaces:2}" />%
+          </div>
+        </VueCircle>
       </div>
-      <div>
-        <div>{{result.result.score}}</div>
-        <div>{{result.result.maxCombo}}</div>
+
+      <div class="rightScore">
         <div>
-          <div>{{result.result.marks.perfect}}</div>
-          <div>{{result.result.marks.good}}</div>
-          <div>{{result.result.marks.offbeat}}</div>
-          <div>{{result.result.marks.miss}}</div>
+          Score
+          <br />
+          <ICountUp
+            style="font-size:2.7em"
+            :endVal="result.result.score"
+            :options="{decimalPlaces:0}"
+          />
+        </div>
+        <div>
+          Max Combo -
+          <ICountUp :endVal="result.result.maxCombo" :options="{decimalPlaces:0}" />
+        </div>
+      </div>
+
+      <div class="rightScore">
+        <div>
+          Perfect -
+          <ICountUp :endVal="result.result.marks.perfect" />
+        </div>
+        <div>
+          Good -
+          <ICountUp :endVal="result.result.marks.good" />
+        </div>
+        <div>
+          Offbeat -
+          <ICountUp :endVal="result.result.marks.offbeat" />
+        </div>
+        <div>
+          Miss -
+          <ICountUp :endVal="result.result.marks.miss" />
         </div>
       </div>
     </div>
@@ -26,12 +64,16 @@
 import PageBackground from '../components/PageBackground.vue';
 import Modal from '../components/Modal.vue';
 import { getSheet, getResult } from "../javascript/db"
+import ICountUp from 'vue-countup-v2';
+import VueCircle from 'vue2-circle-progress/src/index.vue'
 
 export default {
   name: 'Result',
   components:{
       PageBackground,
-      Modal
+      Modal,
+      ICountUp,
+      VueCircle
   },
   data(){
         return {
@@ -78,5 +120,17 @@ export default {
 .darker {
   backdrop-filter: blur(50px);
   -webkit-backdrop-filter: blur(50px);
+}
+.score {
+  font-size: 10em;
+}
+.scoreShadow {
+  color: #ffffff;
+  text-shadow: #ffab2d 0px 0px 20px, #ffab2d 0px 0px 30px, #ffab2d 0px 0px 40px,
+    #ffab2d 0px 0px 50px, #ffab2d 0px 0px 75px;
+}
+.rightScore {
+  text-align: left;
+  font-size: 1.2em;
 }
 </style>

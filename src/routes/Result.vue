@@ -1,61 +1,64 @@
 <template>
-  <div v-if="sheet">
-    <PageBackground songSrc="/songs/login.mp3" :imageSrc="sheet.image"></PageBackground>
-    <div class="blurFilter"></div>
-    <div class="center_logo darker flex_hori">
-      <div>
-        <VueCircle
-          :progress="result.result.percentage"
-          :size="270"
-          line-cap="round"
-          :fill="{ gradient: ['orange', 'yellow'] }"
-          empty-fill="rgba(100, 100, 100, .5)"
-          :thickness="10"
-          insert-mode="append"
-          :show-percent="false"
-        >
-          <div class="score scoreShadow">{{result.rank}}</div>
+  <div>
+    <div v-if="sheet">
+      <PageBackground songSrc="/songs/login.mp3" :imageSrc="sheet.image"></PageBackground>
+      <div class="blurFilter"></div>
+      <div class="center_logo darker flex_hori">
+        <div>
+          <VueCircle
+            :progress="result.result.percentage"
+            :size="260"
+            :fill="{ gradient: ['darkorange', '#ffab2d'] }"
+            empty-fill="rgba(100, 100, 100, .5)"
+            :thickness="10"
+            :start-angle="-1/2*Math.PI"
+            insert-mode="append"
+            :show-percent="false"
+          >
+            <div class="score scoreShadow" style="margin-top:-20px">{{result.rank}}</div>
+            <div style="margin-top:-20px">
+              <ICountUp :endVal="result.result.percentage" :options="{decimalPlaces:2}" />%
+            </div>
+          </VueCircle>
+        </div>
+
+        <div class="rightScore">
           <div>
-            <ICountUp :endVal="result.result.percentage" :options="{decimalPlaces:2}" />%
+            Score
+            <br />
+            <ICountUp
+              style="font-size:2.7em"
+              :endVal="result.result.score"
+              :options="{decimalPlaces:0}"
+            />
           </div>
-        </VueCircle>
-      </div>
+          <div>
+            Max Combo -
+            <ICountUp :endVal="result.result.maxCombo" :options="{decimalPlaces:0}" />
+          </div>
+        </div>
 
-      <div class="rightScore">
-        <div>
-          Score
-          <br />
-          <ICountUp
-            style="font-size:2.7em"
-            :endVal="result.result.score"
-            :options="{decimalPlaces:0}"
-          />
-        </div>
-        <div>
-          Max Combo -
-          <ICountUp :endVal="result.result.maxCombo" :options="{decimalPlaces:0}" />
-        </div>
-      </div>
-
-      <div class="rightScore">
-        <div>
-          Perfect -
-          <ICountUp :endVal="result.result.marks.perfect" />
-        </div>
-        <div>
-          Good -
-          <ICountUp :endVal="result.result.marks.good" />
-        </div>
-        <div>
-          Offbeat -
-          <ICountUp :endVal="result.result.marks.offbeat" />
-        </div>
-        <div>
-          Miss -
-          <ICountUp :endVal="result.result.marks.miss" />
+        <div class="rightScore">
+          <div>
+            Perfect -
+            <ICountUp :endVal="result.result.marks.perfect" />
+          </div>
+          <div>
+            Good -
+            <ICountUp :endVal="result.result.marks.good" />
+          </div>
+          <div>
+            Offbeat -
+            <ICountUp :endVal="result.result.marks.offbeat" />
+          </div>
+          <div>
+            Miss -
+            <ICountUp :endVal="result.result.marks.miss" />
+          </div>
         </div>
       </div>
     </div>
+    <Loading :show="!sheet || !result">Syncing Results...</Loading>
   </div>
 </template>
 
@@ -66,6 +69,7 @@ import Modal from '../components/Modal.vue';
 import { getSheet, getResult } from "../javascript/db"
 import ICountUp from 'vue-countup-v2';
 import VueCircle from 'vue2-circle-progress/src/index.vue'
+import Loading from '../components/Loading.vue';
 
 export default {
   name: 'Result',
@@ -73,7 +77,8 @@ export default {
       PageBackground,
       Modal,
       ICountUp,
-      VueCircle
+      VueCircle,
+      Loading
   },
   data(){
         return {
@@ -132,5 +137,15 @@ export default {
 .rightScore {
   text-align: left;
   font-size: 1.2em;
+}
+@media only screen and (max-width: 1000px) {
+  /* mobile */
+  .flex_hori {
+    flex-direction: column;
+  }
+
+  .center_logo {
+    height: auto;
+  }
 }
 </style>

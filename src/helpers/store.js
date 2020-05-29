@@ -73,7 +73,7 @@ export const store = new Vuex.Store({
 
 function calculateUserLevel(exp) {
   //ref https://stackoverflow.com/questions/6954874/
-  const lvInc = 25;
+  const lvInc = 5;
   return (Math.sqrt(lvInc * lvInc + 100 * exp) - lvInc) / 50;
 }
 

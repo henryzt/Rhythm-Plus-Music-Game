@@ -59,17 +59,20 @@
           </div>
         </div>
 
+        <!-- song section -->
+        <div class="song_item_sec">
+          <div class="detail">
+            <div class="title">{{sheet.song.title}}</div>
+            <div>{{sheet.song.artist}}</div>
+          </div>
+        </div>
+
         <!-- profile section -->
         <div
           class="user_sec"
           v-if="$store.state.currentUser&&result.uid===$store.state.currentUser.uid"
         >
           <UserProfileCard :extend="true" />
-        </div>
-
-        <!-- song section -->
-        <div class="song_item_sec">
-          <SongListItem :song="sheet.song" :hideBg="true" />
         </div>
 
         <div class="btn_sec">
@@ -230,32 +233,43 @@ export default {
   background: rgba(112, 0, 0, 0.8);
 }
 .song_item_sec {
-  background: linear-gradient(to right, #000000, rgba(0, 0, 0, 0));
   position: fixed;
   top: 10vh;
-  left: 0;
-  opacity: 0.8;
+  left: 8%;
+  opacity: 0.2;
+  line-height: 1.8em;
+  font-size: 1.8em;
+}
+
+.song_item_sec .title {
+  font-size: 2em;
+  font-weight: bold;
 }
 
 .user_sec {
   position: fixed;
   bottom: 12vh;
-  left: 0;
-  background: linear-gradient(to right, #000000, rgba(0, 0, 0, 0));
+  left: 8%;
   opacity: 0.8;
 }
 
 .btn-dark {
+  background: rgba(78, 78, 78, 0.575);
   display: inline-block;
   line-height: 30px;
-  width: 120px;
+  width: 150px;
   margin: 0 10px;
+  font-size: 1.2em;
+}
+
+.btn-dark:hover {
+  background: white;
 }
 
 .btn_sec {
   position: fixed;
   bottom: 15vh;
-  right: 50px;
+  right: 8%;
 }
 
 .fa-icon {
@@ -304,18 +318,25 @@ export default {
   .song_item_sec {
     background: rgba(0, 0, 0, 0.4);
     position: relative;
-    top: 0;
+    top: auto;
+    left: auto;
+    text-align: center;
+    font-size: 1em;
+    line-height: 1.5em;
+    margin: 10px auto;
+    padding: 20px;
+  }
+  .song_item_sec .title {
+    font-size: 1.4em;
+    font-weight: bold;
   }
   .user_sec {
     background: rgba(0, 0, 0, 0.4);
     position: relative;
     top: 0;
+    left: auto;
   }
   .user_sec .extend {
-    margin: 10px auto;
-    width: fit-content;
-  }
-  .song_item_sec .song_item {
     margin: 10px auto;
     width: fit-content;
   }
@@ -325,6 +346,9 @@ export default {
     bottom: auto;
     margin: 20px auto;
     width: fit-content;
+  }
+  .btn-dark {
+    width: 120px;
   }
 }
 </style>

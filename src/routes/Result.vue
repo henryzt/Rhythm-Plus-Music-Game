@@ -2,61 +2,66 @@
   <div>
     <div v-if="sheet">
       <PageBackground songSrc="/songs/login.mp3" :imageSrc="sheet.image"></PageBackground>
-      <div class="blurFilter"></div>
-      <div class="center_logo darker flex_hori">
-        <div>
-          <VueCircle
-            class="scoreCircle"
-            :progress="result.result.percentage"
-            :size="windowWidth > 1000 ? 260 : 180"
-            :fill="{ gradient: ['darkorange', '#ffab2d'] }"
-            empty-fill="rgba(100, 100, 100, .5)"
-            :thickness="10"
-            :start-angle="-1/2*Math.PI"
-            insert-mode="append"
-            :show-percent="false"
-          >
-            <div class="circleBg"></div>
-            <div class="score scoreShadow">{{result.rank}}</div>
-            <div style="margin-top:-20px">
-              <ICountUp :endVal="result.result.percentage" :options="{decimalPlaces:2}" />%
+      <div class="blurFilter">
+        <div class="center_logo darker flex_hori">
+          <div class="scoreCircle" ref="resultDiv">
+            <VueCircle
+              :progress="result.result.percentage"
+              :size="windowWidth > 1000 ? 260 : 180"
+              :fill="{ gradient: ['darkorange', '#ffab2d'] }"
+              empty-fill="rgba(100, 100, 100, .5)"
+              :thickness="10"
+              :start-angle="-1/2*Math.PI"
+              insert-mode="append"
+              :show-percent="false"
+            >
+              <div class="circleBg"></div>
+              <div class="score scoreShadow">{{result.rank}}</div>
+              <div style="margin-top:-20px;transform: translateZ(20px);">
+                <ICountUp :endVal="result.result.percentage" :options="{decimalPlaces:2}" />%
+              </div>
+            </VueCircle>
+          </div>
+
+          <div class="rightScore">
+            <div>
+              Score
+              <br />
+              <ICountUp
+                style="font-size:2.7em"
+                :endVal="result.result.score"
+                :options="{decimalPlaces:0}"
+              />
             </div>
-          </VueCircle>
+            <div>
+              Max Combo -
+              <ICountUp :endVal="result.result.maxCombo" :options="{decimalPlaces:0}" />
+            </div>
+          </div>
+
+          <div class="rightScore" style="text-align:left">
+            <div>
+              <div class="markChip perfect">Perfect</div>
+              <ICountUp :endVal="result.result.marks.perfect" />
+            </div>
+            <div>
+              <div class="markChip good">Good</div>
+              <ICountUp :endVal="result.result.marks.good" />
+            </div>
+            <div>
+              <div class="markChip offbeat">Offbeat</div>
+              <ICountUp :endVal="result.result.marks.offbeat" />
+            </div>
+            <div>
+              <div class="markChip miss">Miss</div>
+              <ICountUp :endVal="result.result.marks.miss" />
+            </div>
+          </div>
         </div>
 
-        <div class="rightScore">
-          <div>
-            Score
-            <br />
-            <ICountUp
-              style="font-size:2.7em"
-              :endVal="result.result.score"
-              :options="{decimalPlaces:0}"
-            />
-          </div>
-          <div>
-            Max Combo -
-            <ICountUp :endVal="result.result.maxCombo" :options="{decimalPlaces:0}" />
-          </div>
-        </div>
-
-        <div class="rightScore" style="text-align:left">
-          <div>
-            <div class="markChip perfect">Perfect</div>
-            <ICountUp :endVal="result.result.marks.perfect" />
-          </div>
-          <div>
-            <div class="markChip good">Good</div>
-            <ICountUp :endVal="result.result.marks.good" />
-          </div>
-          <div>
-            <div class="markChip offbeat">Offbeat</div>
-            <ICountUp :endVal="result.result.marks.offbeat" />
-          </div>
-          <div>
-            <div class="markChip miss">Miss</div>
-            <ICountUp :endVal="result.result.marks.miss" />
-          </div>
+        <!-- song section -->
+        <div class="song_item">
+          <SongListItem :song="sheet.song" :hideBg="true" />
         </div>
       </div>
     </div>
@@ -67,6 +72,7 @@
 
 <script>
 import PageBackground from '../components/PageBackground.vue';
+import SongListItem from '../components/SongListItem.vue';
 import Modal from '../components/Modal.vue';
 import { getSheet, getResult } from "../javascript/db"
 import ICountUp from 'vue-countup-v2';
@@ -80,7 +86,8 @@ export default {
       Modal,
       ICountUp,
       VueCircle,
-      Loading
+      Loading,
+      SongListItem
   },
   data(){
         return {
@@ -106,6 +113,13 @@ export default {
       window.onresize = () => {
         this.windowWidth = window.innerWidth
       }
+      
+      this.$nextTick(()=>{
+        VanillaTilt.init(this.$refs.resultDiv, {
+              max: 20,
+              scale: 1.1,
+            });
+      })
     },
     methods: {
 
@@ -133,9 +147,13 @@ export default {
   backdrop-filter: blur(50px);
   -webkit-backdrop-filter: blur(50px);
 }
+.scoreCircle {
+  transform-style: preserve-3d;
+}
 .score {
   font-size: 10em;
   margin-top: -20px;
+  transform: translateZ(40px);
 }
 .scoreShadow {
   color: #ffffff;
@@ -182,6 +200,13 @@ export default {
 .miss {
   background: rgba(112, 0, 0, 0.8);
 }
+.song_item {
+  background: linear-gradient(to right, #000000, rgba(0, 0, 0, 0));
+  position: fixed;
+  top: 10vh;
+  left: 0;
+  opacity: 0.8;
+}
 
 @media only screen and (max-width: 1000px) {
   /* mobile */
@@ -216,6 +241,12 @@ export default {
   }
   .score {
     font-size: 6em;
+  }
+
+  .song_item {
+    background: rgba(0, 0, 0, 0.4);
+    position: relative;
+    top: 0;
   }
 }
 </style>

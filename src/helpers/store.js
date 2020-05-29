@@ -13,19 +13,9 @@ export const store = new Vuex.Store({
     profilePicture: null,
   },
   actions: {
-    fetchUserProfile({ commit, state }) {
-      if (state.currentUser) {
-        fb.usersCollection
-          .doc(state.currentUser.uid)
-          .get()
-          .then((res) => {
-            commit("setUserProfile", res.data());
-          })
-          .catch((err) => {
-            console.error(err);
-          });
-        this.dispatch("fetchProfilePicture");
-      }
+    fetchUserProfile() {
+      this.dispatch("updateUserProfile");
+      this.dispatch("fetchProfilePicture");
     },
     async fetchProfilePicture({ commit, state }) {
       if (state.currentUser) {
@@ -45,6 +35,19 @@ export const store = new Vuex.Store({
         }
       }
     },
+    updateUserProfile({ commit, state }) {
+      if (state.currentUser) {
+        fb.usersCollection
+          .doc(state.currentUser.uid)
+          .get()
+          .then((res) => {
+            commit("setUserProfile", res.data());
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      }
+    },
   },
   mutations: {
     setCurrentUser(state, val) {
@@ -52,6 +55,12 @@ export const store = new Vuex.Store({
     },
     setUserProfile(state, val) {
       state.userProfile = val;
+      if (val && val.exp) {
+        let level = calculateUserLevel(val.exp);
+        state.userProfile.lvBefore = state.userProfile.lv ?? level;
+        state.userProfile.lv = level;
+        state.userProfile.lvd = Math.floor(level);
+      }
     },
     setProfilePciture(state, val) {
       state.profilePicture = val;
@@ -61,5 +70,11 @@ export const store = new Vuex.Store({
     },
   },
 });
+
+function calculateUserLevel(exp) {
+  //ref https://stackoverflow.com/questions/6954874/
+  const lvInc = 25;
+  return (Math.sqrt(lvInc * lvInc + 100 * exp) - lvInc) / 50;
+}
 
 // partly ref https://savvyapps.com/blog/definitive-guide-building-web-app-vuejs-firebase

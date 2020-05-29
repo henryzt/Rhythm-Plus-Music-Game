@@ -1,5 +1,11 @@
 <template>
-  <div class="song_item" ref="item" @click="$emit('selected', song)" v-if="song">
+  <div
+    class="song_item"
+    :class="{'song_item_bg':!hideBg}"
+    ref="item"
+    @click="$emit('selected', song)"
+    v-if="song"
+  >
     <div class="image">
       <img :src="song.image" />
     </div>
@@ -13,7 +19,7 @@
 <script>
 export default {
     name:"SongListItem",
-    props: ["song"],
+    props: ["song", "hideBg"],
     data() {
         return {
         }
@@ -27,21 +33,26 @@ export default {
 
 <style scoped>
 .song_item {
+  padding: 0;
   display: flex;
   align-items: center;
-  padding: 5px;
+  z-index: 1000;
+  margin: 10px;
+  width: fit-content;
+}
+
+.song_item_bg {
   background: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  cursor: pointer;
   width: 100%;
   max-width: 800px;
   margin: 10px auto;
-  padding: 0;
   transition: 0.5s;
   overflow: hidden;
+  cursor: pointer;
 }
-.song_item:hover {
+.song_item_bg:hover {
   background: rgba(255, 255, 255, 0.4);
   transform: scale(1.2);
   z-index: 500;
@@ -71,7 +82,7 @@ export default {
   }
 }
 @media only screen and (max-width: 1300px) {
-  .song_item:hover {
+  .song_item_bg:hover {
     transform: none;
   }
 }

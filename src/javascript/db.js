@@ -169,6 +169,7 @@ export async function getSheet(sheetId) {
       sheet.url = sheet.url ?? song.url;
       sheet.title = sheet.title ?? song.title + " - " + song.artist;
       sheet.image = song.image;
+      sheet.song = song;
       sheet.sheet = JSON.parse(sheet.sheet);
       sheet.sheetId = doc.id;
       console.log("Sheet data:", sheet);

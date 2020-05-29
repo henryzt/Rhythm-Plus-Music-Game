@@ -3,6 +3,7 @@
     <img :src="$store.state.profilePicture" />
     <div class="detail">
       <div>{{$store.state.currentUser.displayName}}</div>
+      <div>Level.{{$store.state.userProfile.lvd}}</div>
     </div>
   </div>
 </template>

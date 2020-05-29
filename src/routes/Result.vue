@@ -59,9 +59,28 @@
           </div>
         </div>
 
+        <!-- profile section -->
+        <div
+          class="user_sec"
+          v-if="$store.state.currentUser&&result.uid===$store.state.currentUser.uid"
+        >
+          <UserProfileCard :extend="true" />
+        </div>
+
         <!-- song section -->
-        <div class="song_item">
+        <div class="song_item_sec">
           <SongListItem :song="sheet.song" :hideBg="true" />
+        </div>
+
+        <div class="btn_sec">
+          <div class="btn-action btn-dark" @click="replay">
+            <v-icon name="redo" />
+            <span>Replay</span>
+          </div>
+          <div class="btn-action btn-dark" @click="toMenu">
+            <v-icon name="arrow-right" />
+            <span>Continue</span>
+          </div>
         </div>
       </div>
     </div>
@@ -73,11 +92,14 @@
 <script>
 import PageBackground from '../components/PageBackground.vue';
 import SongListItem from '../components/SongListItem.vue';
+import UserProfileCard from '../components/UserProfileCard.vue';
 import Modal from '../components/Modal.vue';
 import { getSheet, getResult } from "../javascript/db"
 import ICountUp from 'vue-countup-v2';
 import VueCircle from 'vue2-circle-progress/src/index.vue'
 import Loading from '../components/Loading.vue';
+import 'vue-awesome/icons/redo'
+import 'vue-awesome/icons/arrow-right'
 
 export default {
   name: 'Result',
@@ -87,7 +109,8 @@ export default {
       ICountUp,
       VueCircle,
       Loading,
-      SongListItem
+      SongListItem,
+      UserProfileCard
   },
   data(){
         return {
@@ -122,6 +145,12 @@ export default {
       })
     },
     methods: {
+      replay(){
+        this.$router.push("/game/"+this.sheet.sheetId);
+      },
+      toMenu(){
+        this.$router.push("/menu/")
+      }
 
     }
 };
@@ -200,12 +229,38 @@ export default {
 .miss {
   background: rgba(112, 0, 0, 0.8);
 }
-.song_item {
+.song_item_sec {
   background: linear-gradient(to right, #000000, rgba(0, 0, 0, 0));
   position: fixed;
   top: 10vh;
   left: 0;
   opacity: 0.8;
+}
+
+.user_sec {
+  position: fixed;
+  bottom: 12vh;
+  left: 0;
+  background: linear-gradient(to right, #000000, rgba(0, 0, 0, 0));
+  opacity: 0.8;
+}
+
+.btn-dark {
+  display: inline-block;
+  line-height: 30px;
+  width: 120px;
+  margin: 0 10px;
+}
+
+.btn_sec {
+  position: fixed;
+  bottom: 15vh;
+  right: 50px;
+}
+
+.fa-icon {
+  vertical-align: middle;
+  margin-right: 5px;
 }
 
 @media only screen and (max-width: 1000px) {
@@ -214,6 +269,9 @@ export default {
     flex-direction: column;
   }
 
+  .blurFilter {
+    position: relative;
+  }
   .center_logo {
     position: relative;
     transform: none;
@@ -243,10 +301,30 @@ export default {
     font-size: 6em;
   }
 
-  .song_item {
+  .song_item_sec {
     background: rgba(0, 0, 0, 0.4);
     position: relative;
     top: 0;
+  }
+  .user_sec {
+    background: rgba(0, 0, 0, 0.4);
+    position: relative;
+    top: 0;
+  }
+  .user_sec .extend {
+    margin: 10px auto;
+    width: fit-content;
+  }
+  .song_item_sec .song_item {
+    margin: 10px auto;
+    width: fit-content;
+  }
+  .btn_sec {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    margin: 20px auto;
+    width: fit-content;
   }
 }
 </style>

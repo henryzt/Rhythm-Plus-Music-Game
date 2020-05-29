@@ -78,10 +78,10 @@
       <template>
         <transition name="slide-fade" mode="out-in">
           <div v-if="!advancedMenuOptions" key="1">
-            <div class="btn-action" @click="resumeGame">Resume</div>
-            <div class="btn-action" @click="restartGame">Restart</div>
-            <div class="btn-action" @click="advancedMenuOptions=true">Advanced</div>
-            <div class="btn-action" @click="exitGame">Exit Game</div>
+            <div class="btn-action btn-dark" @click="resumeGame">Resume</div>
+            <div class="btn-action btn-dark" @click="restartGame">Restart</div>
+            <div class="btn-action btn-dark" @click="advancedMenuOptions=true">Advanced</div>
+            <div class="btn-action btn-dark" @click="exitGame">Exit Game</div>
           </div>
 
           <div v-else key="2">
@@ -89,11 +89,11 @@
             <br />
             <hr />
             <div
-              class="btn-action"
+              class="btn-action btn-dark"
               style="display:inline-block"
               @click="advancedMenuOptions=false"
             >Back</div>
-            <div class="btn-action" style="display:inline-block" @click="resumeGame">Done</div>
+            <div class="btn-action btn-dark" style="display:inline-block" @click="resumeGame">Done</div>
           </div>
         </transition>
       </template>
@@ -403,16 +403,6 @@ export default {
 
 .no-events {
   pointer-events: none;
-}
-
-.btn-action {
-  max-width: 200px;
-  margin: 10px auto;
-  background: rgba(78, 78, 78, 0.192);
-}
-
-.btn-action:hover {
-  background: rgb(255, 255, 255);
 }
 
 .slide-fade-enter-active {

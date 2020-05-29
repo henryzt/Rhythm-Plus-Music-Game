@@ -134,6 +134,16 @@ body {
   background: rgba(255, 255, 255, 0.527);
 }
 
+.btn-dark {
+  max-width: 200px;
+  margin: 10px auto;
+  background: rgba(78, 78, 78, 0.192);
+}
+
+.btn-dark:hover {
+  background: rgb(255, 255, 255);
+}
+
 .btn-close {
   border: none;
   font-size: 20px;

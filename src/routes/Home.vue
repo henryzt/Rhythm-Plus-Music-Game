@@ -1,6 +1,6 @@
 <template>
   <div>
-    <PageBackground songSrc="songs/opening.mp3"></PageBackground>
+    <PageBackground songSrc="/songs/opening.mp3"></PageBackground>
 
     <div class="center_logo">
       <img

@@ -23,7 +23,7 @@ const router = new VueRouter({
     },
     { path: "/account", component: Auth },
     { path: "/editor", component: SheetEditor },
-    { path: "*", component: Home },
+    { path: "*", redirect: { path: "/" } },
   ],
 });
 export default router;

@@ -25,7 +25,7 @@ export const store = new Vuex.Store({
         } else {
           let hash = md5(state.currentUser.email);
           let gravatar_link =
-            "http://www.gravatar.com/avatar/" + hash + "?s=50&d=404";
+            "https://www.gravatar.com/avatar/" + hash + "?s=50&d=404";
           let response = await fetch(gravatar_link);
           if (response.status === 200) {
             commit("setProfilePciture", gravatar_link);
@@ -73,8 +73,8 @@ export const store = new Vuex.Store({
 
 function calculateUserLevel(exp) {
   //ref https://stackoverflow.com/questions/6954874/
-  const lvInc = 5;
-  return (Math.sqrt(lvInc * lvInc + 100 * exp) - lvInc) / 50;
+  const lvInc = 10;
+  return (Math.sqrt(lvInc * lvInc + 100 * exp) - lvInc) / 30 + 1;
 }
 
 // partly ref https://savvyapps.com/blog/definitive-guide-building-web-app-vuejs-firebase

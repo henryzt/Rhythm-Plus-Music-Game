@@ -322,6 +322,7 @@ export default {
 
 #gameCanvas {
   transition: 2s;
+  transform-origin: 50% 100%;
 }
 
 .game {

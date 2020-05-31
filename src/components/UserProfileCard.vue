@@ -1,6 +1,6 @@
 <template>
   <div class="profile_card" :class="{extend}" @click="goToAccount" v-if="$store.state.currentUser">
-    <img :src="$store.state.profilePicture" />
+    <img v-if="$store.state.profilePicture" :src="$store.state.profilePicture" />
     <div class="detail">
       <div>{{$store.state.currentUser.displayName}}</div>
       <div style="opacity:0.6">Level.{{$store.state.userProfile.lvd}}</div>

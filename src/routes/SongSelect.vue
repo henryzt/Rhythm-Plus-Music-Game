@@ -24,6 +24,8 @@
         </transition>
       </div>
     </div>
+
+    <Loading :show="!songList && delayedLoading">Fetching Latest Songs...</Loading>
   </div>
 </template>
 
@@ -32,6 +34,7 @@
 import PageBackground from '../components/PageBackground.vue';
 import SongListItem from '../components/SongListItem.vue';
 import SongDetailPanel from '../components/SongDetailPanel.vue';
+import Loading from '../components/Loading.vue';
 import { getSheetList, getSongList } from "../javascript/db"
 
 
@@ -40,13 +43,15 @@ export default {
   components:{
       PageBackground,
       SongListItem,
-      SongDetailPanel
+      SongDetailPanel,
+      Loading
   },
   data(){
         return {
             songList: null,
             sheetList: null,
-            selectedSong: null
+            selectedSong: null,
+            delayedLoading: false
         }
     },
     computed: {
@@ -60,6 +65,9 @@ export default {
     },
     async mounted() {
         this.songList = await getSongList();
+        setTimeout(() => {
+          this.delayedLoading = true
+        }, 1000);
     },
     methods: {
     }

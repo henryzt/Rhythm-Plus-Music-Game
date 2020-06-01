@@ -280,7 +280,8 @@ export default {
           const res = await uploadResult({
             result: this.result,
             songId: this.currentSong.songId,
-            sheetId: this.currentSong.sheetId
+            sheetId: this.currentSong.sheetId,
+            isAuthed: this.$store.state.authed
             });
           console.log(res)
           this.$router.push('/result/'+res.data.resultId)

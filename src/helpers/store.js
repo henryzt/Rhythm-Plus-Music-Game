@@ -11,11 +11,15 @@ export const store = new Vuex.Store({
     currentUser: null,
     userProfile: {},
     profilePicture: null,
+    authed: false,
+    initialized: false,
   },
   actions: {
     fetchUserProfile() {
-      this.dispatch("updateUserProfile");
-      this.dispatch("fetchProfilePicture");
+      if (this.state.currentUser && !this.state.currentUser.isAnonymous) {
+        this.dispatch("updateUserProfile");
+        this.dispatch("fetchProfilePicture");
+      }
     },
     async fetchProfilePicture({ commit, state }) {
       if (state.currentUser) {
@@ -51,6 +55,8 @@ export const store = new Vuex.Store({
   },
   mutations: {
     setCurrentUser(state, val) {
+      state.initialized = true;
+      state.authed = val && !val.isAnonymous;
       state.currentUser = val;
     },
     setUserProfile(state, val) {

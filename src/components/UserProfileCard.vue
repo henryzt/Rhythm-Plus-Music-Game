@@ -1,7 +1,7 @@
 <template>
-  <div class="profile_card" :class="{extend}" @click="goToAccount" v-if="$store.state.currentUser">
+  <div class="profile_card" :class="{extend}" @click="goToAccount">
     <img v-if="$store.state.profilePicture" :src="$store.state.profilePicture" />
-    <div class="detail">
+    <div class="detail" v-if="$store.state.authed">
       <div>{{$store.state.currentUser.displayName}}</div>
       <div style="opacity:0.6">Level.{{$store.state.userProfile.lvd}}</div>
       <div class="wrapper" v-if="extend">
@@ -10,6 +10,11 @@
           <span class="progress-bar-fill" :style="{width: percentage+'%'}"></span>
         </div>
       </div>
+    </div>
+
+    <div v-else-if="!extend">
+      <!-- show if not authed and not extended -->
+      <div style="padding:10px">{{$store.state.initialized ? "Login / Register" : "Loading..."}}</div>
     </div>
   </div>
 </template>

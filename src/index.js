@@ -20,6 +20,11 @@ new Vue({
       console.log("User state changed", user);
       this.$store.commit("setCurrentUser", user);
       this.$store.dispatch("fetchUserProfile");
+      if (!user) {
+        fb.auth.signInAnonymously().catch(function (error) {
+          console.error(error.message);
+        });
+      }
     });
   },
   render: (h) => h(App),

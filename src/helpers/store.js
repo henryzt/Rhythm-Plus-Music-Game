@@ -19,6 +19,9 @@ export const store = new Vuex.Store({
       if (this.state.currentUser && !this.state.currentUser.isAnonymous) {
         this.dispatch("updateUserProfile");
         this.dispatch("fetchProfilePicture");
+      } else {
+        this.commit("setUserProfile", null);
+        this.commit("setProfilePciture", null);
       }
     },
     async fetchProfilePicture({ commit, state }) {

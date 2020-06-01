@@ -52,51 +52,50 @@ export default {
 
     },
     mounted() {
-        const uiConfig = {
-            signInSuccessUrl: '/',
-            signInFlow: 'popup',
-            signInOptions: [
-                firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-                firebase.auth.EmailAuthProvider.PROVIDER_ID
-                ],
-            autoUpgradeAnonymousUsers: true,
-            callbacks: {
-              signInSuccessWithAuthResult: function(authResult, redirectUrl) {
-                return true;
-              },
-              // handle merge conflicts which occur when an existing credential is linked to an anonymous user.
-              signInFailure: async function(error) {
-                if (error.code != 'firebaseui/anonymous-upgrade-merge-conflict') {
-                  console.error(error)
-                  return Promise.resolve();
-                }
-                console.warn(error)
-                        // Hold a reference to the anonymous current user.
-                let anonymousUser = firebase.auth().currentUser;
-                let cred = error.credential;
-                let app = firebase.app();
-                // Save anonymous user data first.
-                firebase.firestore().collection("users").doc(anonymousUser.uid).set({isAnonymousDeleted: true})
-                    .then(function() {
-                      console.log("delete")
-                      return anonymousUser.delete();
-                    })
-                    .then(function() {
-                      console.log("SI")
-                      return firebase.auth().signInWithCredential(cred);
-                    }).then(function() {
-                      return null;
-                      window.location.assign('/');
-                    }).catch((err)=>{
-                      console.error(err)
-                    });
+      const uiConfig = {
+        signInSuccessUrl: '/',
+        signInFlow: 'popup',
+        signInOptions: [
+            firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+            firebase.auth.EmailAuthProvider.PROVIDER_ID
+            ],
+        autoUpgradeAnonymousUsers: true,
+        callbacks: {
+          signInSuccessWithAuthResult: function(authResult, redirectUrl) {
+            return true;
+          },
+          // handle merge conflicts which occur when an existing credential is linked to an anonymous user.
+          signInFailure: async (error) => {
+            if (error.code != 'firebaseui/anonymous-upgrade-merge-conflict') {
+              console.error(error)
+              return Promise.resolve();
+            }
+            console.warn(error)
+                    // Hold a reference to the anonymous current user.
+            let anonymousUser = firebase.auth().currentUser;
+            let cred = error.credential;
+            let app = firebase.app();
+            // Save anonymous user data first.
+            try{
+              if(this.$store.state.userProfile.exp > 5)
+                await firebase.firestore().collection("users").doc(anonymousUser.uid).set({isAnonymousDeleted: true})
+              await anonymousUser.delete();
+            }catch(err){
+              console.error(err)
+            }
 
-                }
-              }
-        };
+            try{
+              await firebase.auth().signInWithCredential(cred);
+              window.location.assign('/');
+            }catch(err){
+              console.error(err)
+            }
+          }
+        }
+      };
 
-        let ui = firebaseui.auth.AuthUI.getInstance() ?? new firebaseui.auth.AuthUI(firebase.auth());
-        ui.start('#firebaseui-auth-container', uiConfig);
+      let ui = firebaseui.auth.AuthUI.getInstance() ?? new firebaseui.auth.AuthUI(firebase.auth());
+      ui.start('#firebaseui-auth-container', uiConfig);
 
     },
   methods: {

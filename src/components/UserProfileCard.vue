@@ -3,7 +3,10 @@
     <img v-if="$store.state.profilePicture" :src="$store.state.profilePicture" />
     <div class="detail" v-if="$store.state.authed">
       <div>{{$store.state.currentUser.displayName}}</div>
-      <div style="opacity:0.6">Level.{{$store.state.userProfile.lvd}}</div>
+      <div
+        style="opacity:0.6"
+        v-if="$store.state.userProfile.lvd"
+      >Level.{{$store.state.userProfile.lvd}}</div>
       <div class="wrapper" v-if="extend">
         <div class="progress-bar">
           <span class="progress-bar-fill increased" :style="{width: percentage+'%'}"></span>

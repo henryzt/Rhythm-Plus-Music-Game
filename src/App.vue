@@ -1,5 +1,6 @@
 <template>
   <div id="app" class="unselectable">
+    <ModalGlobal ref="gm"></ModalGlobal>
     <transition name="fade" v-if="$store.state.audio">
       <router-view />
     </transition>
@@ -8,13 +9,16 @@
 
 <script>
 import Audio from './javascript/audio.js';
+import ModalGlobal from './components/ModalGlobal.vue';
 
 export default {
   name: 'App',
   components: {
+    ModalGlobal
   },
   mounted(){
     this.$store.commit("setAudio", new Audio());
+    this.$store.commit("setGlobalModal", this.$refs.gm);
   }
 };
 </script>

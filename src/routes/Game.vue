@@ -187,10 +187,12 @@ export default {
 
         this.instance = new GameInstance(this);
 
-        //FIXME add id and route validation
-        if(this.$route.params.sheet && this.$route.params.sheet!="null"){
+        if(this.$route.params.sheet){
           this.instance.loading = true
           this.playWithId()
+        }else{
+          this.$store.state.gModal.show({bodyText:"No song is chosen, tap 'OK' to go to song list.", 
+          isError: true, showCancel: false, okCallback: this.exitGame})
         }
 
         window.addEventListener("blur", this.pauseGame);
@@ -202,8 +204,13 @@ export default {
     },
     methods:{
       async playWithId(){
-        let song = await getSheet(this.$route.params.sheet);
-        this.instance.loadSong(song);
+        try{
+          let song = await getSheet(this.$route.params.sheet);
+          this.instance.loadSong(song);
+        }catch(err){
+          this.$store.state.gModal.show({bodyText:"Sorry, this song does not exist or is unavaliable.", 
+          isError: true, showCancel: false, okCallback: this.exitGame})
+        }
       },
       songLoaded(){
         console.log("playing")
@@ -238,6 +245,8 @@ export default {
       },
       ytError(){
         console.error("youtube error")
+        this.$store.state.gModal.show({bodyText:"Sorry, there is a problem with this video right now, which makes this sheet unavaliable. Please try again later.", 
+        isError: true, showCancel: false, okCallback: this.exitGame})
       },
       startGame(){
         this.showStartButton = false
@@ -287,6 +296,8 @@ export default {
           this.$router.push('/result/'+res.data.resultId)
         }catch(error){
           console.error(error)
+          this.$store.state.gModal.show({bodyText:"We are sorry, due to a connection failure, we are unable to save the result. Would you like to try again?", 
+        isError: true, okCallback: this.gameEnded, cancelCallback: this.exitGame})
         }
       },
       clearResult(){

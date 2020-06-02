@@ -5,7 +5,7 @@
         <header class="modal-header" :class="{'modal-darker':hideFooter}">
           <slot name="header">
             {{titleText}}
-            <div class="btn-action btn-close" @click="close">x</div>
+            <div class="btn-action btn-close" @click="close" v-if="showCancel">x</div>
           </slot>
         </header>
         <section class="modal-body" style="transform: translateZ(100px)">
@@ -14,7 +14,7 @@
         <footer class="modal-footer" v-if="!hideFooter">
           <slot name="footer">
             <div class="btn-action" @click="ok">{{okText}}</div>
-            <div class="btn-action" @click="close">{{cancelText}}</div>
+            <div class="btn-action" @click="close" v-if="showCancel">{{cancelText}}</div>
           </slot>
         </footer>
       </div>
@@ -47,10 +47,14 @@ import VanillaTilt from "vanilla-tilt";
             type: Boolean,
             default: false
         },
+        showCancel:{
+            type: Boolean,
+            default: true
+        },
     },
     data: function(){
         return {
-            showModal: false
+            showModal: false,
         }
     },
     methods: {

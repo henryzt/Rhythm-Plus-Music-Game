@@ -176,11 +176,11 @@ export async function getSheet(sheetId) {
       return sheet;
     } else {
       console.error("No such document");
-      return new Error("No such document");
+      throw new Error("No such document");
     }
   } catch (error) {
     console.error(error);
-    return new Error("Error reading document");
+    throw new Error("Error reading document");
   }
 }
 
@@ -197,10 +197,10 @@ export async function getResult(resultId) {
       return result;
     } else {
       console.error("No such document");
-      return new Error("No such document");
+      throw new Error("No such document");
     }
   } catch (error) {
     console.error(error);
-    return new Error("Error reading document");
+    throw new Error("Error reading document");
   }
 }

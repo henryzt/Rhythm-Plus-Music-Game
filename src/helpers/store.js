@@ -8,6 +8,7 @@ Vue.use(Vuex);
 export const store = new Vuex.Store({
   state: {
     audio: null,
+    gModal: null,
     currentUser: null,
     userProfile: {},
     profilePicture: null,
@@ -76,6 +77,9 @@ export const store = new Vuex.Store({
     },
     setAudio(state, val) {
       state.audio = val;
+    },
+    setGlobalModal(state, val) {
+      state.gModal = val;
     },
   },
 });

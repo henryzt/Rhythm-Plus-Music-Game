@@ -1,7 +1,5 @@
 <template>
-  <div class="visualizer">
-    <canvas ref="visualizerCanvas"></canvas>
-  </div>
+  <canvas ref="visualizerCanvas"></canvas>
 </template>
 
 <script>

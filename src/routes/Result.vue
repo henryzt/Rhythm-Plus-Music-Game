@@ -335,6 +335,7 @@ export default {
     position: relative;
     top: 0;
     left: auto;
+    opacity: 1;
   }
   .user_sec .extend {
     margin: 10px auto;

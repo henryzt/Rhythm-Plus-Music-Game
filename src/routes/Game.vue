@@ -257,6 +257,7 @@ export default {
         }else{
           this.instance.startSong()
         }
+        this.perspective = true; //TODO maybe remove later
       },
       pauseGame(){
         if(!this.started || this.isGameEnded) return;

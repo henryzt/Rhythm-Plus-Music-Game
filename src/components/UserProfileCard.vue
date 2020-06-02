@@ -15,9 +15,15 @@
       </div>
     </div>
 
-    <div v-else-if="!extend">
-      <!-- show if not authed and not extended -->
-      <div style="padding:10px">{{$store.state.initialized ? "Login / Register" : "Loading..."}}</div>
+    <div v-else>
+      <div
+        style="padding:10px"
+        v-if="!extend"
+      >{{$store.state.initialized ? "Login / Register" : "Loading..."}}</div>
+      <div style="opacity:0.5" v-else>
+        Login or Register now
+        <br />to sync your progress and exp
+      </div>
     </div>
   </div>
 </template>

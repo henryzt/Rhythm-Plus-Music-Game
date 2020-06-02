@@ -32,7 +32,6 @@ export default {
         vComponent: 'space',
         blur: false,
         audioDataLoaded: false,
-        destroyed: false
     }
   },
   mounted() {
@@ -49,24 +48,23 @@ export default {
         window.removeEventListener("resize", this.resizeCanvas);
         window.removeEventListener("orientationchange",this.resizeCanvas);
         this.audioDataLoaded = false
-        this.destroyed = true
+        this.vComponent = null
     },
   methods: {
     renderVisualizer() {
-        if (!this.audioDataLoaded) return;
+        if (!this.audioDataLoaded || !this.vComponent) return;
         this.$refs.visualizerIns.update()
     },
     setVisualizerByKey(name){
         this.vComponent = visualizers[name];
     },
     update() {
-        if(!this.autoUpdate || this.destroyed) return;
-        if(!this.audioDataLoaded) console.warn("not loaded")
+        if(!this.autoUpdate || !this.vComponent) return;
         requestAnimationFrame(this.update.bind(this));
         this.renderVisualizer();
     },
     resizeCanvas(){
-        if (!this.audioDataLoaded) return;
+        if (!this.audioDataLoaded || !this.vComponent) return;
         this.$refs.visualizerIns.resizeCanvas()
     }
   },
@@ -87,7 +85,7 @@ export default {
         },
         audioData() {
             let data = this.$store.state.audio.audioData;
-            if(!this.visualizerLoaded && data.analyser)
+            if(data.analyser)
                 this.audioDataLoaded = true
             return data;
         }

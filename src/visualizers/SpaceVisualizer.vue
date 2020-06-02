@@ -1,8 +1,6 @@
 <template>
-  <div class="visualizer">
-    <!-- visualizer space -->
-    <div ref="visualizerSpace" id="visualizer"></div>
-  </div>
+  <!-- visualizer space -->
+  <div ref="visualizerSpace" id="visualizer"></div>
 </template>
 
 <script>

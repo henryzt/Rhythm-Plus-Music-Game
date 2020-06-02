@@ -1,8 +1,27 @@
 <template>
   <div class="control">
-    <a
-      @click="toggleVisualizer"
-    >{{playData.visualizerInstance?playData.visualizerInstance.currentVisualizer:''}} (Tap to change)</a>
+    <select
+      id="songSelect"
+      @change="toggleVisualizer($event.target.value)"
+      v-if="playData.visualizerInstance"
+      :value="playData.visualizerInstance.currentVisualizer"
+      style="width:200px"
+    >
+      <option
+        v-for="visualizer in playData.visualizerInstance.visualizerArr"
+        :value="visualizer"
+        :key="visualizer"
+      >{{visualizer}}</option>
+    </select>
+    <input
+      type="checkbox"
+      id="blur"
+      name="blur"
+      value="blur"
+      v-model="playData.visualizerInstance.blur"
+    />
+    <label for="blur">Blur</label>
+    <br />
     <br />
     <button @click="playData.audio.play()">Play Audio</button>
     <button @click="playData.audio.pause()">Pause Audio</button>
@@ -58,8 +77,8 @@ export default {
     }
   },
   methods: {
-    toggleVisualizer() {
-      this.playData.visualizerInstance.switchNextVisualizer()
+    toggleVisualizer(name) {
+      this.playData.visualizerInstance.setVisualizerByKey(name)
     }
   }
 };

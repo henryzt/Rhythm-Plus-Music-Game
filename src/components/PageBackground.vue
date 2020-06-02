@@ -6,7 +6,7 @@
       class="bgImage"
       :style="{ background: `url('${imageSrc}') no-repeat fixed center`, backgroundSize: 'cover' }"
     ></div>
-    <Visualizer v-else ref="visualizer" :setVisualizerNo="visualizerNo" :autoUpdate="true"></Visualizer>
+    <Visualizer v-else ref="visualizer" :setVisualizer="visualizer" :autoUpdate="true"></Visualizer>
   </div>
 </template>
 
@@ -22,9 +22,9 @@ export default {
       type: String,
       default: "songs/login.mp3"
     },
-    visualizerNo : {
-      type: Number,
-      default: 1
+    visualizer : {
+      type: String,
+      default: "space"
     },
     imageSrc : {
       type: String,

@@ -189,7 +189,7 @@ export default class GameInstance {
     this.vm.srcMode = song.srcMode;
     this.timeArr = song.sheet;
     this.vm.visualizerInstance.visualizer =
-      song.visualizerNo !== null ? song.visualizerNo : 0;
+      song.visualizerName !== null ? song.visualizerName : 0;
     if (song.srcMode === "youtube") {
       this.ytPlayer.loadYoutubeVideo(song.youtubeId);
     } else if (song.srcMode === "url") {

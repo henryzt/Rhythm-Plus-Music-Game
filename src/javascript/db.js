@@ -99,7 +99,7 @@ export function createSheet(sheetInfo) {
   const {
     title,
     song,
-    visualizerNo,
+    visualizerName,
     srcMode,
     youtubeId,
     url,
@@ -114,7 +114,7 @@ export function createSheet(sheetInfo) {
       .set({
         songId: song,
         title: title ?? null,
-        visualizerNo: visualizerNo ?? null,
+        visualizerName: visualizerName ?? null,
         srcMode: srcMode ?? null,
         youtubeId: youtubeId ?? null,
         url: url ?? null,

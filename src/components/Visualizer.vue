@@ -10,20 +10,17 @@
 import BarVisualizer from '../visualizers/BarVisualizer.vue';
 import SpaceVisualizer from '../visualizers/SpaceVisualizer.vue';
 
-// visualizers
-const visualizerArr = [
-  "Visualizer Off",
-  "Space Visualizer",
-  "Bar Visualizer",
-  "Space with Polygon",
-  "Space Blurred",
-  "Blurred",
-];
 
+const visualizers = {
+  "Visualizer Off" : null,
+  "Space Visualizer" : "space",
+  "Bar Visualizer" : "bar",
+  "Space with Polygon" : "spacePoly",
+};
 
 export default {
   name: 'Visualizer',
-  props: ["autoUpdate", "setVisualizerNo", "blur"],
+  props: ["autoUpdate", "setVisualizer", "setBlur"],
   components:{
       'bar' : BarVisualizer,
       'space' : SpaceVisualizer,
@@ -31,9 +28,9 @@ export default {
   },
   data: function(){
     return {
-        visualizer: 2,
+        visualizerArr: Object.keys(visualizers),
         vComponent: 'space',
-        visualizerArr,
+        blur: false,
         audioDataLoaded: false,
         destroyed: false
     }
@@ -43,8 +40,10 @@ export default {
         window.addEventListener("orientationchange",this.resizeCanvas,false);
         if(this.autoUpdate)
             this.update();
-        if(this.setVisualizerNo)
-            this.visualizer = this.setVisualizerNo;
+        if(this.setVisualizer)
+            this.vComponent = this.setVisualizer;
+        if(this.setBlur)
+            this.blur = this.setBlur;
     },
     beforeDestroy(){
         window.removeEventListener("resize", this.resizeCanvas);
@@ -57,8 +56,8 @@ export default {
         if (!this.audioDataLoaded) return;
         this.$refs.visualizerIns.update()
     },
-    switchNextVisualizer(){
-        this.visualizer = this.visualizer == this.visualizerArr.length - 1 ? 0 : this.visualizer + 1;
+    setVisualizerByKey(name){
+        this.vComponent = visualizers[name];
     },
     update() {
         if(!this.autoUpdate || this.destroyed) return;
@@ -75,13 +74,16 @@ export default {
         audioData: () => {
             // required to watch vuex change
         },
-        setVisualizerNo: function(){
-            this.visualizer = this.setVisualizerNo;
+        setVisualizer: () => {
+            this.vComponent = this.setVisualizer;
+        },
+        setBlur: () => {
+            this.blur = this.setBlur;
         }
     },
     computed:{
         currentVisualizer() {
-            return this.visualizerArr[this.visualizer]
+            return Object.keys(visualizers).find(key => visualizers[key] === this.vComponent);
         },
         audioData() {
             let data = this.$store.state.audio.audioData;

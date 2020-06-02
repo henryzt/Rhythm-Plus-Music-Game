@@ -1,7 +1,42 @@
+<template>
+  <div class="visualizer">
+    <canvas ref="visualizerCanvas"></canvas>
+  </div>
+</template>
+
+<script>
+
+export default {
+  name: 'BarVisualizer',
+  props: ["audioData"],
+  data: function(){
+    return {
+        canvas: null,
+        ctx: null
+    }
+  },
+  mounted() {
+        this.canvas = this.$refs.visualizerCanvas;
+        this.ctx = this.canvas.getContext("2d");
+        this.resizeCanvas()
+    },
+  methods: {
+    update() {
+        this.ctx.fillStyle = "rgba(10,10,44,0.2)";
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        renderBarVisualizer(this.canvas, this.ctx, this.audioData)
+    },
+    resizeCanvas(){
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+    }
+  },
+};
+
 let barHeight;
 let barX = 0;
 
-export default function renderBarVisualizer(canvas, ctx, audioData) {
+function renderBarVisualizer(canvas, ctx, audioData) {
   const { analyser, dataArray, bufferLength } = audioData;
   const WIDTH = canvas.width;
   const HEIGHT = canvas.height;
@@ -37,3 +72,4 @@ export default function renderBarVisualizer(canvas, ctx, audioData) {
     }
   }
 }
+</script>

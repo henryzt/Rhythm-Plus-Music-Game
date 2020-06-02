@@ -1,20 +1,14 @@
 <template>
-  <div class="visualizer">
-    <!-- visualizer space -->
-    <div class="blurFilter" v-if="visualizer===4||visualizer===5"></div>
-    <canvas ref="visualizerCanvas" v-show="visualizer===2"></canvas>
-    <div
-      ref="visualizerSpace"
-      id="visualizer"
-      v-show="visualizer===1 || visualizer===3 || visualizer===4"
-    ></div>
+  <div class="visualizer" v-if="audioDataLoaded && vComponent">
+    <div class="blurFilter" v-if="blur"></div>
+    <component ref="visualizerIns" :is="vComponent" :name="vComponent" :audioData="audioData"></component>
   </div>
 </template>
 
 
 <script>
-import renderBarVisualizer from '../visualizers/visualizerBar';
-import { initSpaceVisualizer, renderSpaceVisualizer } from '../visualizers/visualizerSpace';
+import BarVisualizer from '../visualizers/BarVisualizer.vue';
+import SpaceVisualizer from '../visualizers/SpaceVisualizer.vue';
 
 // visualizers
 const visualizerArr = [
@@ -29,68 +23,52 @@ const visualizerArr = [
 
 export default {
   name: 'Visualizer',
-  props: ["autoUpdate", "setVisualizerNo"],
+  props: ["autoUpdate", "setVisualizerNo", "blur"],
+  components:{
+      'bar' : BarVisualizer,
+      'space' : SpaceVisualizer,
+      'spacePoly' : SpaceVisualizer
+  },
   data: function(){
     return {
         visualizer: 2,
+        vComponent: 'space',
         visualizerArr,
-        visualizerLoaded: false, // visualizer loaded indicator
-        canvas: null,
-        ctx: null
+        audioDataLoaded: false,
+        destroyed: false
     }
   },
   mounted() {
-        this.canvas = this.$refs.visualizerCanvas;
-        this.ctx = this.canvas.getContext("2d");
-        this.resizeCanvas()
         window.addEventListener("resize", this.resizeCanvas, false);
+        window.addEventListener("orientationchange",this.resizeCanvas,false);
         if(this.autoUpdate)
             this.update();
         if(this.setVisualizerNo)
             this.visualizer = this.setVisualizerNo;
-        if(this.audioData && this.audioData.analyser)
-            this.initAllVisualizersIfRequried()
+    },
+    beforeDestroy(){
+        window.removeEventListener("resize", this.resizeCanvas);
+        window.removeEventListener("orientationchange",this.resizeCanvas);
+        this.audioDataLoaded = false
+        this.destroyed = true
     },
   methods: {
-    initAllVisualizersIfRequried() {
-        if ( !this.visualizerLoaded ) {
-            this.visualizerLoaded = true;
-            initSpaceVisualizer(this.audioData, this.$refs.visualizerSpace);
-        }
-    },
     renderVisualizer() {
-        if (!this.visualizerLoaded) return;
-        switch (this.visualizer) {
-        case 1:
-            renderSpaceVisualizer();
-            break;
-        case 2:
-            this.ctx.fillStyle = "rgba(10,10,44,0.2)";
-            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-            renderBarVisualizer(this.canvas, this.ctx, this.audioData);
-            break;
-        case 3:
-            renderSpaceVisualizer(true);
-            break;
-        case 4:
-            renderSpaceVisualizer(true);
-            break;
-        default:
-            this.ctx.fillStyle = "black";
-            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        }
+        if (!this.audioDataLoaded) return;
+        this.$refs.visualizerIns.update()
     },
     switchNextVisualizer(){
         this.visualizer = this.visualizer == this.visualizerArr.length - 1 ? 0 : this.visualizer + 1;
     },
     update() {
-        if(!this.autoUpdate) return;
+        if(!this.autoUpdate || this.destroyed) return;
+        if(!this.audioDataLoaded) console.warn("not loaded")
         requestAnimationFrame(this.update.bind(this));
         this.renderVisualizer();
     },
     resizeCanvas(){
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
+        if (!this.audioDataLoaded) return;
+        this.$refs.visualizerIns.resizeCanvas()
     }
   },
     watch : {
@@ -107,8 +85,8 @@ export default {
         },
         audioData() {
             let data = this.$store.state.audio.audioData;
-            if(!this.visualizerLoaded && this.ctx && data.analyser)
-                this.initAllVisualizersIfRequried()
+            if(!this.visualizerLoaded && data.analyser)
+                this.audioDataLoaded = true
             return data;
         }
     }

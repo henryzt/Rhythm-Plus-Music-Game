@@ -131,7 +131,7 @@ export default {
             checkHitLineY: null, // hit line postion (white line)
             noteSpeedInSec: 2,
             noteSpeedPxPerSec: null, // note speed
-            playMode: false, // play or edit mode
+            playMode: true, // play or edit mode
             currentSong: null,
             result: {
               score: 0,
@@ -257,7 +257,6 @@ export default {
         }else{
           this.instance.startSong()
         }
-        this.perspective = true; //TODO maybe remove later
       },
       pauseGame(){
         if(!this.started || this.isGameEnded) return;
@@ -342,6 +341,7 @@ export default {
   position: fixed;
   top: 0;
   left: 0;
+  width: 100%;
 }
 
 .score {

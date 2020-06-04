@@ -75,7 +75,7 @@ import VanillaTilt from "vanilla-tilt";
               VanillaTilt.init(this.$refs.modal, {
                 max: 0,
                 glare: true,
-                "max-glare": 0.5
+                "max-glare": 0.3
               });
             }
         }

@@ -52,7 +52,8 @@ export default {
   data(){
         return {
           wrapper: null,
-          contentHeight: "86vh"
+          contentHeight: "86vh",
+          playMode: false
         }
     },
     computed: {

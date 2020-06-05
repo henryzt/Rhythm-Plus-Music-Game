@@ -10,7 +10,7 @@ export default class DropTrack {
     this.particleEffect = new HitParticleEffect(vm.ctx);
     this.noteArr = [];
     this.hitIndicatorOpacity = 0;
-    this.hitGradient = this.getHitGradient();
+    this.updateHitGradient();
   }
 
   keyDown(key) {
@@ -101,7 +101,7 @@ export default class DropTrack {
     }
   }
 
-  getHitGradient() {
+  updateHitGradient() {
     let { ctx, canvas } = this.vm;
     // hit indicator gradient
     const hitGradient = ctx.createLinearGradient(
@@ -112,7 +112,7 @@ export default class DropTrack {
     );
     hitGradient.addColorStop(0, "rgba(0,0,0,0)");
     hitGradient.addColorStop(1, "yellow");
-    return hitGradient;
+    this.hitGradient = hitGradient;
   }
 }
 

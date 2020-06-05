@@ -290,6 +290,28 @@ input::placeholder {
   opacity: 0.35; 
 }
 
+/* scrollbar */
+
+::-webkit-scrollbar {
+  width: 0; 
+  /* todo */
+}
+
+::-webkit-scrollbar-track {
+  background: none;
+}
+ 
+::-webkit-scrollbar-thumb {
+  background: rgba(223, 223, 223, 0.5); 
+  border-radius: 10px;
+  transition: 0.5s;
+  min-width: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(145, 145, 145, 1); 
+}
+
 
 @keyframes enter {
   from {

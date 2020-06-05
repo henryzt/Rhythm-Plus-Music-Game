@@ -63,13 +63,12 @@ export default {
   mounted() {
     this.canvas = this.$refs.mainCanvas;
     this.ctx = this.canvas.getContext("2d");
-    this.canvas.width = window.innerWidth;
-    this.canvas.height = window.innerHeight;
     this.visualizerInstance = this.$refs.visualizer;
     // get audio element
     this.audio = this.$store.state.audio;
 
     this.instance = new GameInstance(this);
+    this.instance.reposition();
 
     window.addEventListener("blur", this.pauseGame);
   },

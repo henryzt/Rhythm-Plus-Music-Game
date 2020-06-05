@@ -67,6 +67,7 @@ export default class GameInstance {
         startX + trackWidthWithOffset * counter,
         trackWidth
       );
+      this.dropTrackArr[counter].updateHitGradient();
     }
 
     this.vm.checkHitLineY = (this.canvas.height / 10) * 9;

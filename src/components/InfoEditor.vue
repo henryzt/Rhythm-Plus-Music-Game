@@ -1,13 +1,13 @@
 <template>
   <div>
     <form @submit.prevent="submitForm">
-      <input v-model="formData.title" name="songTitle" placeholder="Song title" />
+      <input v-model="formData.title" name="songTitle" placeholder="Song title" type="text" />
       <br />
-      <input v-model="formData.artist" name="artist" placeholder="Artist" />
+      <input v-model="formData.artist" name="artist" placeholder="Artist" type="text" />
       <br />
-      <input v-model="formData.image" name="image" placeholder="Image URL (Optional)" />
+      <input v-model="formData.image" name="image" placeholder="Image URL (Optional)" type="text" />
       <br />
-      <input v-model="formData.youtubeId" name="youtubeId" placeholder="Youtube ID" />
+      <input v-model="formData.youtubeId" name="youtubeId" placeholder="Youtube ID" type="text" />
       <br />
       <input type="submit" />
     </form>

@@ -50,7 +50,7 @@
     <transition name="modal-fade">
       <div class="modal-backdrop" :class="{'no-events':hideGameForYtButton}" v-if="showStartButton">
         <div class="modal blurBackground" :class="{'darker':hideGameForYtButton}" ref="playButton">
-          <div class="modal-body" @click="()=>{hideGameForYtButton?()=>{}:startGame()}">
+          <div class="modal-body" @click="hideGameForYtButton?()=>{}:startGame()">
             <div class="flex_hori">
               <v-icon name="play" scale="1.5" />
               <div class="start_button_text">Start</div>
@@ -107,7 +107,7 @@
             <div
               class="btn-action btn-dark"
               style="display:inline-block"
-              @click="started?resumeGame:$refs.menu.close()"
+              @click="started?resumeGame():$refs.menu.close()"
             >Done</div>
           </div>
         </transition>
@@ -348,14 +348,6 @@ export default {
 <style scoped>
 * {
   overflow: hidden;
-}
-.gameWrapper {
-  perspective: 600px;
-}
-
-#gameCanvas {
-  transition: 2s;
-  transform-origin: 50% 100%;
 }
 
 .game {

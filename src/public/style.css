@@ -55,6 +55,15 @@ body {
   -webkit-backdrop-filter: blur(10px);
 }
 
+.gameWrapper {
+  perspective: 600px;
+}
+
+#gameCanvas {
+  transition: 2s;
+  transform-origin: 50% 100%;
+}
+
 #visualizerBarBG {
   position: absolute;
   width: 100vw;
@@ -266,7 +275,7 @@ input[type=text], input[type="number"], select {
   padding: 6px 15px;
   margin: 3px 0;
   box-sizing: border-box;
-  border: 3px solid #555;
+  border: 3px solid rgb(109, 109, 109);
   transition: 0.5s;
   outline: none;
   width: 100%;
@@ -274,6 +283,11 @@ input[type=text], input[type="number"], select {
 
 input[type=text]:focus, input[type="number"]:focus, select:focus {
   border: 3px solid #ccc;
+}
+
+input::placeholder { 
+  color: rgb(255, 255, 255);
+  opacity: 0.35; 
 }
 
 

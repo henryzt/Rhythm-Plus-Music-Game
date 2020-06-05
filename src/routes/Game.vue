@@ -46,22 +46,32 @@
       ></Youtube>
     </div>
 
-    <!-- play button -->
+    <!-- ready screen -->
     <transition name="modal-fade">
-      <div
-        class="modal-backdrop"
-        @click="startGame"
-        :class="{'no-events':hideGameForYtButton}"
-        v-if="showStartButton"
-      >
+      <div class="modal-backdrop" :class="{'no-events':hideGameForYtButton}" v-if="showStartButton">
         <div class="modal blurBackground" :class="{'darker':hideGameForYtButton}" ref="playButton">
           <div class="modal-body">
-            <div class="flex_hori">
+            <div class="flex_hori" @click="()=>{hideGameForYtButton?()=>{}:startGame()}">
               <v-icon name="play" scale="1.5" />
-              <div style="font-size:20px;margin-left:20px">Start</div>
+              <div class="start_button_text">Start</div>
             </div>
           </div>
         </div>
+        <!-- todo, option buttons-->
+        <!-- <div>
+          <div
+            class="flex_hori start_page_button"
+            @click="advancedMenuOptions=true;$refs.menu.show()"
+          >
+            <v-icon name="cog" scale="1.5" />
+            <div class="start_button_text">Options</div>
+          </div>
+
+          <div class="flex_hori start_page_button">
+            <v-icon name="info-circle" scale="1.5" />
+            <div class="start_button_text">Song Detail</div>
+          </div>
+        </div>-->
       </div>
     </transition>
 
@@ -72,7 +82,7 @@
     <!-- pause menu modal -->
     <Modal ref="menu" :hideFooter="true" style="text-align:center;z-index:1000">
       <template v-slot:header>
-        <div style="width:100%;font-size:23px">Pause Menu</div>
+        <div style="width:100%;font-size:23px">{{advancedMenuOptions?"Options":"Pause Menu"}}</div>
       </template>
 
       <template>
@@ -87,13 +97,18 @@
           <div v-else key="2">
             <PlayControl :playData="$data"></PlayControl>
             <br />
-            <hr />
+            <hr style="opacity:0.2" />
             <div
               class="btn-action btn-dark"
               style="display:inline-block"
               @click="advancedMenuOptions=false"
+              v-if="started"
             >Back</div>
-            <div class="btn-action btn-dark" style="display:inline-block" @click="resumeGame">Done</div>
+            <div
+              class="btn-action btn-dark"
+              style="display:inline-block"
+              @click="started?resumeGame:$refs.menu.close()"
+            >Done</div>
           </div>
         </transition>
       </template>
@@ -112,6 +127,8 @@ import { getSheet, uploadResult } from "../javascript/db"
 import ICountUp from 'vue-countup-v2';
 import 'vue-awesome/icons/regular/pause-circle'
 import 'vue-awesome/icons/play'
+import 'vue-awesome/icons/cog'
+import 'vue-awesome/icons/info-circle'
 
 export default {
     name: 'Game',
@@ -358,6 +375,25 @@ export default {
 .perspective {
   transform: rotateX(30deg) scaleY(1.5);
   transform-origin: 50% 100%;
+}
+
+.start_button_text {
+  font-size: 20px;
+  margin-left: 20px;
+}
+
+.start_page_button {
+  margin: 30px 10%;
+  opacity: 0.5;
+  cursor: pointer;
+  transition: 0.5s;
+  pointer-events: all;
+  display: inline-block;
+}
+
+.start_page_button:hover {
+  opacity: 0.8;
+  transform: scale(1.2);
 }
 
 @media only screen and (min-width: 800px) {

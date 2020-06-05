@@ -139,7 +139,6 @@ export default class GameInstance {
   startSong() {
     this.resetPlaying();
     const startTime = Date.now();
-    this.vm.playMode = true;
     window.focus();
 
     const intervalPrePlay = setInterval(() => {
@@ -178,7 +177,6 @@ export default class GameInstance {
     if (resetTimeArr) this.timeArr = [];
     this.timeArrIdx = 0;
     this.playTime = 0;
-    this.vm.playMode = false;
     this.audio.stop();
   }
 

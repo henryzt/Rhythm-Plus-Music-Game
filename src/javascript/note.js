@@ -56,7 +56,7 @@ export default function Note(vm, x, width) {
 
   this.isOutOfCanvas = function () {
     const isOut = this.y > canvas.height;
-    if (vm.playMode && isOut) {
+    if (vm.started && isOut) {
       vm.result.marks.miss += 1;
       vm.result.totalHitNotes += 1;
       vm.result.combo = 0;

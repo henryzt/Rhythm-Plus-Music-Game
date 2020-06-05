@@ -18,7 +18,7 @@
       </div>
 
       <div class="column middle">
-        <div class="gameWrapper">
+        <div class="gameWrapper" ref="wrapper">
           <canvas ref="mainCanvas" id="gameCanvas" :class="{perspective}"></canvas>
         </div>
       </div>
@@ -39,6 +39,7 @@
 <script>
 import Visualizer from '../components/Visualizer.vue';
 import InfoEditor from '../components/InfoEditor.vue';
+import GameInstanceMixin from '../mixins/gameInstanceMixin';
 
 
 export default {
@@ -47,9 +48,11 @@ export default {
       Visualizer,
       InfoEditor
   },
+  mixins: [GameInstanceMixin],
   data(){
         return {
-            perspective: false
+          wrapper: null,
+          contentHeight: "86vh"
         }
     },
     computed: {
@@ -59,7 +62,8 @@ export default {
 
     },
     mounted() {
-
+      this.wrapper = this.$refs.wrapper;
+      this.instance.reposition()
     },
     methods: {
 
@@ -121,7 +125,6 @@ export default {
 
 @media screen and (max-width: 600px) {
   .main {
-    height: 100vh;
     flex-wrap: nowrap;
     overflow-x: auto;
   }
@@ -129,7 +132,6 @@ export default {
   .column.side,
   .column.middle {
     flex: 0 0 auto;
-    height: 100vh;
     width: 100vw;
     scroll-snap-align: start;
   }

@@ -36,7 +36,7 @@
         id="ytPlayer"
         ref="youtube"
         :video-id="youtubeId"
-        :player-vars="{controls: 0, rel: 0, playsinline: 1, disablekb: 1 }"
+        :player-vars="{controls: 0, rel: 0, playsinline: 1, disablekb: 1, autoplay: 0 }"
         @playing="songLoaded"
         @cued="videoCued"
         @buffering="ytBuffering"
@@ -122,6 +122,7 @@ import Visualizer from '../components/Visualizer.vue';
 import Loading from '../components/Loading.vue';
 import Modal from '../components/Modal.vue';
 import GameInstance from '../javascript/gameInstance';
+import GameInstanceMixin from '../mixins/gameInstanceMixin';
 import { Youtube } from 'vue-youtube'
 import { getSheet, uploadResult } from "../javascript/db"
 import ICountUp from 'vue-countup-v2';
@@ -140,73 +141,12 @@ export default {
         Modal,
         ICountUp
     },
+    mixins: [GameInstanceMixin],
     data(){
         return {
-            audio: null,
-            canvas: null,
-            ctx: null,
-            checkHitLineY: null, // hit line postion (white line)
-            noteSpeedInSec: 2,
-            noteSpeedPxPerSec: null, // note speed
-            playMode: true, // play or edit mode
-            currentSong: null,
-            result: {
-              score: 0,
-              totalPercentage: 0,
-              totalHitNotes: 0,
-              combo: 0,
-              maxCombo: 0,
-              marks: { perfect: 0, good: 0, offbeat: 0, miss: 0 }
-            },
-            markJudge: "",
-            srcMode: "youtube",
-            instance: null,
-            visualizerInstance: null,
-            youtubeId: "jNQXAC9IVRw",
-            perspective: false,
-            vibrate: true,
-            advancedMenuOptions: false,
-            started: false,
-            showStartButton: false,
-            isGameEnded: false,
-            initialized: false
-        }
-    },
-    computed: {
-        mode() {
-          return this.playMode ? "Play Mode" : "Create Mode";
-        },
-        ytPlayer() {
-          return this.$refs.youtube?.player;
-        },
-        hideGameForYtButton(){
-          return this.srcMode==='youtube' && this.showStartButton;
-        },
-        percentage(){
-          return this.result.totalHitNotes !== 0 ? (this.result.totalPercentage / this.result.totalHitNotes) : 0;
-        }
-    },
-    watch: {
-        noteSpeedInSec() {
-            this.instance.reposition();
-        },
-        showStartButton(){
-          if(this.showStartButton) {
-            this.$nextTick(this.addTilt);          
-            this.initialized = true
-          };
         }
     },
     mounted() {
-        this.canvas = this.$refs.mainCanvas;
-        this.ctx = this.canvas.getContext("2d");
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
-        this.visualizerInstance = this.$refs.visualizer;
-        // get audio element
-        this.audio = this.$store.state.audio;
-
-        this.instance = new GameInstance(this);
 
         if(this.$route.params.sheet){
           this.instance.loading = true
@@ -216,12 +156,6 @@ export default {
           isError: true, showCancel: false, okCallback: this.exitGame})
         }
 
-        window.addEventListener("blur", this.pauseGame);
-
-    },
-    destroyed(){
-        window.removeEventListener("blur", this.pauseGame);
-        this.instance.destroyInstance()
     },
     methods:{
       async playWithId(){
@@ -320,16 +254,6 @@ export default {
           this.$store.state.gModal.show({bodyText:"We are sorry, due to a connection failure, we are unable to save the result. Would you like to try again?", 
         isError: true, okCallback: this.gameEnded, cancelCallback: this.exitGame})
         }
-      },
-      clearResult(){
-        this.result = {
-              score: 0,
-              totalPercentage: 0,
-              totalHitNotes: 0,
-              combo: 0,
-              maxCombo: 0,
-              marks: { perfect: 0, good: 0, offbeat: 0, miss: 0 }
-            }
       },
       addTilt(){
         if(this.$refs.playButton){

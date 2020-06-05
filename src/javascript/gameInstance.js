@@ -47,8 +47,14 @@ export default class GameInstance {
   }
 
   reposition() {
-    this.canvas.width = window.innerWidth;
-    this.canvas.height = window.innerHeight;
+    if (this.vm.wrapper) {
+      this.canvas.style.height = this.vm.contentHeight ?? "100%";
+      this.canvas.width = this.vm.wrapper.clientWidth;
+      this.canvas.height = this.vm.wrapper.clientHeight;
+    } else {
+      this.canvas.width = window.innerWidth;
+      this.canvas.height = window.innerHeight;
+    }
     const trackWidth =
       this.canvas.width / this.trackNum > this.trackMaxWidth
         ? this.trackMaxWidth

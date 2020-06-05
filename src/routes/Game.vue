@@ -31,7 +31,7 @@
     </div>
 
     <!-- youtube player -->
-    <div v-show="srcMode==='youtube'" v-if="!isGameEnded">
+    <div v-if="srcMode==='youtube' && !isGameEnded" v-show="initialized">
       <Youtube
         id="ytPlayer"
         ref="youtube"
@@ -50,8 +50,8 @@
     <transition name="modal-fade">
       <div class="modal-backdrop" :class="{'no-events':hideGameForYtButton}" v-if="showStartButton">
         <div class="modal blurBackground" :class="{'darker':hideGameForYtButton}" ref="playButton">
-          <div class="modal-body">
-            <div class="flex_hori" @click="()=>{hideGameForYtButton?()=>{}:startGame()}">
+          <div class="modal-body" @click="()=>{hideGameForYtButton?()=>{}:startGame()}">
+            <div class="flex_hori">
               <v-icon name="play" scale="1.5" />
               <div class="start_button_text">Start</div>
             </div>
@@ -159,7 +159,7 @@ export default {
               marks: { perfect: 0, good: 0, offbeat: 0, miss: 0 }
             },
             markJudge: "",
-            srcMode: "url",
+            srcMode: "youtube",
             instance: null,
             visualizerInstance: null,
             youtubeId: "jNQXAC9IVRw",
@@ -168,7 +168,8 @@ export default {
             advancedMenuOptions: false,
             started: false,
             showStartButton: false,
-            isGameEnded: false
+            isGameEnded: false,
+            initialized: false
         }
     },
     computed: {
@@ -176,7 +177,7 @@ export default {
           return this.playMode ? "Play Mode" : "Create Mode";
         },
         ytPlayer() {
-          return this.$refs.youtube.player;
+          return this.$refs.youtube?.player;
         },
         hideGameForYtButton(){
           return this.srcMode==='youtube' && this.showStartButton;
@@ -186,11 +187,14 @@ export default {
         }
     },
     watch: {
-        noteSpeedInSec: function() {
+        noteSpeedInSec() {
             this.instance.reposition();
         },
         showStartButton(){
-          if(this.showStartButton) this.$nextTick(this.addTilt);
+          if(this.showStartButton) {
+            this.$nextTick(this.addTilt);          
+            this.initialized = true
+          };
         }
     },
     mounted() {
@@ -236,8 +240,8 @@ export default {
           // first loaded
           this.showStartButton = true
           if(this.srcMode !== "youtube") return
-          this.ytPlayer.setVolume(0)
-          this.instance.startSong()
+          this.ytPlayer?.setVolume(0)
+          this.instance?.startSong()
           this.showStartButton = false
         }else{
           this.resumeGame()
@@ -269,8 +273,8 @@ export default {
         this.showStartButton = false
         if(this.srcMode === "youtube"){
           this.instance.loading = true
-          this.ytPlayer.playVideo();
-          this.ytPlayer.setVolume(0);
+          this.ytPlayer?.playVideo();
+          this.ytPlayer?.setVolume(0);
         }else{
           this.instance.startSong()
         }

@@ -294,11 +294,10 @@ input::placeholder {
   opacity: 0.35; 
 }
 
-/* scrollbar */
+/* scrollbar - todo */
 
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   width: 0; 
-  /* todo */
 }
 
 ::-webkit-scrollbar-track {
@@ -314,7 +313,7 @@ input::placeholder {
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(145, 145, 145, 1); 
-}
+} */
 
 
 @keyframes enter {

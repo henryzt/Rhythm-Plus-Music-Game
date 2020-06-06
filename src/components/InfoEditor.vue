@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- song create update form -->
     <div v-if="!$parent.songInfo.id">
       <h2>Create Song</h2>
       <form @submit.prevent="submitForm" v-if="songFormOptions.tab==='form'">
@@ -52,6 +53,7 @@
         <div class="switch_tab" @click="songFormOptions.tab='choose'">or Select Existing Song</div>
       </form>
 
+      <!-- existing song chooser -->
       <form @submit.prevent="submitExistingSong" v-if="songFormOptions.tab==='choose'">
         <select id="songSelect" v-model="songFormOptions.selectedSong">
           <option :value="null" disabled hidden>Select an existing song...</option>
@@ -61,7 +63,7 @@
             :value="song"
             :key="song.id"
           >{{song.title}}</option>
-          <option disabled>Your Songs</option>
+          <option disabled>Your Unpublished Songs</option>
           <option
             v-for="song in songFormOptions.privateSongList"
             :value="song"

@@ -25,7 +25,7 @@
       </div>
     </div>
 
-    <Loading :show="!songList && delayedLoading">Fetching Latest Songs...</Loading>
+    <Loading :show="(!songList || songList.length===0)&& delayedLoading">Fetching Latest Songs...</Loading>
   </div>
 </template>
 
@@ -63,8 +63,12 @@ export default {
           this.sheetList = await getSheetList(this.selectedSong.id);
       }
     },
-    async mounted() {
-        this.songList = await getSongList();
+    mounted() {
+        getSongList().then(res=>{
+          this.songList = res;
+        }).catch(err=>{
+          console.error(err)
+        })
         setTimeout(() => {
           this.delayedLoading = true
         }, 1000);

@@ -16,6 +16,7 @@ export function createSong(songInfo) {
   let dateCreated = dbi.Timestamp.now();
   let dateUpdated = dateCreated;
   let createdBy = store.state.currentUser?.uid;
+  let visibility = "private";
   console.log(songId);
   return new Promise((resolve, reject) => {
     songsCollection
@@ -26,13 +27,14 @@ export function createSong(songInfo) {
         image,
         youtubeId,
         url,
+        visibility,
         dateCreated,
         dateUpdated,
         createdBy,
       })
       .then(function () {
         console.log("Document successfully written!");
-        resolve();
+        resolve(songId);
       })
       .catch(function (error) {
         console.error("Error writing document: ", error);
@@ -41,26 +43,39 @@ export function createSong(songInfo) {
   });
 }
 
-export function getSongList() {
+export function getSongList(getPrivate) {
   return new Promise((resolve, reject) => {
-    songsCollection
-      .where("visibility", "==", "public")
-      .get()
-      .then((querySnapshot) => {
-        let res = [];
-        querySnapshot.forEach((doc) => {
-          let song = filterSongData(doc);
+    const processRes = (querySnapshot) => {
+      let res = [];
+      querySnapshot.forEach((doc) => {
+        let song = filterSongData(doc);
 
-          res.push(song);
-          // doc.data() is never undefined for query doc snapshots
-          console.log(doc.id, " => ", doc.data());
-        });
-        resolve(res);
-      })
-      .catch(function (error) {
-        console.error("Error getting document:", error);
-        reject(error);
+        res.push(song);
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, " => ", doc.data());
       });
+      resolve(res);
+    };
+
+    const processErr = (error) => {
+      console.error("Error getting document:", error);
+      reject(error);
+    };
+
+    if (getPrivate) {
+      songsCollection
+        .where("createdBy", "==", store.state.currentUser?.uid)
+        .where("visibility", "in", ["private", "unlisted"])
+        .get()
+        .then(processRes)
+        .catch(processErr);
+    } else {
+      songsCollection
+        .where("visibility", "==", "public")
+        .get()
+        .then(processRes)
+        .catch(processErr);
+    }
   });
 }
 
@@ -167,6 +182,7 @@ export async function getSheet(sheetId) {
       // fallback sheet data
       sheet.youtubeId = sheet.youtubeId ?? song.youtubeId;
       sheet.url = sheet.url ?? song.url;
+      sheet.srcMode = sheet.srcMode ?? song.srcMode;
       sheet.title = sheet.title ?? song.title + " - " + song.artist;
       sheet.image = song.image;
       sheet.song = song;

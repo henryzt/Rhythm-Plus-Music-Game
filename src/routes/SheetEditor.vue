@@ -13,7 +13,6 @@
 
     <div class="main">
       <div class="column side blurBackground">
-        <h2>Info Pannel</h2>
         <info-editor></info-editor>
       </div>
 
@@ -53,7 +52,13 @@ export default {
         return {
           wrapper: null,
           contentHeight: "86vh",
-          playMode: false
+          playMode: false,
+          songInfo: {
+            id:null
+          },
+          sheetInfo: {
+            id:null
+          }
         }
     },
     computed: {

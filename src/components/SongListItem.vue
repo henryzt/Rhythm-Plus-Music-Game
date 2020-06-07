@@ -1,7 +1,7 @@
 <template>
   <div
     class="song_item"
-    :class="{'song_item_bg':!hideBg}"
+    :class="{'song_item_bg':!hideBg, 'song_item_small': hideBg}"
     ref="item"
     @click="$emit('selected', song)"
     v-if="song"
@@ -73,6 +73,15 @@ export default {
 }
 .image img {
   height: 100%;
+}
+
+.song_item_small .image {
+  width: 100px;
+  height: 60px;
+  min-width: 0px;
+}
+.song_item_small {
+  font-size: 0.8em;
 }
 @media only screen and (max-width: 1000px) {
   .image {

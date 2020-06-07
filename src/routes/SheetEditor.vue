@@ -153,7 +153,6 @@ export default {
 /* Left and right column */
 .column.side {
   width: 25%;
-  padding: 30px;
   box-sizing: border-box;
   background: linear-gradient(
     -45deg,

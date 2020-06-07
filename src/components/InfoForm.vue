@@ -52,9 +52,17 @@
       <select id="songSelect" v-model="formOption.selected">
         <option :value="null" disabled hidden>Select an existing {{itemType}}...</option>
         <option disabled>Public {{itemType}}s</option>
-        <option v-for="item in formOption.publicList" :value="item" :key="item.id">{{item.title}}</option>
+        <option
+          v-for="item in formOption.publicList"
+          :value="item"
+          :key="item.id"
+        >{{item.title?item.title:item.id}}</option>
         <option disabled>Your Unpublished {{itemType}}s</option>
-        <option v-for="item in formOption.privateList" :value="item" :key="item.id">{{item.title}}</option>
+        <option
+          v-for="item in formOption.privateList"
+          :value="item"
+          :key="item.id"
+        >{{item.title?item.title:item.id}}</option>
       </select>
       <br />
       <input type="submit" :value="'Done'" />

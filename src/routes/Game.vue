@@ -124,7 +124,7 @@ import Modal from '../components/Modal.vue';
 import GameInstance from '../javascript/gameInstance';
 import GameInstanceMixin from '../mixins/gameInstanceMixin';
 import { Youtube } from 'vue-youtube'
-import { getSheet, uploadResult } from "../javascript/db"
+import { getGameSheet, uploadResult } from "../javascript/db"
 import ICountUp from 'vue-countup-v2';
 import 'vue-awesome/icons/regular/pause-circle'
 import 'vue-awesome/icons/play'
@@ -160,7 +160,7 @@ export default {
     methods:{
       async playWithId(){
         try{
-          let song = await getSheet(this.$route.params.sheet);
+          let song = await getGameSheet(this.$route.params.sheet);
           this.instance.loadSong(song);
         }catch(err){
           this.$store.state.gModal.show({bodyText:"Sorry, this song does not exist or is unavaliable.", 

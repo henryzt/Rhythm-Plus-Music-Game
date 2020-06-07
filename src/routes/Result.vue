@@ -97,7 +97,7 @@ import PageBackground from '../components/PageBackground.vue';
 import SongListItem from '../components/SongListItem.vue';
 import UserProfileCard from '../components/UserProfileCard.vue';
 import Modal from '../components/Modal.vue';
-import { getSheet, getResult } from "../javascript/db"
+import { getGameSheet, getResult } from "../javascript/db"
 import ICountUp from 'vue-countup-v2';
 import VueCircle from 'vue2-circle-progress/src/index.vue'
 import Loading from '../components/Loading.vue';
@@ -133,7 +133,7 @@ export default {
       //FIXME add id and route validation
       if(this.$route.params.resultId && this.$route.params.resultId!="null"){
         this.result = await getResult(this.$route.params.resultId)
-        this.sheet = await getSheet(this.result.sheetId)
+        this.sheet = await getGameSheet(this.result.sheetId)
       }
 
       window.onresize = () => {

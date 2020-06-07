@@ -21,8 +21,12 @@ const router = new VueRouter({
       props: true,
       children: [{ path: ":resultId", component: Result }],
     },
+    {
+      path: "/editor",
+      component: SheetEditor,
+      children: [{ path: ":sheet", component: SheetEditor }],
+    },
     { path: "/account", component: Auth },
-    { path: "/editor", component: SheetEditor },
     { path: "*", redirect: { path: "/" } },
   ],
 });

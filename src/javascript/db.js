@@ -116,6 +116,7 @@ export function createSheet(sheetInfo) {
     song,
     visualizerName,
     srcMode,
+    difficulity,
     youtubeId,
     url,
     sheet,
@@ -125,22 +126,23 @@ export function createSheet(sheetInfo) {
   let createdBy = store.state.currentUser?.uid;
   return new Promise((resolve, reject) => {
     sheetsCollection
-      .doc()
-      .set({
+      .add({
         songId: song,
         title: title ?? null,
         visualizerName: visualizerName ?? null,
+        difficulity: difficulity ?? null,
         srcMode: srcMode ?? null,
         youtubeId: youtubeId ?? null,
         url: url ?? null,
-        sheet: JSON.stringify(sheet),
+        sheet: sheet ? JSON.stringify(sheet) : null,
+        visibility: "private",
         dateCreated,
         dateUpdated,
         createdBy,
       })
-      .then(() => {
+      .then((docRef) => {
         console.log("Document successfully written!");
-        resolve();
+        resolve(docRef.id);
       })
       .catch((error) => {
         console.error("Error writing document: ", error);
@@ -149,31 +151,45 @@ export function createSheet(sheetInfo) {
   });
 }
 
-export function getSheetList(songId) {
+export function getSheetList(songId, getPrivate) {
   return new Promise((resolve, reject) => {
-    sheetsCollection
-      .where("songId", "==", songId)
-      .where("visibility", "==", "public")
-      .get()
-      .then((querySnapshot) => {
-        let res = [];
-        querySnapshot.forEach((doc) => {
-          let sheet = doc.data();
-          sheet.id = doc.id;
-          res.push(sheet);
-          // doc.data() is never undefined for query doc snapshots
-          console.log(doc.id, " => ", doc.data());
-        });
-        resolve(res);
-      })
-      .catch(function (error) {
-        console.error("Error getting document:", error);
-        reject(error);
+    const processRes = (querySnapshot) => {
+      let res = [];
+      querySnapshot.forEach((doc) => {
+        let sheet = doc.data();
+        sheet.id = doc.id;
+        res.push(sheet);
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, " => ", doc.data());
       });
+      resolve(res);
+    };
+
+    const processErr = (error) => {
+      console.error("Error getting document:", error);
+      reject(error);
+    };
+
+    let songSheets = sheetsCollection.where("songId", "==", songId);
+
+    if (getPrivate) {
+      songSheets
+        .where("createdBy", "==", store.state.currentUser?.uid)
+        .where("visibility", "in", ["private", "unlisted"])
+        .get()
+        .then(processRes)
+        .catch(processErr);
+    } else {
+      songSheets
+        .where("visibility", "==", "public")
+        .get()
+        .then(processRes)
+        .catch(processErr);
+    }
   });
 }
 
-export async function getSheet(sheetId) {
+export async function getGameSheet(sheetId) {
   try {
     let doc = await sheetsCollection.doc(sheetId).get();
     if (doc.exists) {
@@ -198,6 +214,27 @@ export async function getSheet(sheetId) {
     console.error(error);
     throw new Error("Error reading document");
   }
+}
+
+export function getSheet(sheetId) {
+  return new Promise((resolve, reject) => {
+    sheetsCollection
+      .doc(sheetId)
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          resolve(filterSongData(doc));
+        } else {
+          // doc.data() will be undefined in this case
+          console.error("No such document!");
+          reject();
+        }
+      })
+      .catch(function (error) {
+        console.error("Error getting document:", error);
+        reject(error);
+      });
+  });
 }
 
 export function uploadResult(data) {

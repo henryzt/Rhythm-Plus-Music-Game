@@ -6,7 +6,6 @@
       <InfoForm
         :formData="songFormData"
         :formOption="songFormOptions"
-        :isCreate="true"
         item-type="Song"
         @submitForm="submitSongForm"
         @submitExisting="submitExistingSong"
@@ -21,7 +20,6 @@
         <InfoForm
           :formData="sheetFormData"
           :formOption="sheetFormOptions"
-          :isCreate="true"
           item-type="Sheet"
           @submitForm="submitSheetForm"
           @submitExisting="submitExistingSheet"
@@ -75,7 +73,8 @@ export default {
               tab: "form",
               publicList: null,
               privateList: null,
-              selected: null
+              selected: null,
+              isUpdate: false
             },
             sheetFormData: { 
                title: null, 
@@ -87,7 +86,8 @@ export default {
               tab: "form",
               publicList: null,
               privateList: null,
-              selected: null
+              selected: null,
+              isUpdate: false
             },
         }
     },
@@ -95,7 +95,14 @@ export default {
 
     },
     watch: {
-
+        '$parent.sheetInfo'(){
+          let sheetInfo = this.$parent.sheetInfo;
+          if(sheetInfo.id!=null){
+            this.sheetFormData = this.$parent.sheetInfo;
+            this.sheetFormOptions.isUpdate = true;
+            this.sheetFormOptions.tab = 'form';
+          }
+        }
     },
     async mounted() {
         this.songFormOptions.publicList = await getSongList();

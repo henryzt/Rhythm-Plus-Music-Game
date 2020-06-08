@@ -87,5 +87,19 @@ export default {
         marks: { perfect: 0, good: 0, offbeat: 0, miss: 0 },
       };
     },
+    ytPaused() {
+      console.log("pasued");
+      if (this.started) this.pauseGame();
+    },
+    ytError() {
+      console.error("youtube error");
+      this.$store.state.gModal.show({
+        bodyText:
+          "Sorry, there is a problem with this video right now, which makes this sheet unavaliable. Please try again later.",
+        isError: true,
+        showCancel: false,
+        okCallback: this.exitGame,
+      });
+    },
   },
 };

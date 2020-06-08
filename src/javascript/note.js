@@ -84,6 +84,7 @@ export default function Note(vm, x, width) {
   };
 
   this.hitIndicator = function () {
+    if (!vm.$refs.hitIndicator) return;
     vm.$refs.hitIndicator.classList.remove("hitAnimation");
     setTimeout(() => {
       vm.$refs.hitIndicator.classList.add("hitAnimation");

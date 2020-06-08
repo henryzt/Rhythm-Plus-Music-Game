@@ -135,7 +135,7 @@ export default class GameInstance {
   update() {
     if (this.destoryed) return;
     requestAnimationFrame(this.update.bind(this));
-    if (this.paused) return;
+    if (this.paused && this.vm.playMode) return;
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.vm.visualizerInstance.renderVisualizer();
     for (const track of this.dropTrackArr) {
@@ -161,6 +161,7 @@ export default class GameInstance {
           this.playTime = cTime + Number(this.vm.noteSpeedInSec);
           const lastIdx = this.timeArr.length - 1;
           if (
+            this.timeArr[lastIdx] &&
             this.timeArrIdx >= lastIdx &&
             this.playTime > this.timeArr[lastIdx].t + 5
           ) {

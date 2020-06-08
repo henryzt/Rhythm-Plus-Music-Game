@@ -43,8 +43,12 @@
           </label>
         </div>-->
       </slot>
-      <input type="submit" :value="'Create ' + itemType" />
-      <div class="switch_tab" @click="formOption.tab='choose'">or Select Existing {{itemType}}</div>
+      <input type="submit" :value="actionText + ' ' + itemType" />
+      <div
+        class="switch_tab"
+        @click="formOption.tab='choose'"
+        v-if="!formOption.isUpdate"
+      >or Select Existing {{itemType}}</div>
     </form>
 
     <!-- existing song chooser -->
@@ -66,7 +70,11 @@
       </select>
       <br />
       <input type="submit" :value="'Done'" />
-      <div class="switch_tab" @click="formOption.tab='form'">or Create New {{itemType}}</div>
+      <div
+        class="switch_tab"
+        @click="formOption.tab='form'"
+        v-if="!formOption.isUpdate"
+      >or {{actionText}} New {{itemType}}</div>
     </form>
   </div>
 </template>
@@ -74,7 +82,12 @@
 <script>
     export default {
         name: 'InfoForm',
-        props: ['formData', 'formOption', 'isCreate', 'itemType']
+        props: ['formData', 'formOption', 'isCreate', 'itemType'],
+        computed:{
+            actionText(){
+                return this.formOption.isUpdate ? "Update" : "Create"
+            }
+        }
         
     }
 </script>

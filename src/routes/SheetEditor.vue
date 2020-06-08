@@ -12,8 +12,19 @@
     </div>
 
     <div class="main">
-      <div class="column side blurBackground">
-        <info-editor></info-editor>
+      <div class="column side left blurBackground">
+        <info-editor style="flex-grow:1"></info-editor>
+        <Youtube
+          id="ytPlayer_editor"
+          ref="youtube"
+          width="100%"
+          height="240px"
+          :video-id="youtubeId"
+          :player-vars="{ rel: 0, playsinline: 1, disablekb: 1, autoplay: 1 }"
+          @playing="songLoaded"
+          @error="ytError"
+          @paused="ytPaused"
+        ></Youtube>
       </div>
 
       <div class="column middle">
@@ -29,14 +40,22 @@
     </div>
 
     <div class="toolbar blurBackground" v-if="instance">
-      <div style="font-size:30px;width:50px;text-align:center;">{{instance.playTime}}</div>
+      <div style="font-size:30px;width:80px;text-align:center;">{{currentTime}}</div>
       <div class="action_buttons">
-        <v-icon name="undo" scale="1" />
-        <v-icon name="play" scale="1.5" />
-        <v-icon name="redo" scale="1" />
+        <v-icon name="undo" scale="1" @click="seekTo(Number(currentTime)-5)" />
+        <v-icon name="play" scale="1.5" @click="songLoaded" v-if="instance && instance.paused" />
+        <v-icon name="pause" scale="1.5" @click="pauseGame" v-else />
+        <v-icon name="redo" scale="1" @click="seekTo(Number(currentTime)+5)" />
       </div>
       <div style="flex-grow:1">
-        <vue-slider v-model="instance.playTime" :tooltip-placement="'right'"></vue-slider>
+        <vue-slider
+          :value="currentTime"
+          :tooltip-placement="'right'"
+          :interval="0.001"
+          :min="-noteSpeedInSec"
+          :max="songLength"
+          @change="seekTo"
+        ></vue-slider>
       </div>
       <div style="width:90px;margin-left:30px;">
         <select id="songSelect" v-model="playbackSpeed">
@@ -54,10 +73,12 @@
 
 
 <script>
+import { getSong, getSheet, getGameSheet } from "../javascript/db"
 import Visualizer from '../components/Visualizer.vue';
 import InfoEditor from '../components/InfoEditor.vue';
 import GameInstanceMixin from '../mixins/gameInstanceMixin';
 import VueSlider from 'vue-slider-component'
+import { Youtube } from 'vue-youtube'
 import 'vue-slider-component/theme/antd.css'
 import 'vue-awesome/icons/play'
 import 'vue-awesome/icons/pause'
@@ -69,7 +90,8 @@ export default {
   components:{
       Visualizer,
       InfoEditor,
-      VueSlider
+      VueSlider,
+      Youtube
   },
   mixins: [GameInstanceMixin],
   data(){
@@ -78,26 +100,86 @@ export default {
           contentHeight: "86vh",
           playMode: false,
           playbackSpeed: 1,
+          songLength: 0,
           songInfo: {
             id:null
           },
           sheetInfo: {
             id:null
-          }
+          },
+          gameSheetInfo: null
         }
     },
     computed: {
+      currentTime(){
+        return (this.instance.playTime - this.noteSpeedInSec).toFixed(2) 
+      }
 
     },
     watch: {
-
+      playbackSpeed(){
+        this.setPlaybackRate(this.playbackSpeed)
+      }
     },
-    mounted() {
+    async mounted() {
       this.wrapper = this.$refs.wrapper;
       this.instance.reposition()
+      const sheetId = this.$route.params.sheet;
+
+      if(sheetId){
+        try{
+          this.sheetInfo = await getSheet(sheetId);
+          this.songInfo = await getSong(this.sheetInfo.songId);
+          this.gameSheetInfo = await getGameSheet(sheetId);
+          this.gameSheetInfo.sheet = this.gameSheetInfo.sheet ?? [];
+          console.log(this.gameSheetInfo)
+          this.instance.loadSong(this.gameSheetInfo);
+        }catch(err){
+          console.error(err);
+          this.$store.state.gModal.show({bodyText:"Sorry, the sheet id is invalid.", 
+          isError: true, showCancel: false, okCallback: this.goToMenu})
+        }
+      }else{
+
+      }
     },
     methods: {
-
+      goToMenu(){
+        this.$router.push('/menu')
+      },
+      async songLoaded(){
+        if(!this.initialized){
+          this.songLength = await this.getLength();
+          this.pauseGame()
+          this.initialized = true;
+        }else if(!this.started){
+          this.instance.paused = false;
+          this.instance.startSong()
+        }else{
+          this.instance.resumeGame()
+        }
+      },
+      async getLength(){
+        let length = 0;
+        if(this.srcMode="youtube"){
+          length = await this.ytPlayer.getDuration();
+        }
+        console.log(length)
+        return length
+      },
+      pauseGame(){
+        this.instance.pauseGame()
+      },
+      seekTo(time){
+        if(this.srcMode="youtube"){
+          this.ytPlayer.seekTo(Number(time))
+        }
+      },
+      setPlaybackRate(rate){
+        if(this.srcMode="youtube"){
+          this.ytPlayer.setPlaybackRate(Number(rate))
+        }
+      }
     }
 };
 </script>
@@ -159,6 +241,15 @@ export default {
     rgba(138, 138, 138, 0.295),
     rgba(0, 0, 0, 0.2)
   );
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+}
+
+.ytPlayer_editor {
+  max-width: 100%;
 }
 
 /* Middle column */

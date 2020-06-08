@@ -123,8 +123,10 @@ export default class GameInstance {
   async onKeyDown(key) {
     if (!this.vm.playMode) {
       const cTime = await this.getCurrentTime();
-      if (this.trackKeyBind.includes(key))
-        this.timeArr.push({ time: cTime, key });
+      if (this.trackKeyBind.includes(key)) {
+        this.timeArr.push({ t: cTime.toFixed(3), k: key });
+        this.timeArrIdx = this.timeArr.length - 1;
+      }
     }
     for (const track of this.dropTrackArr) {
       track.keyDown(key);
@@ -155,14 +157,21 @@ export default class GameInstance {
         if (!this.paused) this.resumeGame();
         // this.vm.visualizerInstance.initAllVisualizersIfRequried();
         clearInterval(intervalPrePlay);
+        clearInterval(this.intervalPlay);
         this.vm.started = true;
         this.intervalPlay = setInterval(async () => {
           const cTime = await this.getCurrentTime();
           this.playTime = cTime + Number(this.vm.noteSpeedInSec);
           const lastIdx = this.timeArr.length - 1;
+          if (!this.vm.playMode && this.playTime < this.timeArr[lastIdx].t) {
+            this.timeArrIdx = this.timeArr.findIndex(
+              (e) => e.t >= this.playTime
+            );
+          }
           if (
-            this.timeArr[lastIdx] &&
+            this.vm.playMode &&
             this.timeArrIdx >= lastIdx &&
+            this.timeArr[lastIdx] &&
             this.playTime > this.timeArr[lastIdx].t + 5
           ) {
             this.vm.gameEnded();
@@ -216,9 +225,9 @@ export default class GameInstance {
   pauseGame() {
     this.paused = true;
     if (this.vm.srcMode === "url") {
-      this.audio.pause();
+      return this.audio.pause();
     } else if (this.vm.srcMode === "youtube") {
-      this.ytPlayer.pauseVideo();
+      return this.ytPlayer.pauseVideo();
     }
   }
 

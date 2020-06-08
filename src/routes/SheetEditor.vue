@@ -33,9 +33,9 @@
         </div>
       </div>
 
-      <div class="column side blurBackground">
-        <h2>Notes</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit..</p>
+      <div class="column side right blurBackground" v-if="instance">
+        <h2>Mappings</h2>
+        <SheetTable></SheetTable>
       </div>
     </div>
 
@@ -76,6 +76,7 @@
 import { getSong, getSheet, getGameSheet } from "../javascript/db"
 import Visualizer from '../components/Visualizer.vue';
 import InfoEditor from '../components/InfoEditor.vue';
+import SheetTable from '../components/SheetTable.vue';
 import GameInstanceMixin from '../mixins/gameInstanceMixin';
 import VueSlider from 'vue-slider-component'
 import { Youtube } from 'vue-youtube'
@@ -91,7 +92,8 @@ export default {
       Visualizer,
       InfoEditor,
       VueSlider,
-      Youtube
+      Youtube,
+      SheetTable
   },
   mixins: [GameInstanceMixin],
   data(){
@@ -170,7 +172,20 @@ export default {
       pauseGame(){
         this.instance.pauseGame()
       },
+      async restartGame(){
+        if(!this.started) return;
+        this.started = false
+        await this.instance.pauseGame()
+        this.clearResult()
+        this.instance.resetPlaying()
+        this.instance.paused = false
+        this.instance.startSong()
+      },
       seekTo(time){
+        if(time<0){
+          this.restartGame()
+          return
+        }
         if(this.srcMode="youtube"){
           this.ytPlayer.seekTo(Number(time))
         }
@@ -246,6 +261,10 @@ export default {
 .left {
   display: flex;
   flex-direction: column;
+}
+
+.right {
+  padding: 30px;
 }
 
 .ytPlayer_editor {

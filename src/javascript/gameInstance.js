@@ -121,7 +121,7 @@ export default class GameInstance {
 
   // log key and touch events
   async onKeyDown(key) {
-    if (!this.vm.playMode) {
+    if (!this.vm.playMode && !this.paused) {
       const cTime = await this.getCurrentTime();
       if (this.trackKeyBind.includes(key)) {
         this.timeArr.push({ t: cTime.toFixed(3), k: key });
@@ -163,12 +163,19 @@ export default class GameInstance {
           const cTime = await this.getCurrentTime();
           this.playTime = cTime + Number(this.vm.noteSpeedInSec);
           const lastIdx = this.timeArr.length - 1;
-          if (!this.vm.playMode && this.playTime < this.timeArr[lastIdx].t) {
+          // advance time arr idx if it's behind current play time
+          if (
+            this.vm.inEditor &&
+            this.timeArr[this.timeArrIdx] &&
+            this.playTime < this.timeArr[this.timeArrIdx].t
+          ) {
             this.timeArrIdx = this.timeArr.findIndex(
               (e) => e.t >= this.playTime
             );
           }
+          // check game end
           if (
+            !this.vm.inEditor &&
             this.vm.playMode &&
             this.timeArrIdx >= lastIdx &&
             this.timeArr[lastIdx] &&

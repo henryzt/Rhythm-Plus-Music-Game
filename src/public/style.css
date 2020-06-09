@@ -262,9 +262,29 @@ body {
   height: 10px;
   border: solid white;
   border-width: 0 3px 3px 0;
-  -webkit-transform: rotate(45deg);
-  -ms-transform: rotate(45deg);
   transform: rotate(45deg);
+}
+
+/* small cb */
+
+.cb_small {
+  padding-left: 0px;
+  font-size: 14px;
+  width: auto;
+}
+
+.cb_small .checkmark:after {
+  left: 4px;
+  top: 0px;
+}
+
+.cb_small .checkmark {
+  height: 15px;
+  width: 15px;
+}
+
+.cb_small input{
+  position: relative;
 }
 
 /* inputs */

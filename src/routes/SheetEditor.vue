@@ -7,7 +7,7 @@
       <div class="logo">R+ Sheet Editor</div>
       <div style="flex-grow:1"></div>
       <a href="#">Save</a>
-      <a href="#">Test</a>
+      <a @click.prevent="togglePlayMode">{{playMode?"Edit":"Test"}}</a>
       <a href="#">Publish</a>
     </div>
 
@@ -103,6 +103,7 @@ export default {
           playMode: false,
           playbackSpeed: 1,
           songLength: 0,
+          inEditor: true,
           songInfo: {
             id:null
           },
@@ -194,6 +195,15 @@ export default {
         if(this.srcMode="youtube"){
           this.ytPlayer.setPlaybackRate(Number(rate))
         }
+      },
+      togglePlayMode(){
+        this.playMode = !this.playMode;
+        this.restartGame()
+      },
+
+
+      reorderSheet(){
+        this.instance.timeArr.sort((a,b) => parseFloat(a.t) - parseFloat(b.t))
       }
     }
 };

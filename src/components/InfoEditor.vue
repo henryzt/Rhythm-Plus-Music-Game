@@ -1,8 +1,9 @@
 <template>
-  <div>
+  <div class="padding" style="height:100%;overflow: scroll;">
     <!-- song create update form -->
-    <div class="padding" v-if="!$parent.songInfo.id">
-      <h2>Create Song</h2>
+    <div v-if="!$parent.songInfo.id || songFormOptions.isUpdate">
+      <h2 v-if="songFormOptions.isUpdate">Update Song Detail</h2>
+      <h2 v-else>Create Song</h2>
       <InfoForm
         :formData="songFormData"
         :formOption="songFormOptions"
@@ -10,12 +11,15 @@
         @submitForm="submitSongForm"
         @submitExisting="submitExistingSong"
       ></InfoForm>
+      <div
+        v-if="songFormOptions.isUpdate"
+        class="switch_tab"
+        @click="songFormOptions.isUpdate=false"
+      >Cancel</div>
     </div>
 
-    <div v-else>
-      <SongListItem :song="$parent.songInfo" :hideBg="true"></SongListItem>
-
-      <div class="padding">
+    <div v-if="$parent.songInfo.id">
+      <div>
         <h2>Sheet Detail</h2>
         <InfoForm
           :formData="sheetFormData"
@@ -38,7 +42,10 @@
               :key="diff"
             >{{diff + ' - ' + ((diff > 9)?"Expert":((diff > 6)?"Hard":((diff > 3)?"Normal":"Easy")))}}</option>
           </select>
-          <select v-model="sheetFormData.visualizerName" v-if="$parent.visualizerInstance">
+          <select
+            v-model="sheetFormData.visualizerName"
+            v-if="$parent.songInfo.srcMode=='url' && $parent.visualizerInstance"
+          >
             <option :value="null" disabled>Select Default Visualizer...</option>
             <option
               v-for="visualizer in $parent.visualizerInstance.visualizerArr"
@@ -58,14 +65,12 @@
 
 
 <script>
-import { createSong, createSheet, getSongList, getSong, getSheetList } from "../javascript/db"
-import SongListItem from '../components/SongListItem.vue';
+import { createSong, createSheet, getSongList, getSong, getSheetList, updateSong, updateSheet } from "../javascript/db"
 import InfoForm from '../components/InfoForm.vue';
 
 export default {
   name: 'InfoEditor',
   components:{
-    SongListItem,
     InfoForm
   },
   data(){
@@ -120,9 +125,18 @@ export default {
     },
     methods: {
         async submitSongForm(){
-            let songId = await createSong(this.songFormData)
-            this.$parent.songInfo = await getSong(songId);
-            this.getSheets()
+          try{
+            if(this.songFormOptions.isUpdate){
+              await updateSong(this.songFormData);
+              this.$router.go();
+            }else{
+              let songId = await createSong(this.songFormData)
+              this.$parent.songInfo = await getSong(songId);
+              this.getSheets()
+            }
+          }catch(err){
+            console.error(err)
+          }
         },
         submitExistingSong(){
             let selectedSong = this.songFormOptions.selected;
@@ -138,9 +152,17 @@ export default {
         },
         async submitSheetForm(){
             this.sheetFormData.song = this.$parent.songInfo.id;
-            let sheetId = await createSheet(this.sheetFormData)
-            this.$router.push('/editor/'+sheetId)
-            this.$router.go()
+            try{
+              if(this.sheetFormOptions.isUpdate){
+                await updateSheet(this.songFormData)
+              }else{
+                let sheetId = await createSheet(this.sheetFormData)
+                this.$router.push('/editor/'+sheetId)
+              }
+              this.$router.go();
+            }catch(err){
+              console.error(err)
+            }
         },
         submitExistingSheet(){
           let selectedSheet = this.sheetFormOptions.selected;
@@ -149,12 +171,26 @@ export default {
               this.$router.go()
             }
         },
+        async openSongUpdate(){
+          this.songFormOptions.isUpdate = true;
+          this.songFormData = await getSong(this.$parent.songInfo.id);
+          if(this.songFormData.image && this.songFormData.image.includes("img.youtube.com")){
+            this.songFormData.image = null
+          }
+        }
     }
 };
 </script>
 
-<style scoped>
+<style>
 .padding {
   padding: 30px;
+}
+.switch_tab {
+  text-align: center;
+  opacity: 0.5;
+  font-size: 14px;
+  margin: 10px;
+  cursor: pointer;
 }
 </style>

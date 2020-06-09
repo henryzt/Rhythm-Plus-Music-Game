@@ -15,7 +15,7 @@ export default class GameInstance {
     // time elapsed relative to audio play time (+Number(vm.noteSpeedInSec))
     this.playTime = 0;
     this.loading = false;
-    this.paused = false;
+    this.paused = true;
 
     // clock for counting time
     this.intervalPlay = null;

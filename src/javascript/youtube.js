@@ -8,6 +8,11 @@ export default class YoutubePlayer {
     if (this.vm.srcMode !== "youtube" || !this.ytPlayer) return;
     this.vm.youtubeId = id;
     this.ytPlayer.setVolume(100);
+    if (!this.vm.playMode) {
+      setTimeout(() => {
+        this.ytPlayer.playVideo();
+      }, 1000);
+    }
   }
 
   playVideo() {

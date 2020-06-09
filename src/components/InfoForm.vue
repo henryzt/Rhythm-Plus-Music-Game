@@ -104,11 +104,4 @@
   padding: 6px 15px;
   margin: 3px 0;
 }
-.switch_tab {
-  text-align: center;
-  opacity: 0.5;
-  font-size: 14px;
-  margin: 10px;
-  cursor: pointer;
-}
 </style>

@@ -13,14 +13,21 @@
 
     <div class="main">
       <div class="column side left blurBackground">
-        <info-editor style="flex-grow:1"></info-editor>
+        <info-editor style="flex-grow:1" ref="info"></info-editor>
+        <SongListItem
+          v-if="songInfo"
+          :song="songInfo"
+          :hideBg="true"
+          @selected="updateSongDetail"
+          style="cursor:pointer"
+        ></SongListItem>
         <Youtube
           id="ytPlayer_editor"
           ref="youtube"
           width="100%"
           height="240px"
           :video-id="youtubeId"
-          :player-vars="{ rel: 0, playsinline: 1, disablekb: 1, autoplay: 1 }"
+          :player-vars="{ rel: 0, playsinline: 1, disablekb: 1, autoplay: 0 }"
           @playing="songLoaded"
           @error="ytError"
           @paused="ytPaused"
@@ -28,19 +35,23 @@
         ></Youtube>
       </div>
 
-      <div class="column middle">
+      <div class="column middle" :class="{disabled:!initialized}">
         <div class="gameWrapper" ref="wrapper">
           <canvas ref="mainCanvas" id="gameCanvas" :class="{perspective}"></canvas>
         </div>
       </div>
 
-      <div class="column side right blurBackground" v-if="instance">
+      <div
+        class="column side right blurBackground"
+        v-if="instance"
+        :class="{disabled:!initialized}"
+      >
         <h2>Mappings</h2>
         <SheetTable></SheetTable>
       </div>
     </div>
 
-    <div class="toolbar blurBackground" v-if="instance">
+    <div class="toolbar blurBackground" v-if="instance" :class="{disabled:!initialized}">
       <div style="font-size:30px;width:80px;text-align:center;">{{currentTime}}</div>
       <div class="action_buttons">
         <v-icon name="undo" scale="1" @click="seekTo(Number(currentTime)-5)" />
@@ -78,6 +89,7 @@ import { getSong, getSheet, getGameSheet } from "../javascript/db"
 import Visualizer from '../components/Visualizer.vue';
 import InfoEditor from '../components/InfoEditor.vue';
 import SheetTable from '../components/SheetTable.vue';
+import SongListItem from '../components/SongListItem.vue';
 import GameInstanceMixin from '../mixins/gameInstanceMixin';
 import VueSlider from 'vue-slider-component'
 import { Youtube } from 'vue-youtube'
@@ -94,7 +106,8 @@ export default {
       InfoEditor,
       VueSlider,
       Youtube,
-      SheetTable
+      SheetTable,
+      SongListItem
   },
   mixins: [GameInstanceMixin],
   data(){
@@ -201,6 +214,9 @@ export default {
         this.playMode = !this.playMode;
         this.restartGame()
       },
+      updateSongDetail(){
+        this.$refs.info.openSongUpdate()
+      },
 
 
       reorderSheet(){
@@ -285,6 +301,11 @@ export default {
 /* Middle column */
 .column.middle {
   width: 50%;
+}
+
+.disabled {
+  opacity: 0.6;
+  pointer-events: none;
 }
 
 @media screen and (max-width: 600px) {

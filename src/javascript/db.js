@@ -112,6 +112,19 @@ export function getSong(songId) {
   });
 }
 
+export function updateSong(songInfo) {
+  return songsCollection
+    .doc(songInfo.id)
+    .update(songInfo)
+    .then(function () {
+      console.log("Document successfully updated!");
+    })
+    .catch(function (error) {
+      // The document probably doesn't exist.
+      console.error("Error updating document: ", error);
+    });
+}
+
 export function createSheet(sheetInfo) {
   const {
     title,
@@ -153,6 +166,19 @@ export function createSheet(sheetInfo) {
         reject();
       });
   });
+}
+
+export function updateSheet(sheetInfo) {
+  return sheetsCollection
+    .doc(sheetInfo.id)
+    .update(sheetInfo)
+    .then(function () {
+      console.log("Document successfully updated!");
+    })
+    .catch(function (error) {
+      // The document probably doesn't exist.
+      console.error("Error updating document: ", error);
+    });
 }
 
 export function getSheetList(songId, getPrivate) {

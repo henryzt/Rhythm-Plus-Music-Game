@@ -24,6 +24,7 @@
           @playing="songLoaded"
           @error="ytError"
           @paused="ytPaused"
+          @ended="ytPaused"
         ></Youtube>
       </div>
 

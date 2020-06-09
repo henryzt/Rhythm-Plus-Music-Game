@@ -8,7 +8,7 @@ import {
 import { store } from "../helpers/store";
 
 export function createSong(songInfo) {
-  const { title, artist, image, youtubeId, url, srcMode } = songInfo;
+  const { title, artist, image, youtubeId, url, srcMode, tags } = songInfo;
   let randomId = btoa(parseInt(Date.now() * Math.random())).slice(0, 9);
   let songId = songInfo.title.trim() + "-" + songInfo.artist.trim();
   songId =
@@ -28,6 +28,7 @@ export function createSong(songInfo) {
         youtubeId,
         srcMode,
         url,
+        tags,
         visibility,
         dateCreated,
         dateUpdated,
@@ -120,6 +121,7 @@ export function createSheet(sheetInfo) {
     difficulity,
     youtubeId,
     url,
+    keys,
     sheet,
   } = sheetInfo;
   let dateCreated = dbi.Timestamp.now();
@@ -139,6 +141,7 @@ export function createSheet(sheetInfo) {
         visibility: "private",
         dateCreated,
         dateUpdated,
+        keys,
         createdBy,
       })
       .then((docRef) => {

@@ -30,18 +30,26 @@
             placeholder="Sheet title (Optional)"
             type="text"
           />
-          <input
-            v-model="sheetFormData.difficulity"
-            name="difficulity"
-            placeholder="Difficulity"
-            type="number"
-          />
-          <input
-            v-model="sheetFormData.visualizerName"
-            name="visualizerName"
-            placeholder="Default Visualizer"
-            type="text"
-          />
+          <select v-model="sheetFormData.difficulity">
+            <option :value="null" disabled>Select Difficulity...</option>
+            <option
+              v-for="diff in 10"
+              :value="diff"
+              :key="diff"
+            >{{diff + ' - ' + ((diff > 9)?"Expert":((diff > 6)?"Hard":((diff > 3)?"Normal":"Easy")))}}</option>
+          </select>
+          <select v-model="sheetFormData.visualizerName" v-if="$parent.visualizerInstance">
+            <option :value="null" disabled>Select Default Visualizer...</option>
+            <option
+              v-for="visualizer in $parent.visualizerInstance.visualizerArr"
+              :value="visualizer"
+              :key="visualizer"
+            >{{visualizer}}</option>
+          </select>
+          <select v-model="sheetFormData.keys">
+            <option :value="null" disabled>Select Key Number...</option>
+            <option v-for="keys in [4,5,6,7,8]" :value="keys" :key="keys">{{keys + ' Key'}}</option>
+          </select>
         </InfoForm>
       </div>
     </div>
@@ -66,7 +74,8 @@ export default {
                title: null, 
                artist: null, 
                image: null, 
-               srcMode: null
+               srcMode: null,
+               tags: null
             },
             songFormOptions:{
               isYoutubeMode: true,
@@ -79,7 +88,8 @@ export default {
             sheetFormData: { 
                title: null, 
                difficulity: null,
-               visualizerName: null
+               visualizerName: null,
+               keys: null,
             },
             sheetFormOptions:{
               isYoutubeMode: true,

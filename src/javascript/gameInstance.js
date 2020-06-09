@@ -17,33 +17,53 @@ export default class GameInstance {
     this.loading = false;
     this.paused = false;
 
-    // init play tracks
-    this.dropTrackArr = [];
-
-    this.trackNum = 4;
-    this.trackKeyBind = ["d", "f", "j", "k"];
-    this.trackMaxWidth = 150;
-
     // clock for counting time
     this.intervalPlay = null;
 
     this.ytPlayer = new YoutubePlayer(vm);
 
-    // init
-
-    for (const keyBind of this.trackKeyBind) {
-      this.dropTrackArr.push(
-        new DropTrack(vm, this, 0, this.trackMaxWidth, keyBind)
-      );
-    }
-
-    this.reposition();
+    this.createTracks(4);
 
     this.registerInput();
 
     // start animate
     this.destoryed = false;
     this.update();
+  }
+
+  createTracks(trackNum) {
+    // init play tracks
+    this.dropTrackArr = [];
+
+    this.trackNum = trackNum;
+    this.trackKeyBind = this.getTrackKeyBind(trackNum);
+    this.trackMaxWidth = 150;
+
+    // init
+    for (const keyBind of this.trackKeyBind) {
+      this.dropTrackArr.push(
+        new DropTrack(this.vm, this, 0, this.trackMaxWidth, keyBind)
+      );
+    }
+
+    this.reposition();
+  }
+
+  getTrackKeyBind(trackNum) {
+    switch (trackNum) {
+      case 4:
+        return ["d", "f", "j", "k"];
+      case 5:
+        return ["d", "f", " ", "j", "k"];
+      case 6:
+        return ["s", "d", "f", "j", "k", "l"];
+      case 7:
+        return ["s", "d", "f", " ", "j", "k", "l"];
+      case 8:
+        return ["a", "s", "d", "f", "j", "k", "l", ";"];
+      default:
+        return ["d", "f", "j", "k"];
+    }
   }
 
   reposition() {
@@ -212,6 +232,7 @@ export default class GameInstance {
     this.timeArr = song.sheet;
     this.vm.visualizerInstance.vComponent =
       song.visualizerName !== null ? song.visualizerName : 0;
+    if (song.keys && song.keys != 4) this.createTracks(Number(song.keys));
     if (song.srcMode === "youtube") {
       this.ytPlayer.loadYoutubeVideo(song.youtubeId);
     } else if (song.srcMode === "url") {

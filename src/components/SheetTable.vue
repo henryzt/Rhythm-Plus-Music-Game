@@ -27,7 +27,7 @@
               </label>
             </td>
             <td>{{entry.t}}</td>
-            <td>{{entry.k}}</td>
+            <td>{{entry.k==" "?"-":entry.k}}</td>
           </tr>
         </tbody>
       </table>

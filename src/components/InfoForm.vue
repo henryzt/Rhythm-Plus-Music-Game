@@ -4,6 +4,7 @@
       <slot>
         <input v-model="formData.title" name="songTitle" placeholder="Song title" type="text" />
         <input v-model="formData.artist" name="artist" placeholder="Artist" type="text" />
+        <input v-model="formData.tags" name="tags" placeholder="Tags (Comma Seperate)" type="text" />
         <select id="songSelect" v-model="formData.srcMode">
           <option :value="null" disabled>Select music source...</option>
           <option value="youtube">Youtube Video</option>

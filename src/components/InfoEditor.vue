@@ -34,8 +34,8 @@
             placeholder="Sheet title (Optional)"
             type="text"
           />
-          <select v-model="sheetFormData.difficulity">
-            <option :value="null" disabled>Select Difficulity...</option>
+          <select v-model="sheetFormData.difficulty">
+            <option :value="null" disabled>Select difficulty...</option>
             <option
               v-for="diff in 10"
               :value="diff"
@@ -48,9 +48,9 @@
           >
             <option :value="null" disabled>Select Default Visualizer...</option>
             <option
-              v-for="visualizer in $parent.visualizerInstance.visualizerArr"
-              :value="visualizer"
-              :key="visualizer"
+              v-for="(idx, visualizer) in $parent.visualizerInstance.visualizerArr"
+              :value="idx"
+              :key="idx"
             >{{visualizer}}</option>
           </select>
           <select v-model="sheetFormData.keys">
@@ -92,7 +92,7 @@ export default {
             },
             sheetFormData: { 
                title: null, 
-               difficulity: null,
+               difficulty: null,
                visualizerName: null,
                keys: null,
             },
@@ -125,6 +125,7 @@ export default {
     },
     methods: {
         async submitSongForm(){
+          this.$parent.loading = true
           try{
             if(this.songFormOptions.isUpdate){
               await updateSong(this.songFormData);
@@ -151,10 +152,10 @@ export default {
           this.sheetFormOptions.privateList = await getSheetList(songId, true);
         },
         async submitSheetForm(){
-            this.sheetFormData.song = this.$parent.songInfo.id;
+            this.$parent.loading = true
             try{
               if(this.sheetFormOptions.isUpdate){
-                await updateSheet(this.songFormData)
+                await updateSheet(this.sheetFormData)
               }else{
                 let sheetId = await createSheet(this.sheetFormData)
                 this.$router.push('/editor/'+sheetId)
@@ -167,11 +168,13 @@ export default {
         submitExistingSheet(){
           let selectedSheet = this.sheetFormOptions.selected;
             if(selectedSheet){
-              this.$router.push('/editor/'+selectedSheet.id)
+              this.$parent.loading = true
+              this.$router.push('/editor/'+selectedSheet.id+'/')
               this.$router.go()
             }
         },
         async openSongUpdate(){
+          this.songFormOptions.tab = "form";
           this.songFormOptions.isUpdate = true;
           this.songFormData = await getSong(this.$parent.songInfo.id);
           if(this.songFormData.image && this.songFormData.image.includes("img.youtube.com")){

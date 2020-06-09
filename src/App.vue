@@ -2,7 +2,7 @@
   <div id="app" class="unselectable">
     <ModalGlobal ref="gm"></ModalGlobal>
     <transition name="fade" v-if="$store.state.audio">
-      <router-view />
+      <router-view :key="$route.path" />
     </transition>
   </div>
 </template>

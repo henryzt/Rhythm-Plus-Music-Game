@@ -28,7 +28,7 @@ export default {
   },
   data: function(){
     return {
-        visualizerArr: Object.keys(visualizers),
+        visualizerArr: visualizers,
         vComponent: 'space',
         blur: false,
         audioDataLoaded: false,

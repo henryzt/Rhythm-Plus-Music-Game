@@ -112,10 +112,11 @@ export function getSong(songId) {
   });
 }
 
-export function updateSong(songInfo) {
+export function updateSong(info) {
+  clean(info);
   return songsCollection
-    .doc(songInfo.id)
-    .update(songInfo)
+    .doc(info.id)
+    .update(info)
     .then(function () {
       console.log("Document successfully updated!");
     })
@@ -125,13 +126,21 @@ export function updateSong(songInfo) {
     });
 }
 
+function clean(obj) {
+  for (let propName in obj) {
+    if (obj[propName] === null || obj[propName] === undefined) {
+      delete obj[propName];
+    }
+  }
+}
+
 export function createSheet(sheetInfo) {
   const {
     title,
     song,
     visualizerName,
     srcMode,
-    difficulity,
+    difficulty,
     youtubeId,
     url,
     keys,
@@ -146,7 +155,7 @@ export function createSheet(sheetInfo) {
         songId: song,
         title: title ?? null,
         visualizerName: visualizerName ?? null,
-        difficulity: difficulity ?? null,
+        difficulty: difficulty ?? null,
         srcMode: srcMode ?? null,
         youtubeId: youtubeId ?? null,
         url: url ?? null,
@@ -168,10 +177,14 @@ export function createSheet(sheetInfo) {
   });
 }
 
-export function updateSheet(sheetInfo) {
+export function updateSheet(info) {
+  console.log(info);
+  clean(info);
+  console.log(info);
+
   return sheetsCollection
-    .doc(sheetInfo.id)
-    .update(sheetInfo)
+    .doc(info.id)
+    .update(info)
     .then(function () {
       console.log("Document successfully updated!");
     })

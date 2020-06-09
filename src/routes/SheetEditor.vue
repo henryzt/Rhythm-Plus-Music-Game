@@ -6,39 +6,48 @@
     <div class="toolbar blurBackground">
       <div class="logo">R+ Sheet Editor</div>
       <div style="flex-grow:1"></div>
-      <a href="#">Save</a>
-      <a @click.prevent="togglePlayMode">{{playMode?"Edit":"Test"}}</a>
-      <a href="#">Publish</a>
+      <div style="display:flex" :class="{disabled:!initialized}">
+        <a href="#" @click.prevent="newEditor">New</a>
+        <a href="#">Save</a>
+        <a href="#" @click.prevent="togglePlayMode">{{playMode?"Edit":"Test"}}</a>
+        <a href="#">Publish</a>
+      </div>
     </div>
 
     <div class="main">
       <div class="column side left blurBackground">
         <info-editor style="flex-grow:1" ref="info"></info-editor>
         <SongListItem
-          v-if="songInfo"
+          v-if="songInfo.id"
           :song="songInfo"
           :hideBg="true"
           @selected="updateSongDetail"
           style="cursor:pointer"
         ></SongListItem>
-        <Youtube
-          id="ytPlayer_editor"
-          ref="youtube"
-          width="100%"
-          height="240px"
-          :video-id="youtubeId"
-          :player-vars="{ rel: 0, playsinline: 1, disablekb: 1, autoplay: 0 }"
-          @playing="songLoaded"
-          @error="ytError"
-          @paused="ytPaused"
-          @ended="ytPaused"
-        ></Youtube>
+        <div v-show="gameSheetInfo" v-if="srcMode=='youtube'&&youtubeId">
+          <Youtube
+            id="ytPlayer_editor"
+            style="min-height:240px"
+            ref="youtube"
+            width="100%"
+            height="240px"
+            :video-id="youtubeId"
+            :player-vars="{ rel: 0, playsinline: 1, disablekb: 1, autoplay: 0 }"
+            @playing="songLoaded"
+            @error="ytError"
+            @paused="ytPaused"
+            @ended="ytPaused"
+          ></Youtube>
+        </div>
       </div>
 
       <div class="column middle" :class="{disabled:!initialized}">
+        <!-- game wrapper -->
         <div class="gameWrapper" ref="wrapper">
           <canvas ref="mainCanvas" id="gameCanvas" :class="{perspective}"></canvas>
         </div>
+        <!-- mark indicator -->
+        <div class="center" v-show="playMode" ref="hitIndicator">{{markJudge}} {{result.combo}}</div>
       </div>
 
       <div
@@ -54,10 +63,16 @@
     <div class="toolbar blurBackground" v-if="instance" :class="{disabled:!initialized}">
       <div style="font-size:30px;width:80px;text-align:center;">{{currentTime}}</div>
       <div class="action_buttons">
-        <v-icon name="undo" scale="1" @click="seekTo(Number(currentTime)-5)" />
-        <v-icon name="play" scale="1.5" @click="songLoaded" v-if="instance && instance.paused" />
-        <v-icon name="pause" scale="1.5" @click="pauseGame" v-else />
-        <v-icon name="redo" scale="1" @click="seekTo(Number(currentTime)+5)" />
+        <v-icon class="vicon" name="undo" scale="1" @click="seekTo(Number(currentTime)-5)" />
+        <v-icon
+          class="vicon"
+          name="play"
+          scale="1.5"
+          @click="songLoaded"
+          v-if="instance && instance.paused"
+        />
+        <v-icon class="vicon" name="pause" scale="1.5" @click="pauseGame" v-else />
+        <v-icon class="vicon" name="redo" scale="1" @click="seekTo(Number(currentTime)+5)" />
       </div>
       <div style="flex-grow:1">
         <vue-slider
@@ -80,6 +95,8 @@
         </select>
       </div>
     </div>
+
+    <Loading style="z-index:500" :show="loading">Just a second...</Loading>
   </div>
 </template>
 
@@ -90,6 +107,7 @@ import Visualizer from '../components/Visualizer.vue';
 import InfoEditor from '../components/InfoEditor.vue';
 import SheetTable from '../components/SheetTable.vue';
 import SongListItem from '../components/SongListItem.vue';
+import Loading from '../components/Loading.vue';
 import GameInstanceMixin from '../mixins/gameInstanceMixin';
 import VueSlider from 'vue-slider-component'
 import { Youtube } from 'vue-youtube'
@@ -107,7 +125,8 @@ export default {
       VueSlider,
       Youtube,
       SheetTable,
-      SongListItem
+      SongListItem,
+      Loading
   },
   mixins: [GameInstanceMixin],
   data(){
@@ -124,7 +143,8 @@ export default {
           sheetInfo: {
             id:null
           },
-          gameSheetInfo: null
+          gameSheetInfo: null,
+          loading: false
         }
     },
     computed: {
@@ -144,6 +164,7 @@ export default {
       const sheetId = this.$route.params.sheet;
 
       if(sheetId){
+        this.loading = true
         try{
           this.sheetInfo = await getSheet(sheetId);
           this.songInfo = await getSong(this.sheetInfo.songId);
@@ -153,9 +174,10 @@ export default {
           this.instance.loadSong(this.gameSheetInfo);
         }catch(err){
           console.error(err);
-          this.$store.state.gModal.show({bodyText:"Sorry, the sheet id is invalid.", 
-          isError: true, showCancel: false, okCallback: this.goToMenu})
+          this.$store.state.gModal.show({bodyText:"Sorry, something went wrong, maybe try refresh?", 
+          isError: true, showCancel: false})
         }
+        this.loading = false
       }else{
 
       }
@@ -178,11 +200,13 @@ export default {
       },
       async getLength(){
         let length = 0;
-        if(this.srcMode="youtube"){
+        if(this.srcMode==="youtube"){
           length = await this.ytPlayer.getDuration();
+        }else{
+          length = this.audio.getDuration();
         }
         console.log(length)
-        return length
+        return Number(length.toFixed(3))
       },
       pauseGame(){
         this.instance.pauseGame()
@@ -201,13 +225,17 @@ export default {
           this.restartGame()
           return
         }
-        if(this.srcMode="youtube"){
+        if(this.srcMode==="youtube"){
           this.ytPlayer.seekTo(Number(time))
+        }else{
+          this.audio.seek(Number(time))
         }
       },
       setPlaybackRate(rate){
-        if(this.srcMode="youtube"){
+        if(this.srcMode==="youtube"){
           this.ytPlayer.setPlaybackRate(Number(rate))
+        }else{
+          this.audio.setRate(Number(rate))
         }
       },
       togglePlayMode(){
@@ -216,6 +244,9 @@ export default {
       },
       updateSongDetail(){
         this.$refs.info.openSongUpdate()
+      },
+      newEditor(){
+        this.$router.push("/editor/")
       },
 
 
@@ -306,6 +337,10 @@ export default {
 .disabled {
   opacity: 0.6;
   pointer-events: none;
+}
+
+.vicon {
+  cursor: pointer;
 }
 
 @media screen and (max-width: 600px) {

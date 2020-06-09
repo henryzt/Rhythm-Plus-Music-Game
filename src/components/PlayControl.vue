@@ -10,7 +10,7 @@
         :value="playData.visualizerInstance.currentVisualizer"
       >
         <option
-          v-for="visualizer in playData.visualizerInstance.visualizerArr"
+          v-for="visualizer in Object.keys(playData.visualizerInstance.visualizerArr)"
           :value="visualizer"
           :key="visualizer"
         >{{visualizer}}</option>

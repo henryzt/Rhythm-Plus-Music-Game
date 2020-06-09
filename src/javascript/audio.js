@@ -77,4 +77,12 @@ export default class Audio {
   seek(sec) {
     this.player?.seek(sec);
   }
+
+  getDuration() {
+    return this.player?.duration();
+  }
+
+  setRate(rate) {
+    this.player?.rate(rate);
+  }
 }

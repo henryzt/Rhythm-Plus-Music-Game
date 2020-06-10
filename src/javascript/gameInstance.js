@@ -41,9 +41,7 @@ export default class GameInstance {
 
     // init
     for (const keyBind of this.trackKeyBind) {
-      this.dropTrackArr.push(
-        new DropTrack(this.vm, this, 0, this.trackMaxWidth, keyBind)
-      );
+      this.dropTrackArr.push(new DropTrack(this.vm, this, 0, this.trackMaxWidth, keyBind));
     }
 
     this.reposition();
@@ -83,16 +81,12 @@ export default class GameInstance {
 
     for (let counter = 0; counter < this.dropTrackArr.length; counter++) {
       const trackWidthWithOffset = trackWidth + 1;
-      this.dropTrackArr[counter].resizeTrack(
-        startX + trackWidthWithOffset * counter,
-        trackWidth
-      );
+      this.dropTrackArr[counter].resizeTrack(startX + trackWidthWithOffset * counter, trackWidth);
       this.dropTrackArr[counter].updateHitGradient();
     }
 
     this.vm.checkHitLineY = (this.canvas.height / 10) * 9;
-    this.vm.noteSpeedPxPerSec =
-      this.vm.checkHitLineY / Number(this.vm.noteSpeedInSec);
+    this.vm.noteSpeedPxPerSec = this.vm.checkHitLineY / Number(this.vm.noteSpeedInSec);
   }
 
   registerInput() {
@@ -131,11 +125,7 @@ export default class GameInstance {
     this.touchRegion = ZingTouch.Region(this.canvas);
 
     for (let numInputs of [1, 2, 3, 4]) {
-      this.touchRegion.bind(
-        this.canvas,
-        new ZingTouch.Tap({ numInputs }),
-        tapEvent
-      );
+      this.touchRegion.bind(this.canvas, new ZingTouch.Tap({ numInputs }), tapEvent);
     }
   }
 
@@ -157,7 +147,7 @@ export default class GameInstance {
   update() {
     if (this.destoryed) return;
     requestAnimationFrame(this.update.bind(this));
-    if (this.paused && this.vm.playMode) return;
+    if (this.vm.started && this.paused && this.vm.playMode) return;
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.vm.visualizerInstance.renderVisualizer();
     for (const track of this.dropTrackArr) {
@@ -174,7 +164,7 @@ export default class GameInstance {
       const elapsedTime = Date.now() - startTime;
       this.playTime = Number(elapsedTime / 1000);
       if (this.playTime > Number(this.vm.noteSpeedInSec)) {
-        if (!this.paused) this.resumeGame();
+        if (!this.vm.started || !this.paused) this.resumeGame();
         // this.vm.visualizerInstance.initAllVisualizersIfRequried();
         clearInterval(intervalPrePlay);
         clearInterval(this.intervalPlay);
@@ -189,9 +179,7 @@ export default class GameInstance {
             this.timeArr[this.timeArrIdx] &&
             this.playTime < this.timeArr[this.timeArrIdx].t
           ) {
-            this.timeArrIdx = this.timeArr.findIndex(
-              (e) => e.t >= this.playTime
-            );
+            this.timeArrIdx = this.timeArr.findIndex((e) => e.t >= this.playTime);
           }
           // check game end
           if (
@@ -230,18 +218,12 @@ export default class GameInstance {
     this.vm.currentSong = song;
     this.vm.srcMode = song.srcMode;
     this.timeArr = song.sheet;
-    this.vm.visualizerInstance.vComponent =
-      song.visualizerName !== null ? song.visualizerName : 0;
+    this.vm.visualizerInstance.vComponent = song.visualizerName !== null ? song.visualizerName : 0;
     if (song.keys && song.keys != 4) this.createTracks(Number(song.keys));
     if (song.srcMode === "youtube") {
       this.ytPlayer.loadYoutubeVideo(song.youtubeId);
     } else if (song.srcMode === "url") {
-      this.vm.audio.loadSong(
-        song.url,
-        false,
-        this.vm.songLoaded,
-        this.vm.gameEnded
-      );
+      this.vm.audio.loadSong(song.url, false, this.vm.songLoaded, this.vm.gameEnded);
     }
   }
 

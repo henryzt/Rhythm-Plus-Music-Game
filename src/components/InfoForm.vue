@@ -28,7 +28,18 @@
             placeholder="MP3 URL (https://**.mp3)"
             type="text"
           />
-          <input v-model="formData.image" name="image" placeholder="Image URL" type="text" />
+          <input
+            v-model="formData.youtubeId"
+            name="youtubeId"
+            placeholder="Youtube ID (for thumbnail)"
+            type="text"
+          />
+          <input
+            v-model="formData.image"
+            name="image"
+            placeholder="Image URL (Optional)"
+            type="text"
+          />
         </div>
         <!-- todo -->
         <!-- <div class="checkboxes">

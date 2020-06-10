@@ -1,63 +1,73 @@
 <template>
   <div class="padding" style="height:100%;overflow: scroll;">
-    <!-- song create update form -->
-    <div v-if="!$parent.songInfo.id || songFormOptions.isUpdate">
-      <h2 v-if="songFormOptions.isUpdate">Update Song Detail</h2>
-      <h2 v-else>Create Song</h2>
-      <InfoForm
-        :formData="songFormData"
-        :formOption="songFormOptions"
-        item-type="Song"
-        @submitForm="submitSongForm"
-        @submitExisting="submitExistingSong"
-      ></InfoForm>
-      <div
-        v-if="songFormOptions.isUpdate"
-        class="switch_tab"
-        @click="songFormOptions.isUpdate=false"
-      >Cancel</div>
+    <div v-if="!$parent.songInfo.id && welcomeScreen">
+      <h2>Welcome to R+ Sheet Editor</h2>
+      <p>It is very easy to create a beatmap in Rhythm+, just create as you are playing one!</p>
+      <p>What would you like to create today?</p>
+      <input type="submit" value="Create a new sheet" @click="welcomeScreen=false" />
+      <input type="submit" value="Choose existing or Continue your work" @click="continueExisting" />
     </div>
 
-    <div v-if="$parent.songInfo.id">
-      <div>
-        <h2>Sheet Detail</h2>
+    <div v-else>
+      <!-- song create update form -->
+      <div v-if="!$parent.songInfo.id || songFormOptions.isUpdate">
+        <h2 v-if="songFormOptions.isUpdate">Update Song Detail</h2>
+        <h2 v-else>Create or Select Song</h2>
         <InfoForm
-          :formData="sheetFormData"
-          :formOption="sheetFormOptions"
-          item-type="Sheet"
-          @submitForm="submitSheetForm"
-          @submitExisting="submitExistingSheet"
-        >
-          <input
-            v-model="sheetFormData.title"
-            name="sheetTitle"
-            placeholder="Sheet title (Optional)"
-            type="text"
-          />
-          <select v-model="sheetFormData.difficulty">
-            <option :value="null" disabled>Select difficulty...</option>
-            <option
-              v-for="diff in 10"
-              :value="diff"
-              :key="diff"
-            >{{diff + ' - ' + ((diff > 9)?"Expert":((diff > 6)?"Hard":((diff > 3)?"Normal":"Easy")))}}</option>
-          </select>
-          <select
-            v-model="sheetFormData.visualizerName"
-            v-if="$parent.songInfo.srcMode=='url' && $parent.visualizerInstance"
+          :formData="songFormData"
+          :formOption="songFormOptions"
+          item-type="Song"
+          @submitForm="submitSongForm"
+          @submitExisting="submitExistingSong"
+        ></InfoForm>
+        <div
+          v-if="songFormOptions.isUpdate"
+          class="switch_tab"
+          @click="songFormOptions.isUpdate=false"
+        >Cancel</div>
+      </div>
+
+      <div v-if="$parent.songInfo.id">
+        <div>
+          <h2>Sheet Detail</h2>
+          <InfoForm
+            :formData="sheetFormData"
+            :formOption="sheetFormOptions"
+            item-type="Sheet"
+            @submitForm="submitSheetForm"
+            @submitExisting="submitExistingSheet"
           >
-            <option :value="null" disabled>Select Default Visualizer...</option>
-            <option
-              v-for="(idx, visualizer) in $parent.visualizerInstance.visualizerArr"
-              :value="idx"
-              :key="idx"
-            >{{visualizer}}</option>
-          </select>
-          <select v-model="sheetFormData.keys">
-            <option :value="null" disabled>Select Key Number...</option>
-            <option v-for="keys in [4,5,6,7,8]" :value="keys" :key="keys">{{keys + ' Key'}}</option>
-          </select>
-        </InfoForm>
+            <input
+              v-model="sheetFormData.title"
+              name="sheetTitle"
+              placeholder="Sheet title (Optional)"
+              type="text"
+            />
+            <select v-model="sheetFormData.difficulty">
+              <option :value="null" disabled>Select difficulty...</option>
+              <option
+                v-for="diff in 10"
+                :value="diff"
+                :key="diff"
+              >{{diff + ' - ' + ((diff > 9)?"Expert":((diff > 6)?"Hard":((diff > 3)?"Normal":"Easy")))}}</option>
+            </select>
+            <select
+              v-model="sheetFormData.visualizerName"
+              v-if="$parent.songInfo.srcMode=='url' && $parent.visualizerInstance"
+            >
+              <option :value="null" disabled>Select Default Visualizer...</option>
+              <option
+                v-for="(idx, visualizer) in $parent.visualizerInstance.visualizerArr"
+                :value="idx"
+                :key="idx"
+              >{{visualizer}}</option>
+            </select>
+            <select v-model="sheetFormData.keys">
+              <option :value="null" disabled>Select Key Number...</option>
+              <option v-for="keys in [4,5,6,7,8]" :value="keys" :key="keys">{{keys + ' Key'}}</option>
+            </select>
+          </InfoForm>
+        </div>
       </div>
     </div>
   </div>
@@ -104,6 +114,7 @@ export default {
               selected: null,
               isUpdate: false
             },
+            welcomeScreen: true
         }
     },
     computed: {
@@ -124,6 +135,11 @@ export default {
         this.songFormOptions.privateList = await getSongList(true);
     },
     methods: {
+        continueExisting(){
+          this.welcomeScreen = false;
+          this.songFormOptions.tab = 'choose';
+          this.sheetFormOptions.tab = 'choose';
+        },
         async submitSongForm(){
           this.$parent.loading = true
           try{

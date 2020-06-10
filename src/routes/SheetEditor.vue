@@ -1,14 +1,14 @@
 <template>
   <div>
     <!-- visualizer canvas -->
-    <Visualizer ref="visualizer"></Visualizer>
+    <Visualizer ref="visualizer" v-show="srcMode==='url'"></Visualizer>
 
     <div class="toolbar blurBackground">
       <div class="logo">R+ Sheet Editor</div>
       <div style="flex-grow:1"></div>
       <div style="display:flex" :class="{disabled:!initialized}">
         <a href="#" @click.prevent="newEditor">New</a>
-        <a href="#">Save</a>
+        <a href="#" @click.prevent="saveSheet">Save</a>
         <a href="#" @click.prevent="togglePlayMode">{{playMode?"Edit":"Test"}}</a>
         <a href="#">Publish</a>
       </div>
@@ -102,7 +102,7 @@
 
 
 <script>
-import { getSong, getSheet, getGameSheet } from "../javascript/db"
+import { getSong, getSheet, getGameSheet, updateSheet } from "../javascript/db"
 import Visualizer from '../components/Visualizer.vue';
 import InfoEditor from '../components/InfoEditor.vue';
 import SheetTable from '../components/SheetTable.vue';
@@ -252,6 +252,17 @@ export default {
 
       reorderSheet(){
         this.instance.timeArr.sort((a,b) => parseFloat(a.t) - parseFloat(b.t))
+      },
+      saveSheet(){
+        const sheet = {
+          id: this.sheetInfo.id,
+          sheet: JSON.stringify(this.instance.timeArr)
+          }
+        updateSheet(sheet);
+        // save local backup
+        let local = JSON.parse(localStorage.getItem("localSheetBackup")) || {};
+        local[this.sheetInfo.id] = sheet;
+        localStorage.setItem("localSheetBackup", JSON.stringify(local));
       }
     }
 };
@@ -261,7 +272,7 @@ export default {
 /* The navbar container */
 .toolbar {
   overflow: hidden;
-  background-color: #333;
+  background-color: rgba(63, 63, 63, 0.8);
   height: 7vh;
   display: flex;
   align-items: center;
@@ -311,8 +322,8 @@ export default {
   box-sizing: border-box;
   background: linear-gradient(
     -45deg,
-    rgba(138, 138, 138, 0.295),
-    rgba(0, 0, 0, 0.2)
+    rgba(56, 56, 56, 0.8),
+    rgba(0, 0, 0, 0.7)
   );
 }
 
@@ -337,6 +348,7 @@ export default {
 .disabled {
   opacity: 0.6;
   pointer-events: none;
+  cursor: not-allowed;
 }
 
 .vicon {

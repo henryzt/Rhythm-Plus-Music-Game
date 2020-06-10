@@ -89,6 +89,11 @@ body {
   animation-duration: 1s;
 }
 
+.enterAnimation {
+  animation-name: enter;
+  animation-duration: 1s;
+}
+
 #ytPlayer {
   position: fixed;
   width: 100vw;

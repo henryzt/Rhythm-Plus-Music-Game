@@ -11,8 +11,7 @@ export function createSong(songInfo) {
   const { title, artist, image, youtubeId, url, srcMode, tags } = songInfo;
   let randomId = btoa(parseInt(Date.now() * Math.random())).slice(0, 9);
   let songId = songInfo.title.trim() + "-" + songInfo.artist.trim();
-  songId =
-    songId.replace(/ /gi, "-").replace(/[^a-z0-9-]/gi, "") + "-" + randomId;
+  songId = songId.replace(/ /gi, "-").replace(/[^a-z0-9-]/gi, "") + "-" + randomId;
   let dateCreated = dbi.Timestamp.now();
   let dateUpdated = dateCreated;
   let createdBy = store.state.currentUser?.uid;
@@ -72,11 +71,7 @@ export function getSongList(getPrivate) {
         .then(processRes)
         .catch(processErr);
     } else {
-      songsCollection
-        .where("visibility", "==", "public")
-        .get()
-        .then(processRes)
-        .catch(processErr);
+      songsCollection.where("visibility", "==", "public").get().then(processRes).catch(processErr);
     }
   });
 }
@@ -113,7 +108,7 @@ export function getSong(songId) {
 }
 
 export function updateSong(info) {
-  clean(info);
+  cleanForUpdate(info);
   return songsCollection
     .doc(info.id)
     .update(info)
@@ -126,7 +121,8 @@ export function updateSong(info) {
     });
 }
 
-function clean(obj) {
+function cleanForUpdate(obj) {
+  obj.dateUpdated = dbi.Timestamp.now();
   for (let propName in obj) {
     if (obj[propName] === null || obj[propName] === undefined) {
       delete obj[propName];
@@ -179,7 +175,7 @@ export function createSheet(sheetInfo) {
 
 export function updateSheet(info) {
   console.log(info);
-  clean(info);
+  cleanForUpdate(info);
   console.log(info);
 
   return sheetsCollection
@@ -223,11 +219,7 @@ export function getSheetList(songId, getPrivate) {
         .then(processRes)
         .catch(processErr);
     } else {
-      songSheets
-        .where("visibility", "==", "public")
-        .get()
-        .then(processRes)
-        .catch(processErr);
+      songSheets.where("visibility", "==", "public").get().then(processRes).catch(processErr);
     }
   });
 }

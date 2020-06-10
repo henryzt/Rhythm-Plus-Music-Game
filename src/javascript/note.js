@@ -1,6 +1,7 @@
-export default function Note(vm, x, width) {
+export default function Note(vm, x, width, color) {
   this.x = x;
   this.width = width;
+  this.color = color;
   const { ctx, canvas } = vm;
 
   this.y = 0;
@@ -69,9 +70,9 @@ export default function Note(vm, x, width) {
 
   this.update = function () {
     this.setDelta();
-    const color = this.y > vm.checkHitLineY + 10 ? "red" : "yellow";
-    // Make note blur when get missed.
-    ctx.filter = this.y > vm.checkHitLineY + 10 ? "blur(5px)" : "blur(0px)";
+    const defaultColor = this.color ?? "yellow";
+    let color = this.y > vm.checkHitLineY + 10 ? "red" : defaultColor;
+    if (!vm.playMode) color = defaultColor;
     ctx.fillStyle = color;
     ctx.fillRect(x, this.y, this.width, 10);
     ctx.filter = "none";

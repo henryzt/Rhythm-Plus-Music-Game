@@ -173,6 +173,8 @@ export default {
               if(this.sheetFormOptions.isUpdate){
                 await updateSheet(this.sheetFormData)
               }else{
+                const songId = this.$parent.songInfo.id;
+                this.sheetFormData.songId = songId;
                 let sheetId = await createSheet(this.sheetFormData)
                 this.$router.push('/editor/'+sheetId)
               }

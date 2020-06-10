@@ -144,7 +144,8 @@ export default {
             id:null
           },
           gameSheetInfo: null,
-          loading: false
+          loading: false,
+          showExistingNote: true
         }
     },
     computed: {
@@ -254,6 +255,7 @@ export default {
         this.instance.timeArr.sort((a,b) => parseFloat(a.t) - parseFloat(b.t))
       },
       saveSheet(){
+        this.reorderSheet()
         const sheet = {
           id: this.sheetInfo.id,
           sheet: JSON.stringify(this.instance.timeArr)

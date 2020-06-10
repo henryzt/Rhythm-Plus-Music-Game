@@ -6,7 +6,7 @@
           <tr>
             <th>
               <label class="cb_container cb_small">
-                <input type="checkbox" />
+                <input type="checkbox" v-model="selectedAll" />
                 <span class="checkmark"></span>
               </label>
             </th>
@@ -18,11 +18,12 @@
           <tr
             v-for="(entry, idx) in instance.timeArr"
             :key="idx"
-            :class="{onScreen:isWithinTime(entry.t), current:idx===instance.timeArrIdx}"
+            :class="{onScreen:$parent.playMode && isWithinTime(entry.t), current:idx===instance.timeArrIdx}"
+            @dblclick="seekTo(entry.t)"
           >
             <td>
               <label class="cb_container cb_small">
-                <input type="checkbox" />
+                <input type="checkbox" v-model="selectedNotes" :value="entry" />
                 <span class="checkmark"></span>
               </label>
             </td>
@@ -33,11 +34,10 @@
       </table>
     </div>
     <div class="buttons">
-      <a @click="$parent.reorderSheet">Reorder</a>
-      <a>Select Between</a>
-      <a>Delete</a>
-      <a>Delete After</a>
-      <a>Clear</a>
+      <a @click="reorder">Reorder</a>
+      <a @click="selectBetween">Select Between</a>
+      <a @click="removeSelected">Delete</a>
+      <a @click="clearSelected">Clear</a>
     </div>
   </div>
 </template>
@@ -50,20 +50,63 @@ export default {
         return this.$parent.instance;
       }
     },
+    data() {
+      return {
+        selectedNotes: [],
+        selectedAll: false
+      }
+    },
     watch: {
         'instance.timeArrIdx'(){
             this.$nextTick(()=>{
                 let element = this.$el.querySelector(".current");
                 if(!element) return;
-                element.scrollIntoView({block: "end"})
+                element.scrollIntoView({block: "end", behavior: "smooth"})
             })
         },
+        selectedAll(){
+          if(this.selectedAll){
+            this.selectAll()
+          }else{
+            this.clearSelected()
+          }
+        },
+        selectedNotes(){
+          this.selectedAll = this.selectedNotes.length!==0 && this.selectedNotes.length===this.instance.timeArr.length;
+        }
     },
     methods:{
       isWithinTime(time){
         const sec = Number(this.$parent.noteSpeedInSec);
         const current = Number(this.$parent.currentTime);
         return time <= current + sec && time >= current;
+      },
+      selectAll(){
+        this.selectedNotes = this.instance.timeArr;
+      },
+      clearSelected(){
+        this.selectedNotes = []
+      },
+      removeSelected(){
+        this.instance.timeArr = this.instance.timeArr.filter(( el ) => {
+          return !this.selectedNotes.includes( el );
+        } );
+        this.clearSelected()
+      },
+      reorder(){
+        this.$parent.reorderSheet()
+        this.selectedNotes.sort((a,b) => parseFloat(a.t) - parseFloat(b.t))
+      },
+      selectBetween(){
+        if(this.selectedNotes.length < 2) return;
+        this.reorder()
+        let sheet = this.instance.timeArr;
+        const minIdx = sheet.indexOf(this.selectedNotes[0]);
+        const maxIdx = sheet.indexOf(this.selectedNotes[this.selectedNotes.length-1]);
+        this.selectedNotes = sheet.slice(minIdx, maxIdx + 1);
+      },
+      seekTo(t){
+        this.$parent.seekTo(t)
       }
     }
 
@@ -74,6 +117,7 @@ export default {
 .sheetTable {
   height: 80%;
   overflow: scroll;
+  position: relative;
 }
 
 table {
@@ -84,11 +128,10 @@ table {
 th {
   height: 30px;
   text-align: left;
-}
-
-thead {
+  background-color: #0b0b0b !important;
   position: sticky;
   top: 0;
+  z-index: 30;
 }
 
 tr {
@@ -104,12 +147,12 @@ td {
   padding: 3px;
 }
 
-.current {
-  background-color: rgba(145, 255, 0, 0.3);
-}
-
 .onScreen {
   background-color: rgba(255, 255, 255, 0.1);
+}
+
+.current {
+  background-color: rgba(145, 255, 0, 0.3);
 }
 
 .buttons {

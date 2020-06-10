@@ -13,12 +13,12 @@ export default class DropTrack {
     this.updateHitGradient();
   }
 
-  keyDown(key) {
+  keyDown(key, color) {
     if (this.keyBind === key) {
-      this.hitIndicatorOpacity = 1;
+      if (color !== "grey") this.hitIndicatorOpacity = 1;
       if (!this.vm.playMode) {
         // create mode
-        this.noteArr.push(new Note(this.vm, this.x, this.width));
+        this.noteArr.push(new Note(this.vm, this.x, this.width, color));
       } else if (this.noteArr && this.noteArr[0]) {
         const noteToDismiss = this.noteArr[0];
         if (noteToDismiss.getDiffPercentage() < 0.5) {

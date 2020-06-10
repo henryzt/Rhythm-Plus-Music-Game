@@ -11,7 +11,8 @@ export function createSong(songInfo) {
   const { title, artist, image, youtubeId, url, srcMode, tags } = songInfo;
   let randomId = btoa(parseInt(Date.now() * Math.random())).slice(0, 9);
   let songId = songInfo.title.trim() + "-" + songInfo.artist.trim();
-  songId = songId.replace(/ /gi, "-").replace(/[^a-z0-9-]/gi, "") + "-" + randomId;
+  songId =
+    songId.replace(/ /gi, "-").replace(/[^a-z0-9-]/gi, "") + "-" + randomId;
   let dateCreated = dbi.Timestamp.now();
   let dateUpdated = dateCreated;
   let createdBy = store.state.currentUser?.uid;
@@ -71,7 +72,11 @@ export function getSongList(getPrivate) {
         .then(processRes)
         .catch(processErr);
     } else {
-      songsCollection.where("visibility", "==", "public").get().then(processRes).catch(processErr);
+      songsCollection
+        .where("visibility", "==", "public")
+        .get()
+        .then(processRes)
+        .catch(processErr);
     }
   });
 }
@@ -123,6 +128,7 @@ export function updateSong(info) {
 
 function cleanForUpdate(obj) {
   obj.dateUpdated = dbi.Timestamp.now();
+  // FIXME handle this logic better
   for (let propName in obj) {
     if (obj[propName] === null || obj[propName] === undefined) {
       delete obj[propName];
@@ -133,7 +139,7 @@ function cleanForUpdate(obj) {
 export function createSheet(sheetInfo) {
   const {
     title,
-    song,
+    songId,
     visualizerName,
     srcMode,
     difficulty,
@@ -148,7 +154,7 @@ export function createSheet(sheetInfo) {
   return new Promise((resolve, reject) => {
     sheetsCollection
       .add({
-        songId: song,
+        songId,
         title: title ?? null,
         visualizerName: visualizerName ?? null,
         difficulty: difficulty ?? null,
@@ -219,7 +225,11 @@ export function getSheetList(songId, getPrivate) {
         .then(processRes)
         .catch(processErr);
     } else {
-      songSheets.where("visibility", "==", "public").get().then(processRes).catch(processErr);
+      songSheets
+        .where("visibility", "==", "public")
+        .get()
+        .then(processRes)
+        .catch(processErr);
     }
   });
 }

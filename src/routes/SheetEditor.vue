@@ -10,7 +10,7 @@
         <a href="#" @click.prevent="newEditor">New</a>
         <a href="#" @click.prevent="saveSheet">Save</a>
         <a href="#" @click.prevent="togglePlayMode">{{playMode?"Edit":"Test"}}</a>
-        <a href="#">Publish</a>
+        <a href="#" @click.prevent="showPublishModal">Publish</a>
       </div>
     </div>
 
@@ -97,6 +97,17 @@
     </div>
 
     <Loading style="z-index:500" :show="loading">Just a second...</Loading>
+
+    <Modal
+      ref="publishModal"
+      :hideFooter="true"
+      titleText="Publish"
+      style="text-align:center;z-index:1000"
+    >
+      <template>
+        <publish></publish>
+      </template>
+    </Modal>
   </div>
 </template>
 
@@ -107,6 +118,8 @@ import Visualizer from '../components/Visualizer.vue';
 import InfoEditor from '../components/InfoEditor.vue';
 import SheetTable from '../components/SheetTable.vue';
 import SongListItem from '../components/SongListItem.vue';
+import Modal from '../components/Modal.vue';
+import Publish from '../components/Publish.vue';
 import Loading from '../components/Loading.vue';
 import GameInstanceMixin from '../mixins/gameInstanceMixin';
 import VueSlider from 'vue-slider-component'
@@ -126,7 +139,9 @@ export default {
       Youtube,
       SheetTable,
       SongListItem,
-      Loading
+      Loading,
+      Modal,
+      Publish
   },
   mixins: [GameInstanceMixin],
   data(){
@@ -249,6 +264,9 @@ export default {
       },
       newEditor(){
         this.$router.push("/editor/")
+      },
+      showPublishModal(){
+        this.$refs.publishModal.show()
       },
 
 

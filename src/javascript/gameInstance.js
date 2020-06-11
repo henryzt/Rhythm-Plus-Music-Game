@@ -155,7 +155,7 @@ export default class GameInstance {
         } else {
           // add at idx
           this.timeArr.splice(this.timeArrIdx, 0, {
-            t: cTime.toFixed(3),
+            t: Number(cTime.toFixed(3)),
             k: key,
           });
           this.lastAddedTime = cTime;
@@ -229,7 +229,7 @@ export default class GameInstance {
             this.vm.playMode &&
             this.timeArrIdx >= lastIdx &&
             this.timeArr[lastIdx] &&
-            this.playTime > this.timeArr[lastIdx].t + 5
+            this.playTime > Number(this.timeArr[lastIdx].t) + 5
           ) {
             this.vm.gameEnded();
           }

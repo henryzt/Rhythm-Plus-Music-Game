@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="sheet">
-      <PageBackground songSrc="/songs/login.mp3" :imageSrc="sheet.image"></PageBackground>
+      <PageBackground songSrc="/songs/result.mp3" :imageSrc="sheet.image"></PageBackground>
       <div class="blurFilter">
         <div class="center_logo darker flex_hori">
           <div class="scoreCircle" ref="resultDiv">

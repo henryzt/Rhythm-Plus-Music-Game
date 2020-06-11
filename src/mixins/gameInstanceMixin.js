@@ -44,9 +44,11 @@ export default {
       return this.srcMode === "youtube" && this.showStartButton;
     },
     percentage() {
-      return this.result.totalHitNotes !== 0
-        ? this.result.totalPercentage / this.result.totalHitNotes
-        : 0;
+      if (this.result.totalHitNotes === 0) {
+        return 0;
+      } else {
+        return this.result.totalPercentage / this.result.totalHitNotes;
+      }
     },
   },
   watch: {

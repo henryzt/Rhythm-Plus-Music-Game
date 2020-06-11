@@ -66,7 +66,7 @@ export default {
           },
           // handle merge conflicts which occur when an existing credential is linked to an anonymous user.
           signInFailure: async (error) => {
-            if (error.code != 'firebaseui/anonymous-upgrade-merge-conflict') {
+            if (error.code !== 'firebaseui/anonymous-upgrade-merge-conflict') {
               console.error(error)
               return Promise.resolve();
             }

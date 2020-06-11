@@ -28,7 +28,7 @@
               </label>
             </td>
             <td>{{entry.t}}</td>
-            <td>{{entry.k==" "?"-":entry.k}}</td>
+            <td>{{entry.k===" "?"-":entry.k}}</td>
           </tr>
           <tr class="last"></tr>
         </tbody>

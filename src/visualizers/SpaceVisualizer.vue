@@ -25,7 +25,7 @@ export default {
   },
   computed:{
     shouldRenderPolygon(){
-      return this.name==="spacePoly";
+      return this.name === "spacePoly";
     }
   }
 };
@@ -499,7 +499,6 @@ const SpaceVisualizer = function () {
 
     setInterval(drawBg, 100);
     setInterval(rotateForeground, 20);
-    
   };
 
   this.render = (drawPolygon) => {

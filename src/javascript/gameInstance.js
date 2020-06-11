@@ -1,7 +1,5 @@
 import DropTrack from "./track";
 import YoutubePlayer from "./youtube";
-import { saveToLocal, loadFromLocal } from "./storage";
-import { loadFromDemo } from "./demo";
 import ZingTouch from "zingtouch";
 
 export default class GameInstance {
@@ -16,28 +14,19 @@ export default class GameInstance {
 
     // time elapsed relative to audio play time (+Number(vm.noteSpeedInSec))
     this.playTime = 0;
+    this.loading = false;
+    this.paused = true;
 
-    // init play tracks
-    this.dropTrackArr = [];
-
-    this.trackNum = 4;
-    this.trackKeyBind = ["d", "f", "j", "k"];
-    this.trackMaxWidth = 150;
+    // to check if keys should be combined
+    this.lastAddedTime = null;
+    this.lastAddedIdx = null;
 
     // clock for counting time
     this.intervalPlay = null;
 
     this.ytPlayer = new YoutubePlayer(vm);
 
-    // init
-
-    for (const keyBind of this.trackKeyBind) {
-      this.dropTrackArr.push(
-        new DropTrack(vm, this, 0, this.trackMaxWidth, keyBind)
-      );
-    }
-
-    this.reposition();
+    this.createTracks(4);
 
     this.registerInput();
 
@@ -46,9 +35,50 @@ export default class GameInstance {
     this.update();
   }
 
+  createTracks(trackNum) {
+    // init play tracks
+    this.dropTrackArr = [];
+
+    this.trackNum = trackNum;
+    this.trackKeyBind = this.getTrackKeyBind(trackNum);
+    this.trackMaxWidth = 150;
+
+    // init
+    for (const keyBind of this.trackKeyBind) {
+      this.dropTrackArr.push(
+        new DropTrack(this.vm, this, 0, this.trackMaxWidth, keyBind)
+      );
+    }
+
+    this.reposition();
+  }
+
+  getTrackKeyBind(trackNum) {
+    switch (trackNum) {
+      case 4:
+        return ["d", "f", "j", "k"];
+      case 5:
+        return ["d", "f", " ", "j", "k"];
+      case 6:
+        return ["s", "d", "f", "j", "k", "l"];
+      case 7:
+        return ["s", "d", "f", " ", "j", "k", "l"];
+      case 8:
+        return ["a", "s", "d", "f", "j", "k", "l", ";"];
+      default:
+        return ["d", "f", "j", "k"];
+    }
+  }
+
   reposition() {
-    this.canvas.width = window.innerWidth;
-    this.canvas.height = window.innerHeight;
+    if (this.vm.wrapper) {
+      this.canvas.style.height = this.vm.contentHeight ?? "100%";
+      this.canvas.width = this.vm.wrapper.clientWidth;
+      this.canvas.height = this.vm.wrapper.clientHeight;
+    } else {
+      this.canvas.width = window.innerWidth;
+      this.canvas.height = window.innerHeight;
+    }
     const trackWidth =
       this.canvas.width / this.trackNum > this.trackMaxWidth
         ? this.trackMaxWidth
@@ -61,6 +91,7 @@ export default class GameInstance {
         startX + trackWidthWithOffset * counter,
         trackWidth
       );
+      this.dropTrackArr[counter].updateHitGradient();
     }
 
     this.vm.checkHitLineY = (this.canvas.height / 10) * 9;
@@ -73,6 +104,14 @@ export default class GameInstance {
       this.reposition();
     });
 
+    window.addEventListener(
+      "orientationchange",
+      (_) => {
+        this.reposition();
+      },
+      false
+    );
+
     document.addEventListener(
       "keydown",
       (event) => {
@@ -82,8 +121,6 @@ export default class GameInstance {
     );
 
     const tapEvent = (e) => {
-      this.vm.testTap = e.tapCount;
-      console.log(e);
       for (let pointer of e.detail.events) {
         const x = pointer.clientX;
 
@@ -97,23 +134,41 @@ export default class GameInstance {
 
     this.touchRegion = ZingTouch.Region(this.canvas);
 
-    for (let idx of this.trackKeyBind)
+    for (let numInputs of [1, 2, 3, 4]) {
       this.touchRegion.bind(
         this.canvas,
-        new ZingTouch.Tap({ numInputs: idx + 1 }),
+        new ZingTouch.Tap({ numInputs }),
         tapEvent
       );
+    }
   }
 
   // log key and touch events
   async onKeyDown(key) {
-    if (!this.vm.playMode) {
+    if (!this.vm.playMode && !this.paused) {
       const cTime = await this.getCurrentTime();
-      if (this.trackKeyBind.includes(key))
-        this.timeArr.push({ time: cTime, key });
+      if (this.trackKeyBind.includes(key)) {
+        // this.timeArr.push({ t: cTime.toFixed(3), k: key });
+        // this.timeArrIdx = this.timeArr.length - 1;
+        if (this.lastAddedTime && cTime - this.lastAddedTime < 0.05) {
+          this.timeArr[this.lastAddedIdx].k += key;
+        } else {
+          // add at idx
+          this.timeArr.splice(this.timeArrIdx, 0, {
+            t: Number(cTime.toFixed(3)),
+            k: key,
+          });
+          this.lastAddedTime = cTime;
+          this.lastAddedIdx = this.timeArrIdx;
+        }
+      }
     }
+    this.registerKeyDown(key);
+  }
+
+  registerKeyDown(key, colorOverride) {
     for (const track of this.dropTrackArr) {
-      track.keyDown(key);
+      track.keyDown(key, colorOverride);
     }
   }
 
@@ -121,36 +176,63 @@ export default class GameInstance {
   update() {
     if (this.destoryed) return;
     requestAnimationFrame(this.update.bind(this));
+    if (this.vm.started && this.paused && this.vm.playMode) return;
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.vm.visualizerInstance.renderVisualizer();
+    let shouldAdvance = false;
     for (const track of this.dropTrackArr) {
-      track.update();
+      shouldAdvance = track.update() || shouldAdvance;
     }
+    if (shouldAdvance) this.timeArrIdx++;
   }
 
-  playGame() {
+  startSong() {
     this.resetPlaying();
     const startTime = Date.now();
-    this.vm.playMode = true;
+    window.focus();
 
     const intervalPrePlay = setInterval(() => {
       const elapsedTime = Date.now() - startTime;
       this.playTime = Number(elapsedTime / 1000);
       if (this.playTime > Number(this.vm.noteSpeedInSec)) {
-        try {
-          if (this.vm.srcMode === "url") {
-            this.audio.play();
-          } else if (this.vm.srcMode === "youtube") {
-            this.ytPlayer.playVideo();
-          }
-        } catch (e) {
-          console.error(e);
-        }
+        if (!this.vm.started || !this.paused) this.resumeGame();
         // this.vm.visualizerInstance.initAllVisualizersIfRequried();
         clearInterval(intervalPrePlay);
+        clearInterval(this.intervalPlay);
+        this.vm.started = true;
         this.intervalPlay = setInterval(async () => {
           const cTime = await this.getCurrentTime();
           this.playTime = cTime + Number(this.vm.noteSpeedInSec);
+          const lastIdx = this.timeArr.length - 1;
+          // advance time arr idx if it's behind current play time
+          if (this.vm.inEditor && !this.vm.playMode && !this.paused) {
+            const lastIdx = this.timeArrIdx;
+            let idx = this.timeArr.findIndex((e) => e.t >= cTime);
+            if (idx === -1) {
+              const endIdx = this.timeArr.length - 1;
+              idx =
+                this.timeArr[endIdx] && this.timeArr[endIdx].t < cTime
+                  ? endIdx + 1
+                  : 0;
+            }
+            this.timeArrIdx = idx;
+            if (
+              this.vm.showExistingNote &&
+              lastIdx !== idx &&
+              this.timeArr[idx]
+            )
+              this.registerKeyDown(this.timeArr[idx].k, "grey");
+          }
+          // check game end
+          if (
+            !this.vm.inEditor &&
+            this.vm.playMode &&
+            this.timeArrIdx >= lastIdx &&
+            this.timeArr[lastIdx] &&
+            this.playTime > Number(this.timeArr[lastIdx].t) + 5
+          ) {
+            this.vm.gameEnded();
+          }
         }, 100);
       }
     }, 100);
@@ -169,21 +251,28 @@ export default class GameInstance {
     if (resetTimeArr) this.timeArr = [];
     this.timeArrIdx = 0;
     this.playTime = 0;
-    this.vm.playMode = false;
     this.audio.stop();
   }
 
-  startSong(song) {
+  loadSong(song) {
+    this.loading = true;
     this.resetPlaying(true);
-    this.vm.currentSong = song.url;
+    this.vm.currentSong = song;
     this.vm.srcMode = song.srcMode;
     this.timeArr = song.sheet;
-    this.vm.visualizerInstance.visualizer =
-      song.visualizerNo !== null ? song.visualizerNo : 0;
+    this.vm.visualizerInstance.vComponent =
+      song.visualizerName !== null ? song.visualizerName : 0;
+    if (song.keys && song.keys != 4) this.createTracks(Number(song.keys));
     if (song.srcMode === "youtube") {
-      this.loadYoutubeVideo(song.youtubeId);
+      this.ytPlayer.loadYoutubeVideo(song.youtubeId);
+    } else if (song.srcMode === "url") {
+      this.vm.audio.loadSong(
+        song.url,
+        false,
+        this.vm.songLoaded,
+        this.vm.gameEnded
+      );
     }
-    this.playGame();
   }
 
   destroyInstance() {
@@ -191,25 +280,22 @@ export default class GameInstance {
     this.resetPlaying();
   }
 
-  // local storage
-  saveCurrentTimeArrToLocal(name) {
-    saveToLocal(name, this.timeArr);
+  pauseGame() {
+    this.paused = true;
+    if (this.vm.srcMode === "url") {
+      return this.audio.pause();
+    } else if (this.vm.srcMode === "youtube") {
+      return this.ytPlayer.pauseVideo();
+    }
   }
 
-  loadTimeArrFromLocal(name) {
-    this.timeArr = loadFromLocal(name);
-  }
-
-  loadTimeArrFromDemo(name) {
-    this.timeArr = loadFromDemo(name);
-  }
-
-  // youtube
-  playVideo() {
-    this.ytPlayer.playVideo();
-  }
-
-  loadYoutubeVideo(id) {
-    this.ytPlayer.loadYoutubeVideo(id);
+  resumeGame() {
+    this.paused = false;
+    this.reposition();
+    if (this.vm.srcMode === "url") {
+      this.audio.play();
+    } else if (this.vm.srcMode === "youtube") {
+      this.ytPlayer.playVideo();
+    }
   }
 }

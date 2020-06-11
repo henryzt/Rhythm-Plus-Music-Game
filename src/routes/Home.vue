@@ -1,6 +1,6 @@
 <template>
   <div>
-    <PageBackground songSrc="songs/opening.mp3"></PageBackground>
+    <PageBackground songSrc="/songs/opening.mp3"></PageBackground>
 
     <div class="center_logo">
       <img
@@ -11,7 +11,7 @@
       <div
         class="text_button"
         @click="goToAuth"
-      >{{$store.state.currentUser ? "Welcome, "+$store.state.currentUser.displayName:"Login or Reigster"}}</div>
+      >{{$store.state.authed ? "Welcome, "+$store.state.currentUser.displayName:"Login or Reigster"}}</div>
     </div>
   </div>
 </template>

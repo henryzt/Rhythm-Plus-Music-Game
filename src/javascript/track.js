@@ -10,18 +10,18 @@ export default class DropTrack {
     this.particleEffect = new HitParticleEffect(vm.ctx);
     this.noteArr = [];
     this.hitIndicatorOpacity = 0;
-    this.hitGradient = this.getHitGradient();
+    this.updateHitGradient();
   }
 
-  keyDown(key) {
-    if (this.keyBind === key) {
-      this.hitIndicatorOpacity = 1;
+  keyDown(key, color) {
+    if (key.includes(this.keyBind)) {
+      if (color !== "grey") this.hitIndicatorOpacity = 1;
       if (!this.vm.playMode) {
         // create mode
-        this.noteArr.push(new Note(this.vm, this.x, this.width));
+        this.noteArr.push(new Note(this.vm, this.x, this.width, color));
       } else if (this.noteArr && this.noteArr[0]) {
         const noteToDismiss = this.noteArr[0];
-        if (noteToDismiss.getDistPercentage() < 2) {
+        if (noteToDismiss.getDiffPercentage() < 0.5) {
           noteToDismiss.hitAndCountScore();
           this.noteArr.shift();
           this.particleEffect.create(
@@ -91,17 +91,17 @@ export default class DropTrack {
       playMode &&
       this.game.timeArrIdx < timeArr.length &&
       playTime >= timeArr[this.game.timeArrIdx].t &&
-      timeArr[this.game.timeArrIdx].k === this.keyBind;
-
+      timeArr[this.game.timeArrIdx].k.includes(this.keyBind);
     if (needNote) {
       if (playTime - timeArr[this.game.timeArrIdx].t < 1) {
         this.noteArr.push(new Note(this.vm, this.x, this.width));
       }
-      this.game.timeArrIdx++;
+      // this.game.timeArrIdx++;
+      return true;
     }
   }
 
-  getHitGradient() {
+  updateHitGradient() {
     let { ctx, canvas } = this.vm;
     // hit indicator gradient
     const hitGradient = ctx.createLinearGradient(
@@ -112,7 +112,7 @@ export default class DropTrack {
     );
     hitGradient.addColorStop(0, "rgba(0,0,0,0)");
     hitGradient.addColorStop(1, "yellow");
-    return hitGradient;
+    this.hitGradient = hitGradient;
   }
 }
 

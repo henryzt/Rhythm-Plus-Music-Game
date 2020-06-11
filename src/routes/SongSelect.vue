@@ -1,6 +1,6 @@
 <template>
   <div>
-    <PageBackground songSrc="songs/select.mp3"></PageBackground>
+    <PageBackground songSrc="/songs/select.mp3"></PageBackground>
 
     <div style="font-size:2.3em; font-weight: bold;text-align:center;padding:40px;">Song Select</div>
 
@@ -24,6 +24,8 @@
         </transition>
       </div>
     </div>
+
+    <Loading :show="(!songList || songList.length===0)&& delayedLoading">Fetching Latest Songs...</Loading>
   </div>
 </template>
 
@@ -32,6 +34,7 @@
 import PageBackground from '../components/PageBackground.vue';
 import SongListItem from '../components/SongListItem.vue';
 import SongDetailPanel from '../components/SongDetailPanel.vue';
+import Loading from '../components/Loading.vue';
 import { getSheetList, getSongList } from "../javascript/db"
 
 
@@ -40,13 +43,15 @@ export default {
   components:{
       PageBackground,
       SongListItem,
-      SongDetailPanel
+      SongDetailPanel,
+      Loading
   },
   data(){
         return {
             songList: null,
             sheetList: null,
-            selectedSong: null
+            selectedSong: null,
+            delayedLoading: false
         }
     },
     computed: {
@@ -58,8 +63,15 @@ export default {
           this.sheetList = await getSheetList(this.selectedSong.id);
       }
     },
-    async mounted() {
-        this.songList = await getSongList();
+    mounted() {
+        getSongList().then(res=>{
+          this.songList = res;
+        }).catch(err=>{
+          console.error(err)
+        })
+        setTimeout(() => {
+          this.delayedLoading = true
+        }, 1000);
     },
     methods: {
     }
@@ -108,6 +120,9 @@ export default {
   .detail {
     transform: rotateY(-30deg);
     margin: 0 20px;
+  }
+  .mContainer {
+    margin: 50px;
   }
 }
 

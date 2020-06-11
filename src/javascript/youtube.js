@@ -5,24 +5,35 @@ export default class YoutubePlayer {
   }
 
   loadYoutubeVideo(id) {
-    if (this.vm.srcMode !== "youtube") return;
+    if (this.vm.srcMode !== "youtube" || !this.ytPlayer) return;
     this.vm.youtubeId = id;
     this.ytPlayer.setVolume(100);
+    if (!this.vm.playMode) {
+      setTimeout(() => {
+        this.ytPlayer.playVideo();
+      }, 1000);
+    }
   }
 
   playVideo() {
-    if (this.vm.srcMode !== "youtube") return;
+    if (this.vm.srcMode !== "youtube" || !this.ytPlayer) return;
+    this.ytPlayer.setVolume(100);
     this.ytPlayer.playVideo();
   }
 
+  pauseVideo() {
+    if (this.vm.srcMode !== "youtube" || !this.ytPlayer) return;
+    this.ytPlayer.pauseVideo();
+  }
+
   resetVideo() {
-    if (this.vm.srcMode !== "youtube") return;
+    if (this.vm.srcMode !== "youtube" || !this.ytPlayer) return;
     this.ytPlayer.seekTo(0);
     this.ytPlayer.pauseVideo();
   }
 
   getPlayerTime() {
-    if (this.vm.srcMode !== "youtube") return 0;
+    if (this.vm.srcMode !== "youtube" || !this.ytPlayer) return 0;
     return this.ytPlayer.getCurrentTime();
   }
 }

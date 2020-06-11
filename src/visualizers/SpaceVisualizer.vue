@@ -1,3 +1,35 @@
+<template>
+  <!-- visualizer space -->
+  <div ref="visualizerSpace" id="visualizer"></div>
+</template>
+
+<script>
+
+export default {
+  name: 'SpaceVisualizer',
+  props: ["audioData", "name"],
+  data: function(){
+    return {
+    }
+  },
+  mounted() {
+        initSpaceVisualizer(this.audioData, this.$refs.visualizerSpace);
+    },
+  methods: {
+    update() {
+        renderSpaceVisualizer(this.shouldRenderPolygon)
+    },
+    resizeCanvas(){
+        visualizer.resizeCanvas()
+    }
+  },
+  computed:{
+    shouldRenderPolygon(){
+      return this.name === "spacePoly";
+    }
+  }
+};
+
 /* eslint-disable */
 /**
  * Created by Michael on 31/12/13.
@@ -467,8 +499,6 @@ const SpaceVisualizer = function () {
 
     setInterval(drawBg, 100);
     setInterval(rotateForeground, 20);
-    // resize the canvas to fill browser window dynamically
-    window.addEventListener("resize", this.resizeCanvas, false);
   };
 
   this.render = (drawPolygon) => {
@@ -476,7 +506,7 @@ const SpaceVisualizer = function () {
   };
 };
 
-export function initSpaceVisualizer(audioDataRaw, canvasContainer) {
+function initSpaceVisualizer(audioDataRaw, canvasContainer) {
   visualizer = new SpaceVisualizer();
   // let player = audio;
   audioData = audioDataRaw;
@@ -490,7 +520,7 @@ export function initSpaceVisualizer(audioDataRaw, canvasContainer) {
   });
 }
 
-export function renderSpaceVisualizer(drawPolygon) {
+function renderSpaceVisualizer(drawPolygon) {
   visualizer.render(drawPolygon);
 }
 
@@ -510,3 +540,4 @@ export function renderSpaceVisualizer(drawPolygon) {
 //         break;
 //     }
 //   }
+</script>

@@ -1,106 +1,92 @@
 <template>
-  <div class="visualizer">
-    <!-- visualizer space -->
-    <div class="blurFilter" v-if="visualizer===4||visualizer===5"></div>
-    <canvas ref="visualizerCanvas" v-show="visualizer===2"></canvas>
-    <div ref="visualizerSpace" id="visualizer" v-show="visualizer!=0 && visualizer!=2"></div>
+  <div class="visualizer" v-if="audioDataLoaded && vComponent">
+    <div class="blurFilter" v-if="blur"></div>
+    <component ref="visualizerIns" :is="vComponent" :name="vComponent" :audioData="audioData"></component>
   </div>
 </template>
 
 
 <script>
-import renderBarVisualizer from '../visualizers/visualizerBar';
-import { initSpaceVisualizer, renderSpaceVisualizer } from '../visualizers/visualizerSpace';
+import BarVisualizer from '../visualizers/BarVisualizer.vue';
+import SpaceVisualizer from '../visualizers/SpaceVisualizer.vue';
 
-// visualizers
-const visualizerArr = [
-  "Visualizer Off",
-  "Space Visualizer",
-  "Bar Visualizer",
-  "Space with Polygon",
-  "Space Blurred",
-  "Blurred",
-];
 
+const visualizers = {
+  "Visualizer Off" : null,
+  "Space Visualizer" : "space",
+  "Bar Visualizer" : "bar",
+  "Space with Polygon" : "spacePoly",
+};
 
 export default {
   name: 'Visualizer',
-  props: ["autoUpdate", "setVisualizerNo"],
+  props: ["autoUpdate", "setVisualizer", "setBlur"],
+  components:{
+      'bar' : BarVisualizer,
+      'space' : SpaceVisualizer,
+      'spacePoly' : SpaceVisualizer
+  },
   data: function(){
     return {
-        visualizer: 2,
-        visualizerArr,
-        visualizerLoaded: false, // visualizer loaded indicator
-        canvas: null,
-        ctx: null
+        visualizerArr: visualizers,
+        vComponent: 'space',
+        blur: false,
+        audioDataLoaded: false,
     }
   },
   mounted() {
-        this.canvas = this.$refs.visualizerCanvas;
-        this.ctx = this.canvas.getContext("2d");
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
+        window.addEventListener("resize", this.resizeCanvas, false);
+        window.addEventListener("orientationchange",this.resizeCanvas,false);
         if(this.autoUpdate)
             this.update();
-        if(this.setVisualizerNo)
-            this.visualizer = this.setVisualizerNo;
-        if(this.audioData && this.audioData.analyser)
-            this.initAllVisualizersIfRequried()
+        if(this.setVisualizer)
+            this.vComponent = this.setVisualizer;
+        if(this.setBlur)
+            this.blur = this.setBlur;
+    },
+    beforeDestroy(){
+        window.removeEventListener("resize", this.resizeCanvas);
+        window.removeEventListener("orientationchange",this.resizeCanvas);
+        this.audioDataLoaded = false
+        this.vComponent = null
     },
   methods: {
-    initAllVisualizersIfRequried() {
-        if ( !this.visualizerLoaded ) {
-            this.visualizerLoaded = true;
-            initSpaceVisualizer(this.audioData, this.$refs.visualizerSpace);
-        }
-    },
     renderVisualizer() {
-        if (!this.visualizerLoaded) return;
-        switch (this.visualizer) {
-        case 1:
-            renderSpaceVisualizer();
-            break;
-        case 2:
-            this.ctx.fillStyle = "rgba(10,10,44,0.2)";
-            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-            renderBarVisualizer(this.canvas, this.ctx, this.audioData);
-            break;
-        case 3:
-            renderSpaceVisualizer(true);
-            break;
-        case 4:
-            renderSpaceVisualizer(true);
-            break;
-        default:
-            this.ctx.fillStyle = "black";
-            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        }
+        if (!this.audioDataLoaded || !this.vComponent) return;
+        this.$refs.visualizerIns.update()
     },
-    switchNextVisualizer(){
-        this.visualizer = this.visualizer == this.visualizerArr.length - 1 ? 0 : this.visualizer + 1;
+    setVisualizerByKey(name){
+        this.vComponent = visualizers[name];
     },
     update() {
-        if(!this.autoUpdate) return;
+        if(!this.autoUpdate || !this.vComponent) return;
         requestAnimationFrame(this.update.bind(this));
         this.renderVisualizer();
+    },
+    resizeCanvas(){
+        if (!this.audioDataLoaded || !this.vComponent) return;
+        this.$refs.visualizerIns.resizeCanvas()
     }
   },
     watch : {
         audioData: () => {
             // required to watch vuex change
         },
-        setVisualizerNo: function(){
-            this.visualizer = this.setVisualizerNo;
+        setVisualizer: () => {
+            this.vComponent = this.setVisualizer;
+        },
+        setBlur: () => {
+            this.blur = this.setBlur;
         }
     },
     computed:{
         currentVisualizer() {
-            return this.visualizerArr[this.visualizer]
+            return Object.keys(visualizers).find(key => visualizers[key] === this.vComponent);
         },
         audioData() {
             let data = this.$store.state.audio.audioData;
-            if(!this.visualizerLoaded && this.ctx && data.analyser)
-                this.initAllVisualizersIfRequried()
+            if(data.analyser)
+                this.audioDataLoaded = true
             return data;
         }
     }

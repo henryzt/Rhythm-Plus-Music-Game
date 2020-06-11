@@ -5,16 +5,6 @@ body {
   color: white;
   font-family: "Raleway";
   -webkit-tap-highlight-color: rgba(255, 255, 255, 0.3);
-  overflow: hidden;
-}
-
-.control {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  opacity: 0.5;
-  transition: opacity 2s ease-in-out;
-  z-index: 100;
 }
 
 .center {
@@ -56,7 +46,22 @@ body {
   top: 0;
   left: 0;
   backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
   z-index: 100;
+}
+
+.blurBackground{
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.gameWrapper {
+  perspective: 600px;
+}
+
+#gameCanvas {
+  transition: 2s;
+  transform-origin: 50% 100%;
 }
 
 #visualizerBarBG {
@@ -84,6 +89,11 @@ body {
   animation-duration: 1s;
 }
 
+.enterAnimation {
+  animation-name: enter;
+  animation-duration: 1s;
+}
+
 #ytPlayer {
   position: fixed;
   width: 100vw;
@@ -98,6 +108,7 @@ body {
   top: 0;
   left: 0;
   z-index: -1;
+  width: 100%;
 }
 
 .text_button {
@@ -120,6 +131,217 @@ body {
   -ms-user-select: none;
   user-select: none;
 }
+
+/* modal */
+.btn-action {
+  cursor: pointer;
+  color: white;
+  background: transparent;
+  padding: 10px;
+  min-width: 80px;
+  margin: 0 10px;
+  text-align: center;
+  transition: 0.5s;
+}
+
+.btn-action:hover {
+  color: gray;
+  background: rgba(255, 255, 255, 0.527);
+}
+
+.btn-dark {
+  max-width: 200px;
+  margin: 10px auto;
+  background: rgba(78, 78, 78, 0.192);
+}
+
+.btn-dark:hover {
+  background: rgb(255, 255, 255);
+}
+
+.btn-close {
+  border: none;
+  font-size: 20px;
+  font-weight: bold;
+  padding: 2px;
+  margin: 0;
+  min-width: 20px;
+}
+
+.modal-fade-enter,
+.modal-fade-leave-active {
+  transform: scale(1.2);
+  opacity: 0;
+}
+
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: 0.5s;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.modal {
+  background: rgba(255, 255, 255, 0.5);
+  overflow-x: auto;
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  max-width: 500px;
+}
+
+
+/* checkboxes */
+/* ref https://www.w3schools.com/howto/howto_css_custom_checkbox.asp */
+
+/* The container */
+.cb_container {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  cursor: pointer;
+  font-size: 18px;
+  text-align: center;
+  margin: 10px auto;
+  width: 190px;
+}
+
+/* Hide the browser's default checkbox */
+.cb_container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+  transition: .5s;
+}
+
+/* On mouse-over, add a grey background color */
+.cb_container:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.cb_container input:checked ~ .checkmark {
+  background-color: rgb(228, 121, 0);
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.cb_container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.cb_container .checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+}
+
+/* small cb */
+
+.cb_small {
+  padding-left: 0px;
+  font-size: 14px;
+  width: auto;
+}
+
+.cb_small .checkmark:after {
+  left: 4px;
+  top: 0px;
+}
+
+.cb_small .checkmark {
+  height: 15px;
+  width: 15px;
+}
+
+.cb_small input{
+  position: relative;
+}
+
+/* inputs */
+
+input[type=text], input[type="number"], input[type="submit"], select {
+  background-color: rgb(109, 109, 109);
+  color: white;
+  padding: 6px 15px;
+  margin: 3px 0;
+  box-sizing: border-box;
+  border: 3px solid rgb(109, 109, 109);
+  transition: 0.5s;
+  outline: none;
+  width: 100%;
+}
+
+input[type=text]:hover, input[type="number"]:hover,input[type="submit"]:hover, select:hover {
+  border: 3px solid  rgb(150, 150, 150);
+}
+
+input[type=text]:focus, input[type="number"]:focus,input[type="submit"]:focus, select:focus {
+  border: 3px solid #ccc;
+}
+
+input::placeholder { 
+  color: rgb(255, 255, 255);
+  opacity: 0.35; 
+}
+
+/* scrollbar - todo */
+
+::-webkit-scrollbar {
+  width: 0; 
+  height: 0;
+  background: transparent;
+}
+
+::-webkit-scrollbar-track {
+  background: none;
+}
+ 
+::-webkit-scrollbar-thumb {
+  background: rgba(223, 223, 223, 0.5); 
+  border-radius: 10px;
+  transition: 0.5s;
+  width: 1px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(145, 145, 145, 1); 
+}
+
 
 @keyframes enter {
   from {

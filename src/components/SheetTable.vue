@@ -6,7 +6,7 @@
           <tr>
             <th>
               <label class="cb_container cb_small">
-                <input type="checkbox" v-model="selectedAll" />
+                <input type="checkbox" v-model="selectedAll" @click="selectAll" />
                 <span class="checkmark"></span>
               </label>
             </th>
@@ -30,6 +30,7 @@
             <td>{{entry.t}}</td>
             <td>{{entry.k==" "?"-":entry.k}}</td>
           </tr>
+          <tr class="last"></tr>
         </tbody>
       </table>
     </div>
@@ -38,6 +39,11 @@
       <a @click="selectBetween">Select Between</a>
       <a @click="removeSelected">Delete</a>
       <a @click="clearSelected">Clear</a>
+      <label class="cb_container cb_small">
+        <input type="checkbox" v-model="follow" />
+        <span class="checkmark"></span>
+        Follow Current
+      </label>
     </div>
   </div>
 </template>
@@ -53,23 +59,18 @@ export default {
     data() {
       return {
         selectedNotes: [],
-        selectedAll: false
+        selectedAll: false,
+        follow: true
       }
     },
     watch: {
         'instance.timeArrIdx'(){
+            if(!this.follow) return;
             this.$nextTick(()=>{
                 let element = this.$el.querySelector(".current");
-                if(!element) return;
+                if(!element) element = this.$el.querySelector(".last");
                 element.scrollIntoView({block: "end", behavior: "smooth"})
             })
-        },
-        selectedAll(){
-          if(this.selectedAll){
-            this.selectAll()
-          }else{
-            this.clearSelected()
-          }
         },
         selectedNotes(){
           this.selectedAll = this.selectedNotes.length!==0 && this.selectedNotes.length===this.instance.timeArr.length;
@@ -82,7 +83,11 @@ export default {
         return time <= current + sec && time >= current;
       },
       selectAll(){
-        this.selectedNotes = this.instance.timeArr;
+          if(this.selectedAll){
+            this.clearSelected()
+          }else{
+            this.selectedNotes = this.instance.timeArr;
+          }
       },
       clearSelected(){
         this.selectedNotes = []
@@ -115,7 +120,7 @@ export default {
 
 <style scoped>
 .sheetTable {
-  height: 80%;
+  height: 75%;
   overflow: scroll;
   position: relative;
 }

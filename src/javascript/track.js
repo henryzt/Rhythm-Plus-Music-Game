@@ -14,7 +14,7 @@ export default class DropTrack {
   }
 
   keyDown(key, color) {
-    if (this.keyBind === key) {
+    if (key.includes(this.keyBind)) {
       if (color !== "grey") this.hitIndicatorOpacity = 1;
       if (!this.vm.playMode) {
         // create mode
@@ -91,13 +91,18 @@ export default class DropTrack {
       playMode &&
       this.game.timeArrIdx < timeArr.length &&
       playTime >= timeArr[this.game.timeArrIdx].t &&
-      timeArr[this.game.timeArrIdx].k === this.keyBind;
-
+      timeArr[this.game.timeArrIdx].k.includes(this.keyBind);
+    if (
+      timeArr[this.game.timeArrIdx] &&
+      timeArr[this.game.timeArrIdx].k.length > 1
+    )
+      console.log(timeArr[this.game.timeArrIdx].k, this.keyBind, needNote);
     if (needNote) {
       if (playTime - timeArr[this.game.timeArrIdx].t < 1) {
         this.noteArr.push(new Note(this.vm, this.x, this.width));
       }
-      this.game.timeArrIdx++;
+      // this.game.timeArrIdx++;
+      return true;
     }
   }
 

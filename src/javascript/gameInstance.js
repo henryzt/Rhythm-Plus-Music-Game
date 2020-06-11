@@ -17,6 +17,10 @@ export default class GameInstance {
     this.loading = false;
     this.paused = true;
 
+    // to check if keys should be combined
+    this.lastAddedTime = null;
+    this.lastAddedIdx = null;
+
     // clock for counting time
     this.intervalPlay = null;
 
@@ -146,11 +150,17 @@ export default class GameInstance {
       if (this.trackKeyBind.includes(key)) {
         // this.timeArr.push({ t: cTime.toFixed(3), k: key });
         // this.timeArrIdx = this.timeArr.length - 1;
-        // add at idx instead
-        this.timeArr.splice(this.timeArrIdx - 1, 0, {
-          t: cTime.toFixed(3),
-          k: key,
-        });
+        if (this.lastAddedTime && cTime - this.lastAddedTime < 0.05) {
+          this.timeArr[this.lastAddedIdx].k += key;
+        } else {
+          // add at idx
+          this.timeArr.splice(this.timeArrIdx, 0, {
+            t: cTime.toFixed(3),
+            k: key,
+          });
+          this.lastAddedTime = cTime;
+          this.lastAddedIdx = this.timeArrIdx;
+        }
       }
     }
     this.registerKeyDown(key);
@@ -169,9 +179,11 @@ export default class GameInstance {
     if (this.vm.started && this.paused && this.vm.playMode) return;
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.vm.visualizerInstance.renderVisualizer();
+    let shouldAdvance = [];
     for (const track of this.dropTrackArr) {
-      track.update();
+      shouldAdvance.push(track.update());
     }
+    if (shouldAdvance.some((e) => e === true)) this.timeArrIdx++;
   }
 
   startSong() {

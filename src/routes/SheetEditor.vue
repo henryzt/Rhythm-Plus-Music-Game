@@ -210,6 +210,7 @@ export default {
         return Number(length.toFixed(3))
       },
       pauseGame(){
+        this.reorderSheet()
         this.instance.pauseGame()
       },
       async restartGame(){

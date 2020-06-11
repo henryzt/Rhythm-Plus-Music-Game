@@ -96,14 +96,13 @@ export default class DropTrack {
       timeArr[this.game.timeArrIdx] &&
       timeArr[this.game.timeArrIdx].k.length > 1
     )
-      console.log(timeArr[this.game.timeArrIdx].k, this.keyBind, needNote);
-    if (needNote) {
-      if (playTime - timeArr[this.game.timeArrIdx].t < 1) {
-        this.noteArr.push(new Note(this.vm, this.x, this.width));
+      if (needNote) {
+        if (playTime - timeArr[this.game.timeArrIdx].t < 1) {
+          this.noteArr.push(new Note(this.vm, this.x, this.width));
+        }
+        // this.game.timeArrIdx++;
+        return true;
       }
-      // this.game.timeArrIdx++;
-      return true;
-    }
   }
 
   updateHitGradient() {

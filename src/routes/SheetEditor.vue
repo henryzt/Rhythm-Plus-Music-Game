@@ -257,15 +257,23 @@ export default {
       },
       saveSheet(){
         this.reorderSheet()
+        this.countTotal()
         const sheet = {
           id: this.sheetInfo.id,
-          sheet: JSON.stringify(this.instance.timeArr)
+          sheet: JSON.stringify(this.instance.timeArr),
+          length: this.sheetInfo.length,
+          noteCount: this.sheetInfo.noteCount
           }
         updateSheet(sheet);
         // save local backup
         let local = JSON.parse(localStorage.getItem("localSheetBackup")) || {};
         local[this.sheetInfo.id] = sheet;
         localStorage.setItem("localSheetBackup", JSON.stringify(local));
+      },
+      countTotal(){
+        const lastNote = this.instance.timeArr[this.instance.timeArr.length-1]
+        this.sheetInfo.length = Math.min.apply(Math,[this.songLength, lastNote.t+2])
+        this.sheetInfo.noteCount = this.instance.timeArr.length
       }
     }
 };

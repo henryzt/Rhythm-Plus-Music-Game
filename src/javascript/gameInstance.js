@@ -179,11 +179,11 @@ export default class GameInstance {
     if (this.vm.started && this.paused && this.vm.playMode) return;
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.vm.visualizerInstance.renderVisualizer();
-    let shouldAdvance = [];
+    let shouldAdvance = false;
     for (const track of this.dropTrackArr) {
-      shouldAdvance.push(track.update());
+      shouldAdvance = track.update() || shouldAdvance;
     }
-    if (shouldAdvance.some((e) => e === true)) this.timeArrIdx++;
+    if (shouldAdvance) this.timeArrIdx++;
   }
 
   startSong() {

@@ -36,8 +36,8 @@
     </div>
     <div class="buttons">
       <a @click="reorder">Reorder</a>
-      <a @click="selectBetween">Select Between</a>
       <a @click="removeSelected">Delete</a>
+      <a @click="selectBetween">Select Between</a>
       <a @click="clearSelected">Clear</a>
       <label class="cb_container cb_small">
         <input type="checkbox" v-model="follow" />
@@ -69,7 +69,7 @@ export default {
             this.$nextTick(()=>{
                 let element = this.$el.querySelector(".current");
                 if(!element) element = this.$el.querySelector(".last");
-                element.scrollIntoView({block: "end", behavior: "smooth"})
+                element?.scrollIntoView({block: "end", behavior: "smooth"})
             })
         },
         selectedNotes(){

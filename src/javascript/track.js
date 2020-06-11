@@ -127,6 +127,7 @@ export class HitParticleEffect {
 
   create(x, y, width, height) {
     let count = 0;
+    this.circle = new SpiningCircle(x + width / 2, y, "255, 255, 0");
 
     // Go through every location of our button and create a particle
     for (let localX = 0; localX < width; localX++) {
@@ -152,11 +153,7 @@ export class HitParticleEffect {
   }
 
   update() {
-    // Clear out the old particles
-    // if (typeof ctx !== "undefined") {
-    //   ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-    // }
-
+    this.circle?.draw(this.ctx);
     // Draw all of our particles in their new location
     for (let i = 0; i < this.particles.length; i++) {
       this.ctx.globalAlpha = 0.7;
@@ -170,6 +167,7 @@ export class HitParticleEffect {
 
         if (percent > 1) {
           this.particles = [];
+          this.circle = null;
         }
       }
     }
@@ -210,6 +208,48 @@ class ExplodingParticle {
       this.radius -= 0.25;
       this.startX += this.speed.x;
       this.startY += this.speed.y;
+    }
+  }
+}
+
+class SpiningCircle {
+  constructor(x, y, rgb) {
+    // Set how long we want our particle to animate for
+    this.animationDuration = 1000; // in ms
+
+    this.x = x;
+    this.y = y;
+    this.offset = Math.random();
+    this.radius = 20;
+    this.rgb = rgb;
+  }
+
+  draw(ctx) {
+    if (this.radius < 100) {
+      let os = this.offset;
+      let percent = this.radius / 100;
+      ctx.strokeStyle = `rgba(${this.rgb}, ${1 - percent})`;
+      ctx.lineWidth = 30 + 20 * percent;
+      ctx.beginPath();
+      ctx.arc(
+        this.x,
+        this.y,
+        this.radius,
+        (os + 0) * Math.PI,
+        (os + 0.5) * Math.PI
+      );
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(
+        this.x,
+        this.y,
+        this.radius,
+        (os + 1) * Math.PI,
+        (os + 1.5) * Math.PI
+      );
+      ctx.stroke();
+      this.offset += 0.1;
+      this.radius += 3;
     }
   }
 }

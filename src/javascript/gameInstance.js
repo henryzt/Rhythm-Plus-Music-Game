@@ -45,9 +45,7 @@ export default class GameInstance {
 
     // init
     for (const keyBind of this.trackKeyBind) {
-      this.dropTrackArr.push(
-        new DropTrack(this.vm, this, 0, this.trackMaxWidth, keyBind)
-      );
+      this.dropTrackArr.push(new DropTrack(this.vm, this, 0, this.trackMaxWidth, keyBind));
     }
 
     this.reposition();
@@ -87,16 +85,12 @@ export default class GameInstance {
 
     for (let counter = 0; counter < this.dropTrackArr.length; counter++) {
       const trackWidthWithOffset = trackWidth + 1;
-      this.dropTrackArr[counter].resizeTrack(
-        startX + trackWidthWithOffset * counter,
-        trackWidth
-      );
+      this.dropTrackArr[counter].resizeTrack(startX + trackWidthWithOffset * counter, trackWidth);
       this.dropTrackArr[counter].updateHitGradient();
     }
 
     this.vm.checkHitLineY = (this.canvas.height / 10) * 9;
-    this.vm.noteSpeedPxPerSec =
-      this.vm.checkHitLineY / Number(this.vm.noteSpeedInSec);
+    this.vm.noteSpeedPxPerSec = this.vm.checkHitLineY / Number(this.vm.noteSpeedInSec);
   }
 
   registerInput() {
@@ -120,6 +114,14 @@ export default class GameInstance {
       false
     );
 
+    document.addEventListener(
+      "keyup",
+      (event) => {
+        this.onKeyUp(event.key);
+      },
+      false
+    );
+
     const tapEvent = (e) => {
       for (let pointer of e.detail.events) {
         const x = pointer.clientX;
@@ -127,6 +129,7 @@ export default class GameInstance {
         this.dropTrackArr.forEach((track) => {
           if (x > track.x && x < track.x + track.width) {
             this.onKeyDown(track.keyBind);
+            this.onKeyUp(track.keyBind);
           }
         });
       }
@@ -135,40 +138,56 @@ export default class GameInstance {
     this.touchRegion = ZingTouch.Region(this.canvas);
 
     for (let numInputs of [1, 2, 3, 4]) {
-      this.touchRegion.bind(
-        this.canvas,
-        new ZingTouch.Tap({ numInputs }),
-        tapEvent
-      );
+      this.touchRegion.bind(this.canvas, new ZingTouch.Tap({ numInputs }), tapEvent);
     }
   }
 
   // log key and touch events
-  async onKeyDown(key) {
+  onKeyDown(key) {
+    console.log("keydown", key);
     if (!this.vm.playMode && !this.paused) {
-      const cTime = await this.getCurrentTime();
-      if (this.trackKeyBind.includes(key)) {
-        // this.timeArr.push({ t: cTime.toFixed(3), k: key });
-        // this.timeArrIdx = this.timeArr.length - 1;
-        if (this.lastAddedTime && cTime - this.lastAddedTime < 0.05) {
-          this.timeArr[this.lastAddedIdx].k += key;
-        } else {
-          // add at idx
-          this.timeArr.splice(this.timeArrIdx, 0, {
-            t: Number(cTime.toFixed(3)),
-            k: key,
-          });
-          this.lastAddedTime = cTime;
-          this.lastAddedIdx = this.timeArrIdx;
-        }
-      }
+      this.createSingleNote(key);
     }
-    this.registerKeyDown(key);
+    for (const track of this.dropTrackArr) {
+      track.keyDown(key);
+    }
   }
 
-  registerKeyDown(key, colorOverride) {
+  onKeyUp(key) {
+    console.log("keyup", key);
     for (const track of this.dropTrackArr) {
-      track.keyDown(key, colorOverride);
+      track.keyUp(key);
+    }
+  }
+
+  dropNote(key, colorOverride) {
+    for (const track of this.dropTrackArr) {
+      track.dropNote(key, colorOverride);
+    }
+  }
+
+  async createSingleNote(key) {
+    const cTime = await this.getCurrentTime();
+    const waitTimeForMultiNote = 0.05;
+    if (this.trackKeyBind.includes(key)) {
+      // this.timeArr.push({ t: cTime.toFixed(3), k: key });
+      // this.timeArrIdx = this.timeArr.length - 1;
+      if (this.lastAddedTime && cTime - this.lastAddedTime < waitTimeForMultiNote) {
+        this.timeArr[this.lastAddedIdx].k += key;
+      } else {
+        // add at idx
+        this.timeArr.splice(this.timeArrIdx, 0, {
+          t: Number(cTime.toFixed(3)),
+          k: key,
+        });
+        this.lastAddedTime = cTime;
+        this.lastAddedIdx = this.timeArrIdx;
+        setTimeout(() => {
+          const k = this.timeArr[this.lastAddedIdx].k;
+          this.dropNote(k);
+          this.onKeyUp(k);
+        }, waitTimeForMultiNote * 1000 + 5);
+      }
     }
   }
 
@@ -210,18 +229,11 @@ export default class GameInstance {
             let idx = this.timeArr.findIndex((e) => e.t >= cTime);
             if (idx === -1) {
               const endIdx = this.timeArr.length - 1;
-              idx =
-                this.timeArr[endIdx] && this.timeArr[endIdx].t < cTime
-                  ? endIdx + 1
-                  : 0;
+              idx = this.timeArr[endIdx] && this.timeArr[endIdx].t < cTime ? endIdx + 1 : 0;
             }
             this.timeArrIdx = idx;
-            if (
-              this.vm.showExistingNote &&
-              lastIdx !== idx &&
-              this.timeArr[idx]
-            )
-              this.registerKeyDown(this.timeArr[idx].k, "grey");
+            if (this.vm.showExistingNote && lastIdx !== idx && this.timeArr[idx])
+              this.dropNote(this.timeArr[idx].k, "grey");
           }
           // check game end
           if (
@@ -260,18 +272,12 @@ export default class GameInstance {
     this.vm.currentSong = song;
     this.vm.srcMode = song.srcMode;
     this.timeArr = song.sheet;
-    this.vm.visualizerInstance.vComponent =
-      song.visualizerName !== null ? song.visualizerName : 0;
+    this.vm.visualizerInstance.vComponent = song.visualizerName !== null ? song.visualizerName : 0;
     if (song.keys && song.keys != 4) this.createTracks(Number(song.keys));
     if (song.srcMode === "youtube") {
       this.ytPlayer.loadYoutubeVideo(song.youtubeId);
     } else if (song.srcMode === "url") {
-      this.vm.audio.loadSong(
-        song.url,
-        false,
-        this.vm.songLoaded,
-        this.vm.gameEnded
-      );
+      this.vm.audio.loadSong(song.url, false, this.vm.songLoaded, this.vm.gameEnded);
     }
   }
 

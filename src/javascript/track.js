@@ -10,16 +10,15 @@ export default class DropTrack {
     this.particleEffect = new HitEffect(vm.ctx);
     this.noteArr = [];
     this.hitIndicatorOpacity = 0;
+    this.isKeyDown = false;
     this.updateHitGradient();
   }
 
-  keyDown(key, color) {
-    if (key.includes(this.keyBind)) {
-      if (color !== "grey") this.hitIndicatorOpacity = 1;
-      if (!this.vm.playMode) {
-        // create mode
-        this.noteArr.push(new Note(this.vm, this.x, this.width, color));
-      } else if (this.noteArr && this.noteArr[0]) {
+  keyDown(key) {
+    if (key.includes(this.keyBind) && !this.isKeyDown) {
+      this.isKeyDown = true;
+      this.hitIndicatorOpacity = 1;
+      if (this.vm.playMode && this.noteArr && this.noteArr[0]) {
         const noteToDismiss = this.noteArr[0];
         if (noteToDismiss.getDiffPercentage() < 0.5) {
           noteToDismiss.hitAndCountScore();
@@ -33,6 +32,18 @@ export default class DropTrack {
           );
         }
       }
+    }
+  }
+
+  keyUp(key) {
+    if (key.includes(this.keyBind)) {
+      this.isKeyDown = false;
+    }
+  }
+
+  dropNote(key, color) {
+    if (key.includes(this.keyBind) && !this.vm.playMode) {
+      this.noteArr.push(new Note(this.vm, this.x, this.width, color));
     }
   }
 
@@ -67,13 +78,8 @@ export default class DropTrack {
       // yellow gradient
       ctx.fillStyle = this.hitGradient;
       ctx.globalAlpha = this.hitIndicatorOpacity;
-      ctx.fillRect(
-        this.x,
-        (canvas.height / 10) * 6,
-        this.width,
-        (canvas.height / 10) * 4
-      );
-      this.hitIndicatorOpacity -= 0.02;
+      ctx.fillRect(this.x, (canvas.height / 10) * 6, this.width, (canvas.height / 10) * 4);
+      if (!this.isKeyDown) this.hitIndicatorOpacity -= 0.1;
       ctx.globalAlpha = 1;
     }
 
@@ -97,20 +103,14 @@ export default class DropTrack {
       if (playTime - timeArr[this.game.timeArrIdx].t < 1) {
         this.noteArr.push(new Note(this.vm, this.x, this.width));
       }
-      // this.game.timeArrIdx++;
-      return true;
+      return true; // this.game.timeArrIdx++;
     }
   }
 
   updateHitGradient() {
     let { ctx, canvas } = this.vm;
     // hit indicator gradient
-    const hitGradient = ctx.createLinearGradient(
-      0,
-      (canvas.height / 10) * 7,
-      0,
-      canvas.height
-    );
+    const hitGradient = ctx.createLinearGradient(0, (canvas.height / 10) * 7, 0, canvas.height);
     hitGradient.addColorStop(0, "rgba(0,0,0,0)");
     hitGradient.addColorStop(1, "yellow");
     this.hitGradient = hitGradient;
@@ -121,15 +121,17 @@ export default class DropTrack {
 export class HitEffect {
   constructor(ctx) {
     this.colorData = ["yellow", "#DED51F", "#EBA400", "#FCC138"];
-    this.reductionFactor = 50;
+    this.reductionFactor = 5;
     this.particles = [];
     this.ctx = ctx;
   }
 
   create(x, y, width, height, judge) {
+    x = x + width / 2 - 5;
+    width = 10;
     let count = 0;
     const rgb = this.getRgb(judge);
-    this.circle = new SpiningCircle(x + width / 2, y, rgb);
+    this.circle = new ExpandingCircle(x + 5, y, rgb);
 
     // Go through every location of our button and create a particle
     for (let localX = 0; localX < width; localX++) {
@@ -177,8 +179,7 @@ export class HitEffect {
       // Simple way to clean up if the last particle is done animating
       if (i === this.particles.length - 1) {
         const percent =
-          (Date.now() - this.particles[i].startTime) /
-          this.particles[i].animationDuration;
+          (Date.now() - this.particles[i].startTime) / this.particles[i].animationDuration;
 
         if (percent > 1) {
           this.particles = [];
@@ -212,9 +213,7 @@ class ExplodingParticle {
       // Draw a circle at the current location
       ctx.beginPath();
       // ctx.arc(p.startX, p.startY, p.radius, 0, Math.PI * 2);
-      ctx.fillStyle = this.rgbArray[
-        Math.floor(Math.random() * this.rgbArray.length)
-      ];
+      ctx.fillStyle = this.rgbArray[Math.floor(Math.random() * this.rgbArray.length)];
       ctx.fillRect(this.startX, this.startY, this.radius, this.radius);
       // ctx.fill();
 
@@ -275,14 +274,7 @@ class ExpandingCircle {
         // Radius of the entire circle.
         radius = this.radius;
 
-      var gradient = ctx.createRadialGradient(
-        x,
-        y,
-        innerRadius,
-        x,
-        y,
-        outerRadius
-      );
+      var gradient = ctx.createRadialGradient(x, y, innerRadius, x, y, outerRadius);
       gradient.addColorStop(0, `rgba(${this.rgb},0)`);
       gradient.addColorStop(1, `rgba(${this.rgb}, ${1 - percent})`);
 

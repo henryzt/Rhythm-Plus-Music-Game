@@ -9,7 +9,7 @@
     <Visualizer
       v-else
       ref="visualizer"
-      style="opacity:0.5"
+      style="opacity:1"
       :setVisualizer="visualizer"
       :autoUpdate="true"
     ></Visualizer>
@@ -30,7 +30,7 @@ export default {
     },
     visualizer : {
       type: String,
-      default: "colorPoly"
+      default: "space"
     },
     imageSrc : {
       type: String,

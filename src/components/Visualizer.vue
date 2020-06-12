@@ -9,6 +9,7 @@
 <script>
 import BarVisualizer from '../visualizers/BarVisualizer.vue';
 import SpaceVisualizer from '../visualizers/SpaceVisualizer.vue';
+import ColorPoly from '../visualizers/ColorPoly.vue';
 
 
 const visualizers = {
@@ -16,6 +17,7 @@ const visualizers = {
   "Space Visualizer" : "space",
   "Bar Visualizer" : "bar",
   "Space with Polygon" : "spacePoly",
+  "Colored Polygon" : "colorPoly",
 };
 
 export default {
@@ -24,7 +26,8 @@ export default {
   components:{
       'bar' : BarVisualizer,
       'space' : SpaceVisualizer,
-      'spacePoly' : SpaceVisualizer
+      'spacePoly' : SpaceVisualizer,
+      'colorPoly' : ColorPoly
   },
   data: function(){
     return {

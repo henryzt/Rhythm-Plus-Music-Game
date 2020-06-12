@@ -89,6 +89,6 @@ export default function Note(vm, x, width, color) {
     vm.$refs.hitIndicator.classList.remove("hitAnimation");
     setTimeout(() => {
       vm.$refs.hitIndicator.classList.add("hitAnimation");
-    }, 1);
+    }, 2);
   };
 }

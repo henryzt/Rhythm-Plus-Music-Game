@@ -47,7 +47,11 @@
           <canvas ref="mainCanvas" id="gameCanvas" :class="{perspective}"></canvas>
         </div>
         <!-- mark indicator -->
-        <div class="center" v-show="playMode" ref="hitIndicator">{{markJudge}} {{result.combo}}</div>
+        <div
+          class="center_judge"
+          v-show="playMode"
+          ref="hitIndicator"
+        >{{markJudge}} {{result.combo}}</div>
       </div>
 
       <div

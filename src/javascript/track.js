@@ -129,7 +129,7 @@ export class HitEffect {
   create(x, y, width, height, judge) {
     let count = 0;
     const rgb = this.getRgb(judge);
-    this.circle = new ExpandingCircle(x + width / 2, y, rgb);
+    this.circle = new SpiningCircle(x + width / 2, y, rgb);
 
     // Go through every location of our button and create a particle
     for (let localX = 0; localX < width; localX++) {
@@ -138,7 +138,7 @@ export class HitEffect {
           const globalX = x + localX;
           const globalY = y + localY;
 
-          this.createParticleAtPoint(globalX, globalY, this.colorData);
+          this.createParticleAtPoint(globalX, globalY, [`rgb(${rgb})`]);
         }
         count++;
       }
@@ -157,9 +157,9 @@ export class HitEffect {
   getRgb(judge) {
     switch (judge) {
       case "Perfect":
-        return "3, 223, 252";
-      case "Good":
         return "3, 252, 32";
+      case "Good":
+        return "3, 223, 252";
       case "Offbeat":
         return "255, 0, 55";
       default:
@@ -248,7 +248,7 @@ class SpiningCircle {
       ctx.beginPath();
       ctx.arc(this.x, this.y, 80, (os + 1) * Math.PI, (os + 1.5) * Math.PI);
       ctx.stroke();
-      this.offset += 0.1;
+      this.offset += 0.1 - percent / 10;
       this.radius -= 4;
     }
   }

@@ -6,7 +6,13 @@
       class="bgImage"
       :style="{ background: `url('${imageSrc}') no-repeat fixed center`, backgroundSize: 'cover' }"
     ></div>
-    <Visualizer v-else ref="visualizer" :setVisualizer="visualizer" :autoUpdate="true"></Visualizer>
+    <Visualizer
+      v-else
+      ref="visualizer"
+      style="opacity:0.5"
+      :setVisualizer="visualizer"
+      :autoUpdate="true"
+    ></Visualizer>
   </div>
 </template>
 
@@ -24,7 +30,7 @@ export default {
     },
     visualizer : {
       type: String,
-      default: "space"
+      default: "colorPoly"
     },
     imageSrc : {
       type: String,

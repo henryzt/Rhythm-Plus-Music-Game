@@ -7,7 +7,7 @@ body {
   -webkit-tap-highlight-color: rgba(255, 255, 255, 0.3);
 }
 
-.center {
+.center_judge {
   position: absolute;
   color: white;
   font-family: "Raleway";
@@ -17,7 +17,7 @@ body {
   line-height: 80px;
   width: 400px;
   height: 80px;
-  top: 70%;
+  top: 60%;
   left: 50%;
   margin-top: -40px;
   margin-left: -200px;

@@ -12,7 +12,7 @@
     </transition>
 
     <!-- mark indicator -->
-    <div class="center" ref="hitIndicator">{{markJudge}} {{result.combo>=5?result.combo:''}}</div>
+    <div class="center_judge" ref="hitIndicator">{{markJudge}} {{result.combo>=5?result.combo:''}}</div>
 
     <!-- game canvas -->
     <div class="gameWrapper" :class="{'no-events':hideGameForYtButton}">

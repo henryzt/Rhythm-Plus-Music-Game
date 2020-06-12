@@ -7,7 +7,7 @@ export default class DropTrack {
     this.x = x;
     this.width = width;
     this.keyBind = keyBind;
-    this.particleEffect = new HitParticleEffect(vm.ctx);
+    this.particleEffect = new HitEffect(vm.ctx);
     this.noteArr = [];
     this.hitIndicatorOpacity = 0;
     this.updateHitGradient();
@@ -28,7 +28,8 @@ export default class DropTrack {
             this.x,
             this.vm.checkHitLineY,
             this.width,
-            10
+            10,
+            this.vm.markJudge
           );
         }
       }
@@ -117,7 +118,7 @@ export default class DropTrack {
 }
 
 // ref https://css-tricks.com/adding-particle-effects-to-dom-elements-with-canvas/
-export class HitParticleEffect {
+export class HitEffect {
   constructor(ctx) {
     this.colorData = ["yellow", "#DED51F", "#EBA400", "#FCC138"];
     this.reductionFactor = 50;
@@ -125,9 +126,10 @@ export class HitParticleEffect {
     this.ctx = ctx;
   }
 
-  create(x, y, width, height) {
+  create(x, y, width, height, judge) {
     let count = 0;
-    this.circle = new SpiningCircle(x + width / 2, y, "255, 255, 0");
+    const rgb = this.getRgb(judge);
+    this.circle = new ExpandingCircle(x + width / 2, y, rgb);
 
     // Go through every location of our button and create a particle
     for (let localX = 0; localX < width; localX++) {
@@ -150,6 +152,19 @@ export class HitParticleEffect {
     particle.startY = y;
     particle.startTime = Date.now();
     this.particles.push(particle);
+  }
+
+  getRgb(judge) {
+    switch (judge) {
+      case "Perfect":
+        return "3, 223, 252";
+      case "Good":
+        return "3, 252, 32";
+      case "Offbeat":
+        return "255, 0, 55";
+      default:
+        return "255, 255, 0";
+    }
   }
 
   update() {
@@ -214,42 +229,69 @@ class ExplodingParticle {
 
 class SpiningCircle {
   constructor(x, y, rgb) {
-    // Set how long we want our particle to animate for
-    this.animationDuration = 1000; // in ms
-
     this.x = x;
     this.y = y;
     this.offset = Math.random();
-    this.radius = 20;
+    this.radius = 100;
+    this.rgb = rgb;
+  }
+
+  draw(ctx) {
+    if (this.radius > 30) {
+      let os = this.offset;
+      let percent = 1 - this.radius / 100;
+      ctx.strokeStyle = `rgba(${this.rgb}, ${1 - percent})`;
+      ctx.lineWidth = 30 + 20 * percent;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, 80, (os + 0) * Math.PI, (os + 0.5) * Math.PI);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, 80, (os + 1) * Math.PI, (os + 1.5) * Math.PI);
+      ctx.stroke();
+      this.offset += 0.1;
+      this.radius -= 4;
+    }
+  }
+}
+
+class ExpandingCircle {
+  constructor(x, y, rgb) {
+    this.x = x;
+    this.y = y;
+    this.offset = Math.random();
+    this.radius = 30;
     this.rgb = rgb;
   }
 
   draw(ctx) {
     if (this.radius < 100) {
-      let os = this.offset;
       let percent = this.radius / 100;
-      ctx.strokeStyle = `rgba(${this.rgb}, ${1 - percent})`;
-      ctx.lineWidth = 30 + 20 * percent;
-      ctx.beginPath();
-      ctx.arc(
-        this.x,
-        this.y,
-        this.radius,
-        (os + 0) * Math.PI,
-        (os + 0.5) * Math.PI
+
+      const x = this.x,
+        y = this.y,
+        // Radii of the white glow.
+        innerRadius = this.radius * 0.1,
+        outerRadius = this.radius * 1.1,
+        // Radius of the entire circle.
+        radius = this.radius;
+
+      var gradient = ctx.createRadialGradient(
+        x,
+        y,
+        innerRadius,
+        x,
+        y,
+        outerRadius
       );
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(
-        this.x,
-        this.y,
-        this.radius,
-        (os + 1) * Math.PI,
-        (os + 1.5) * Math.PI
-      );
-      ctx.stroke();
-      this.offset += 0.1;
-      this.radius += 3;
+      gradient.addColorStop(0, `rgba(${this.rgb},0)`);
+      gradient.addColorStop(1, `rgba(${this.rgb}, ${1 - percent})`);
+
+      ctx.arc(x, y, radius, 0, 2 * Math.PI);
+
+      ctx.fillStyle = gradient;
+      ctx.fill();
+
+      this.radius += 5;
     }
   }
 }

@@ -251,6 +251,9 @@ export default {
         }else{
           this.audio.seek(Number(time))
         }
+        setTimeout(()=>{
+          this.instance.seeked()
+        },100)
       },
       setPlaybackRate(rate){
         if(this.srcMode==="youtube"){

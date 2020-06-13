@@ -13,7 +13,8 @@ export default class GameInstance {
     this.timeArrIdx = 0;
 
     // time elapsed relative to audio play time (+Number(vm.noteSpeedInSec))
-    this.playTime = 0;
+    this.currentTime = 0;
+    this.playTime = 0; // Current time + note drop delay
     this.loading = false;
     this.paused = true;
 
@@ -45,7 +46,9 @@ export default class GameInstance {
 
     // init
     for (const keyBind of this.trackKeyBind) {
-      this.dropTrackArr.push(new DropTrack(this.vm, this, 0, this.trackMaxWidth, keyBind));
+      this.dropTrackArr.push(
+        new DropTrack(this.vm, this, 0, this.trackMaxWidth, keyBind)
+      );
     }
 
     this.reposition();
@@ -85,12 +88,16 @@ export default class GameInstance {
 
     for (let counter = 0; counter < this.dropTrackArr.length; counter++) {
       const trackWidthWithOffset = trackWidth + 1;
-      this.dropTrackArr[counter].resizeTrack(startX + trackWidthWithOffset * counter, trackWidth);
+      this.dropTrackArr[counter].resizeTrack(
+        startX + trackWidthWithOffset * counter,
+        trackWidth
+      );
       this.dropTrackArr[counter].updateHitGradient();
     }
 
     this.vm.checkHitLineY = (this.canvas.height / 10) * 9;
-    this.vm.noteSpeedPxPerSec = this.vm.checkHitLineY / Number(this.vm.noteSpeedInSec);
+    this.vm.noteSpeedPxPerSec =
+      this.vm.checkHitLineY / Number(this.vm.noteSpeedInSec);
   }
 
   registerInput() {
@@ -138,7 +145,11 @@ export default class GameInstance {
     this.touchRegion = ZingTouch.Region(this.canvas);
 
     for (let numInputs of [1, 2, 3, 4]) {
-      this.touchRegion.bind(this.canvas, new ZingTouch.Tap({ numInputs }), tapEvent);
+      this.touchRegion.bind(
+        this.canvas,
+        new ZingTouch.Tap({ numInputs }),
+        tapEvent
+      );
     }
   }
 
@@ -172,7 +183,12 @@ export default class GameInstance {
     if (this.trackKeyBind.includes(key)) {
       // this.timeArr.push({ t: cTime.toFixed(3), k: key });
       // this.timeArrIdx = this.timeArr.length - 1;
-      if (this.lastAddedTime && cTime - this.lastAddedTime < waitTimeForMultiNote) {
+      if (
+        this.lastAddedTime &&
+        this.timeArr[this.lastAddedIdx] &&
+        this.lastAddedKey !== key &&
+        cTime - this.lastAddedTime < waitTimeForMultiNote
+      ) {
         this.timeArr[this.lastAddedIdx].k += key;
       } else {
         // add at idx
@@ -182,12 +198,29 @@ export default class GameInstance {
         });
         this.lastAddedTime = cTime;
         this.lastAddedIdx = this.timeArrIdx;
+        this.lastAddedKey = key;
+        this.timeArrIdx++;
         setTimeout(() => {
           const k = this.timeArr[this.lastAddedIdx].k;
           this.dropNote(k);
-          this.onKeyUp(k);
         }, waitTimeForMultiNote * 1000 + 5);
       }
+    }
+  }
+
+  seeked() {
+    // advance time arr idx if play time is changed
+    if (this.vm.inEditor) {
+      const cTime = this.currentTime;
+      let idx = this.timeArr.findIndex((e) => e.t >= cTime);
+      if (idx === -1) {
+        const endIdx = this.timeArr.length - 1;
+        idx =
+          this.timeArr[endIdx] && this.timeArr[endIdx].t < cTime
+            ? endIdx + 1
+            : 0;
+      }
+      this.timeArrIdx = idx;
     }
   }
 
@@ -222,19 +255,9 @@ export default class GameInstance {
         this.intervalPlay = setInterval(async () => {
           const cTime = await this.getCurrentTime();
           this.playTime = cTime + Number(this.vm.noteSpeedInSec);
+          this.currentTime = cTime;
           const lastIdx = this.timeArr.length - 1;
-          // advance time arr idx if it's behind current play time
-          if (this.vm.inEditor && !this.vm.playMode && !this.paused) {
-            const lastIdx = this.timeArrIdx;
-            let idx = this.timeArr.findIndex((e) => e.t >= cTime);
-            if (idx === -1) {
-              const endIdx = this.timeArr.length - 1;
-              idx = this.timeArr[endIdx] && this.timeArr[endIdx].t < cTime ? endIdx + 1 : 0;
-            }
-            this.timeArrIdx = idx;
-            if (this.vm.showExistingNote && lastIdx !== idx && this.timeArr[idx])
-              this.dropNote(this.timeArr[idx].k, "grey");
-          }
+
           // check game end
           if (
             !this.vm.inEditor &&
@@ -263,6 +286,7 @@ export default class GameInstance {
     if (resetTimeArr) this.timeArr = [];
     this.timeArrIdx = 0;
     this.playTime = 0;
+    this.currentTime = 0;
     this.audio.stop();
   }
 
@@ -272,12 +296,18 @@ export default class GameInstance {
     this.vm.currentSong = song;
     this.vm.srcMode = song.srcMode;
     this.timeArr = song.sheet;
-    this.vm.visualizerInstance.vComponent = song.visualizerName !== null ? song.visualizerName : 0;
+    this.vm.visualizerInstance.vComponent =
+      song.visualizerName !== null ? song.visualizerName : 0;
     if (song.keys && song.keys != 4) this.createTracks(Number(song.keys));
     if (song.srcMode === "youtube") {
       this.ytPlayer.loadYoutubeVideo(song.youtubeId);
     } else if (song.srcMode === "url") {
-      this.vm.audio.loadSong(song.url, false, this.vm.songLoaded, this.vm.gameEnded);
+      this.vm.audio.loadSong(
+        song.url,
+        false,
+        this.vm.songLoaded,
+        this.vm.gameEnded
+      );
     }
   }
 

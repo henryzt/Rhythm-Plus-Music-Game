@@ -78,7 +78,12 @@ export default class DropTrack {
       // yellow gradient
       ctx.fillStyle = this.hitGradient;
       ctx.globalAlpha = this.hitIndicatorOpacity;
-      ctx.fillRect(this.x, (canvas.height / 10) * 6, this.width, (canvas.height / 10) * 4);
+      ctx.fillRect(
+        this.x,
+        (canvas.height / 10) * 6,
+        this.width,
+        (canvas.height / 10) * 4
+      );
       if (!this.isKeyDown) this.hitIndicatorOpacity -= 0.1;
       ctx.globalAlpha = 1;
     }
@@ -93,15 +98,17 @@ export default class DropTrack {
     this.particleEffect.update();
 
     // create note
-    const { timeArr, playTime } = this.game;
+    const { timeArr, playTime, currentTime } = this.game;
+    const timing = playMode ? playTime : currentTime; // in editor mode, time without note drop delay is used.
     const needNote =
-      playMode &&
+      !this.game.paused &&
       this.game.timeArrIdx < timeArr.length &&
-      playTime >= timeArr[this.game.timeArrIdx].t &&
+      timing >= timeArr[this.game.timeArrIdx].t &&
       timeArr[this.game.timeArrIdx].k.includes(this.keyBind);
     if (needNote) {
-      if (playTime - timeArr[this.game.timeArrIdx].t < 1) {
-        this.noteArr.push(new Note(this.vm, this.x, this.width));
+      const color = playMode ? "yellow" : "grey";
+      if (timing - timeArr[this.game.timeArrIdx].t < 1) {
+        this.noteArr.push(new Note(this.vm, this.x, this.width, color));
       }
       return true; // this.game.timeArrIdx++;
     }
@@ -110,7 +117,12 @@ export default class DropTrack {
   updateHitGradient() {
     let { ctx, canvas } = this.vm;
     // hit indicator gradient
-    const hitGradient = ctx.createLinearGradient(0, (canvas.height / 10) * 7, 0, canvas.height);
+    const hitGradient = ctx.createLinearGradient(
+      0,
+      (canvas.height / 10) * 7,
+      0,
+      canvas.height
+    );
     hitGradient.addColorStop(0, "rgba(0,0,0,0)");
     hitGradient.addColorStop(1, "yellow");
     this.hitGradient = hitGradient;
@@ -179,7 +191,8 @@ export class HitEffect {
       // Simple way to clean up if the last particle is done animating
       if (i === this.particles.length - 1) {
         const percent =
-          (Date.now() - this.particles[i].startTime) / this.particles[i].animationDuration;
+          (Date.now() - this.particles[i].startTime) /
+          this.particles[i].animationDuration;
 
         if (percent > 1) {
           this.particles = [];
@@ -213,7 +226,9 @@ class ExplodingParticle {
       // Draw a circle at the current location
       ctx.beginPath();
       // ctx.arc(p.startX, p.startY, p.radius, 0, Math.PI * 2);
-      ctx.fillStyle = this.rgbArray[Math.floor(Math.random() * this.rgbArray.length)];
+      ctx.fillStyle = this.rgbArray[
+        Math.floor(Math.random() * this.rgbArray.length)
+      ];
       ctx.fillRect(this.startX, this.startY, this.radius, this.radius);
       // ctx.fill();
 
@@ -262,26 +277,37 @@ class ExpandingCircle {
     this.rgb = rgb;
   }
 
+  drawCircle(ctx, radius, percent) {
+    const x = this.x,
+      y = this.y,
+      // Radii of the white glow.
+      innerRadius = radius * 0.1,
+      outerRadius = radius * 1.1;
+
+    const gradient = ctx.createRadialGradient(
+      x,
+      y,
+      innerRadius,
+      x,
+      y,
+      outerRadius
+    );
+    gradient.addColorStop(0, `rgba(${this.rgb},0)`);
+    gradient.addColorStop(1, `rgba(${this.rgb}, ${1 - percent})`);
+
+    ctx.arc(x, y, radius, 0, 2 * Math.PI);
+
+    ctx.fillStyle = gradient;
+    ctx.fill();
+  }
+
   draw(ctx) {
     if (this.radius < 100) {
       let percent = this.radius / 100;
 
-      const x = this.x,
-        y = this.y,
-        // Radii of the white glow.
-        innerRadius = this.radius * 0.1,
-        outerRadius = this.radius * 1.1,
-        // Radius of the entire circle.
-        radius = this.radius;
-
-      var gradient = ctx.createRadialGradient(x, y, innerRadius, x, y, outerRadius);
-      gradient.addColorStop(0, `rgba(${this.rgb},0)`);
-      gradient.addColorStop(1, `rgba(${this.rgb}, ${1 - percent})`);
-
-      ctx.arc(x, y, radius, 0, 2 * Math.PI);
-
-      ctx.fillStyle = gradient;
-      ctx.fill();
+      // FIXME idk whats going on here
+      this.drawCircle(ctx, this.radius + 20, percent);
+      // this.drawCircle(ctx, this.radius - 20, percent);
 
       this.radius += 5;
     }

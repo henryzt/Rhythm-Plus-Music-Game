@@ -23,6 +23,7 @@
     "firebaseui": "^4.5.0",
     "hammerjs": "^2.0.8",
     "howler": "^2.1.3",
+    "interactjs": "^1.9.19",
     "js-md5": "^0.7.3",
     "vanilla-tilt": "^1.7.0",
     "vue": "^2.6.11",

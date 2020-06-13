@@ -1,6 +1,5 @@
 import DropTrack from "./track";
 import YoutubePlayer from "./youtube";
-import ZingTouch from "zingtouch";
 
 export default class GameInstance {
   constructor(vm) {
@@ -129,28 +128,54 @@ export default class GameInstance {
       false
     );
 
-    const tapEvent = (e) => {
-      for (let pointer of e.detail.events) {
+    let touches = {};
+
+    const tapEvent = (e, start) => {
+      e.preventDefault();
+      for (let pointer of e.changedTouches) {
+        console.log(e);
         const x = pointer.clientX;
 
         this.dropTrackArr.forEach((track) => {
           if (x > track.x && x < track.x + track.width) {
-            this.onKeyDown(track.keyBind);
-            this.onKeyUp(track.keyBind);
+            if (start) {
+              this.onKeyDown(track.keyBind);
+              touches[pointer.identifier] = track.keyBind;
+            } else {
+              this.onKeyUp(track.keyBind);
+              touches[pointer.identifier] = null;
+            }
           }
         });
       }
     };
 
-    this.touchRegion = ZingTouch.Region(this.canvas);
+    const moveEvent = (e) => {
+      for (let pointer of e.changedTouches) {
+        const x = pointer.clientX;
+        if (!touches[pointer.identifier]) return;
 
-    for (let numInputs of [1, 2, 3, 4]) {
-      this.touchRegion.bind(
-        this.canvas,
-        new ZingTouch.Tap({ numInputs }),
-        tapEvent
-      );
-    }
+        this.dropTrackArr.forEach((track) => {
+          if (x > track.x && x < track.x + track.width) {
+            if (touches[pointer.identifier] !== track.keyBind) {
+              this.onKeyUp(touches[pointer.identifier]);
+              touches[pointer.identifier] = null;
+            }
+          }
+        });
+      }
+    };
+
+    this.canvas.ontouchstart = (e) => {
+      tapEvent(e, true);
+    };
+    this.canvas.ontouchmove = moveEvent;
+    this.canvas.ontouchcancel = (e) => {
+      tapEvent(e, false);
+    };
+    this.canvas.ontouchend = (e) => {
+      tapEvent(e, false);
+    };
   }
 
   // log key and touch events

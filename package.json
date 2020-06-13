@@ -23,7 +23,6 @@
     "firebaseui": "^4.5.0",
     "hammerjs": "^2.0.8",
     "howler": "^2.1.3",
-    "interactjs": "^1.9.19",
     "js-md5": "^0.7.3",
     "vanilla-tilt": "^1.7.0",
     "vue": "^2.6.11",
@@ -34,8 +33,7 @@
     "vue-spinner": "^1.0.3",
     "vue-youtube": "^1.4.0",
     "vue2-circle-progress": "^1.2.3",
-    "vuex": "^3.3.0",
-    "zingtouch": "^1.0.6"
+    "vuex": "^3.3.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",

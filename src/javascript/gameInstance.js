@@ -24,6 +24,9 @@ export default class GameInstance {
     // clock for counting time
     this.intervalPlay = null;
 
+    // store whether key is holding
+    this.keyStatus = {};
+
     this.ytPlayer = new YoutubePlayer(vm);
 
     this.createTracks(4);
@@ -179,10 +182,22 @@ export default class GameInstance {
   }
 
   // log key and touch events
-  onKeyDown(key) {
-    console.log("keydown", key);
-    if (!this.vm.playMode && !this.paused) {
-      this.createSingleNote(key);
+  async onKeyDown(key) {
+    if (this.keyStatus[key]) return;
+    this.keyStatus[key] = true;
+    if (!this.vm.playMode && !this.paused && this.trackKeyBind.includes(key)) {
+      const cTime = await this.getCurrentTime();
+      this.createSingleNote(key, cTime);
+      const singleNoteObj = this.timeArr[this.lastAddedIdx];
+      // convert to hold note
+      setTimeout(() => {
+        if (
+          this.keyStatus[key] &&
+          singleNoteObj == this.timeArr[this.lastAddedIdx]
+        ) {
+          this.createHoldNote(key, singleNoteObj);
+        }
+      }, 350);
     }
     for (const track of this.dropTrackArr) {
       track.keyDown(key);
@@ -190,47 +205,49 @@ export default class GameInstance {
   }
 
   onKeyUp(key) {
-    console.log("keyup", key);
+    this.keyStatus[key] = false;
     for (const track of this.dropTrackArr) {
       track.keyUp(key);
     }
   }
 
-  dropNote(key, colorOverride) {
+  dropNote(key, keyObj) {
     for (const track of this.dropTrackArr) {
-      track.dropNote(key, colorOverride);
+      track.dropNote(key, keyObj);
     }
   }
 
-  async createSingleNote(key) {
-    const cTime = await this.getCurrentTime();
+  createSingleNote(key, cTime) {
     const waitTimeForMultiNote = 0.05;
-    if (this.trackKeyBind.includes(key)) {
-      // this.timeArr.push({ t: cTime.toFixed(3), k: key });
-      // this.timeArrIdx = this.timeArr.length - 1;
-      if (
-        this.lastAddedTime &&
-        this.timeArr[this.lastAddedIdx] &&
-        this.lastAddedKey !== key &&
-        cTime - this.lastAddedTime < waitTimeForMultiNote
-      ) {
-        this.timeArr[this.lastAddedIdx].k += key;
-      } else {
-        // add at idx
-        this.timeArr.splice(this.timeArrIdx, 0, {
-          t: Number(cTime.toFixed(3)),
-          k: key,
-        });
-        this.lastAddedTime = cTime;
-        this.lastAddedIdx = this.timeArrIdx;
-        this.lastAddedKey = key;
-        this.timeArrIdx++;
-        setTimeout(() => {
-          const k = this.timeArr[this.lastAddedIdx].k;
-          this.dropNote(k);
-        }, waitTimeForMultiNote * 1000 + 5);
-      }
+    // this.timeArr.push({ t: cTime.toFixed(3), k: key });
+    // this.timeArrIdx = this.timeArr.length - 1;
+    if (
+      this.lastAddedTime &&
+      this.timeArr[this.lastAddedIdx] &&
+      this.lastAddedKey !== key &&
+      cTime - this.lastAddedTime < waitTimeForMultiNote
+    ) {
+      this.timeArr[this.lastAddedIdx].k += key;
+    } else {
+      // add at idx
+      this.timeArr.splice(this.timeArrIdx, 0, {
+        t: Number(cTime.toFixed(3)),
+        k: key,
+      });
+      this.lastAddedTime = cTime;
+      this.lastAddedIdx = this.timeArrIdx;
+      this.lastAddedKey = key;
+      this.timeArrIdx++;
+      setTimeout(() => {
+        const k = this.timeArr[this.lastAddedIdx].k;
+        this.dropNote(k, this.timeArr[this.lastAddedIdx]);
+      }, waitTimeForMultiNote * 1000 + 5);
     }
+  }
+
+  createHoldNote(key, obj) {
+    console.log("hold", key, obj);
+    obj.c = "hd"; // key.category = hold
   }
 
   seeked() {

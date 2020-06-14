@@ -1,4 +1,4 @@
-export default function Note(vm, x, width, color) {
+export default function Note(vm, game, keyObj, x, width, color) {
   this.x = x;
   this.width = width;
   this.color = color;
@@ -20,14 +20,20 @@ export default function Note(vm, x, width, color) {
   };
 
   this.getDiffPercentage = function () {
-    // const dist = vm.checkHitLineY - this.y;
-    // const percentage = Math.abs(dist) / (canvas.height / 10); // the lower the better
-    let hitTimeSinceStartInSec =
-      (parseFloat(Date.now()) - parseFloat(this.timeStarted)) / 1000;
-    const diff = Math.abs(vm.noteSpeedInSec - hitTimeSinceStartInSec);
-    let percentage = diff / vm.noteSpeedInSec; // the lower the better
+    if (this.paused) {
+      // game had been pasued, time unuseable, use less accurate dist calculation instead
+      const dist = vm.checkHitLineY - this.y;
+      const percentage = Math.abs(dist) / canvas.height; // the lower the better
 
-    return percentage;
+      return percentage;
+    } else {
+      let hitTimeSinceStartInSec =
+        (parseFloat(Date.now()) - parseFloat(this.timeStarted)) / 1000;
+      const diff = Math.abs(vm.noteSpeedInSec - hitTimeSinceStartInSec);
+      let percentage = diff / vm.noteSpeedInSec; // the lower the better
+
+      return percentage;
+    }
   };
 
   this.hitAndCountScore = function () {
@@ -70,9 +76,17 @@ export default function Note(vm, x, width, color) {
 
   this.update = function () {
     this.setDelta();
+    if (this.delta > 0.5) {
+      this.delta = 0;
+      this.then = this.now;
+      this.paused = true;
+    }
     const defaultColor = this.color ?? "yellow";
     let color = this.y > vm.checkHitLineY + 10 ? "red" : defaultColor;
     if (!vm.playMode) color = defaultColor;
+
+    if (keyObj.c == "hd") color = "orange";
+
     ctx.fillStyle = color;
     ctx.fillRect(x, this.y, this.width, 10);
     ctx.filter = "none";

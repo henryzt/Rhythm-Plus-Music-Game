@@ -41,10 +41,16 @@ export default class DropTrack {
     }
   }
 
-  dropNote(key, color) {
+  dropNote(key, keyObj) {
     if (key.includes(this.keyBind) && !this.vm.playMode) {
-      this.noteArr.push(new Note(this.vm, this.x, this.width, color));
+      this.addNoteToArr(keyObj);
     }
+  }
+
+  addNoteToArr(keyObj, color) {
+    this.noteArr.push(
+      new Note(this.vm, this.game, keyObj, this.x, this.width, color)
+    );
   }
 
   resizeTrack(x, width) {
@@ -108,7 +114,7 @@ export default class DropTrack {
     if (needNote) {
       const color = playMode ? "yellow" : "grey";
       if (timing - timeArr[this.game.timeArrIdx].t < 1) {
-        this.noteArr.push(new Note(this.vm, this.x, this.width, color));
+        this.addNoteToArr(timeArr[this.game.timeArrIdx], color);
       }
       return true; // this.game.timeArrIdx++;
     }

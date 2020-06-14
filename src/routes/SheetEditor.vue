@@ -6,8 +6,8 @@
     <div class="toolbar blurBackground">
       <div class="logo">R+ Sheet Editor</div>
       <div style="flex-grow:1"></div>
+      <a href="#" @click.prevent="newEditor">New</a>
       <div style="display:flex" :class="{disabled:!initialized}">
-        <a href="#" @click.prevent="newEditor">New</a>
         <a href="#" @click.prevent="saveSheet">Save</a>
         <a href="#" @click.prevent="togglePlayMode">{{playMode?"Edit":"Test"}}</a>
         <a href="#" @click.prevent="showPublishModal">Publish</a>
@@ -271,6 +271,7 @@ export default {
       },
       newEditor(){
         this.$router.push("/editor/")
+        this.$router.go()
       },
       showPublishModal(){
         this.$refs.publishModal.show()

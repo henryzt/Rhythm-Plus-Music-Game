@@ -16,7 +16,15 @@
 
     <div class="main">
       <div class="column side left blurBackground">
-        <info-editor style="flex-grow:1" ref="info"></info-editor>
+        <div class="tabs">
+          <div class="tab" :class="{active:leftTab===1}" @click="leftTab=1">Info</div>
+          <div class="tab" :class="{active:leftTab===2}" @click="leftTab=2">Options</div>
+        </div>
+        <!-- tab 1 - info editor -->
+        <info-editor style="flex-grow:1" ref="info" v-show="leftTab===1"></info-editor>
+        <!-- tab 2 - options -->
+        <PlayControl style="flex-grow:1" ref="control" v-if="leftTab===2" :playData="$data"></PlayControl>
+        <!-- song control -->
         <SongListItem
           v-if="songInfo.id"
           :song="songInfo"
@@ -122,6 +130,7 @@ import Visualizer from '../components/Visualizer.vue';
 import InfoEditor from '../components/InfoEditor.vue';
 import SheetTable from '../components/SheetTable.vue';
 import SongListItem from '../components/SongListItem.vue';
+import PlayControl from '../components/PlayControl.vue';
 import Modal from '../components/Modal.vue';
 import Publish from '../components/Publish.vue';
 import Loading from '../components/Loading.vue';
@@ -145,7 +154,8 @@ export default {
       SongListItem,
       Loading,
       Modal,
-      Publish
+      Publish,
+      PlayControl
   },
   mixins: [GameInstanceMixin],
   data(){
@@ -164,7 +174,8 @@ export default {
           },
           gameSheetInfo: null,
           loading: false,
-          showExistingNote: true
+          showExistingNote: true,
+          leftTab: 1
         }
     },
     computed: {
@@ -215,6 +226,7 @@ export default {
           this.instance.paused = false;
           this.instance.startSong()
         }else{
+          this.instance.seeked()
           this.instance.resumeGame()
         }
       },
@@ -251,9 +263,10 @@ export default {
         }else{
           this.audio.seek(Number(time))
         }
+        this.instance.clearNotes()
         setTimeout(()=>{
           this.instance.seeked()
-        },100)
+        },200)
       },
       setPlaybackRate(rate){
         if(this.srcMode==="youtube"){
@@ -264,6 +277,7 @@ export default {
       },
       togglePlayMode(){
         this.playMode = !this.playMode;
+        this.instance.clearNotes()
         this.restartGame()
       },
       updateSongDetail(){
@@ -390,6 +404,27 @@ export default {
 
 .vicon {
   cursor: pointer;
+}
+
+.tabs {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.tab {
+  padding: 20px;
+  cursor: pointer;
+  transition: background-color 0.5s;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.active {
+  border-bottom: solid 2px white;
+}
+
+.tab:hover {
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 @media screen and (max-width: 600px) {

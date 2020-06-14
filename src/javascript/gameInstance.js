@@ -225,6 +225,12 @@ export default class GameInstance {
     }
   }
 
+  clearNotes() {
+    for (const track of this.dropTrackArr) {
+      track.noteArr = [];
+    }
+  }
+
   createSingleNote(key, cTime) {
     const waitTimeForMultiNote = 0.05;
     // this.timeArr.push({ t: cTime.toFixed(3), k: key });
@@ -299,6 +305,7 @@ export default class GameInstance {
     const intervalPrePlay = setInterval(() => {
       const elapsedTime = Date.now() - startTime;
       this.playTime = Number(elapsedTime / 1000);
+      this.paused = false;
       if (this.playTime > Number(this.vm.noteSpeedInSec)) {
         if (!this.vm.started || !this.paused) this.resumeGame();
         // this.vm.visualizerInstance.initAllVisualizersIfRequried();

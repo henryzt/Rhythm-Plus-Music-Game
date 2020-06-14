@@ -11,6 +11,7 @@ export default class DropTrack {
     this.noteArr = [];
     this.hitIndicatorOpacity = 0;
     this.isKeyDown = false;
+    this.isUserHoldingNote = false;
     this.updateHitGradient();
   }
 
@@ -18,18 +19,46 @@ export default class DropTrack {
     if (key.includes(this.keyBind) && !this.isKeyDown) {
       this.isKeyDown = true;
       this.hitIndicatorOpacity = 1;
+      const createParticle = () => {
+        this.particleEffect.create(
+          this.x,
+          this.vm.checkHitLineY,
+          this.width,
+          10,
+          this.vm.markJudge
+        );
+      };
       if (this.vm.playMode && this.noteArr && this.noteArr[0]) {
         const noteToDismiss = this.noteArr[0];
         if (noteToDismiss.getDiffPercentage() < 0.5) {
-          noteToDismiss.hitAndCountScore();
-          this.noteArr.shift();
-          this.particleEffect.create(
-            this.x,
-            this.vm.checkHitLineY,
-            this.width,
-            10,
-            this.vm.markJudge
-          );
+          noteToDismiss.calculatePercent();
+          if (noteToDismiss.isHoldNote) {
+            this.isUserHoldingNote = true;
+            let countInterval = setInterval(() => {
+              // if hold note is finished or is nearly finished but player released key, count as success
+              if (
+                noteToDismiss.isHoldNoteFinished() ||
+                (noteToDismiss.isHoldNoteFinished(true) &&
+                  !this.isUserHoldingNote)
+              ) {
+                this.isUserHoldingNote = false;
+                createParticle();
+                clearInterval(countInterval);
+                return;
+              }
+              // else check if user is still holding, if so keep counting score.
+              if (this.isUserHoldingNote) {
+                noteToDismiss.hitAndCountScore();
+              } else {
+                clearInterval(countInterval);
+              }
+            }, 100);
+          } else {
+            this.isUserHoldingNote = false;
+            noteToDismiss.hitAndCountScore();
+            this.noteArr.shift();
+          }
+          createParticle();
         }
       }
     }
@@ -38,6 +67,7 @@ export default class DropTrack {
   keyUp(key) {
     if (key.includes(this.keyBind)) {
       this.isKeyDown = false;
+      this.isUserHoldingNote = false;
     }
   }
 
@@ -109,7 +139,7 @@ export default class DropTrack {
     ctx.fillRect(this.x, hitLineY, this.width, 10);
 
     // particle effect
-    this.particleEffect.update();
+    this.particleEffect.update(this.isUserHoldingNote);
 
     // create note
     const { timeArr, playTime, currentTime } = this.game;
@@ -158,6 +188,7 @@ export class HitEffect {
     let count = 0;
     const rgb = this.getRgb(judge);
     this.circle = new ExpandingCircle(x + 5, y, rgb);
+    this.holdCircle = new SpiningCircle(x + 5, y, rgb);
 
     // Go through every location of our button and create a particle
     for (let localX = 0; localX < width; localX++) {
@@ -195,8 +226,9 @@ export class HitEffect {
     }
   }
 
-  update() {
+  update(drawHoldEffect) {
     this.circle?.draw(this.ctx);
+    if (drawHoldEffect) this.holdCircle?.draw(this.ctx);
     // Draw all of our particles in their new location
     for (let i = 0; i < this.particles.length; i++) {
       this.ctx.globalAlpha = 0.7;
@@ -277,7 +309,7 @@ class SpiningCircle {
       ctx.arc(this.x, this.y, 80, (os + 1) * Math.PI, (os + 1.5) * Math.PI);
       ctx.stroke();
       this.offset += 0.1 - percent / 10;
-      this.radius -= 4;
+      // this.radius -= 4;
     }
   }
 }

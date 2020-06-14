@@ -27,6 +27,9 @@ export default class GameInstance {
     // store whether key is holding
     this.keyStatus = {};
 
+    // store holding key
+    this.holdingNote = {};
+
     this.ytPlayer = new YoutubePlayer(vm);
 
     this.createTracks(4);
@@ -197,15 +200,20 @@ export default class GameInstance {
         ) {
           this.createHoldNote(key, singleNoteObj);
         }
-      }, 350);
+      }, 300);
     }
     for (const track of this.dropTrackArr) {
       track.keyDown(key);
     }
   }
 
-  onKeyUp(key) {
+  async onKeyUp(key) {
     this.keyStatus[key] = false;
+    if (this.holdingNote[key]) {
+      const cTime = await this.getCurrentTime();
+      this.holdingNote[key].h[key] = cTime;
+      this.holdingNote[key] = null;
+    }
     for (const track of this.dropTrackArr) {
       track.keyUp(key);
     }
@@ -250,6 +258,7 @@ export default class GameInstance {
     console.log("hold", key, obj);
     obj.h = obj.h ?? {}; // key.hold = {key: endTime}
     obj.h[key] = -1; // -1: not yet completed
+    this.holdingNote[key] = obj;
   }
 
   seeked() {

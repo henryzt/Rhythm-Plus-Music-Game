@@ -9,6 +9,8 @@ export default class Note {
     this.key = key;
     this.ctx = vm.ctx;
     this.canvas = vm.canvas;
+    this.percentage = 0;
+    this.isHoldNote = false;
 
     this.y = 0;
     this.singleNoteHeight = 10;
@@ -44,9 +46,23 @@ export default class Note {
     }
   }
 
+  calculatePercent() {
+    this.percentage = this.getDiffPercentage();
+    if (this.percentage < 0.05) {
+      this.vm.result.marks.perfect += 1;
+      this.vm.markJudge = "Perfect";
+    } else if (this.percentage < 0.25) {
+      this.vm.result.marks.good += 1;
+      this.vm.markJudge = "Good";
+    } else if (this.percentage < 0.5) {
+      this.vm.result.marks.offbeat += 1;
+      this.vm.markJudge = "Offbeat";
+    }
+  }
+
   hitAndCountScore() {
     this.vibrate(25);
-    const percentage = this.getDiffPercentage();
+    const percentage = this.percentage;
     let accuracyPercent = 100 * (1 - percentage);
     this.vm.result.totalPercentage += accuracyPercent;
     this.vm.result.totalHitNotes += 1;
@@ -56,21 +72,17 @@ export default class Note {
       this.vm.result.combo > this.vm.result.maxCombo
         ? this.vm.result.combo
         : this.vm.result.maxCombo;
-    if (percentage < 0.05) {
-      this.vm.result.marks.perfect += 1;
-      this.vm.markJudge = "Perfect";
-    } else if (percentage < 0.25) {
-      this.vm.result.marks.good += 1;
-      this.vm.markJudge = "Good";
-    } else if (percentage < 0.5) {
-      this.vm.result.marks.offbeat += 1;
-      this.vm.markJudge = "Offbeat";
-    }
     this.hitIndicator(this.vm);
   }
 
   isOutOfCanvas() {
-    const isOut = this.y > this.canvas.height;
+    const yOut = this.y > this.canvas.height;
+    const isOut =
+      (yOut && !this.isHoldNote) ||
+      (yOut &&
+        this.isHoldNote &&
+        !this.game.keyStatus[this.key] &&
+        !this.isHoldNoteFinished(true));
     if (this.vm.started && isOut) {
       this.vm.result.marks.miss += 1;
       this.vm.result.totalHitNotes += 1;
@@ -79,7 +91,15 @@ export default class Note {
       this.vibrate([20, 20, 50]);
       this.hitIndicator(this.vm);
     }
+    if (this.isHoldNote && this.holdNoteY > this.canvas.height) {
+      return true;
+    }
     return isOut;
+  }
+
+  isHoldNoteFinished(nearly) {
+    const offset = nearly ? 50 : 0;
+    return this.holdNoteY > this.vm.checkHitLineY - offset;
   }
 
   update() {
@@ -96,7 +116,8 @@ export default class Note {
         : defaultColor;
     if (!this.vm.playMode) color = defaultColor;
 
-    if (this.keyObj.h && this.keyObj.h[this.key]) {
+    if (this.isHoldNote || (this.keyObj.h && this.keyObj.h[this.key])) {
+      this.isHoldNote = true;
       color = "orange";
       this.drawHoldNote(color);
     } else {
@@ -112,8 +133,8 @@ export default class Note {
   }
 
   drawHoldNote(color) {
-    let holdLengthInSec = this.keyObj.h[this.key];
-    holdLengthInSec = holdLengthInSec === -1 ? 100 : holdLengthInSec;
+    const endTime = this.keyObj.h[this.key];
+    const holdLengthInSec = endTime === -1 ? 100 : endTime - this.keyObj.t;
     const noteHeight = holdLengthInSec * this.vm.noteSpeedPxPerSec;
     this.holdNoteY = this.y - noteHeight + this.singleNoteHeight;
     this.ctx.fillStyle = color;

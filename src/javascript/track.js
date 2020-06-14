@@ -33,6 +33,7 @@ export default class DropTrack {
         if (noteToDismiss.getDiffPercentage() < 0.5) {
           noteToDismiss.calculatePercent();
           if (noteToDismiss.isHoldNote) {
+            if (noteToDismiss.noteFailed) return;
             this.isUserHoldingNote = true;
             let countInterval = setInterval(() => {
               // if hold note is finished or is nearly finished but player released key, count as success
@@ -42,14 +43,16 @@ export default class DropTrack {
                   !this.isUserHoldingNote)
               ) {
                 this.isUserHoldingNote = false;
+                noteToDismiss.isHoldingDone = true;
                 createParticle();
                 clearInterval(countInterval);
                 return;
               }
               // else check if user is still holding, if so keep counting score.
-              if (this.isUserHoldingNote) {
+              if (this.isUserHoldingNote && !noteToDismiss.noteFailed) {
                 noteToDismiss.hitAndCountScore();
               } else {
+                this.isUserHoldingNote = false;
                 clearInterval(countInterval);
               }
             }, 100);
@@ -106,7 +109,7 @@ export default class DropTrack {
 
     // note update
     for (let i = 0; i < this.noteArr.length; ++i) {
-      this.noteArr[i].update();
+      this.noteArr[i].update(i === 0 && this.isUserHoldingNote);
       if (this.noteArr[i].isOutOfCanvas()) {
         this.noteArr.splice(i, 1); // Remove out of canvas note
         --i; // Correct the index value

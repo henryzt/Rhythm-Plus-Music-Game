@@ -10,7 +10,9 @@ export default class Note {
     this.ctx = vm.ctx;
     this.canvas = vm.canvas;
     this.percentage = 0;
-    this.isHoldNote = false;
+    this.isHoldNote = keyObj.h && keyObj.h[key];
+    this.isUserHolding = false;
+    this.isHoldingDone = false;
 
     this.y = 0;
     this.singleNoteHeight = 10;
@@ -81,28 +83,30 @@ export default class Note {
       (yOut && !this.isHoldNote) ||
       (yOut &&
         this.isHoldNote &&
-        !this.game.keyStatus[this.key] &&
+        !this.isUserHolding &&
         !this.isHoldNoteFinished(true));
-    if (this.vm.started && isOut) {
+    if (this.vm.started && isOut && !this.noteFailed) {
       this.vm.result.marks.miss += 1;
       this.vm.result.totalHitNotes += 1;
       this.vm.result.combo = 0;
       this.vm.markJudge = "Miss";
       this.vibrate([20, 20, 50]);
       this.hitIndicator(this.vm);
+      this.noteFailed = true;
     }
-    if (this.isHoldNote && this.holdNoteY > this.canvas.height) {
-      return true;
-    }
-    return isOut;
+    const shouldClean =
+      (yOut && !this.isHoldNote) ||
+      (this.isHoldNote &&
+        (this.holdNoteY > this.canvas.height || this.isHoldingDone));
+    return shouldClean;
   }
 
   isHoldNoteFinished(nearly) {
-    const offset = nearly ? 50 : 0;
+    const offset = nearly ? 100 : 0;
     return this.holdNoteY > this.vm.checkHitLineY - offset;
   }
 
-  update() {
+  update(isUserHolding) {
     this.setDelta();
     if (this.delta > 0.5) {
       this.delta = 0;
@@ -110,17 +114,20 @@ export default class Note {
       this.paused = true;
     }
     const defaultColor = this.color ?? "yellow";
-    let color =
-      this.y > this.vm.checkHitLineY + this.singleNoteHeight
-        ? "red"
-        : defaultColor;
-    if (!this.vm.playMode) color = defaultColor;
-
-    if (this.isHoldNote || (this.keyObj.h && this.keyObj.h[this.key])) {
+    if (
+      this.isHoldNote ||
+      (!this.vm.playMode && this.keyObj.h && this.keyObj.h[this.key])
+    ) {
+      let color = this.noteFailed ? "grey" : defaultColor;
       this.isHoldNote = true;
-      color = "orange";
+      this.isUserHolding = isUserHolding;
       this.drawHoldNote(color);
     } else {
+      let color =
+        this.y > this.vm.checkHitLineY + this.singleNoteHeight
+          ? "red"
+          : defaultColor;
+      if (!this.vm.playMode) color = defaultColor;
       this.drawSingleNote(color);
     }
 
@@ -137,8 +144,14 @@ export default class Note {
     const holdLengthInSec = endTime === -1 ? 100 : endTime - this.keyObj.t;
     const noteHeight = holdLengthInSec * this.vm.noteSpeedPxPerSec;
     this.holdNoteY = this.y - noteHeight + this.singleNoteHeight;
+    const paintY = this.holdNoteY < 0 ? 0 : this.holdNoteY;
+    let paintHeight =
+      this.holdNoteY < 0 ? this.holdNoteY + noteHeight : noteHeight;
+    paintHeight = this.isUserHolding
+      ? this.vm.checkHitLineY - paintY
+      : paintHeight;
     this.ctx.fillStyle = color;
-    this.ctx.fillRect(this.x, this.holdNoteY, this.width, noteHeight);
+    this.ctx.fillRect(this.x, paintY, this.width, paintHeight);
   }
 
   vibrate(pattern) {

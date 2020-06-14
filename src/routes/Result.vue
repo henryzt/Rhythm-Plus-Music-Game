@@ -325,6 +325,7 @@ export default {
     line-height: 1.5em;
     margin: 10px auto;
     padding: 20px;
+    opacity: 1;
   }
   .song_item_sec .title {
     font-size: 1.4em;

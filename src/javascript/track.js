@@ -49,7 +49,15 @@ export default class DropTrack {
 
   addNoteToArr(keyObj, color) {
     this.noteArr.push(
-      new Note(this.vm, this.game, keyObj, this.x, this.width, color)
+      new Note(
+        this.vm,
+        this.game,
+        keyObj,
+        this.keyBind,
+        this.x,
+        this.width,
+        color
+      )
     );
   }
 

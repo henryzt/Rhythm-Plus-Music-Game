@@ -1,11 +1,12 @@
 export default class Note {
-  constructor(vm, game, keyObj, x, width, color) {
+  constructor(vm, game, keyObj, key, x, width, color) {
     this.x = x;
     this.width = width;
     this.color = color;
     this.vm = vm;
     this.game = game;
     this.keyObj = keyObj;
+    this.key = key;
     this.ctx = vm.ctx;
     this.canvas = vm.canvas;
 
@@ -95,7 +96,7 @@ export default class Note {
         : defaultColor;
     if (!this.vm.playMode) color = defaultColor;
 
-    if (this.keyObj.c == "hd") {
+    if (this.keyObj.h && this.keyObj.h[this.key]) {
       color = "orange";
       this.drawHoldNote(color);
     } else {
@@ -111,9 +112,8 @@ export default class Note {
   }
 
   drawHoldNote(color) {
-    const holdLengthInSec = this.keyObj.et
-      ? this.keyObj.et - this.keyObj.t
-      : 100;
+    let holdLengthInSec = this.keyObj.h[this.key];
+    holdLengthInSec = holdLengthInSec === -1 ? 100 : holdLengthInSec;
     const noteHeight = holdLengthInSec * this.vm.noteSpeedPxPerSec;
     this.holdNoteY = this.y - noteHeight + this.singleNoteHeight;
     this.ctx.fillStyle = color;

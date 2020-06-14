@@ -22,7 +22,7 @@ export default class GameInstance {
     this.lastAddedIdx = null;
 
     // clock for counting time
-    this.intervalPlay = null;
+    // this.intervalPlay = null;
 
     // store whether key is holding
     this.keyStatus = {};
@@ -221,28 +221,36 @@ export default class GameInstance {
     const waitTimeForMultiNote = 0.05;
     // this.timeArr.push({ t: cTime.toFixed(3), k: key });
     // this.timeArrIdx = this.timeArr.length - 1;
+    const addNote = (idx, time) => {
+      // add at idx
+      let keyObj = {
+        t: Number(time.toFixed(3)),
+        k: key,
+      };
+      this.timeArr.splice(idx, 0, keyObj);
+      return keyObj;
+    };
+
+    let keyObj = null;
     if (
       this.lastAddedTime &&
       this.timeArr[this.lastAddedIdx] &&
       this.lastAddedKey !== key &&
       cTime - this.lastAddedTime < waitTimeForMultiNote
     ) {
-      this.timeArr[this.lastAddedIdx].k += key;
+      keyObj = addNote(this.lastAddedIdx + 1, this.lastAddedTime);
     } else {
-      // add at idx
-      this.timeArr.splice(this.timeArrIdx, 0, {
-        t: Number(cTime.toFixed(3)),
-        k: key,
-      });
+      keyObj = addNote(this.timeArrIdx, cTime);
       this.lastAddedTime = cTime;
       this.lastAddedIdx = this.timeArrIdx;
       this.lastAddedKey = key;
       this.timeArrIdx++;
-      setTimeout(() => {
-        const k = this.timeArr[this.lastAddedIdx].k;
-        this.dropNote(k, this.timeArr[this.lastAddedIdx]);
-      }, waitTimeForMultiNote * 1000 + 5);
+      // setTimeout(() => {
+      //   const k = this.timeArr[this.lastAddedIdx].k;
+      //   this.dropNote(k, this.timeArr[this.lastAddedIdx]);
+      // }, waitTimeForMultiNote * 1000 + 5);
     }
+    this.dropNote(key, keyObj);
   }
 
   createHoldNote(key, obj) {
@@ -271,6 +279,7 @@ export default class GameInstance {
     if (this.destoryed) return;
     requestAnimationFrame(this.update.bind(this));
     if (this.vm.started && this.paused && this.vm.playMode) return;
+    if (this.vm.started) this.gameTimingLoop();
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.vm.visualizerInstance.renderVisualizer();
     let shouldAdvance = false;
@@ -292,27 +301,29 @@ export default class GameInstance {
         if (!this.vm.started || !this.paused) this.resumeGame();
         // this.vm.visualizerInstance.initAllVisualizersIfRequried();
         clearInterval(intervalPrePlay);
-        clearInterval(this.intervalPlay);
+        // clearInterval(this.intervalPlay);
         this.vm.started = true;
-        this.intervalPlay = setInterval(async () => {
-          const cTime = await this.getCurrentTime();
-          this.playTime = cTime + Number(this.vm.noteSpeedInSec);
-          this.currentTime = cTime;
-          const lastIdx = this.timeArr.length - 1;
-
-          // check game end
-          if (
-            !this.vm.inEditor &&
-            this.vm.playMode &&
-            this.timeArrIdx >= lastIdx &&
-            this.timeArr[lastIdx] &&
-            this.playTime > Number(this.timeArr[lastIdx].t) + 5
-          ) {
-            this.vm.gameEnded();
-          }
-        }, 100);
+        // this.intervalPlay = setInterval(this.gameTimingLoop.bind(this), 100);
       }
     }, 100);
+  }
+
+  async gameTimingLoop() {
+    const cTime = await this.getCurrentTime();
+    this.playTime = cTime + Number(this.vm.noteSpeedInSec);
+    this.currentTime = cTime;
+
+    // check game end
+    const lastIdx = this.timeArr.length - 1;
+    if (
+      !this.vm.inEditor &&
+      this.vm.playMode &&
+      this.timeArrIdx >= lastIdx &&
+      this.timeArr[lastIdx] &&
+      this.playTime > Number(this.timeArr[lastIdx].t) + 5
+    ) {
+      this.vm.gameEnded();
+    }
   }
 
   getCurrentTime() {
@@ -323,7 +334,7 @@ export default class GameInstance {
   }
 
   resetPlaying(resetTimeArr) {
-    clearInterval(this.intervalPlay);
+    // clearInterval(this.intervalPlay);
     this.ytPlayer.resetVideo();
     if (resetTimeArr) this.timeArr = [];
     this.timeArrIdx = 0;

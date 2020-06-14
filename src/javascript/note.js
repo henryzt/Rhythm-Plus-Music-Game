@@ -10,6 +10,7 @@ export default class Note {
     this.canvas = vm.canvas;
 
     this.y = 0;
+    this.singleNoteHeight = 10;
 
     // modulate speed, ref https://www.viget.com/articles/time-based-animation/
     this.now = Date.now();
@@ -88,15 +89,35 @@ export default class Note {
       this.paused = true;
     }
     const defaultColor = this.color ?? "yellow";
-    let color = this.y > this.vm.checkHitLineY + 10 ? "red" : defaultColor;
+    let color =
+      this.y > this.vm.checkHitLineY + this.singleNoteHeight
+        ? "red"
+        : defaultColor;
     if (!this.vm.playMode) color = defaultColor;
 
-    if (this.keyObj.c == "hd") color = "orange";
+    if (this.keyObj.c == "hd") {
+      color = "orange";
+      this.drawHoldNote(color);
+    } else {
+      this.drawSingleNote(color);
+    }
 
-    this.ctx.fillStyle = color;
-    this.ctx.fillRect(this.x, this.y, this.width, 10);
-    this.ctx.filter = "none";
     this.y += this.vm.noteSpeedPxPerSec * this.delta;
+  }
+
+  drawSingleNote(color) {
+    this.ctx.fillStyle = color;
+    this.ctx.fillRect(this.x, this.y, this.width, this.singleNoteHeight);
+  }
+
+  drawHoldNote(color) {
+    const holdLengthInSec = this.keyObj.et
+      ? this.keyObj.et - this.keyObj.t
+      : 100;
+    const noteHeight = holdLengthInSec * this.vm.noteSpeedPxPerSec;
+    this.holdNoteY = this.y - noteHeight + this.singleNoteHeight;
+    this.ctx.fillStyle = color;
+    this.ctx.fillRect(this.x, this.holdNoteY, this.width, noteHeight);
   }
 
   vibrate(pattern) {

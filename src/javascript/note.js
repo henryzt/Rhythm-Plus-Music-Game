@@ -1,80 +1,86 @@
-export default function Note(vm, game, keyObj, x, width, color) {
-  this.x = x;
-  this.width = width;
-  this.color = color;
-  const { ctx, canvas } = vm;
+export default class Note {
+  constructor(vm, game, keyObj, x, width, color) {
+    this.x = x;
+    this.width = width;
+    this.color = color;
+    this.vm = vm;
+    this.game = game;
+    this.keyObj = keyObj;
+    this.ctx = vm.ctx;
+    this.canvas = vm.canvas;
 
-  this.y = 0;
+    this.y = 0;
 
-  // modulate speed, ref https://www.viget.com/articles/time-based-animation/
-  this.now = Date.now();
-  this.delta = 0;
-  this.then = 0;
-  this.timeStarted = this.now;
+    // modulate speed, ref https://www.viget.com/articles/time-based-animation/
+    this.now = Date.now();
+    this.delta = 0;
+    this.then = 0;
+    this.timeStarted = this.now;
+  }
 
-  this.setDelta = function () {
+  setDelta() {
     if (this.then === 0) this.then = this.now;
     this.now = Date.now();
     this.delta = (parseFloat(this.now) - parseFloat(this.then)) / 1000; // seconds since last frame
     this.then = this.now;
-  };
+  }
 
-  this.getDiffPercentage = function () {
+  getDiffPercentage() {
     if (this.paused) {
       // game had been pasued, time unuseable, use less accurate dist calculation instead
-      const dist = vm.checkHitLineY - this.y;
-      const percentage = Math.abs(dist) / canvas.height; // the lower the better
+      const dist = this.vm.checkHitLineY - this.y;
+      const percentage = Math.abs(dist) / this.canvas.height; // the lower the better
 
       return percentage;
     } else {
       let hitTimeSinceStartInSec =
         (parseFloat(Date.now()) - parseFloat(this.timeStarted)) / 1000;
-      const diff = Math.abs(vm.noteSpeedInSec - hitTimeSinceStartInSec);
-      let percentage = diff / vm.noteSpeedInSec; // the lower the better
+      const diff = Math.abs(this.vm.noteSpeedInSec - hitTimeSinceStartInSec);
+      let percentage = diff / this.vm.noteSpeedInSec; // the lower the better
 
       return percentage;
     }
-  };
+  }
 
-  this.hitAndCountScore = function () {
+  hitAndCountScore() {
     this.vibrate(25);
     const percentage = this.getDiffPercentage();
     let accuracyPercent = 100 * (1 - percentage);
-    vm.result.totalPercentage += accuracyPercent;
-    vm.result.totalHitNotes += 1;
-    vm.result.score += 3 * accuracyPercent;
-    vm.result.combo += 1;
-    vm.result.maxCombo =
-      vm.result.combo > vm.result.maxCombo
-        ? vm.result.combo
-        : vm.result.maxCombo;
+    this.vm.result.totalPercentage += accuracyPercent;
+    this.vm.result.totalHitNotes += 1;
+    this.vm.result.score += 3 * accuracyPercent;
+    this.vm.result.combo += 1;
+    this.vm.result.maxCombo =
+      this.vm.result.combo > this.vm.result.maxCombo
+        ? this.vm.result.combo
+        : this.vm.result.maxCombo;
     if (percentage < 0.05) {
-      vm.result.marks.perfect += 1;
-      vm.markJudge = "Perfect";
+      this.vm.result.marks.perfect += 1;
+      this.vm.markJudge = "Perfect";
     } else if (percentage < 0.25) {
-      vm.result.marks.good += 1;
-      vm.markJudge = "Good";
+      this.vm.result.marks.good += 1;
+      this.vm.markJudge = "Good";
     } else if (percentage < 0.5) {
-      vm.result.marks.offbeat += 1;
-      vm.markJudge = "Offbeat";
+      this.vm.result.marks.offbeat += 1;
+      this.vm.markJudge = "Offbeat";
     }
-    this.hitIndicator(vm);
-  };
+    this.hitIndicator(this.vm);
+  }
 
-  this.isOutOfCanvas = function () {
-    const isOut = this.y > canvas.height;
-    if (vm.started && isOut) {
-      vm.result.marks.miss += 1;
-      vm.result.totalHitNotes += 1;
-      vm.result.combo = 0;
-      vm.markJudge = "Miss";
+  isOutOfCanvas() {
+    const isOut = this.y > this.canvas.height;
+    if (this.vm.started && isOut) {
+      this.vm.result.marks.miss += 1;
+      this.vm.result.totalHitNotes += 1;
+      this.vm.result.combo = 0;
+      this.vm.markJudge = "Miss";
       this.vibrate([20, 20, 50]);
-      this.hitIndicator(vm);
+      this.hitIndicator(this.vm);
     }
     return isOut;
-  };
+  }
 
-  this.update = function () {
+  update() {
     this.setDelta();
     if (this.delta > 0.5) {
       this.delta = 0;
@@ -82,27 +88,27 @@ export default function Note(vm, game, keyObj, x, width, color) {
       this.paused = true;
     }
     const defaultColor = this.color ?? "yellow";
-    let color = this.y > vm.checkHitLineY + 10 ? "red" : defaultColor;
-    if (!vm.playMode) color = defaultColor;
+    let color = this.y > this.vm.checkHitLineY + 10 ? "red" : defaultColor;
+    if (!this.vm.playMode) color = defaultColor;
 
-    if (keyObj.c == "hd") color = "orange";
+    if (this.keyObj.c == "hd") color = "orange";
 
-    ctx.fillStyle = color;
-    ctx.fillRect(x, this.y, this.width, 10);
-    ctx.filter = "none";
-    this.y += vm.noteSpeedPxPerSec * this.delta;
-  };
+    this.ctx.fillStyle = color;
+    this.ctx.fillRect(this.x, this.y, this.width, 10);
+    this.ctx.filter = "none";
+    this.y += this.vm.noteSpeedPxPerSec * this.delta;
+  }
 
-  this.vibrate = function (pattern) {
-    if (vm.vibrate && window.navigator.vibrate)
+  vibrate(pattern) {
+    if (this.vm.vibrate && window.navigator.vibrate)
       window.navigator.vibrate(pattern);
-  };
+  }
 
-  this.hitIndicator = function () {
-    if (!vm.$refs.hitIndicator || !vm.playMode) return;
-    vm.$refs.hitIndicator.classList.remove("hitAnimation");
+  hitIndicator() {
+    if (!this.vm.$refs.hitIndicator || !this.vm.playMode) return;
+    this.vm.$refs.hitIndicator.classList.remove("hitAnimation");
     setTimeout(() => {
-      vm.$refs.hitIndicator.classList.add("hitAnimation");
+      this.vm.$refs.hitIndicator.classList.add("hitAnimation");
     }, 2);
-  };
+  }
 }

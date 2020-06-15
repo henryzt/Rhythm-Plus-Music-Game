@@ -102,17 +102,26 @@ export default class Note {
   }
 
   isHoldNoteFinished(nearly) {
-    const offset = nearly ? 100 : 0;
+    const offset = nearly
+      ? Math.min.apply(0, [this.holdNoteHeight / 10, 100])
+      : 0;
     return this.holdNoteY > this.vm.checkHitLineY - offset;
   }
 
   update(isUserHolding) {
     this.setDelta();
-    if (this.delta > 0.5) {
+    // game has been paused, reset delta
+    if (this.delta > 0.5 || this.vm.paused) {
       this.delta = 0;
       this.then = this.now;
       this.paused = true;
     }
+
+    if (this.vm.inEditor && this.vm.selectedNotes.includes(this.keyObj)) {
+      this.ctx.shadowBlur = 20;
+      this.ctx.shadowColor = "orange";
+    }
+
     const defaultColor = this.color ?? "yellow";
     if (
       this.isHoldNote ||
@@ -131,6 +140,10 @@ export default class Note {
       this.drawSingleNote(color);
     }
 
+    this.ctx.shadowBlur = 0;
+
+    if (this.game.paused) return;
+
     this.y += this.vm.noteSpeedPxPerSec * this.delta;
   }
 
@@ -143,6 +156,7 @@ export default class Note {
     const endTime = this.keyObj.h[this.key];
     const holdLengthInSec = endTime === -1 ? 100 : endTime - this.keyObj.t;
     const noteHeight = holdLengthInSec * this.vm.noteSpeedPxPerSec;
+    this.holdNoteHeight = noteHeight;
     this.holdNoteY = this.y - noteHeight + this.singleNoteHeight;
     const paintY = this.holdNoteY < 0 ? 0 : this.holdNoteY;
     let paintHeight =

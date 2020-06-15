@@ -141,6 +141,9 @@ export default class DropTrack {
     const hitLineY = playMode ? checkHitLineY : 0;
     ctx.fillRect(this.x, hitLineY, this.width, 10);
 
+    // in editor, one time update
+    if (this.game.paused) return;
+
     // particle effect
     this.particleEffect.update(this.isUserHoldingNote);
 

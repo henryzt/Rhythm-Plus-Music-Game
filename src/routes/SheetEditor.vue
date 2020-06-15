@@ -175,6 +175,7 @@ export default {
           gameSheetInfo: null,
           loading: false,
           showExistingNote: true,
+          selectedNotes: [],
           leftTab: 1
         }
     },
@@ -356,6 +357,11 @@ export default {
 .toolbar a:hover {
   background-color: #ddd;
   color: black;
+}
+
+.perspective {
+  transform: rotateX(30deg) scaleY(1.5);
+  transform-origin: 50% 100%;
 }
 
 .main {

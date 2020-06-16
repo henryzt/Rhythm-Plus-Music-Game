@@ -50,7 +50,7 @@ export default class DropTrack {
               }
               // else check if user is still holding, if so keep counting score.
               if (this.isUserHoldingNote && !noteToDismiss.noteFailed) {
-                noteToDismiss.hitAndCountScore();
+                noteToDismiss.hitAndCountScore(true);
               } else {
                 this.isUserHoldingNote = false;
                 clearInterval(countInterval);

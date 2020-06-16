@@ -49,7 +49,8 @@ export default class Note {
   }
 
   calculatePercent() {
-    this.percentage = this.getDiffPercentage();
+    this.percentage = 1 - ((1 - this.getDiffPercentage() - 0.2) / 4) * 5;
+    this.percentage = this.percentage < 1 ? this.percentage : 1;
     if (this.percentage < 0.05) {
       this.vm.result.marks.perfect += 1;
       this.vm.markJudge = "Perfect";
@@ -62,12 +63,15 @@ export default class Note {
     }
   }
 
-  hitAndCountScore() {
+  hitAndCountScore(isHolding) {
     this.vibrate(25);
     const percentage = this.percentage;
     let accuracyPercent = 100 * (1 - percentage);
-    this.vm.result.totalPercentage += accuracyPercent;
-    this.vm.result.totalHitNotes += 1;
+    if (!isHolding) {
+      // hold note does not count towards accuracy percent
+      this.vm.result.totalPercentage += accuracyPercent;
+      this.vm.result.totalHitNotes += 1;
+    }
     this.vm.result.score += 3 * accuracyPercent;
     this.vm.result.combo += 1;
     this.vm.result.maxCombo =

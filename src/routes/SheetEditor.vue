@@ -16,7 +16,7 @@
 
     <div class="main">
       <div class="column side left blurBackground">
-        <div class="tabs">
+        <div class="tabs" :class="{disabled:!initialized}">
           <div class="tab" :class="{active:leftTab===1}" @click="leftTab=1">Info</div>
           <div class="tab" :class="{active:leftTab===2}" @click="leftTab=2">Options</div>
         </div>
@@ -97,7 +97,7 @@
         ></vue-slider>
       </div>
       <div style="width:90px;margin-left:30px;">
-        <select id="songSelect" v-model="playbackSpeed">
+        <select id="songSelect" v-model="playbackSpeed" :disabled="playMode">
           <option disabled>Playback Speed</option>
           <option value="0.25">0.25X</option>
           <option value="0.5">0.5X</option>
@@ -227,7 +227,7 @@ export default {
           this.instance.paused = false;
           this.instance.startSong()
         }else{
-          this.instance.seeked()
+          if(!this.playMode) this.instance.seeked();
           this.instance.resumeGame()
         }
       },
@@ -278,6 +278,7 @@ export default {
       },
       togglePlayMode(){
         this.playMode = !this.playMode;
+        this.playbackSpeed = 1;
         this.instance.clearNotes()
         this.restartGame()
       },

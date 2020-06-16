@@ -231,12 +231,6 @@ export default class GameInstance {
     }
   }
 
-  repaintNotes() {
-    // this will introduce wired bug where the particle effect will repaint like crasy, TODO REMOVE
-    if (!this.paused) return;
-    this.update(null, true);
-  }
-
   createSingleNote(key, cTime) {
     const waitTimeForMultiNote = 0.05;
     // this.timeArr.push({ t: cTime.toFixed(3), k: key });
@@ -276,6 +270,7 @@ export default class GameInstance {
   seeked() {
     // advance time arr idx if play time is changed
     if (this.vm.inEditor) {
+      this.timeArrIdx = -1;
       const cTime = this.currentTime;
       let idx = this.timeArr.findIndex((e) => e.t >= cTime);
       if (idx === -1) {
@@ -285,15 +280,16 @@ export default class GameInstance {
             ? endIdx + 1
             : 0;
       }
+      this.clearNotes();
       this.timeArrIdx = idx;
     }
   }
 
   // animate all
-  update(ts, overrideUpdate) {
+  update() {
     if (this.destoryed) return;
     requestAnimationFrame(this.update.bind(this));
-    if (this.vm.started && this.paused && overrideUpdate) return;
+    if (this.vm.started && this.paused && !this.vm.inEditor) return;
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.vm.visualizerInstance.renderVisualizer();
     let shouldAdvance = false;

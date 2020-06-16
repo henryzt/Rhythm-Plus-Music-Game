@@ -111,7 +111,7 @@ export default class Note {
   update(isUserHolding) {
     this.setDelta();
     // game has been paused, reset delta
-    if (this.delta > 0.5 || this.vm.paused) {
+    if (this.delta > 0.5 || this.game.paused) {
       this.delta = 0;
       this.then = this.now;
       this.paused = true;
@@ -120,6 +120,7 @@ export default class Note {
     if (this.vm.inEditor && this.vm.selectedNotes.includes(this.keyObj)) {
       this.ctx.shadowBlur = 20;
       this.ctx.shadowColor = "orange";
+      this.ctx.globalAlpha = 0.5;
     }
 
     const defaultColor = this.color ?? "yellow";
@@ -141,6 +142,7 @@ export default class Note {
     }
 
     this.ctx.shadowBlur = 0;
+    this.ctx.globalAlpha = 1;
 
     if (this.game.paused) return;
 

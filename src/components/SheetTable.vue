@@ -73,7 +73,6 @@ export default {
         },
         '$parent.selectedNotes'(){
           this.selectedAll = this.$parent.selectedNotes.length!==0 && this.$parent.selectedNotes.length===this.instance.timeArr.length;
-          this.instance.repaintNotes()
         }
     },
     methods:{

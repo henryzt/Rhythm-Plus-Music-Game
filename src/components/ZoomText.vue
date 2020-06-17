@@ -28,7 +28,7 @@ export default {
             this.text = text;
             this.position = position ?? this.position;
             this.duration = duration ?? this.duration;
-            if(classObj) this.classObj = { classObj };
+            if(classObj) this.classObj = { [classObj]:true };
            this.display = true;
         }
     }
@@ -44,8 +44,12 @@ export default {
   justify-content: center;
   align-items: center;
   font-size: 4em;
-  font-weight: 800;
+  font-weight: 900;
   pointer-events: none;
+}
+
+.fever {
+  font-size: 5em;
 }
 
 .bounce-enter-active {
@@ -58,8 +62,10 @@ export default {
   0% {
     transform: scale(0);
     opacity: 0;
+    font-weight: 100;
   }
   50% {
+    font-weight: 900;
     opacity: 1;
   }
   100% {
@@ -75,6 +81,7 @@ export default {
   100% {
     opacity: 0;
     transform: scale(2);
+    font-weight: 100;
   }
 }
 </style>

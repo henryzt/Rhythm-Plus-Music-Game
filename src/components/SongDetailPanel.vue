@@ -75,8 +75,8 @@ export default {
   padding: 0;
   transition: 0.5s;
   text-align: center;
-  overflow: hidden;
   min-width: 300px;
+  white-space: normal;
 }
 .song_item:hover {
   background: rgba(255, 255, 255, 0.35);
@@ -85,6 +85,7 @@ export default {
   display: flex;
   flex-direction: column;
   padding: 20px;
+  width: 100%;
 }
 .image {
   width: 100%;

@@ -72,12 +72,13 @@ export default class Note {
       this.vm.result.totalPercentage += accuracyPercent;
       this.vm.result.totalHitNotes += 1;
     }
-    this.vm.result.score += 3 * accuracyPercent;
+    this.vm.result.score += 3 * accuracyPercent * this.vm.fever.value;
     this.vm.result.combo += 1;
     this.vm.result.maxCombo =
       this.vm.result.combo > this.vm.result.maxCombo
         ? this.vm.result.combo
         : this.vm.result.maxCombo;
+    this.vm.fever.percent += (1 - percentage) / 100;
     this.hitIndicator(this.vm);
   }
 
@@ -94,6 +95,7 @@ export default class Note {
       this.vm.result.totalHitNotes += 1;
       this.vm.result.combo = 0;
       this.vm.markJudge = "Miss";
+      this.vm.fever.percent -= 0.3;
       this.vibrate([20, 20, 50]);
       this.hitIndicator(this.vm);
       this.noteFailed = true;

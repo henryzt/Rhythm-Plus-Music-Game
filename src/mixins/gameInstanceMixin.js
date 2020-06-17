@@ -19,7 +19,9 @@ export default {
         maxCombo: 0,
         marks: { perfect: 0, good: 0, offbeat: 0, miss: 0 },
       },
+      fever: { value: 1, time: 0, percent: 0 },
       markJudge: "",
+      feverInterval: null,
       srcMode: "youtube",
       instance: null,
       visualizerInstance: null,
@@ -72,9 +74,12 @@ export default {
     this.instance = new GameInstance(this);
     this.instance.reposition();
 
+    this.feverInterval = setInterval(this.feverTimer, 500);
+
     window.addEventListener("blur", this.pauseGame);
   },
-  destroyed() {
+  beforeDestroy() {
+    clearInterval(this.feverInterval);
     window.removeEventListener("blur", this.pauseGame);
     this.instance.destroyInstance();
   },
@@ -88,6 +93,27 @@ export default {
         maxCombo: 0,
         marks: { perfect: 0, good: 0, offbeat: 0, miss: 0 },
       };
+      this.clearFever();
+    },
+    clearFever() {
+      this.fever = { value: 1, time: 0, percent: 0 };
+    },
+    feverTimer() {
+      if (!this.started) return;
+      console.log(this.fever.percent, this.fever.time);
+      if (this.fever.value < 1) this.fever.value = 1;
+      if (this.fever.percent >= 1) {
+        this.fever.percent = 0;
+        this.fever.time = 30;
+        this.fever.value =
+          this.fever.value < 5 ? this.fever.value + 1 : this.fever.value;
+        this.$refs?.zoom?.show("X" + this.fever.value, "30%", "fever");
+      }
+      if (this.fever.time > 0) {
+        this.fever.time -= 0.5;
+      } else if (this.fever.value > 1) {
+        this.clearFever();
+      }
     },
     ytPaused() {
       console.log("pasued");

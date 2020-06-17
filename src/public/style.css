@@ -89,6 +89,14 @@ body {
   animation-duration: 1s;
 }
 
+.center{
+  text-align: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 .enterAnimation {
   animation-name: enter;
   animation-duration: 1s;

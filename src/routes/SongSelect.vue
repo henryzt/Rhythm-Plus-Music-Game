@@ -2,7 +2,9 @@
   <div>
     <PageBackground songSrc="/songs/select.mp3"></PageBackground>
 
-    <div style="font-size:2.3em; font-weight: bold;text-align:center;padding:40px;">Song Select</div>
+    <div
+      style="font-size:2.3em; font-weight: bold;text-align:center;padding:10px;margin-top:70px"
+    >Song Select</div>
 
     <div class="mContainer">
       <div class="song_list" :class="{'list_collapsed': selectedSong}" v-if="songList">

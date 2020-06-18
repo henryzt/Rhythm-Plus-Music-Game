@@ -95,7 +95,7 @@ export default class Note {
       this.vm.result.totalHitNotes += 1;
       this.vm.result.combo = 0;
       this.vm.markJudge = "Miss";
-      this.vm.fever.percent -= 0.3;
+      this.vm.fever.percent -= 0.1;
       this.vibrate([20, 20, 50]);
       this.hitIndicator(this.vm);
       this.noteFailed = true;

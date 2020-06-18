@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Navbar></Navbar>
     <UserProfileCard></UserProfileCard>
     <div
       v-if="imageSrc"
@@ -19,6 +20,7 @@
 
 <script>
 import Visualizer from '../components/Visualizer.vue';
+import Navbar from '../components/Navbar.vue';
 import UserProfileCard from './UserProfileCard.vue';
 
 export default {
@@ -39,7 +41,8 @@ export default {
   },
   components:{
       Visualizer,
-      UserProfileCard
+      UserProfileCard,
+      Navbar
   },
   data(){
         return {

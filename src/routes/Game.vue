@@ -206,6 +206,7 @@ export default {
           this.ytPlayer?.playVideo();
           this.ytPlayer?.setVolume(0);
         }else{
+          this.$refs.zoom.show("Get Ready...")
           this.instance.startSong()
         }
       },

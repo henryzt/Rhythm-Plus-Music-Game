@@ -12,6 +12,7 @@
         <div class="text_button" @click="confirmSignOut">Logout</div>
       </div>
     </div>
+
     <Modal
       ref="modal"
       :show="showModal"

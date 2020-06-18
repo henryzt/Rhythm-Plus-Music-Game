@@ -1,4 +1,5 @@
 import DropTrack from "./track";
+import FeverEffect from "./FeverEffect";
 import YoutubePlayer from "./youtube";
 
 export default class GameInstance {
@@ -31,6 +32,7 @@ export default class GameInstance {
     this.holdingNote = {};
 
     this.ytPlayer = new YoutubePlayer(vm);
+    this.feverEff = new FeverEffect(vm, this);
 
     this.createTracks(4);
 
@@ -99,6 +101,9 @@ export default class GameInstance {
       );
       this.dropTrackArr[counter].updateHitGradient();
     }
+
+    this.startX = startX;
+    this.endX = startX + (trackWidth + 1) * this.dropTrackArr.length - 1;
 
     this.vm.checkHitLineY = (this.canvas.height / 10) * 9;
     this.vm.noteSpeedPxPerSec =
@@ -292,6 +297,7 @@ export default class GameInstance {
     if (this.vm.started && this.paused && !this.vm.inEditor) return;
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.vm.visualizerInstance.renderVisualizer();
+    this.feverEff.update();
     let shouldAdvance = false;
     for (const track of this.dropTrackArr) {
       shouldAdvance = track.update() || shouldAdvance;

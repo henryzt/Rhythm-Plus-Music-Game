@@ -99,9 +99,10 @@ export default {
       this.fever = { value: 1, time: 0, percent: 0 };
     },
     feverTimer() {
-      if (!this.started) return;
-      console.log(this.fever.percent, this.fever.time);
+      if (!this.started || this.instance.paused) return;
+      console.log(this.fever.percent, this.fever.time, this.fever.value);
       if (this.fever.value < 1) this.fever.value = 1;
+      if (this.fever.percent < 0) this.fever.percent = 0;
       if (this.fever.percent >= 1) {
         this.fever.percent = 0;
         this.fever.time = 30;

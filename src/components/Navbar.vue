@@ -1,5 +1,5 @@
 <template>
-  <div class="navbar">
+  <div class="navbar mainNav">
     <router-link to="/" exact>
       <div class="nav">
         <v-icon name="home" scale="2" />
@@ -44,7 +44,7 @@ export default {
   top: 0;
   left: 0;
   display: flex;
-  max-width: 50%;
+  max-width: 80%;
   overflow: scroll;
   z-index: 1000;
   background: rgba(0, 0, 0, 0.5);
@@ -91,19 +91,48 @@ a {
   background: rgba(255, 255, 255, 0.7);
   color: black;
   opacity: 1;
-  width: auto;
-  max-width: 100%;
-}
-
-.nav:hover .navtext {
-  padding-left: 10px;
-  max-width: 100%;
-  width: 100%;
-  opacity: 1;
 }
 
 .router-link-active .nav {
   opacity: 0.9;
   /* border-bottom: solid 3px rgb(255, 255, 255); */
+}
+
+@media only screen and (min-width: 800px) {
+  /* desktop */
+
+  .nav:hover {
+    background: rgba(255, 255, 255, 0.7);
+    color: black;
+    opacity: 1;
+    width: auto;
+    max-width: 100%;
+  }
+
+  .nav:hover .navtext {
+    padding-left: 10px;
+    max-width: 100%;
+    width: 100%;
+    opacity: 1;
+  }
+}
+
+@media only screen and (max-width: 1000px) {
+  /* mobile */
+  .mainNav {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+    max-width: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    background: linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.7) 0%,
+      rgba(0, 0, 0, 0) 100%
+    );
+  }
 }
 </style>

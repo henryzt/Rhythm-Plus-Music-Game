@@ -10,8 +10,9 @@ export default class Audio {
     };
     this.maxVolume = 0.5;
     this.player = null;
+    this.muteBg = false;
     document.addEventListener("visibilitychange", () => {
-      if (this.player) this.mute(document.hidden);
+      if (this.player && !this.muteBg) this.mute(document.hidden);
     });
   }
 
@@ -68,6 +69,11 @@ export default class Audio {
   mute(mute) {
     if (mute) this.player.fade(this.maxVolume, 0, 500);
     else this.player.fade(0, this.maxVolume, 2000);
+  }
+
+  toggleBgMute() {
+    this.muteBg = !this.muteBg;
+    this.mute(this.muteBg);
   }
 
   getCurrentTime() {

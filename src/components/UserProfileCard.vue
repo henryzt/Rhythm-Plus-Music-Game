@@ -19,10 +19,11 @@
       <div
         style="padding:10px"
         v-if="!extend"
-      >{{$store.state.initialized ? "Login / Register" : "Loading..."}}</div>
+        v-html="$store.state.initialized ? 'Login &<br>Register' : 'Loading...'"
+      ></div>
       <div style="opacity:0.5" v-else>
         Login or Register now
-        <br />to sync your progress and exp
+        <br />to save your progress and exp
       </div>
     </div>
   </div>
@@ -58,8 +59,8 @@ export default {
   padding: 5px;
   background: rgba(0, 0, 0, 0.5);
   background: linear-gradient(
-    195deg,
-    rgba(0, 0, 0, 1) 0%,
+    -90deg,
+    rgba(0, 0, 0, 0.7) 0%,
     rgba(0, 0, 0, 0) 70%
   );
   cursor: pointer;

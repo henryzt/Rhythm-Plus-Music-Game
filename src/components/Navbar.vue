@@ -1,21 +1,29 @@
 <template>
   <div class="navbar">
-    <div class="nav">
-      <v-icon name="home" scale="2" />
-      <div class="navtext">Home</div>
-    </div>
-    <div class="nav">
-      <v-icon name="stream" scale="1.7" />
-      <div class="navtext">Song Select</div>
-    </div>
-    <div class="nav">
-      <v-icon name="medal" scale="1.7" />
-      <span class="navtext">Rankings</span>
-    </div>
-    <div class="nav">
-      <v-icon name="cog" scale="1.7" />
-      <span class="navtext">Account & Options</span>
-    </div>
+    <router-link to="/" exact>
+      <div class="nav">
+        <v-icon name="home" scale="2" />
+        <div class="navtext">Home</div>
+      </div>
+    </router-link>
+    <router-link to="/menu">
+      <div class="nav">
+        <v-icon name="stream" scale="1.7" />
+        <div class="navtext">Song Select</div>
+      </div>
+    </router-link>
+    <router-link to="/rankings">
+      <div class="nav">
+        <v-icon name="medal" scale="1.7" />
+        <span class="navtext">Rankings</span>
+      </div>
+    </router-link>
+    <router-link to="/account">
+      <div class="nav">
+        <v-icon name="cog" scale="1.7" />
+        <span class="navtext">Account & Options</span>
+      </div>
+    </router-link>
   </div>
 </template>
 
@@ -36,6 +44,15 @@ export default {
   top: 0;
   left: 0;
   display: flex;
+  max-width: 50%;
+  overflow: scroll;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.5);
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.2) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
 }
 
 .navtext {
@@ -50,6 +67,10 @@ export default {
   pointer-events: none;
 }
 
+a {
+  text-decoration: none;
+}
+
 .nav {
   padding: 20px;
   opacity: 0.5;
@@ -59,9 +80,11 @@ export default {
   transition: 0.5s;
   cursor: pointer;
   box-sizing: border-box;
-  min-width: 72px;
-  width: 72px;
-  max-width: 72px;
+  min-width: 68px;
+  width: 68px;
+  max-width: 68px;
+  color: white;
+  text-align: center;
 }
 
 .nav:hover {
@@ -77,5 +100,10 @@ export default {
   max-width: 100%;
   width: 100%;
   opacity: 1;
+}
+
+.router-link-active .nav {
+  opacity: 0.9;
+  /* border-bottom: solid 3px rgb(255, 255, 255); */
 }
 </style>

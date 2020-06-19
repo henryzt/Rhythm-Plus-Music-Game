@@ -241,7 +241,6 @@ export default {
           this.instance.paused = false;
           this.instance.startSong()
         }else{
-          if(!this.playMode) this.instance.seeked();
           this.instance.resumeGame()
         }
       },
@@ -281,6 +280,8 @@ export default {
         this.instance.clearNotes()
         setTimeout(()=>{
           this.instance.seeked()
+          if(this.instance.paused)
+            this.instance.repositionNotes()
         },200)
       },
       setPlaybackRate(rate){
@@ -415,12 +416,6 @@ export default {
 /* Middle column */
 .column.middle {
   width: 50%;
-}
-
-.disabled {
-  opacity: 0.6;
-  pointer-events: none;
-  cursor: not-allowed;
 }
 
 .vicon {

@@ -32,7 +32,7 @@ export default class Note {
   }
 
   getDiffPercentage() {
-    if (this.paused) {
+    if (this.gameHadBeenPaused) {
       // game had been pasued, time unuseable, use less accurate dist calculation instead
       const dist = this.vm.checkHitLineY - this.y;
       const percentage = Math.abs(dist) / this.canvas.height; // the lower the better
@@ -114,13 +114,22 @@ export default class Note {
     return this.holdNoteY > this.vm.checkHitLineY - offset;
   }
 
+  reposition() {
+    // reposition y value based on current time
+    const timing = this.game.getNoteTiming();
+    const timeElapsed = timing - this.keyObj.t;
+    const y = (timeElapsed / this.vm.noteSpeedInSec) * this.vm.checkHitLineY;
+    this.y = y;
+    this.gameHadBeenPaused = true;
+  }
+
   update(isUserHolding) {
     this.setDelta();
     // game has been paused, reset delta
     if (this.delta > 0.5 || this.game.paused) {
       this.delta = 0;
       this.then = this.now;
-      this.paused = true;
+      this.gameHadBeenPaused = true;
     }
 
     if (this.vm.inEditor && this.vm.selectedNotes.includes(this.keyObj)) {

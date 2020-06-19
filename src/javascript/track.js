@@ -99,6 +99,17 @@ export default class DropTrack {
     this.width = width;
   }
 
+  repositionNotes(filteredNotes) {
+    this.noteArr = [];
+    const color = this.vm.playMode ? "yellow" : "grey";
+    for (let note of filteredNotes) {
+      if (note.k.includes(this.keyBind)) {
+        this.addNoteToArr(note, color);
+        this.noteArr[this.noteArr.length - 1].reposition();
+      }
+    }
+  }
+
   update() {
     // track bg
     let { ctx, canvas } = this.vm;
@@ -148,17 +159,17 @@ export default class DropTrack {
     this.particleEffect.update(this.isUserHoldingNote);
 
     // create note
-    const { timeArr, playTime, currentTime } = this.game;
-    const timing = playMode ? playTime : currentTime; // in editor mode, time without note drop delay is used.
+    const { timeArr, timeArrIdx } = this.game;
+    const timing = this.game.getNoteTiming();
     const needNote =
       !this.game.paused &&
-      this.game.timeArrIdx < timeArr.length &&
-      timing >= timeArr[this.game.timeArrIdx].t &&
-      timeArr[this.game.timeArrIdx].k.includes(this.keyBind);
+      timeArrIdx < timeArr.length &&
+      timing >= timeArr[timeArrIdx].t &&
+      timeArr[timeArrIdx].k.includes(this.keyBind);
     if (needNote) {
       const color = playMode ? "yellow" : "grey";
-      if (timing - timeArr[this.game.timeArrIdx].t < 1) {
-        this.addNoteToArr(timeArr[this.game.timeArrIdx], color);
+      if (timing - timeArr[timeArrIdx].t < 1) {
+        this.addNoteToArr(timeArr[timeArrIdx], color);
       }
       return true; // this.game.timeArrIdx++;
     }

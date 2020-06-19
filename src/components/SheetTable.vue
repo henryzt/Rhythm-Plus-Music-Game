@@ -18,7 +18,7 @@
           <tr
             v-for="(entry, idx) in instance.timeArr"
             :key="idx"
-            :class="{onScreen:$parent.playMode && isWithinTime(entry.t), current:idx===instance.timeArrIdx}"
+            :class="{onScreen: instance.isWithinTime(entry.t), current:idx===instance.timeArrIdx}"
             @dblclick="seekTo(entry.t)"
           >
             <td>
@@ -34,17 +34,17 @@
         </tbody>
       </table>
     </div>
-    <div class="buttons">
+    <div class="buttons" :class="{disabled: !instance.paused}">
       <a @click="reorder">Reorder</a>
       <a @click="removeSelected">Delete</a>
       <a @click="selectBetween">Select Between</a>
       <a @click="clearSelected">Clear</a>
-      <label class="cb_container cb_small">
-        <input type="checkbox" v-model="follow" />
-        <span class="checkmark"></span>
-        Follow Current
-      </label>
     </div>
+    <label class="cb_container cb_small">
+      <input type="checkbox" v-model="follow" />
+      <span class="checkmark"></span>
+      Follow Current
+    </label>
   </div>
 </template>
 
@@ -81,11 +81,6 @@ export default {
         }
     },
     methods:{
-      isWithinTime(time){
-        const sec = Number(this.$parent.noteSpeedInSec);
-        const current = Number(this.$parent.currentTime);
-        return time <= current + sec && time >= current;
-      },
       selectAll(){
           if(this.selectedAll){
             this.clearSelected()

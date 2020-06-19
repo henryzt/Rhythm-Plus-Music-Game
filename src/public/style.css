@@ -97,6 +97,12 @@ body {
   transform: translate(-50%, -50%);
 }
 
+.disabled {
+  opacity: 0.6;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
 .enterAnimation {
   animation-name: enter;
   animation-duration: 1s;

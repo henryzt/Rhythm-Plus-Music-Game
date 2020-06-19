@@ -236,6 +236,19 @@ export default class GameInstance {
     }
   }
 
+  repositionNotes() {
+    let filteredNotes = this.timeArr.filter((e) => {
+      return this.isWithinTime(e.t);
+    });
+    for (const track of this.dropTrackArr) {
+      track.repositionNotes(filteredNotes);
+    }
+    const idx = this.timeArr.findIndex(
+      (e) => e === filteredNotes[filteredNotes.length - 1]
+    );
+    this.timeArrIdx = idx + 1;
+  }
+
   createSingleNote(key, cTime) {
     const waitTimeForMultiNote = 0.05;
     // this.timeArr.push({ t: cTime.toFixed(3), k: key });
@@ -353,6 +366,17 @@ export default class GameInstance {
     return this.vm.srcMode === "youtube"
       ? this.ytPlayer.getPlayerTime()
       : this.audio.getCurrentTime();
+  }
+
+  getNoteTiming() {
+    return this.vm.playMode ? this.playTime : this.currentTime; // in editor mode, time without note drop delay is used.
+  }
+
+  isWithinTime(time) {
+    // check if a note with start time is currently on screen
+    const sec = Number(this.vm.noteSpeedInSec);
+    const current = Number(this.getNoteTiming());
+    return time <= current && time >= current - sec;
   }
 
   resetPlaying(resetTimeArr) {

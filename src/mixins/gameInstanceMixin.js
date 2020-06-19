@@ -99,7 +99,7 @@ export default {
       this.fever = { value: 1, time: 0, percent: 0 };
     },
     feverTimer() {
-      if (!this.started || this.instance.paused) return;
+      if (!this.started || this.instance.paused || !this.playMode) return;
       console.log(this.fever.percent, this.fever.time, this.fever.value);
       if (this.fever.value < 1) this.fever.value = 1;
       if (this.fever.percent < 0) this.fever.percent = 0;

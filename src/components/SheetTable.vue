@@ -73,6 +73,11 @@ export default {
         },
         '$parent.selectedNotes'(){
           this.selectedAll = this.$parent.selectedNotes.length!==0 && this.$parent.selectedNotes.length===this.instance.timeArr.length;
+        },
+        'instance.timeArr'(){
+          if(this.instance.timeArr.length>200 && !this.instance.paused){
+            this.$parent.disableMappingTable = true;
+          }
         }
     },
     methods:{

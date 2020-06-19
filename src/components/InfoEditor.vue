@@ -141,9 +141,9 @@ export default {
           this.sheetFormOptions.tab = 'choose';
         },
         async submitSongForm(){
-          this.$parent.loading = true
           try{
             if(this.songFormOptions.isUpdate){
+              this.$parent.loading = true
               await updateSong(this.songFormData);
               this.$router.go();
             }else{

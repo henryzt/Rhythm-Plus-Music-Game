@@ -60,6 +60,9 @@
           v-show="playMode"
           ref="hitIndicator"
         >{{markJudge}} {{result.combo}}</div>
+
+        <!-- center text -->
+        <ZoomText style="z-index:1000" ref="zoom"></ZoomText>
       </div>
 
       <div
@@ -68,7 +71,15 @@
         :class="{disabled:!initialized}"
       >
         <h2>Mappings</h2>
-        <SheetTable></SheetTable>
+        <SheetTable v-if="!disableMappingTable"></SheetTable>
+        <div v-else>
+          To improve editor performance, mapping table is disabled.
+          <div
+            class="btn-action btn-dark"
+            style="margin: 10px 0;width:100px;"
+            @click="disableMappingTable=false"
+          >Enable</div>
+        </div>
       </div>
     </div>
 
@@ -131,6 +142,7 @@ import InfoEditor from '../components/InfoEditor.vue';
 import SheetTable from '../components/SheetTable.vue';
 import SongListItem from '../components/SongListItem.vue';
 import PlayControl from '../components/PlayControl.vue';
+import ZoomText from '../components/ZoomText.vue';
 import Modal from '../components/Modal.vue';
 import Publish from '../components/Publish.vue';
 import Loading from '../components/Loading.vue';
@@ -155,7 +167,8 @@ export default {
       Loading,
       Modal,
       Publish,
-      PlayControl
+      PlayControl,
+      ZoomText
   },
   mixins: [GameInstanceMixin],
   data(){
@@ -176,7 +189,8 @@ export default {
           loading: false,
           showExistingNote: true,
           selectedNotes: [],
-          leftTab: 1
+          leftTab: 1,
+          disableMappingTable: false
         }
     },
     computed: {

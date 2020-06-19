@@ -10,8 +10,8 @@ export default class FeverEffect {
     const x1 = this.game.startX;
     const x2 = this.game.endX;
     const xm = (x1 + x2) / 2;
-    const height = 200;
-    const thickness = 100;
+    const height = 100;
+    const thickness = 200;
     ctx.beginPath();
     ctx.moveTo(xm, y);
     ctx.lineTo(x2, y + thickness);
@@ -29,7 +29,7 @@ export default class FeverEffect {
     if (fever.value <= 1) return;
     const height = 300;
     const cHeight = this.game.canvas.height;
-    const num = cHeight / height + 1;
+    const num = cHeight / height + 2;
     const speed = fever.time - 10;
     const alpha = fever.time / 100;
     ctx.globalAlpha = alpha;

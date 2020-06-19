@@ -20,7 +20,7 @@ export default class Audio {
     this.player?.unload();
 
     this.player = new Howl({
-      volume: this.maxVolume,
+      volume: this.muteBg && asBackground ? 0 : this.maxVolume,
       src: [songSrc],
       loop: asBackground,
     });

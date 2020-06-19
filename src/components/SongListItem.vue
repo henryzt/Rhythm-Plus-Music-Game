@@ -54,7 +54,7 @@ export default {
 }
 .song_item_bg:hover {
   background: rgba(255, 255, 255, 0.4);
-  transform: scale(1.2);
+  transform: scale(1.1);
   z-index: 500;
 }
 .detail {

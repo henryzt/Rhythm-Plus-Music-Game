@@ -248,6 +248,11 @@ export default class GameInstance {
     ) {
       this.timeArr[this.lastAddedIdx].k += key;
     } else {
+      // this.timeArr.push({
+      //   t: Number(cTime.toFixed(3)),
+      //   k: key,
+      // });
+      // this.timeArrIdx = this.timeArr.length - 1;
       // add at idx
       this.timeArr.splice(this.timeArrIdx, 0, {
         t: Number(cTime.toFixed(3)),

@@ -1,6 +1,7 @@
 <template>
   <div id="app" class="unselectable">
     <ModalGlobal ref="gm"></ModalGlobal>
+    <FloatingAlert ref="alert"></FloatingAlert>
     <transition name="fade" v-if="$store.state.audio">
       <router-view :key="$route.path" />
     </transition>
@@ -10,15 +11,18 @@
 <script>
 import Audio from './javascript/audio.js';
 import ModalGlobal from './components/ModalGlobal.vue';
+import FloatingAlert from './components/FloatingAlert.vue';
 
 export default {
   name: 'App',
   components: {
-    ModalGlobal
+    ModalGlobal,
+    FloatingAlert
   },
   mounted(){
     this.$store.commit("setAudio", new Audio());
     this.$store.commit("setGlobalModal", this.$refs.gm);
+    this.$store.commit("setFloatingAlert", this.$refs.alert);
   }
 };
 </script>

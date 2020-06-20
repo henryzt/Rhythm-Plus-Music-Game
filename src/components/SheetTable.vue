@@ -91,11 +91,13 @@ export default {
         this.$parent.selectedNotes = []
       },
       removeSelected(){
+        if(this.$parent.selectedNotes == []) return;
         this.instance.timeArr = this.instance.timeArr.filter(( el ) => {
           return !this.$parent.selectedNotes.includes( el );
         } );
         this.clearSelected()
         this.instance.repositionNotes()
+        this.$store.state.alert.success("Selected notes deleted")
       },
       reorder(){
         this.$parent.reorderSheet()

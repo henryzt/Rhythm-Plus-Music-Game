@@ -81,6 +81,9 @@ export const store = new Vuex.Store({
     setGlobalModal(state, val) {
       state.gModal = val;
     },
+    setFloatingAlert(state, val) {
+      state.alert = val;
+    },
   },
 });
 

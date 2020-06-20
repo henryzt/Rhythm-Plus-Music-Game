@@ -5,7 +5,11 @@
 
     <div class="toolbar blurBackground" style="padding-left:0">
       <div class="logo">
-        <img src="/assets/editor_logo.png" style="height:8vh;cursor:pointer;" @click="goToMenu" />
+        <img
+          src="/assets/editor_logo.png"
+          style="height:8vh;cursor:pointer;pointer-events:all;"
+          @click="goToMenu"
+        />
         Sheet Editor
       </div>
       <div style="flex-grow:1"></div>
@@ -313,7 +317,7 @@ export default {
       reorderSheet(){
         this.instance.timeArr.sort((a,b) => parseFloat(a.t) - parseFloat(b.t))
       },
-      saveSheet(){
+      async saveSheet(){
         this.reorderSheet()
         this.countTotal()
         const sheet = {
@@ -322,7 +326,12 @@ export default {
           length: this.sheetInfo.length,
           noteCount: this.sheetInfo.noteCount
           }
-        updateSheet(sheet);
+        try{
+          await updateSheet(sheet);
+          this.$store.state.alert.success("Sheet saved!")
+        }catch(err){
+          this.$store.state.alert.error("Error occurred while saving, please try again.")
+        }
         // save local backup
         let local = JSON.parse(localStorage.getItem("localSheetBackup")) || {};
         local[this.sheetInfo.id] = sheet;

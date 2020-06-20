@@ -145,13 +145,16 @@ export default {
             if(this.songFormOptions.isUpdate){
               this.$parent.loading = true
               await updateSong(this.songFormData);
+              this.$store.state.alert.success("Song updated")
               this.$router.go();
             }else{
               let songId = await createSong(this.songFormData)
               this.$parent.songInfo = await getSong(songId);
               this.getSheets()
+              this.$store.state.alert.success("Song created")
             }
           }catch(err){
+            this.$store.state.alert.success("An error occurred, please try again")
             console.error(err)
           }
         },
@@ -172,14 +175,17 @@ export default {
             try{
               if(this.sheetFormOptions.isUpdate){
                 await updateSheet(this.sheetFormData)
+                this.$store.state.alert.success("Sheet updated")
               }else{
                 const songId = this.$parent.songInfo.id;
                 this.sheetFormData.songId = songId;
                 let sheetId = await createSheet(this.sheetFormData)
                 this.$router.push('/editor/'+sheetId)
+                this.$store.state.alert.success("Sheet created")
               }
               this.$router.go();
             }catch(err){
+              this.$store.state.alert.error("An error occurred, please try again")
               console.error(err)
             }
         },

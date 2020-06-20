@@ -97,6 +97,10 @@ body {
   transform: translate(-50%, -50%);
 }
 
+img{
+  pointer-events: none;
+}
+
 .disabled {
   opacity: 0.6;
   pointer-events: none;

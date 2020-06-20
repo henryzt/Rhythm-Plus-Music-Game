@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Navbar></Navbar>
+    <Navbar v-if="showNav"></Navbar>
     <UserProfileCard></UserProfileCard>
     <div
       v-if="imageSrc"
@@ -38,6 +38,10 @@ export default {
       type: String,
       default: null
     },
+    showNav: {
+      type: Boolean,
+      default: true
+    }
   },
   components:{
       Visualizer,

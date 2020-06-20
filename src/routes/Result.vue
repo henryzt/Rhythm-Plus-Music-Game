@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="sheet">
-      <PageBackground songSrc="/songs/result.mp3" :imageSrc="sheet.image"></PageBackground>
+      <PageBackground songSrc="/songs/result.mp3" :imageSrc="sheet.image" :showNav="false"></PageBackground>
       <div class="blurFilter">
         <div class="center_logo darker flex_hori">
           <div class="scoreCircle" ref="resultDiv">
@@ -132,8 +132,14 @@ export default {
     async mounted() {
       //FIXME add id and route validation
       if(this.$route.params.resultId && this.$route.params.resultId!="null"){
-        this.result = await getResult(this.$route.params.resultId)
-        this.sheet = await getGameSheet(this.result.sheetId)
+        try{
+          this.result = await getResult(this.$route.params.resultId)
+          this.sheet = await getGameSheet(this.result.sheetId)
+        }catch(err){
+          this.showError()
+        }
+      }else{
+        this.showError()
       }
 
       window.onresize = () => {
@@ -148,6 +154,10 @@ export default {
       })
     },
     methods: {
+      showError(){
+          this.$store.state.gModal.show({bodyText:"This result is unavaliable.", 
+          isError: true, showCancel: false, okCallback: this.toMenu})
+      },
       replay(){
         this.$router.push("/game/"+this.sheet.sheetId);
       },

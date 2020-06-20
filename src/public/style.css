@@ -121,6 +121,13 @@ img{
   z-index: -100;
 }
 
+@media only screen and (max-width: 1000px) {
+  .ytPlayerMobileExtend {
+    width: 249vh !important;
+    transform: translateX(calc(50vw - 124.5vh));
+  }
+}
+
 .visualizer {
   position: fixed;
   top: 0;

@@ -145,7 +145,6 @@ export default {
             if(this.songFormOptions.isUpdate){
               this.$parent.loading = true
               await updateSong(this.songFormData);
-              this.$store.state.alert.success("Song updated")
               this.$router.go();
             }else{
               let songId = await createSong(this.songFormData)
@@ -175,13 +174,11 @@ export default {
             try{
               if(this.sheetFormOptions.isUpdate){
                 await updateSheet(this.sheetFormData)
-                this.$store.state.alert.success("Sheet updated")
               }else{
                 const songId = this.$parent.songInfo.id;
                 this.sheetFormData.songId = songId;
                 let sheetId = await createSheet(this.sheetFormData)
                 this.$router.push('/editor/'+sheetId)
-                this.$store.state.alert.success("Sheet created")
               }
               this.$router.go();
             }catch(err){

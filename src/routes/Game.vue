@@ -33,6 +33,7 @@
     <!-- youtube player -->
     <div v-if="srcMode==='youtube' && !isGameEnded" v-show="initialized">
       <Youtube
+        class="ytPlayerMobileExtend"
         id="ytPlayer"
         ref="youtube"
         :video-id="youtubeId"

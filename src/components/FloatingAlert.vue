@@ -25,17 +25,17 @@ export default {
                 }, time)
             }
         },
-        info(text){
+        info(text, time){
             this.className="info"
-            this.show(text)
+            this.show(text, time)
         },
-        warn(text){
+        warn(text, time){
             this.className="warn"
-            this.show(text)
+            this.show(text, time)
         },
-        error(text){
+        error(text, time){
             this.className="error"
-            this.show(text)
+            this.show(text, time)
         },
         success(text){
             this.className="success"
@@ -55,6 +55,7 @@ export default {
   background: orange;
   padding: 20px;
   z-index: 1000;
+  transition: 0.5s;
 }
 .info {
   background: rgb(0, 120, 156);

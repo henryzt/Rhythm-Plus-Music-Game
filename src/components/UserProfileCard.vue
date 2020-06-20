@@ -114,6 +114,7 @@ export default {
   );
   cursor: pointer;
   z-index: 500;
+  -webkit-tap-highlight-color: transparent;
 }
 .detail {
   display: flex;

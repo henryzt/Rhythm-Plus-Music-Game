@@ -15,9 +15,9 @@
       <div style="flex-grow:1"></div>
       <a href="#" @click.prevent="newEditor">New</a>
       <div style="display:flex" :class="{disabled:!initialized}">
-        <a href="#" @click.prevent="saveSheet">Save</a>
+        <a href="#" @click.prevent="saveSheet" :class="{disabled:!isSheetOwner}">Save</a>
         <a href="#" @click.prevent="togglePlayMode">{{playMode?"Edit":"Test"}}</a>
-        <a href="#" @click.prevent="showPublishModal">Publish</a>
+        <a href="#" @click.prevent="showPublishModal" :class="{disabled:!isSheetOwner}">Publish</a>
       </div>
     </div>
 
@@ -203,6 +203,12 @@ export default {
     computed: {
       currentTime(){
         return (this.instance.playTime - this.noteSpeedInSec).toFixed(2) 
+      },
+      isSheetOwner(){
+        return !this.sheetInfo.id || this.sheetInfo.createdBy === this.$store.state.currentUser.uid;
+      },
+      isSongOwner(){
+        return !this.songInfo.id || this.songInfo.createdBy === this.$store.state.currentUser.uid;
       }
 
     },
@@ -225,6 +231,8 @@ export default {
           this.gameSheetInfo.sheet = this.gameSheetInfo.sheet ?? [];
           console.log(this.gameSheetInfo)
           this.instance.loadSong(this.gameSheetInfo);
+          if(!this.isSheetOwner)
+            this.$store.state.alert.warn("Warning, you do not have edit access to this sheet, any changes will not be saved!", 10000)
         }catch(err){
           console.error(err);
           this.$store.state.gModal.show({bodyText:"Sorry, something went wrong, maybe try refresh?", 
@@ -330,7 +338,7 @@ export default {
           await updateSheet(sheet);
           this.$store.state.alert.success("Sheet saved!")
         }catch(err){
-          this.$store.state.alert.error("Error occurred while saving, please try again.")
+          this.$store.state.alert.error("Error occurred while saving, please try again.", 6000)
         }
         // save local backup
         let local = JSON.parse(localStorage.getItem("localSheetBackup")) || {};

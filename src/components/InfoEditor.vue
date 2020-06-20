@@ -19,7 +19,9 @@
           item-type="Song"
           @submitForm="submitSongForm"
           @submitExisting="submitExistingSong"
+          :class="{disabled:!$parent.isSongOwner}"
         ></InfoForm>
+        <div v-if="!$parent.isSongOwner">You have no edit access to this song.</div>
         <div
           v-if="songFormOptions.isUpdate"
           class="switch_tab"
@@ -36,6 +38,7 @@
             item-type="Sheet"
             @submitForm="submitSheetForm"
             @submitExisting="submitExistingSheet"
+            :class="{disabled:!$parent.isSheetOwner}"
           >
             <input
               v-model="sheetFormData.title"
@@ -67,6 +70,7 @@
               <option v-for="keys in [4,5,6,7,8]" :value="keys" :key="keys">{{keys + ' Key'}}</option>
             </select>
           </InfoForm>
+          <div v-if="!$parent.isSheetOwner">You have no edit access to this sheet.</div>
         </div>
       </div>
     </div>
@@ -153,7 +157,8 @@ export default {
               this.$store.state.alert.success("Song created")
             }
           }catch(err){
-            this.$store.state.alert.success("An error occurred, please try again")
+            this.$parent.loading = false
+            this.$store.state.alert.error("An error occurred, please try again", 5000)
             console.error(err)
           }
         },
@@ -182,7 +187,8 @@ export default {
               }
               this.$router.go();
             }catch(err){
-              this.$store.state.alert.error("An error occurred, please try again")
+              this.$parent.loading = false
+              this.$store.state.alert.error("An error occurred, please try again", 5000)
               console.error(err)
             }
         },

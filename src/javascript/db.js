@@ -193,6 +193,7 @@ export function updateSheet(info) {
     .catch(function (error) {
       // The document probably doesn't exist.
       console.error("Error updating document: ", error);
+      throw error;
     });
 }
 

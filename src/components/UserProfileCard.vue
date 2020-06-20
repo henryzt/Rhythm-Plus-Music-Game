@@ -69,6 +69,7 @@ export default {
           this.$router.push('/account')
       },
       async toggleFullscreen(){
+        this.isFullscreen = document.fullscreen;
         if(this.isFullscreen){
           await document.exitFullscreen();
         }else{

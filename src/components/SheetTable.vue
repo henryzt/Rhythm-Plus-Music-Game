@@ -19,7 +19,6 @@
             v-for="(entry, idx) in instance.timeArr"
             :key="idx"
             :class="{onScreen: instance.isWithinTime(entry.t), current:idx===instance.timeArrIdx}"
-            @dblclick="seekTo(entry.t)"
           >
             <td>
               <label class="cb_container cb_small">
@@ -27,7 +26,7 @@
                 <span class="checkmark"></span>
               </label>
             </td>
-            <td>{{entry.t}}</td>
+            <td @dblclick="seekTo(entry.t)">{{entry.t}}</td>
             <td>{{entry.k===" "?"-":entry.k}}</td>
           </tr>
           <tr class="last"></tr>
@@ -96,6 +95,7 @@ export default {
           return !this.$parent.selectedNotes.includes( el );
         } );
         this.clearSelected()
+        this.instance.repositionNotes()
       },
       reorder(){
         this.$parent.reorderSheet()

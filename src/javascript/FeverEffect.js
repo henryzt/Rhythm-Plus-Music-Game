@@ -31,7 +31,7 @@ export default class FeverEffect {
     const cHeight = this.game.canvas.height;
     const num = cHeight / height + 2;
     const speed = fever.time - 10;
-    const alpha = fever.time / 100;
+    const alpha = fever.time / 80;
     ctx.globalAlpha = alpha;
     for (let i = 0; i < num; i++) {
       ctx.fillStyle = "white";

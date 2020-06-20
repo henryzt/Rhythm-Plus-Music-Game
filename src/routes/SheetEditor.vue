@@ -3,8 +3,11 @@
     <!-- visualizer canvas -->
     <Visualizer ref="visualizer" v-show="srcMode==='url'"></Visualizer>
 
-    <div class="toolbar blurBackground">
-      <div class="logo">R+ Sheet Editor</div>
+    <div class="toolbar blurBackground" style="padding-left:0">
+      <div class="logo">
+        <img src="/assets/editor_logo.png" style="height:8vh;cursor:pointer;" @click="goToMenu" />
+        Sheet Editor
+      </div>
       <div style="flex-grow:1"></div>
       <a href="#" @click.prevent="newEditor">New</a>
       <div style="display:flex" :class="{disabled:!initialized}">
@@ -277,11 +280,9 @@ export default {
         }else{
           this.audio.seek(Number(time))
         }
-        this.instance.clearNotes()
         setTimeout(()=>{
           this.instance.seeked()
-          if(this.instance.paused)
-            this.instance.repositionNotes()
+          this.instance.repositionNotes()
         },200)
       },
       setPlaybackRate(rate){
@@ -350,6 +351,9 @@ export default {
 
 .logo {
   padding: 20px;
+  padding-left: 0;
+  display: flex;
+  align-items: center;
 }
 
 .action_buttons {

@@ -127,6 +127,16 @@ export default class GameInstance {
       "keydown",
       (event) => {
         this.onKeyDown(event.key);
+        if (this.vm.inEditor) {
+          // editor time minor adjust by arrow keys
+          if (event.keyCode === 37) {
+            // left
+            this.vm.seekTo(this.currentTime - 0.03);
+          } else if (event.keyCode === 39) {
+            // right
+            this.vm.seekTo(this.currentTime + 0.03);
+          }
+        }
       },
       false
     );
@@ -190,10 +200,14 @@ export default class GameInstance {
   }
 
   // log key and touch events
-  async onKeyDown(key) {
+  async onKeyDown(keyRaw) {
+    const key = keyRaw.toLowerCase();
+    // avoid repeated triggering when key is held
     if (this.keyStatus[key]) return;
     this.keyStatus[key] = true;
-    if (!this.vm.playMode && !this.paused && this.trackKeyBind.includes(key)) {
+    if (!this.trackKeyBind.includes(key)) return;
+    // if in create mode, create note
+    if (!this.vm.playMode && !this.paused) {
       const cTime = await this.getCurrentTime();
       this.createSingleNote(key, cTime);
       const singleNoteObj = this.timeArr[this.lastAddedIdx];
@@ -207,6 +221,7 @@ export default class GameInstance {
         }
       }, 300);
     }
+    // register key down
     for (const track of this.dropTrackArr) {
       track.keyDown(key);
     }

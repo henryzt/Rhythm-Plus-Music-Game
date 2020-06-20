@@ -45,15 +45,20 @@
     </label>
 
     <!-- create mode only -->
-    <div v-if="!playData.playMode">
+    <div v-if="playData.inEditor">
       <br />
       <br />
       <!-- score -->
       <div style="padding:15px">
-        score - {{playData.result.score}} | combo - {{playData.result.combo}} | max combo - {{playData.result.maxCombo}}
+        score - {{playData.result.score}}
+        <br />
+        combo - {{playData.result.combo}} | max combo - {{playData.result.maxCombo}}
         <br />
         perfect - {{playData.result.marks.perfect}} | good - {{playData.result.marks.good}} | offbeat - {{playData.result.marks.offbeat}} | miss
         - {{playData.result.marks.miss}}
+        <br />
+        <br />
+        fever level - {{playData.fever.value}} | fever time - {{playData.fever.time}} s | fever up percent - {{playData.fever.percent.toFixed(2)}} |
       </div>
     </div>
   </div>

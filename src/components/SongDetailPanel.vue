@@ -10,10 +10,9 @@
     <div style="background:rgba(0,0,0,0.2); padding: 20px 0; box-sizing:border-box; width: 100%">
       <div style="opacity:0.4">Select Sheet or Press Play</div>
       <div v-for="sheet in sheets" :value="sheet.id" :key="sheet.id">
-        <div
-          @click="selectedSheet = sheet"
-          :class="{'sheet':true, 'active':selectedSheet==sheet}"
-        >{{sheet.id}}</div>
+        <div @click="selectedSheet = sheet" :class="{'sheet':true, 'active':selectedSheet==sheet}">
+          <SheetDetailLine :sheet="sheet"></SheetDetailLine>
+        </div>
       </div>
     </div>
 
@@ -26,6 +25,7 @@
 
 <script>
 import Button from './Button.vue';
+import SheetDetailLine from './SheetDetailLine.vue';
 export default {
     name:"SongDetailPanel",
     props: ["song", "sheets"],
@@ -35,7 +35,8 @@ export default {
         }
     },
     components:{
-      Button
+      Button,
+      SheetDetailLine
     },
     computed: {
     },

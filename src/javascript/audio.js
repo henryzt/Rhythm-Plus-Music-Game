@@ -8,7 +8,7 @@ export default class Audio {
       bufferLength: null,
       dataArray: null,
     };
-    this.maxVolume = 0.5;
+    this.maxVolume = 0.3;
     this.player = null;
     this.muteBg = false;
     document.addEventListener("visibilitychange", () => {

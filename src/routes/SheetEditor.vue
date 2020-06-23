@@ -239,8 +239,6 @@ export default {
           isError: true, showCancel: false})
         }
         this.loading = false
-      }else{
-
       }
     },
     methods: {

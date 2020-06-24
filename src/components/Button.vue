@@ -96,6 +96,7 @@ export default {
   left: 50%;
   transform: translate(-50%, -50%);
   animation: ring 1s infinite;
+  pointer-events: none;
 }
 
 .colored .main_button {

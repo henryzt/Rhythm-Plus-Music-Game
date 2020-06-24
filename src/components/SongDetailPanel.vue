@@ -9,11 +9,17 @@
     </div>
     <div style="background:rgba(0,0,0,0.2); padding: 20px 0; box-sizing:border-box; width: 100%">
       <div style="opacity:0.4">Select Sheet or Press Play</div>
-      <div v-for="sheet in sheets" :value="sheet.id" :key="sheet.id">
-        <div @click="selectedSheet = sheet" :class="{'sheet':true, 'active':selectedSheet==sheet}">
-          <SheetDetailLine :sheet="sheet"></SheetDetailLine>
+      <div v-if="sheets">
+        <div v-for="sheet in sheets" :value="sheet.id" :key="sheet.id">
+          <div
+            @click="selectedSheet = sheet"
+            :class="{'sheet':true, 'active':selectedSheet==sheet}"
+          >
+            <SheetDetailLine :sheet="sheet" :compact="true"></SheetDetailLine>
+          </div>
         </div>
       </div>
+      <div style="padding:20px;" v-else>Sheets loading...</div>
     </div>
 
     <div style="padding: 20px 0;">

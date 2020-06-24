@@ -61,6 +61,7 @@ export default {
     },
     watch: {
       async selectedSong(){
+        this.sheetList = null;
         if(this.selectedSong)
           this.sheetList = await getSheetList(this.selectedSong.id);
       }
@@ -82,7 +83,7 @@ export default {
 
 <style scoped>
 .mContainer {
-  perspective: 60em;
+  perspective: 100em;
   display: flex;
   justify-content: center;
   transition: 2s;
@@ -99,7 +100,7 @@ export default {
 }
 .detail {
   transition: 1s;
-  width: 300px;
+  width: 350px;
 }
 
 @media only screen and (max-width: 800px) {

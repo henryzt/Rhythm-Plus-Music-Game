@@ -1,6 +1,6 @@
 <template>
   <div>
-    <PageBackground songSrc="/songs/select.mp3"></PageBackground>
+    <PageBackground songSrc="/audio/bgm/select.mp3"></PageBackground>
 
     <div
       style="font-size:2.3em; font-weight: bold;text-align:center;padding:10px;margin-top:70px"
@@ -27,7 +27,7 @@
       </div>
     </div>
 
-    <Loading :show="(!songList || songList.length===0)&& delayedLoading">Fetching Latest Songs...</Loading>
+    <Loading :show="(!songList || songList.length===0)" :delay="true">Fetching Latest Songs...</Loading>
   </div>
 </template>
 
@@ -53,7 +53,6 @@ export default {
             songList: null,
             sheetList: null,
             selectedSong: null,
-            delayedLoading: false
         }
     },
     computed: {
@@ -72,9 +71,6 @@ export default {
         }).catch(err=>{
           console.error(err)
         })
-        setTimeout(() => {
-          this.delayedLoading = true
-        }, 1000);
     },
     methods: {
     }

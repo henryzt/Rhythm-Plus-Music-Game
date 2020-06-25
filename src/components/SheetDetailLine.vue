@@ -4,9 +4,9 @@
       <div class="sBlock">
         <span class="clip">{{getDifficulty(sheet.difficulty)}}</span>
       </div>
+      <div class="sBlock">{{getLengthFormatted(sheet.length)}}</div>
       <div class="sBlock">{{sheet.keys}}Key</div>
       <div class="sBlock">{{sheet.noteCount}} Notes</div>
-      <div class="sBlock">{{getLengthFormatted(sheet.length)}}</div>
     </div>
     <div style="text-align:left" v-else>
       <div class="sBlock">

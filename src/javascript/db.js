@@ -83,6 +83,7 @@ export function getSongList(getPrivate) {
 
 function filterSongData(doc) {
   let song = doc.data();
+
   song.id = doc.id;
   song.image = song.youtubeId
     ? `https://img.youtube.com/vi/${song.youtubeId}/mqdefault.jpg`
@@ -250,6 +251,7 @@ export async function getGameSheet(sheetId) {
       sheet.song = song;
       sheet.sheet = JSON.parse(sheet.sheet);
       sheet.sheetId = doc.id;
+      replaceBaseUrl(sheet);
       console.log("Sheet data:", sheet);
       return sheet;
     } else {
@@ -281,6 +283,10 @@ export function getSheet(sheetId) {
         reject(error);
       });
   });
+}
+
+function replaceBaseUrl(sheet) {
+  sheet.url = sheet.url ? sheet.url.replace("{base}", "/audio/songs") : null; // replace local songs
 }
 
 export function uploadResult(data) {

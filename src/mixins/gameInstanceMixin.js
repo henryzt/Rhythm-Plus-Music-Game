@@ -122,9 +122,10 @@ export default {
     },
     ytError() {
       console.error("youtube error");
+      this.instance.loading = false;
       this.$store.state.gModal.show({
         bodyText:
-          "Sorry, there is a problem with this video right now, which makes this sheet unavaliable. Please try again later.",
+          "Sorry, there is a problem with the source right now, which makes this sheet unavaliable. Please try again later.",
         isError: true,
         showCancel: false,
         okCallback: this.exitGame,

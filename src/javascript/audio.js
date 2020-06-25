@@ -16,7 +16,13 @@ export default class Audio {
     });
   }
 
-  async loadSong(songSrc, asBackground, loadedCallback, finishedCallback) {
+  async loadSong(
+    songSrc,
+    asBackground,
+    loadedCallback,
+    finishedCallback,
+    errorCallback
+  ) {
     this.player?.unload();
 
     this.player = new Howl({
@@ -50,6 +56,9 @@ export default class Audio {
     });
     this.player.on("end", () => {
       if (finishedCallback) finishedCallback();
+    });
+    this.player.on("loaderror", () => {
+      if (errorCallback) errorCallback();
     });
   }
 

@@ -82,7 +82,7 @@ export default {
   padding: 0;
   transition: 0.5s;
   text-align: center;
-  min-width: 300px;
+  min-width: 350px;
   white-space: normal;
 }
 .song_item:hover {

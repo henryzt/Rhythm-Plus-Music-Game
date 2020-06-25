@@ -421,7 +421,8 @@ export default class GameInstance {
         song.url,
         false,
         this.vm.songLoaded,
-        this.vm.gameEnded
+        this.vm.gameEnded,
+        this.vm.ytError
       );
     }
   }

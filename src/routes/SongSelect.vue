@@ -1,6 +1,6 @@
 <template>
   <div>
-    <PageBackground songSrc="/audio/bgm/select.mp3"></PageBackground>
+    <PageBackground></PageBackground>
 
     <div
       style="font-size:2.3em; font-weight: bold;text-align:center;padding:10px;margin-top:70px"

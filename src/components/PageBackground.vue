@@ -28,7 +28,7 @@ export default {
   props: {
     songSrc : {
       type: String,
-      default: "songs/login.mp3"
+      default: null
     },
     visualizer : {
       type: String,
@@ -54,10 +54,13 @@ export default {
         }
     },
     mounted() {
-        this.$store.state.audio.loadSong(this.songSrc, true)
+        if(this.songSrc){
+          this.$store.state.audio.loadSong(this.songSrc, true)
+        }else{
+          this.$store.state.audio.playBgm()
+        }
     },
     destroyed(){
-        this.$store.state.audio.stop()
     }
 };
 </script>

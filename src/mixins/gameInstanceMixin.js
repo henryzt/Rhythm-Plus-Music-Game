@@ -71,6 +71,8 @@ export default {
     // get audio element
     this.audio = this.$store.state.audio;
 
+    this.audio.stop();
+
     this.instance = new GameInstance(this);
     this.instance.reposition();
 
@@ -104,6 +106,7 @@ export default {
       if (this.fever.value < 1) this.fever.value = 1;
       if (this.fever.percent < 0) this.fever.percent = 0;
       if (this.fever.percent >= 1) {
+        // this.audio.playEffect("/audio/effects/swoosh2.mp3");
         this.fever.percent = 0;
         this.fever.time = 30;
         this.fever.value =

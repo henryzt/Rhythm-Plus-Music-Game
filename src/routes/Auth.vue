@@ -1,6 +1,6 @@
 <template>
   <div>
-    <PageBackground songSrc="/audio/bgm/login.mp3"></PageBackground>
+    <PageBackground></PageBackground>
 
     <div class="center_logo">
       <div v-show="!$store.state.authed">

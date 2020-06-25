@@ -62,6 +62,23 @@ export default class Audio {
     });
   }
 
+  playBgm() {
+    // randomly play background music
+    const bgmUrl = "/audio/bgm/aurora.mp3";
+    if (bgmUrl == this.player?._src) return;
+    this.stop();
+    this.loadSong(bgmUrl, true);
+  }
+
+  playEffect(url) {
+    const effectPlayer = new Howl({
+      volume: 0.5,
+      src: [url],
+      loop: false,
+    });
+    effectPlayer.play();
+  }
+
   stop() {
     this.player?.stop();
   }

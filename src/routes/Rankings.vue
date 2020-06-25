@@ -1,6 +1,6 @@
 <template>
   <div>
-    <PageBackground songSrc="/audio/bgm/opening.mp3"></PageBackground>
+    <PageBackground></PageBackground>
 
     <div class="center_logo">Coming soon...</div>
   </div>

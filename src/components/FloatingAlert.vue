@@ -16,14 +16,15 @@ export default {
     },
     methods: {
         show(text, time){
-            this.visible = true;
+          this.visible = true;
             this.text = text;
             clearTimeout(this.hideTimeout)
             if(time && time!==0){
-                this.hideTimeout = setTimeout(()=>{
-                    this.visible = false;
+              this.hideTimeout = setTimeout(()=>{
+                this.visible = false;
                 }, time)
             }
+            // this.$store.state.audio.playEffect("/audio/effects/error.mp3");
         },
         info(text, time){
             this.className="info"

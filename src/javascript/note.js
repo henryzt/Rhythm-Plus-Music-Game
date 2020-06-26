@@ -162,6 +162,8 @@ export default class Note {
     if (this.game.paused) return;
 
     this.y += this.vm.noteSpeedPxPerSec * this.delta;
+
+    this.playSoundEffect();
   }
 
   drawSingleNote(color) {
@@ -183,6 +185,14 @@ export default class Note {
       : paintHeight;
     this.ctx.fillStyle = color;
     this.ctx.fillRect(this.x, paintY, this.width, paintHeight);
+  }
+
+  playSoundEffect() {
+    if (!this.vm.inEditor) return;
+    if (!this.sePlayed && this.y >= this.vm.checkHitLineY) {
+      this.sePlayed = true;
+      this.vm.$store.state.audio.playEffect("/audio/effects/du.mp3");
+    }
   }
 
   vibrate(pattern) {

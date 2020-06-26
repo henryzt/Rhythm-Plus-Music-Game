@@ -22,6 +22,25 @@
       <div style="padding:20px;" v-else>Sheets loading...</div>
     </div>
 
+    <div class="bestRes" v-if="bestResult">
+      <div class="brBlock">
+        <div class="brTxt">Rank</div>
+        {{bestResult.rank}}
+      </div>
+      <div class="brBlock">
+        <div class="brTxt">Combo</div>
+        {{bestResult.result.maxCombo}}
+      </div>
+      <div class="brBlock">
+        <div class="brTxt">Accuracy</div>
+        {{bestResult.result.percentage.toFixed(2)}}%
+      </div>
+      <div class="brBlock">
+        <div class="brTxt">Score</div>
+        {{bestResult.result.score.toFixed(0)}}
+      </div>
+    </div>
+
     <div style="padding: 20px 0;">
       <Button text="Play!" @click="startSelected"></Button>
       <div class="text_button" @click="$emit('cancel')">Cancel</div>
@@ -32,12 +51,15 @@
 <script>
 import Button from './Button.vue';
 import SheetDetailLine from './SheetDetailLine.vue';
+import { getBestScore } from "../javascript/db"
+
 export default {
     name:"SongDetailPanel",
     props: ["song", "sheets"],
       data(){
         return {
-            selectedSheet: null
+            selectedSheet: null,
+            bestResult: null
         }
     },
     components:{
@@ -60,6 +82,13 @@ export default {
       sheets(){
         if(this.song)
           this.selectedSheet = null;
+      },
+      async selectedSheet(){
+        if(this.selectedSheet){
+          this.bestResult = await getBestScore(this.selectedSheet.id);
+        }else{
+          this.bestResult = null;
+        }
       }
     }
 }
@@ -111,5 +140,23 @@ export default {
 }
 .active {
   background: rgba(255, 255, 255, 0.3);
+}
+.bestRes {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  width: 100%;
+  margin-top: 10px;
+}
+.brBlock {
+  width: 30%;
+  padding: 10px;
+}
+.brBlock + .brBlock {
+  border-left: 1px solid grey;
+}
+.brTxt {
+  font-size: 14px;
+  color: grey;
 }
 </style>

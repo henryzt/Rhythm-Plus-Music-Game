@@ -309,3 +309,26 @@ export async function getResult(resultId) {
     throw new Error("Error reading document");
   }
 }
+
+export async function getBestScore(sheetId) {
+  try {
+    let snapshot = await resultsCollection
+      .where("uid", "==", store.state.currentUser?.uid)
+      .where("sheetId", "==", sheetId)
+      .orderBy("result.score", "desc")
+      .limit(1)
+      .get();
+
+    let res = null;
+    snapshot.forEach((doc) => {
+      if (doc.exists) {
+        res = doc.data();
+      }
+    });
+
+    return res;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error reading document");
+  }
+}

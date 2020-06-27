@@ -4,6 +4,8 @@
 
 <script>
 import SimplexNoise from "./noise.min.js";
+import VolumeSampler from "../VolumeSampler"
+
 
 export default {
     name: 'Swirl',
@@ -13,7 +15,7 @@ export default {
     },
     mounted() {
         let container = this.$refs.visualizerContainer;
-        setup(container)
+        setup(container, this.audioData)
     },
     beforeDestroy(){
      
@@ -63,7 +65,8 @@ const noiseSteps = 8;
 const xOff = 0.00125;
 const yOff = 0.00125;
 const zOff = 0.0005;
-const backgroundColor = 'hsla(260,40%,5%,1)';
+
+let sampler;
 
 let container;
 let canvas;
@@ -80,11 +83,16 @@ let speeds;
 let sizes;
 let hues;
 
-function setup(container) {
+function setup(container, audioData) {
     createCanvas(container);
     resize();
     initParticles();
-	draw();
+    draw();
+    sampler = new VolumeSampler(audioData);
+}
+
+function getVolume(){
+  return sampler ? sampler.volume / 10000 : 0;
 }
 
 function initParticles() {
@@ -124,6 +132,8 @@ function drawParticles() {
 }
 
 function updateParticle(i) {
+  const speedOffset = 1 +  (getVolume()) * 10;
+
   let i2=1+i, i3=2+i, i4=3+i, i5=4+i, i6=5+i, i7=6+i, i8=7+i, i9=8+i;
   let n, x, y, vx, vy, life, ttl, speed, x2, y2, radius, hue;
 
@@ -134,7 +144,7 @@ function updateParticle(i) {
   vy = lerp(particleProps[i4], sin(n), 0.5);
   life = particleProps[i5];
   ttl = particleProps[i6];
-  speed = particleProps[i7];
+  speed = particleProps[i7] * speedOffset;
   x2 = x + vx * speed;
   y2 = y + vy * speed;
   radius = particleProps[i8];
@@ -235,10 +245,13 @@ function renderToScreen() {
 
 function draw() {
   tick++;
-
+  
   ctx.a.clearRect(0, 0, canvas.a.width, canvas.a.height);
+  ctx.b.clearRect(0, 0, canvas.a.width, canvas.a.height);
 
-  ctx.b.fillStyle = backgroundColor;
+  let alpha = getVolume() - 0.35;
+
+  ctx.b.fillStyle = `rgba(61, 10, 162, ${alpha})`;
   ctx.b.fillRect(0, 0, canvas.a.width, canvas.a.height);
 
   drawParticles();

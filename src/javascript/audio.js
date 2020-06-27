@@ -24,6 +24,7 @@ export default class Audio {
     errorCallback
   ) {
     this.player?.unload();
+    this.asBackground = asBackground;
 
     this.player = new Howl({
       volume: this.muteBg && asBackground ? 0 : this.maxVolume,
@@ -65,7 +66,7 @@ export default class Audio {
 
   playBgm(songToExclude) {
     // randomly play background music
-    if (this.player && !songToExclude) return;
+    if (this.player && this.player.playing() && !songToExclude) return;
     let bgmUrlArr = ["/audio/bgm/aurora.mp3", "/audio/bgm/kontekst.mp3"];
     shuffle(bgmUrlArr);
     bgmUrlArr.filter((e) => e !== songToExclude);
@@ -85,8 +86,10 @@ export default class Audio {
 
   stop() {
     this.player?.stop();
-    this.player?.unload();
-    this.player = null;
+    if (this.asBackground) {
+      this.player?.unload();
+      this.player = null;
+    }
   }
 
   pause() {

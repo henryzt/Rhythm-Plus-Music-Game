@@ -60,6 +60,7 @@ export default class DropTrack {
             this.isUserHoldingNote = false;
             noteToDismiss.hitAndCountScore();
             this.noteArr.shift();
+            this.playSoundEffect();
           }
           createParticle();
         }
@@ -77,6 +78,7 @@ export default class DropTrack {
   dropNote(key, keyObj) {
     if (key.includes(this.keyBind) && !this.vm.playMode) {
       this.addNoteToArr(keyObj);
+      this.playSoundEffect();
     }
   }
 
@@ -108,6 +110,11 @@ export default class DropTrack {
         this.noteArr[this.noteArr.length - 1].reposition();
       }
     }
+  }
+
+  playSoundEffect() {
+    if (!this.vm.inEditor || !this.vm.soundEffect) return;
+    this.vm.$store.state.audio.playEffect("/audio/effects/du.mp3");
   }
 
   update() {

@@ -71,7 +71,7 @@ export default {
   display: flex;
   max-width: 80%;
   overflow: scroll;
-  z-index: 1000;
+  z-index: 800;
 }
 
 .navtext {

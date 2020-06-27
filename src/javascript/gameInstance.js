@@ -105,7 +105,10 @@ export default class GameInstance {
     this.startX = startX;
     this.endX = startX + (trackWidth + 1) * this.dropTrackArr.length - 1;
 
-    this.vm.checkHitLineY = (this.canvas.height / 10) * 9;
+    const isMobile = window.innerWidth < 1000;
+    const hitLineProp = isMobile ? 8.5 : 9;
+
+    this.vm.checkHitLineY = (this.canvas.height / 10) * hitLineProp;
     this.vm.noteSpeedPxPerSec =
       this.vm.checkHitLineY / Number(this.vm.noteSpeedInSec);
   }

@@ -33,6 +33,7 @@ export default {
       showStartButton: false,
       isGameEnded: false,
       initialized: false,
+      soundEffect: true, //eidtor hit sound effect
     };
   },
   computed: {

@@ -2,7 +2,7 @@ export default class FeverEffect {
   constructor(vm, game) {
     this.vm = vm;
     this.game = game;
-    this.yOffset = 0;
+    this.yOffset = -this.game.canvas.height;
   }
 
   drawArrow(y) {

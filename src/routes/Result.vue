@@ -26,9 +26,9 @@
           <div class="rightScore">
             <div>
               Score
-              <br />
+              <div class="markChip acheivementChip highScoreChip" v-if="newRecord">New Record</div>
               <ICountUp
-                style="font-size:2.7em"
+                style="font-size:2.7em;display:block;"
                 :endVal="result.result.score"
                 :options="{decimalPlaces:0}"
               />
@@ -36,6 +36,7 @@
             <div>
               Max Combo -
               <ICountUp :endVal="result.result.maxCombo" :options="{decimalPlaces:0}" />
+              <div class="markChip acheivementChip comboChip" v-if="result.isFullCombo">Full Combo</div>
             </div>
           </div>
 
@@ -97,7 +98,7 @@ import PageBackground from '../components/PageBackground.vue';
 import SongListItem from '../components/SongListItem.vue';
 import UserProfileCard from '../components/UserProfileCard.vue';
 import Modal from '../components/Modal.vue';
-import { getGameSheet, getResult } from "../javascript/db"
+import { getGameSheet, getResult, getBestScore } from "../javascript/db"
 import ICountUp from 'vue-countup-v2';
 import VueCircle from 'vue2-circle-progress/src/index.vue'
 import Loading from '../components/Loading.vue';
@@ -120,7 +121,8 @@ export default {
             showModal: false,
             result: null,
             sheet: null,
-            windowWidth: window.innerWidth
+            windowWidth: window.innerWidth,
+            newRecord: false
         }
     },
     computed: {
@@ -135,6 +137,10 @@ export default {
         try{
           this.result = await getResult(this.$route.params.resultId)
           this.sheet = await getGameSheet(this.result.sheetId)
+          const bestResult = await getBestScore(this.result.sheetId)
+          if(bestResult && bestResult.result.score <= this.result.result.score){
+            this.newRecord = true;
+          }
         }catch(err){
           this.showError()
         }
@@ -242,6 +248,22 @@ export default {
 .miss {
   background: rgba(112, 0, 0, 0.8);
 }
+
+.acheivementChip {
+  margin-top: 10px;
+  width: fit-content;
+}
+
+.highScoreChip {
+  box-shadow: #ffab2d 0px 0px 20px;
+  background: #ff8b2d;
+}
+
+.comboChip {
+  box-shadow: #68ff2d 0px 0px 20px;
+  background: #00b609;
+}
+
 .song_item_sec {
   position: fixed;
   top: 10vh;
@@ -323,6 +345,12 @@ export default {
   }
   .score {
     font-size: 6em;
+  }
+
+  .acheivementChip {
+    display: block;
+    margin: auto;
+    margin-top: 10px;
   }
 
   .song_item_sec {

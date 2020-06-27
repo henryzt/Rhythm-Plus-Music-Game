@@ -51,6 +51,10 @@ export default class Note {
   calculatePercent() {
     this.percentage = 1 - ((1 - this.getDiffPercentage() - 0.2) / 4) * 5;
     this.percentage = this.percentage < 1 ? this.percentage : 1;
+    this.judge();
+  }
+
+  judge() {
     if (this.percentage < 0.05) {
       this.vm.result.marks.perfect += 1;
       this.vm.markJudge = "Perfect";
@@ -65,6 +69,7 @@ export default class Note {
 
   hitAndCountScore(isHolding) {
     this.vibrate(25);
+    this.judge();
     const percentage = this.percentage;
     let accuracyPercent = 100 * (1 - percentage);
     if (!isHolding) {
@@ -109,7 +114,7 @@ export default class Note {
 
   isHoldNoteFinished(nearly) {
     const offset = nearly
-      ? Math.min.apply(0, [this.holdNoteHeight / 10, 100])
+      ? Math.min.apply(0, [this.holdNoteHeight / 2, 100])
       : 0;
     return this.holdNoteY > this.vm.checkHitLineY - offset;
   }

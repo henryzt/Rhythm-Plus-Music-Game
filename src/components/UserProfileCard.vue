@@ -32,7 +32,7 @@
         v-if="!extend"
         v-html="$store.state.initialized ? 'Login &<br>Register' : 'Loading...'"
       ></div>
-      <div style="opacity:0.5" v-else>
+      <div style="opacity:0.5;padding:15px;" v-else>
         Login or Register now
         <br />to save your progress and exp
       </div>

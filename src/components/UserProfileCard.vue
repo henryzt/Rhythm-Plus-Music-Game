@@ -6,7 +6,11 @@
         scale="1.3"
         @click="$store.state.audio.toggleBgMute()"
       />
-      <v-icon :name="isFullscreen?'compress':'expand'" scale="1.3" @click="toggleFullscreen" />
+      <v-icon
+        :name="$store.state.isFullscreen?'compress':'expand'"
+        scale="1.3"
+        @click="$store.commit('toggleFullscreen')"
+      />
     </div>
 
     <div v-if="$store.state.authed" @click="goToAccount" style="display:flex;align-items: center;">
@@ -41,21 +45,16 @@
 </template>
 
 <script>
-import 'vue-awesome/icons/volume-up'
-import 'vue-awesome/icons/volume-mute'
-import 'vue-awesome/icons/expand'
-import 'vue-awesome/icons/compress'
-
 export default {
     name:"UserProfileCard",
     props: ["extend"],
     data: function(){
       return {
-        isFullscreen: false
+        
       }
     },
     mounted(){
-      this.isFullscreen = document.fullscreen;
+      this.$store.commit("checkFullscreen")
     },
     computed: {
       percentage(){
@@ -68,15 +67,6 @@ export default {
         if(!this.extend)
           this.$router.push('/account')
       },
-      async toggleFullscreen(){
-        this.isFullscreen = document.fullscreen;
-        if(this.isFullscreen){
-          await document.exitFullscreen();
-        }else{
-          await document.documentElement.requestFullscreen();
-        }
-        this.isFullscreen = document.fullscreen;
-      }
     }
 }
 </script>

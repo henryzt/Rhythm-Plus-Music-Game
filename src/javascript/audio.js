@@ -64,8 +64,10 @@ export default class Audio {
 
   playBgm() {
     // randomly play background music
-    const bgmUrl = "/audio/bgm/aurora.mp3";
-    if (bgmUrl == this.player?._src) return;
+    const bgmUrlArr = ["/audio/bgm/aurora.mp3", "/audio/bgm/kontekst.mp3"];
+    const bgmUrl = bgmUrlArr[Math.floor(Math.random() * bgmUrlArr.length)];
+    // if (bgmUrl == this.player?._src) return;
+    if (this.player) return;
     this.stop();
     this.loadSong(bgmUrl, true);
   }
@@ -81,6 +83,8 @@ export default class Audio {
 
   stop() {
     this.player?.stop();
+    this.player?.unload();
+    this.player = null;
   }
 
   pause() {

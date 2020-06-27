@@ -9,6 +9,7 @@
       >
         <v-icon name="regular/pause-circle" scale="1.5" />
       </a>
+      <Navbar v-else-if="!started" :gameNav="true"></Navbar>
     </transition>
 
     <!-- mark indicator -->
@@ -76,7 +77,7 @@
       </div>
     </transition>
 
-    <!-- center text -->
+    <!-- center text (fever x2 etc) -->
     <ZoomText style="z-index:1000" ref="zoom"></ZoomText>
 
     <!-- loading popup -->
@@ -126,6 +127,7 @@ import Visualizer from '../components/Visualizer.vue';
 import Loading from '../components/Loading.vue';
 import Modal from '../components/Modal.vue';
 import ZoomText from '../components/ZoomText.vue';
+import Navbar from '../components/Navbar.vue';
 import GameInstance from '../javascript/gameInstance';
 import GameInstanceMixin from '../mixins/gameInstanceMixin';
 import { Youtube } from 'vue-youtube'
@@ -145,7 +147,8 @@ export default {
         Loading,
         Modal,
         ICountUp,
-        ZoomText
+        ZoomText,
+        Navbar
     },
     mixins: [GameInstanceMixin],
     data(){

@@ -1,29 +1,52 @@
 <template>
-  <div class="navbar mainNav">
-    <router-link to="/" exact>
+  <div>
+    <div class="navbar mainNav" v-if="!gameNav">
+      <router-link to="/" exact>
+        <div class="nav">
+          <v-icon name="home" scale="2" />
+          <div class="navtext">Home</div>
+        </div>
+      </router-link>
+      <router-link to="/menu">
+        <div class="nav">
+          <v-icon name="stream" scale="1.7" />
+          <div class="navtext">Song Select</div>
+        </div>
+      </router-link>
+      <router-link to="/rankings">
+        <div class="nav">
+          <v-icon name="medal" scale="1.7" />
+          <span class="navtext">Rankings</span>
+        </div>
+      </router-link>
+      <router-link to="/account">
+        <div class="nav">
+          <v-icon name="cog" scale="1.7" />
+          <span class="navtext">Account & Options</span>
+        </div>
+      </router-link>
+    </div>
+
+    <div class="navbar gameNav" v-else>
+      <router-link to="/menu" exact>
+        <div class="nav">
+          <v-icon name="home" scale="1.5" />
+          <div class="navtext">Back</div>
+        </div>
+      </router-link>
       <div class="nav">
-        <v-icon name="home" scale="2" />
-        <div class="navtext">Home</div>
+        <v-icon
+          :name="$store.state.isFullscreen?'compress':'expand'"
+          scale="1.5"
+          @click="$store.commit('toggleFullscreen')"
+        />
+        <div class="navtext">Toggle Fullscreen</div>
       </div>
-    </router-link>
-    <router-link to="/menu">
       <div class="nav">
-        <v-icon name="stream" scale="1.7" />
-        <div class="navtext">Song Select</div>
+        <v-icon name="share" scale="1.5" />
+        <div class="navtext">Share</div>
       </div>
-    </router-link>
-    <router-link to="/rankings">
-      <div class="nav">
-        <v-icon name="medal" scale="1.7" />
-        <span class="navtext">Rankings</span>
-      </div>
-    </router-link>
-    <router-link to="/account">
-      <div class="nav">
-        <v-icon name="cog" scale="1.7" />
-        <span class="navtext">Account & Options</span>
-      </div>
-    </router-link>
+    </div>
   </div>
 </template>
 
@@ -32,9 +55,11 @@ import 'vue-awesome/icons/home'
 import 'vue-awesome/icons/stream'
 import 'vue-awesome/icons/medal'
 import 'vue-awesome/icons/cog'
+import 'vue-awesome/icons/share'
 
 export default {
     name: "Navbar",
+    props: ["gameNav"]
 }
 </script>
 
@@ -47,12 +72,6 @@ export default {
   max-width: 80%;
   overflow: scroll;
   z-index: 1000;
-  background: rgba(0, 0, 0, 0.5);
-  background: linear-gradient(
-    90deg,
-    rgba(0, 0, 0, 0.2) 0%,
-    rgba(0, 0, 0, 0) 100%
-  );
 }
 
 .navtext {
@@ -65,6 +84,15 @@ export default {
   opacity: 0;
   transition: padding-left 0.5s, max-width 0.5s, opacity 0.5s;
   pointer-events: none;
+}
+
+.mainNav {
+  background: rgba(0, 0, 0, 0.5);
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.2) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
 }
 
 a {
@@ -91,6 +119,12 @@ a {
   background: rgba(255, 255, 255, 0.7);
   color: black;
   opacity: 1;
+}
+
+.gameNav .nav {
+  min-width: 48px;
+  width: 48px;
+  max-width: 48px;
 }
 
 .router-link-active .nav {

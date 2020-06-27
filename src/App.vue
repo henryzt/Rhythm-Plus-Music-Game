@@ -12,6 +12,10 @@
 import Audio from './javascript/audio.js';
 import ModalGlobal from './components/ModalGlobal.vue';
 import FloatingAlert from './components/FloatingAlert.vue';
+import 'vue-awesome/icons/volume-up'
+import 'vue-awesome/icons/volume-mute'
+import 'vue-awesome/icons/expand'
+import 'vue-awesome/icons/compress'
 
 export default {
   name: 'App',

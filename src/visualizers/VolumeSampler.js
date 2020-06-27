@@ -19,7 +19,7 @@ export default class VolumeSampler {
     this.volume = 0;
     // this.streamData = new Uint8Array(128);
   }
-  destory() {
+  destroy() {
     clearInterval(this.interval);
   };
 }

@@ -109,9 +109,9 @@ export default {
     transform: none;
   }
 
-  .detail {
+  /* .detail {
     width: 80%;
-  }
+  } */
 }
 
 @media only screen and (min-width: 800px) {

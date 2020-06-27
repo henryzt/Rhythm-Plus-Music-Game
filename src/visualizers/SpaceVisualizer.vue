@@ -16,7 +16,7 @@ export default {
     initSpaceVisualizer(this.audioData, this.$refs.visualizerSpace);
   },
   beforeDestroy(){
-    audioSource.destory()
+    audioSource.destroy()
   },
   methods: {
     update() {

@@ -18,7 +18,8 @@ export default {
         setup(container, this.audioData)
     },
     beforeDestroy(){
-     
+      destroyed=true;
+      sampler?.destroy();
     },
     methods: {
         update() {},
@@ -56,7 +57,7 @@ const rangeY = 100;
 const baseTTL = 50;
 const rangeTTL = 150;
 const baseSpeed = 0.1;
-const rangeSpeed = 2;
+const rangeSpeed = 0.5;
 const baseRadius = 1;
 const rangeRadius = 4;
 const baseHue = 220;
@@ -67,6 +68,7 @@ const yOff = 0.00125;
 const zOff = 0.0005;
 
 let sampler;
+let destroyed;
 
 let container;
 let canvas;
@@ -84,6 +86,7 @@ let sizes;
 let hues;
 
 function setup(container, audioData) {
+    destroyed = false;
     createCanvas(container);
     resize();
     initParticles();
@@ -257,7 +260,7 @@ function draw() {
   drawParticles();
   renderGlow();
   renderToScreen();
-
+  if(destroyed) return;
 	window.requestAnimationFrame(draw);
 }
 

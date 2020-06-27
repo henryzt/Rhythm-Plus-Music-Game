@@ -159,6 +159,9 @@ export default {
             });
       })
     },
+    beforeDestroy(){
+      this.$store.state.audio.stop();
+    },
     methods: {
       showError(){
           this.$store.state.gModal.show({bodyText:"This result is unavaliable.", 

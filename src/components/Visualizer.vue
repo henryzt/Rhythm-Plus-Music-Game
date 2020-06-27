@@ -16,6 +16,7 @@
 import BarVisualizer from '../visualizers/BarVisualizer.vue';
 import SpaceVisualizer from '../visualizers/SpaceVisualizer.vue';
 import ColorPoly from '../visualizers/ColorPoly.vue';
+import Swirl from '../visualizers/swirl/Swirl.vue';
 
 
 const visualizers = {
@@ -24,6 +25,7 @@ const visualizers = {
   "Bar Visualizer" : "bar",
   "Space with Polygon" : "spacePoly",
   "Colored Polygon" : "colorPoly",
+  "Swirl" : "swirl",
 };
 
 export default {
@@ -33,7 +35,8 @@ export default {
       'bar' : BarVisualizer,
       'space' : SpaceVisualizer,
       'spacePoly' : SpaceVisualizer,
-      'colorPoly' : ColorPoly
+      'colorPoly' : ColorPoly,
+      'swirl' : Swirl
   },
   data: function(){
     return {

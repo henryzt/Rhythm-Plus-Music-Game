@@ -32,7 +32,7 @@ export default {
     },
     visualizer : {
       type: String,
-      default: "space"
+      default: "swirl"
     },
     imageSrc : {
       type: String,

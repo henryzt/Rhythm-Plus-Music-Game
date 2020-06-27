@@ -1,5 +1,5 @@
 <template>
-  <div class="wrap">
+  <div class="wrap colored">
     <button class="main_button" @click="clicked">{{text}}</button>
   </div>
 </template>

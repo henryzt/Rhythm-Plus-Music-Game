@@ -56,20 +56,22 @@ export default class Audio {
     });
     this.player.on("end", () => {
       if (finishedCallback) finishedCallback();
+      if (asBackground) this.playBgm(this.player._src);
     });
     this.player.on("loaderror", () => {
       if (errorCallback) errorCallback();
     });
   }
 
-  playBgm() {
+  playBgm(songToExclude) {
     // randomly play background music
-    const bgmUrlArr = ["/audio/bgm/aurora.mp3", "/audio/bgm/kontekst.mp3"];
-    const bgmUrl = bgmUrlArr[Math.floor(Math.random() * bgmUrlArr.length)];
-    // if (bgmUrl == this.player?._src) return;
-    if (this.player) return;
+    if (this.player && !songToExclude) return;
+    let bgmUrlArr = ["/audio/bgm/aurora.mp3", "/audio/bgm/kontekst.mp3"];
+    shuffle(bgmUrlArr);
+    bgmUrlArr.filter((e) => e !== songToExclude);
     this.stop();
-    this.loadSong(bgmUrl, true);
+    console.log(bgmUrlArr);
+    this.loadSong(bgmUrlArr[0], true);
   }
 
   playEffect(url) {
@@ -121,4 +123,26 @@ export default class Audio {
   setRate(rate) {
     this.player?.rate(rate);
   }
+}
+
+function shuffle(array) {
+  //ref https://stackoverflow.com/questions/2450954/
+
+  let currentIndex = array.length,
+    temporaryValue,
+    randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
 }

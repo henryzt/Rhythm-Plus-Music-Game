@@ -27,7 +27,7 @@ export default class Audio {
     this.asBackground = asBackground;
 
     this.player = new Howl({
-      volume: this.muteBg && asBackground ? 0 : this.maxVolume,
+      volume: (this.muteBg && asBackground) ? 0 : this.maxVolume,
       src: [songSrc],
       loop: asBackground,
     });
@@ -66,7 +66,7 @@ export default class Audio {
 
   playBgm(songToExclude) {
     // randomly play background music
-    if (this.player && this.player.playing() && !songToExclude) return;
+    if (this.player?.playing() && !songToExclude) return;
     let bgmUrlArr = ["/audio/bgm/aurora.mp3", "/audio/bgm/kontekst.mp3"];
     shuffle(bgmUrlArr);
     bgmUrlArr.filter((e) => e !== songToExclude);
@@ -131,20 +131,17 @@ export default class Audio {
 function shuffle(array) {
   //ref https://stackoverflow.com/questions/2450954/
 
-  let currentIndex = array.length,
-    temporaryValue,
-    randomIndex;
+  let currentIndex = array.length;
+  let randomIndex = 0;
 
   // While there remain elements to shuffle...
-  while (0 !== currentIndex) {
+  while (currentIndex !== 0) {
     // Pick a remaining element...
     randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
+    currentIndex--;
 
     // And swap it with the current element.
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
+    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
   }
 
   return array;

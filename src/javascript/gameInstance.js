@@ -275,7 +275,7 @@ export default class GameInstance {
       this.lastAddedTime &&
       this.timeArr[this.lastAddedIdx] &&
       this.lastAddedKey !== key &&
-      cTime - this.lastAddedTime < waitTimeForMultiNote
+      (cTime - this.lastAddedTime) < waitTimeForMultiNote
     ) {
       this.timeArr[this.lastAddedIdx].k += key;
     } else {

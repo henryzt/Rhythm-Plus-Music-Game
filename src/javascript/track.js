@@ -221,7 +221,8 @@ export class HitEffect {
           const globalX = x + localX;
           const globalY = y + localY;
 
-          this.createParticleAtPoint(globalX, globalY, [`rgb(${rgb})`]);
+          const color = `rgb(${rgb})`;
+          this.createParticleAtPoint(globalX, globalY, [color]);
         }
         count++;
       }

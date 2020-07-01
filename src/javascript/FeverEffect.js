@@ -6,26 +6,24 @@ export default class FeverEffect {
   }
 
   drawArrow(y) {
-    const ctx = this.game.ctx;
-    const x1 = this.game.startX;
-    const x2 = this.game.endX;
-    const xm = (x1 + x2) / 2;
+    const {ctx, startX, endX} = this.game;
+    const midX = (startX + endX) / 2;
     const height = 100;
     const thickness = 200;
     ctx.beginPath();
-    ctx.moveTo(xm, y);
-    ctx.lineTo(x2, y + thickness);
-    ctx.lineTo(x2, y + thickness + height);
-    ctx.lineTo(xm, y + height);
-    ctx.lineTo(x1, y + thickness + height);
-    ctx.lineTo(x1, y + thickness);
-    ctx.lineTo(xm, y);
+    ctx.moveTo(midX, y);
+    ctx.lineTo(endX, y + thickness);
+    ctx.lineTo(endX, y + thickness + height);
+    ctx.lineTo(midX, y + height);
+    ctx.lineTo(startX, y + thickness + height);
+    ctx.lineTo(startX, y + thickness);
+    ctx.lineTo(midX, y);
     ctx.fill();
   }
 
   update() {
-    let fever = this.vm.fever;
-    const ctx = this.game.ctx;
+    let {fever} = this.vm;
+    const {ctx} = this.game;
     if (fever.value <= 1) return;
     const height = 300;
     const cHeight = this.game.canvas.height;

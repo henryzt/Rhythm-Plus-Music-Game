@@ -70,7 +70,7 @@ export default class Note {
   hitAndCountScore(isHolding) {
     this.vibrate(25);
     this.judge();
-    const percentage = this.percentage;
+    const {percentage} = this;
     let accuracyPercent = 100 * (1 - percentage);
     if (!isHolding) {
       // hold note does not count towards accuracy percent
@@ -178,7 +178,7 @@ export default class Note {
 
   drawHoldNote(color) {
     const endTime = this.keyObj.h[this.key];
-    const holdLengthInSec = endTime === -1 ? 100 : endTime - this.keyObj.t;
+    const holdLengthInSec = (endTime === -1) ? 100 : endTime - this.keyObj.t;
     const noteHeight = holdLengthInSec * this.vm.noteSpeedPxPerSec;
     this.holdNoteHeight = noteHeight;
     this.holdNoteY = this.y - noteHeight + this.singleNoteHeight;

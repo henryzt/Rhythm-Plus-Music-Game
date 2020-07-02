@@ -6,7 +6,7 @@ export default class FeverEffect {
   }
 
   drawArrow(y) {
-    const {ctx, startX, endX} = this.game;
+    const { ctx, startX, endX } = this.game;
     const midX = (startX + endX) / 2;
     const height = 100;
     const thickness = 200;
@@ -22,8 +22,8 @@ export default class FeverEffect {
   }
 
   update() {
-    let {fever} = this.vm;
-    const {ctx} = this.game;
+    let { fever } = this.vm;
+    const { ctx } = this.game;
     if (fever.value <= 1) return;
     const height = 300;
     const cHeight = this.game.canvas.height;

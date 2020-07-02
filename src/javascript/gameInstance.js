@@ -132,10 +132,14 @@ export default class GameInstance {
         this.onKeyDown(event.key);
         if (this.vm.inEditor) {
           // editor time minor adjust by arrow keys
-          if (event.keyCode === 37) {
+          const KeyCode = {
+            KEY_LEFT: 37,
+            KEY_RIGHT: 39,
+          };
+          if (event.keyCode === KeyCode.KEY_LEFT) {
             // left
             this.vm.seekTo(this.currentTime - 0.03);
-          } else if (event.keyCode === 39) {
+          } else if (event.keyCode === KeyCode.KEY_RIGHT) {
             // right
             this.vm.seekTo(this.currentTime + 0.03);
           }
@@ -275,7 +279,7 @@ export default class GameInstance {
       this.lastAddedTime &&
       this.timeArr[this.lastAddedIdx] &&
       this.lastAddedKey !== key &&
-      (cTime - this.lastAddedTime) < waitTimeForMultiNote
+      cTime - this.lastAddedTime < waitTimeForMultiNote
     ) {
       this.timeArr[this.lastAddedIdx].k += key;
     } else {
@@ -373,7 +377,7 @@ export default class GameInstance {
       this.vm.playMode &&
       this.timeArrIdx >= lastIdx &&
       this.timeArr[lastIdx] &&
-      this.playTime > Number(this.timeArr[lastIdx].t) + 5
+      this.playTime > Number(this.timeArr[lastIdx].t) + 5 // FIXME: Number Casting
     ) {
       this.vm.gameEnded();
     }

@@ -238,8 +238,8 @@ export default class GameInstance {
     this.keyStatus[key] = false;
     if (this.holdingNote[key]) {
       const cTime = await this.getCurrentTime();
-      this.holdingNote[key].h[key] = cTime;
-      this.holdingNote[key] = null;
+      this.holdingNote[key].h[key] = cTime; // Hold note creation complete, set the end time
+      this.holdingNote[key] = null; // set current holding key store to null
     }
     for (const track of this.dropTrackArr) {
       track.keyUp(key);
@@ -383,7 +383,7 @@ export default class GameInstance {
     }
   }
 
-  getCurrentTime() {
+  async getCurrentTime() {
     // it seems that 'getPlayerTime' is async, thus all places calling this func need to await res [help wanted]
     return this.vm.srcMode === "youtube"
       ? this.ytPlayer.getPlayerTime()

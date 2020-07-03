@@ -38,7 +38,7 @@ export default class DropTrack {
             let countInterval = setInterval(() => {
               // if hold note is finished or is nearly finished but player released key, count as success
               if (
-                noteToDismiss.isHoldNoteFinished() ||
+                noteToDismiss.isHoldNoteFinished(false) ||
                 (noteToDismiss.isHoldNoteFinished(true) &&
                   !this.isUserHoldingNote)
               ) {
@@ -58,7 +58,7 @@ export default class DropTrack {
             }, 100);
           } else {
             this.isUserHoldingNote = false;
-            noteToDismiss.hitAndCountScore();
+            noteToDismiss.hitAndCountScore(false);
             this.noteArr.shift();
             this.playSoundEffect();
           }
@@ -127,11 +127,12 @@ export default class DropTrack {
 
     // note update
     for (let i = 0; i < this.noteArr.length; ++i) {
-      this.noteArr[i].update(i === 0 && this.isUserHoldingNote);
-      if (this.noteArr[i].isOutOfCanvas()) {
-        this.noteArr.splice(i, 1); // Remove out of canvas note
-        --i; // Correct the index value
-      }
+      const isUserHolding = i === 0 && this.isUserHoldingNote;
+      this.noteArr[i].update(isUserHolding);
+    }
+
+    if (this.noteArr.length > 0 && this.noteArr[0].isOutOfCanvas()) {
+      this.noteArr.shift(); // Remove out of canvas note
     }
 
     // hit indicator

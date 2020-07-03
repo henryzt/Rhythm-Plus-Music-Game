@@ -1,7 +1,6 @@
 export default class VolumeSampler {
   constructor(audioData) {
-    const self = this;
-    const sampleAudioStream = function () {
+    const sampleAudioStream = () => {
       if (!audioData.analyser)
         return;
       audioData.analyser.getByteFrequencyData(audioData.dataArray);
@@ -11,7 +10,7 @@ export default class VolumeSampler {
         // get the volume from the first 50 bins, else it gets too loud with treble
         total += audioData.dataArray[i];
       }
-      self.volume = total;
+      this.volume = total;
       // console.log(total)
     };
     this.interval = setInterval(sampleAudioStream, 20);

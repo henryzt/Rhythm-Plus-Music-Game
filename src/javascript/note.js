@@ -49,6 +49,7 @@ export default class Note {
   }
 
   calculatePercent() {
+    // FIXME calculation logic
     this.percentage = 1 - ((1 - this.getDiffPercentage() - 0.2) / 4) * 5;
     this.percentage = this.percentage < 1 ? this.percentage : 1;
     this.judge();
@@ -89,13 +90,12 @@ export default class Note {
 
   isOutOfCanvas() {
     const yOut = this.y > this.canvas.height;
-    const isOut =
-      (yOut && !this.isHoldNote) ||
-      (yOut &&
-        this.isHoldNote &&
+    const isHoldNoteOut =
+      !this.isHoldNote ||
+      (this.isHoldNote &&
         !this.isUserHolding &&
         !this.isHoldNoteFinished(true));
-    if (this.vm.started && isOut && !this.noteFailed) {
+    if (this.vm.started && yOut && isHoldNoteOut && !this.noteFailed) {
       this.vm.result.marks.miss += 1;
       this.vm.result.totalHitNotes += 1;
       this.vm.result.combo = 0;

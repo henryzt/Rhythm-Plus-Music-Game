@@ -26,10 +26,13 @@ export default class GameInstance {
     this.intervalPlay = null;
 
     // store whether key is holding
-    this.keyStatus = {};
+    this.keyHoldingStatus = {};
 
     // store holding key
     this.holdingNote = {};
+
+    // timeouts for holding note
+    this.holdingNoteTimeout = {};
 
     this.ytPlayer = new YoutubePlayer(vm);
     this.feverEff = new FeverEffect(vm, this);
@@ -207,8 +210,8 @@ export default class GameInstance {
   // log key and touch events
   async onKeyDown(key) {
     // avoid repeated triggering when key is held
-    if (this.keyStatus[key]) return;
-    this.keyStatus[key] = true;
+    if (this.keyHoldingStatus[key]) return;
+    this.keyHoldingStatus[key] = true;
     if (!this.trackKeyBind.includes(key)) return;
     // if in create mode, create note
     if (!this.vm.playMode && !this.paused) {
@@ -216,14 +219,11 @@ export default class GameInstance {
       this.createSingleNote(key, cTime);
       const singleNoteObj = this.timeArr[this.lastAddedIdx];
       // convert to hold note
-      setTimeout(() => {
-        if (
-          this.keyStatus[key] &&
-          singleNoteObj ==
-            this.timeArr.reverse().find((obj) => obj.k.includes(key))
-        ) {
+      this.holdingNoteTimeout[key] = setTimeout(() => {
+        if (this.keyHoldingStatus[key]) {
           this.createHoldNote(key, singleNoteObj);
         }
+        this.holdingNoteTimeout[key] = null;
       }, 300);
     }
     // register key down
@@ -233,7 +233,8 @@ export default class GameInstance {
   }
 
   async onKeyUp(key) {
-    this.keyStatus[key] = false;
+    this.keyHoldingStatus[key] = false;
+    clearTimeout(this.holdingNoteTimeout[key]);
     if (this.holdingNote[key]) {
       const cTime = await this.getCurrentTime();
       this.holdingNote[key].h[key] = cTime; // Hold note creation complete, set the end time

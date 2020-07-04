@@ -281,6 +281,7 @@ export default {
         return Number(length.toFixed(3))
       },
       pauseGame(){
+        if(!this.started) return;
         this.reorderSheet()
         this.instance.pauseGame()
       },

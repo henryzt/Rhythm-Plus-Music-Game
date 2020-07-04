@@ -9,7 +9,7 @@
       >
         <v-icon name="regular/pause-circle" scale="1.5" />
       </a>
-      <Navbar v-else-if="!started" :gameNav="true"></Navbar>
+      <Navbar v-else style="z-index:1000" :gameNav="true"></Navbar>
     </transition>
 
     <!-- mark indicator -->
@@ -85,7 +85,7 @@
     <Loading style="z-index:500" :show="isGameEnded">Syncing Results...</Loading>
 
     <!-- pause menu modal -->
-    <Modal ref="menu" :hideFooter="true" style="text-align:center;z-index:1000">
+    <Modal ref="menu" :hideFooter="true" style="text-align:center;z-index:500">
       <template v-slot:header>
         <div style="width:100%;font-size:23px">{{advancedMenuOptions?"Options":"Pause Menu"}}</div>
       </template>

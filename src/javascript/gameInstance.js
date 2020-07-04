@@ -133,12 +133,17 @@ export default class GameInstance {
       "keydown",
       (event) => {
         this.onKeyDown(event.key.toLowerCase());
+        const KeyCode = {
+          KEY_LEFT: 37,
+          KEY_RIGHT: 39,
+          ESC: 27,
+          P: 80,
+        };
+        if (event.keyCode === KeyCode.ESC || event.keyCode === KeyCode.P) {
+          this.vm.pauseGame();
+        }
         if (this.vm.inEditor) {
           // editor time minor adjust by arrow keys
-          const KeyCode = {
-            KEY_LEFT: 37,
-            KEY_RIGHT: 39,
-          };
           if (event.keyCode === KeyCode.KEY_LEFT) {
             this.vm.seekTo(this.currentTime - 0.03);
           } else if (event.keyCode === KeyCode.KEY_RIGHT) {

@@ -72,12 +72,14 @@ export default class Note {
     this.judge();
     const { percentage } = this;
     let accuracyPercent = 100 * (1 - percentage);
-    if (!isHolding) {
+    if (!this.accuracyJudged) {
       // hold note does not count towards accuracy percent
       this.vm.result.totalPercentage += accuracyPercent;
       this.vm.result.totalHitNotes += 1;
+      this.accuracyJudged = true;
     }
-    this.vm.result.score += 2 * accuracyPercent * this.vm.fever.value;
+    const buff = isHolding ? 1 : 2;
+    this.vm.result.score += buff * accuracyPercent * this.vm.fever.value;
     this.vm.result.combo += 1;
     this.vm.result.maxCombo =
       this.vm.result.combo > this.vm.result.maxCombo

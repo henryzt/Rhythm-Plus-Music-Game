@@ -4,7 +4,10 @@
       <img :src="song.image" />
     </div>
     <div class="detail">
-      <div style="font-size:1.3em; font-weight: bold;">{{song.title}}</div>
+      <div style="font-size:1.3em; font-weight: bold;">
+        {{song.title}}
+        <span v-if="song.subtitle" style="opacity:0.6">({{song.subtitle}})</span>
+      </div>
       <div>{{song.artist}}</div>
     </div>
     <div style="background:rgba(0,0,0,0.2); padding: 20px 0; box-sizing:border-box; width: 100%">

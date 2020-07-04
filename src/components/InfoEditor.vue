@@ -69,6 +69,18 @@
               <option :value="null" disabled>Select Key Number...</option>
               <option v-for="keys in [4,5,6,7,8]" :value="keys" :key="keys">{{keys + ' Key'}}</option>
             </select>
+            <input
+              v-if="sheetFormOptions.isUpdate"
+              v-model="sheetFormData.startAt"
+              placeholder="Start time (In seconds, Optional)"
+              type="number"
+            />
+            <input
+              v-if="sheetFormOptions.isUpdate"
+              v-model="sheetFormData.endAt"
+              placeholder="End time (In seconds, Optional)"
+              type="number"
+            />
           </InfoForm>
           <div v-if="!$parent.isSheetOwner">You have no edit access to this sheet.</div>
         </div>
@@ -178,6 +190,8 @@ export default {
             this.$parent.loading = true
             try{
               if(this.sheetFormOptions.isUpdate){
+                this.sheetFormData.startAt = this.sheetFormData.startAt ? Number(this.sheetFormData.startAt) : null;
+                this.sheetFormData.endAt = this.sheetFormData.endAt ? Number(this.sheetFormData.endAt) : null;
                 await updateSheet(this.sheetFormData)
               }else{
                 const songId = this.$parent.songInfo.id;

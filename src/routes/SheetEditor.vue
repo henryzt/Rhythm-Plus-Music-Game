@@ -281,15 +281,11 @@ export default {
         this.instance.startSong()
       },
       seekTo(time){
-        if(time<0){
+        if(time<this.instance.startSongAt){
           this.restartGame()
           return
         }
-        if(this.srcMode==="youtube"){
-          this.ytPlayer.seekTo(Number(time))
-        }else{
-          this.audio.seek(Number(time))
-        }
+        this.instance.seekTo(time)
         setTimeout(()=>{
           this.instance.seeked()
           this.instance.repositionNotes()
@@ -345,7 +341,7 @@ export default {
       },
       countTotal(){
         const lastNote = this.instance.timeArr[this.instance.timeArr.length-1]
-        this.sheetInfo.length = Math.min.apply(Math,[this.songLength, lastNote.t+2])
+        this.sheetInfo.length = this.sheetInfo.endAt ?? Math.min.apply(Math,[this.songLength, lastNote.t+5]);
         this.sheetInfo.noteCount = this.instance.timeArr.length
       }
     }

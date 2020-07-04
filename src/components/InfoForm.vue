@@ -3,6 +3,12 @@
     <form @submit.prevent="$emit('submitForm')" v-if="formOption.tab==='form'">
       <slot>
         <input v-model="formData.title" name="songTitle" placeholder="Song title" type="text" />
+        <input
+          v-model="formData.subtitle"
+          name="songTitle"
+          placeholder="Subtitle (E.g. xxx opening song, Optional)"
+          type="text"
+        />
         <input v-model="formData.artist" name="artist" placeholder="Artist" type="text" />
         <input v-model="formData.tags" name="tags" placeholder="Tags (Comma Seperate)" type="text" />
         <select id="songSelect" v-model="formData.srcMode">

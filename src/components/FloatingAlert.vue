@@ -59,7 +59,7 @@ export default {
   transition: 0.5s;
 }
 .info {
-  background: rgb(0, 120, 156);
+  background: rgb(0, 151, 197);
 }
 .warn {
   background: orange;

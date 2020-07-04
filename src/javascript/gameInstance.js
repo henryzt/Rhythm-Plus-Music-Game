@@ -309,6 +309,14 @@ export default class GameInstance {
     this.holdingNote[key] = obj;
   }
 
+  seekTo(time) {
+    if (this.vm.srcMode === "youtube") {
+      this.vm.ytPlayer.seekTo(Number(time));
+    } else {
+      this.audio.seek(Number(time));
+    }
+  }
+
   seeked() {
     // advance time arr idx if play time is changed
     if (this.vm.inEditor) {
@@ -346,14 +354,14 @@ export default class GameInstance {
     this.resetPlaying();
     const startTime = Date.now();
     window.focus();
+    this.seekTo(this.startSongAt);
 
     const intervalPrePlay = setInterval(() => {
       const elapsedTime = Date.now() - startTime;
-      this.playTime = Number(elapsedTime / 1000);
+      this.playTime = elapsedTime / 1000 + this.startSongAt;
       this.paused = false;
-      if (this.playTime > Number(this.vm.noteSpeedInSec)) {
+      if (this.playTime > this.vm.noteSpeedInSec + this.startSongAt) {
         if (!this.vm.started || !this.paused) this.resumeGame();
-        // this.vm.visualizerInstance.initAllVisualizersIfRequried();
         clearInterval(intervalPrePlay);
         clearInterval(this.intervalPlay);
         this.vm.started = true;
@@ -364,19 +372,22 @@ export default class GameInstance {
 
   async gameTimingLoop() {
     const cTime = await this.getCurrentTime();
-    this.playTime = cTime + Number(this.vm.noteSpeedInSec);
+    this.playTime = cTime + this.vm.noteSpeedInSec;
     this.currentTime = cTime;
+    const gameEndAt = this.vm.currentSong.length;
 
     // check game end
-    const lastIdx = this.timeArr.length - 1;
-    if (
-      !this.vm.inEditor &&
-      this.vm.playMode &&
-      this.timeArrIdx >= lastIdx &&
-      this.timeArr[lastIdx] &&
-      this.playTime > Number(this.timeArr[lastIdx].t) + 5 // FIXME: Number Casting
-    ) {
-      this.vm.gameEnded();
+    if (this.currentTime >= gameEndAt) {
+      if (!this.vm.inEditor) {
+        this.vm.gameEnded();
+      } else if (!this.paused) {
+        this.vm.pauseGame();
+        this.seekTo(gameEndAt);
+        this.vm.$store.state.alert.info(
+          `Game ended at ${gameEndAt} seconds`,
+          3000
+        );
+      }
     }
   }
 
@@ -417,6 +428,7 @@ export default class GameInstance {
     this.timeArr = song.sheet;
     this.vm.visualizerInstance.vComponent =
       song.visualizerName !== null ? song.visualizerName : 0;
+    this.startSongAt = song.startAt ?? 0;
     if (song.keys && song.keys != 4) this.createTracks(Number(song.keys));
     if (song.srcMode === "youtube") {
       this.ytPlayer.loadYoutubeVideo(song.youtubeId);

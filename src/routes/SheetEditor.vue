@@ -229,16 +229,29 @@ export default {
           this.songInfo = await getSong(this.sheetInfo.songId);
           this.gameSheetInfo = await getGameSheet(sheetId);
           this.gameSheetInfo.sheet = this.gameSheetInfo.sheet ?? [];
-          console.log(this.gameSheetInfo)
           this.instance.loadSong(this.gameSheetInfo);
-          if(!this.isSheetOwner)
-            this.$store.state.alert.warn("Warning, you do not have edit access to this sheet, any changes will not be saved!", 10000)
+          console.log(this.gameSheetInfo)
+          if(this.$route.query.save){
+            // refresh sheet data
+            await this.saveSheet()
+            this.$router.push({query: { update: true }});
+            this.$router.go();
+            return;
+          }
+          if(!this.isSheetOwner){
+            this.$store.state.alert.warn("Warning, you do not have edit access to this sheet, any changes will not be saved!", 10000);
+          }
         }catch(err){
           console.error(err);
           this.$store.state.gModal.show({bodyText:"Sorry, something went wrong, maybe try refresh?", 
           isError: true, showCancel: false})
         }
         this.loading = false
+
+        if(this.$route.query.update){
+          this.$store.state.alert.success("Successfully updated!")
+          this.$router.push({query:null})
+        }
       }
     },
     methods: {

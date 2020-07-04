@@ -219,7 +219,8 @@ export default class GameInstance {
       setTimeout(() => {
         if (
           this.keyStatus[key] &&
-          singleNoteObj == this.timeArr[this.lastAddedIdx]
+          singleNoteObj ==
+            this.timeArr.reverse().find((obj) => obj.k.includes(key))
         ) {
           this.createHoldNote(key, singleNoteObj);
         }
@@ -380,7 +381,7 @@ export default class GameInstance {
     if (this.currentTime >= gameEndAt) {
       if (!this.vm.inEditor) {
         this.vm.gameEnded();
-      } else if (!this.paused) {
+      } else if (!this.paused && this.vm.currentSong.endAt === gameEndAt) {
         this.vm.pauseGame();
         this.seekTo(gameEndAt);
         this.vm.$store.state.alert.info(

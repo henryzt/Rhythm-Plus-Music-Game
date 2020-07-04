@@ -161,6 +161,7 @@ export default {
             if(this.songFormOptions.isUpdate){
               this.$parent.loading = true
               await updateSong(this.songFormData);
+              this.$router.push({query: { update: true }})
               this.$router.go();
             }else{
               let songId = await createSong(this.songFormData)
@@ -193,6 +194,7 @@ export default {
                 this.sheetFormData.startAt = this.sheetFormData.startAt ? Number(this.sheetFormData.startAt) : null;
                 this.sheetFormData.endAt = this.sheetFormData.endAt ? Number(this.sheetFormData.endAt) : null;
                 await updateSheet(this.sheetFormData)
+                this.$router.push({query: { save: true }})
               }else{
                 const songId = this.$parent.songInfo.id;
                 this.sheetFormData.songId = songId;

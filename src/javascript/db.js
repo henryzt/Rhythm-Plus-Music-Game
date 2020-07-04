@@ -131,7 +131,7 @@ function cleanForUpdate(obj) {
   obj.dateUpdated = dbi.Timestamp.now();
   // FIXME handle this logic better
   for (let propName in obj) {
-    if (obj[propName] === null || obj[propName] === undefined) {
+    if (obj[propName] === undefined) {
       delete obj[propName];
     }
   }

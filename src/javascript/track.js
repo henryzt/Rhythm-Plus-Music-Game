@@ -128,11 +128,13 @@ export default class DropTrack {
     // note update
     for (let i = 0; i < this.noteArr.length; ++i) {
       const isUserHolding = i === 0 && this.isUserHoldingNote;
+      // here noteArr[0] means the closest (i.e. oldest, or the next) note player are going to dismiss,
+      // therefore if its the next note and user is holding, play the holding animation instead.
       this.noteArr[i].update(isUserHolding);
     }
 
     if (this.noteArr.length > 0 && this.noteArr[0].isOutOfCanvas()) {
-      this.noteArr.shift(); // Remove out of canvas note
+      this.noteArr.shift(); // The oldest note now out of canvas note, remove the note.
     }
 
     // hit indicator

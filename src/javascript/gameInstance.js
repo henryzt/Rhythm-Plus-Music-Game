@@ -387,7 +387,7 @@ export default class GameInstance {
     // it seems that 'getPlayerTime' is async, thus all places calling this func need to await res [help wanted]
     return this.vm.srcMode === "youtube"
       ? this.ytPlayer.getPlayerTime()
-      : this.audio.getCurrentTime();
+      : Promise.resolve(this.audio.getCurrentTime());
   }
 
   getNoteTiming() {

@@ -142,6 +142,8 @@ img{
   z-index: 100;
   transition: 1s;
   opacity: 0.5;
+  width: fit-content;
+  margin: auto;
 }
 
 .text_button:hover {

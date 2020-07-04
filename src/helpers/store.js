@@ -62,6 +62,7 @@ export const store = new Vuex.Store({
     setCurrentUser(state, val) {
       state.initialized = true;
       state.authed = val && !val.isAnonymous;
+      state.verified = state.authed && val.emailVerified;
       state.currentUser = val;
     },
     setUserProfile(state, val) {

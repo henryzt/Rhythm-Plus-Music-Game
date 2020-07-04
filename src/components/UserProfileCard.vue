@@ -13,13 +13,17 @@
       />
     </div>
 
-    <div v-if="$store.state.authed" @click="goToAccount" style="display:flex;align-items: center;">
+    <div
+      v-if="$store.state.authed && $store.state.userProfile"
+      @click="goToAccount"
+      style="display:flex;align-items: center;"
+    >
       <img v-if="$store.state.profilePicture" :src="$store.state.profilePicture" />
       <div class="detail">
         <div>{{$store.state.currentUser.displayName}}</div>
         <div
           style="opacity:0.6"
-          v-if="$store.state.userProfile.lvd"
+          v-if="$store.state.userProfile.lvd && $store.state.verified"
         >Level.{{$store.state.userProfile.lvd}}</div>
         <div class="wrapper" v-if="extend">
           <div class="progress-bar">
@@ -27,6 +31,7 @@
             <span class="progress-bar-fill" :style="{width: percentage+'%'}"></span>
           </div>
         </div>
+        <div v-if="!$store.state.verified" style="color:pink;">Not Verified</div>
       </div>
     </div>
 

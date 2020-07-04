@@ -2,13 +2,24 @@
   <div>
     <PageBackground></PageBackground>
 
+    <div class="mContainer" v-if="$store.state.verified">
+      <div class="flex_hori">
+        <UserProfileCard :extend="true" />
+        <div class="clip" @click="confirmSignOut">Logout</div>
+      </div>
+    </div>
+
     <div class="center_logo" style="z-index: 1000;">
       <div v-show="!$store.state.authed">
         <h3>Signin or Register Now for Complete Experience!</h3>
         <div id="firebaseui-auth-container"></div>
       </div>
-      <div v-show="$store.state.authed">
-        You are already logged in!
+      <div v-if="$store.state.authed && !$store.state.verified">
+        <div
+          style="font-size:20px;padding-bottom:30px"
+        >Please check your email to verify your account!</div>
+        <div class="text_button" @click="$router.go()">Refresh</div>
+        <div class="text_button" @click="sendVerificationEmail">Resend Email</div>
         <div class="text_button" @click="confirmSignOut">Logout</div>
       </div>
     </div>
@@ -16,12 +27,13 @@
     <Modal
       ref="modal"
       :show="showModal"
+      style="z-index: 1000;"
       bodyText="Are you sure you want to log out?"
       okText="Logout"
       @ok="signOut"
     ></Modal>
 
-    <Loading :show="!$store.state.initialized">Communicating...</Loading>
+    <Loading style="z-index: 1000;" :show="!$store.state.initialized">Communicating...</Loading>
   </div>
 </template>
 
@@ -30,6 +42,7 @@
 import PageBackground from '../components/PageBackground.vue';
 import Modal from '../components/Modal.vue';
 import Loading from '../components/Loading.vue';
+import UserProfileCard from '../components/UserProfileCard.vue';
 import firebase from 'firebase';
 import * as firebaseui from "firebaseui"
 import "firebaseui/dist/firebaseui.css";
@@ -39,7 +52,8 @@ export default {
   components:{
       PageBackground,
       Modal,
-      Loading
+      Loading,
+      UserProfileCard
   },
   data(){
         return {
@@ -54,7 +68,6 @@ export default {
     },
     mounted() {
       const uiConfig = {
-        signInSuccessUrl: '/',
         signInFlow: 'popup',
         signInOptions: [
             firebase.auth.GoogleAuthProvider.PROVIDER_ID,
@@ -62,7 +75,9 @@ export default {
             ],
         autoUpgradeAnonymousUsers: true,
         callbacks: {
-          signInSuccessWithAuthResult: function(authResult, redirectUrl) {
+          signInSuccessWithAuthResult: (authResult, redirectUrl) => {
+            console.log(authResult)
+            this.signInRedirect();
             return true;
           },
           // handle merge conflicts which occur when an existing credential is linked to an anonymous user.
@@ -78,7 +93,7 @@ export default {
             let app = firebase.app();
             // Save anonymous user data first.
             try{
-              if(this.$store.state.userProfile.exp > 5)
+              if(this.$store.state.userProfile && this.$store.state.userProfile.exp > 5)
                 await firebase.firestore().collection("users").doc(anonymousUser.uid).set({isAnonymousDeleted: true})
               await anonymousUser.delete();
             }catch(err){
@@ -87,7 +102,7 @@ export default {
 
             try{
               await firebase.auth().signInWithCredential(cred);
-              window.location.assign('/');
+              this.signInRedirect()
             }catch(err){
               console.error(err)
             }
@@ -103,18 +118,39 @@ export default {
       confirmSignOut(){
         this.$refs.modal.show()
       },
-      signOut(){
+      async signOut(){
         try{
-          firebase.auth().signOut();
+          await firebase.auth().signOut();
+          this.$router.go();
         }catch(err){
           console.error(err)
         }
+      },
+      signInRedirect(){
+        const user = firebase.auth().currentUser;
+
+        if(user.emailVerified){
+          window.location.assign('/');
+        }else{
+          this.$router.go()
+          this.sendVerificationEmail()
+        }
+      },
+      sendVerificationEmail(){
+        const user = firebase.auth().currentUser;
+
+        user.sendEmailVerification().then(()=> {
+          this.$store.state.alert.success("Verification email sent! Please check your inbox or spam folder.")
+        }).catch((error) => {
+          console.error(error)
+          this.$store.state.alert.error("Sorry, something went wrong, please try again.")
+        });
       }
   }
 };
 </script>
 
-<style>
+<style scoped>
 #firebaseui-auth-container {
   z-index: 1000;
 }
@@ -124,5 +160,31 @@ export default {
   color: black;
   border: none;
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.mContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: 2s;
+  width: 100%;
+  max-width: 600px;
+  margin: auto;
+  margin-top: 100px;
+}
+
+.flex_hori {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.clip {
+  background: rgba(184, 184, 184, 0.5);
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 15px;
+  cursor: pointer;
 }
 </style>

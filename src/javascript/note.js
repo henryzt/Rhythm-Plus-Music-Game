@@ -52,7 +52,6 @@ export default class Note {
     // FIXME calculation logic
     this.percentage = 1 - ((1 - this.getDiffPercentage() - 0.2) / 4) * 5;
     this.percentage = this.percentage < 1 ? this.percentage : 1;
-    this.judge();
   }
 
   judge() {

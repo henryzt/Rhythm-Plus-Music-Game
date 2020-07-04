@@ -12,7 +12,11 @@ export default class Audio {
     this.player = null;
     this.muteBg = false;
     document.addEventListener("visibilitychange", () => {
-      if (this.player && !this.muteBg) this.mute(document.hidden);
+      if (document.hidden) {
+        this.pause();
+      } else {
+        this.play();
+      }
     });
   }
 

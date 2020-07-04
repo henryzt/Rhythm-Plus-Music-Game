@@ -1,5 +1,5 @@
 <template>
-  <div class="song_item" @click="$emit('selected', song)" v-if="song">
+  <div class="song_item" @click="$emit('selected', song)" :key="song.id" v-if="song">
     <div class="image">
       <img :src="song.image" />
     </div>
@@ -9,7 +9,7 @@
     </div>
     <div style="background:rgba(0,0,0,0.2); padding: 20px 0; box-sizing:border-box; width: 100%">
       <div style="opacity:0.4">Select Sheet or Press Play</div>
-      <div v-if="sheets">
+      <div v-if="sheets" key="1">
         <div v-for="sheet in sheets" :value="sheet.id" :key="sheet.id">
           <div
             @click="selectedSheet = sheet"
@@ -19,7 +19,7 @@
           </div>
         </div>
       </div>
-      <div style="padding:20px;" v-else>Sheets loading...</div>
+      <div style="padding:20px;" v-else key="2">Sheets loading...</div>
     </div>
 
     <div class="bestRes" v-if="bestResult">

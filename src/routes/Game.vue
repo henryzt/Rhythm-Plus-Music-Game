@@ -253,7 +253,7 @@ export default {
         }catch(error){
           console.error(error)
           this.$store.state.gModal.show({bodyText:"We are sorry, due to a connection failure, we are unable to save the result. Would you like to try again?", 
-        isError: true, okCallback: this.gameEnded, cancelCallback: this.exitGame})
+        isError: true, showCancel:true, okCallback: this.gameEnded, cancelCallback: this.exitGame})
         }
       },
       addTilt(){

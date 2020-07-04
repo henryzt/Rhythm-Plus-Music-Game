@@ -129,7 +129,7 @@ export default class GameInstance {
     document.addEventListener(
       "keydown",
       (event) => {
-        this.onKeyDown(event.key);
+        this.onKeyDown(event.key.toLowerCase());
         if (this.vm.inEditor) {
           // editor time minor adjust by arrow keys
           const KeyCode = {
@@ -137,10 +137,8 @@ export default class GameInstance {
             KEY_RIGHT: 39,
           };
           if (event.keyCode === KeyCode.KEY_LEFT) {
-            // left
             this.vm.seekTo(this.currentTime - 0.03);
           } else if (event.keyCode === KeyCode.KEY_RIGHT) {
-            // right
             this.vm.seekTo(this.currentTime + 0.03);
           }
         }
@@ -151,7 +149,7 @@ export default class GameInstance {
     document.addEventListener(
       "keyup",
       (event) => {
-        this.onKeyUp(event.key);
+        this.onKeyUp(event.key.toLowerCase());
       },
       false
     );
@@ -207,8 +205,7 @@ export default class GameInstance {
   }
 
   // log key and touch events
-  async onKeyDown(keyRaw) {
-    const key = keyRaw.toLowerCase();
+  async onKeyDown(key) {
     // avoid repeated triggering when key is held
     if (this.keyStatus[key]) return;
     this.keyStatus[key] = true;

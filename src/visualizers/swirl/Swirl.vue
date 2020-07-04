@@ -50,7 +50,7 @@ const angle = (x1, y1, x2, y2) => atan2(y2 - y1, x2 - x1);
 const lerp = (n1, n2, speed) => (1 - speed) * n1 + speed * n2;
 
 // main
-const particleCount = 700;
+const particleCount = 500;
 const particlePropCount = 9;
 const particlePropsLength = particleCount * particlePropCount;
 const rangeY = 100;

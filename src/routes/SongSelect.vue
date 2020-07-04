@@ -79,7 +79,7 @@ export default {
 
 <style scoped>
 .mContainer {
-  perspective: 100em;
+  /* perspective: 100em; */
   display: flex;
   justify-content: center;
   transition: 2s;
@@ -91,9 +91,9 @@ export default {
   margin: 0 20px;
   transition: 1s;
 }
-.list_collapsed {
+/* .list_collapsed {
   transform: rotateY(10deg);
-}
+} */
 .detail {
   transition: 1s;
   width: 350px;
@@ -117,7 +117,7 @@ export default {
 @media only screen and (min-width: 800px) {
   /* desktop */
   .detail {
-    transform: rotateY(-30deg);
+    /* transform: rotateY(-30deg); */
     margin: 0 20px;
   }
   .mContainer {

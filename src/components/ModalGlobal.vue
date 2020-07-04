@@ -33,13 +33,13 @@ import Modal from './Modal.vue';
     },
     methods: {
         show(options){
-            if(options.okText!=null) this.okText = options.okText;
-            if(options.cancelText!=null) this.cancelText = options.cancelText;
-            if(options.bodyText!=null) this.bodyText = options.bodyText;
-            if(options.titleText!=null) this.titleText = options.titleText;
-            if(options.showCancel!=null) this.showCancel = options.showCancel;
-            if(options.okCallback!=null) this.okCallback = options.okCallback;
-            if(options.cancelCallback!=null) this.cancelCallback = options.cancelCallback;
+            if(options.okText!==null) this.okText = options.okText;
+            if(options.cancelText!==null) this.cancelText = options.cancelText;
+            if(options.bodyText!==null) this.bodyText = options.bodyText;
+            if(options.titleText!==null) this.titleText = options.titleText;
+            if(options.showCancel!==null) this.showCancel = options.showCancel;
+            if(options.okCallback!==null) this.okCallback = options.okCallback;
+            if(options.cancelCallback!==null) this.cancelCallback = options.cancelCallback;
             if(options.isError) this.titleText = "Error";
             this.$refs.globalModal.show()
         }

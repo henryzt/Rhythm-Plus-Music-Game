@@ -13,8 +13,11 @@ export default {
     }
   },
   mounted() {
-        initSpaceVisualizer(this.audioData, this.$refs.visualizerSpace);
-    },
+    initSpaceVisualizer(this.audioData, this.$refs.visualizerSpace);
+  },
+  beforeDestroy(){
+    audioSource.destroy()
+  },
   methods: {
     update() {
         renderSpaceVisualizer(this.shouldRenderPolygon)
@@ -41,24 +44,10 @@ let audioSource;
 let audioData;
 let container;
 
-const PlayerAudioSource = function (player) {
-  const self = this;
-  const sampleAudioStream = function () {
-    if(!audioData.analyser) return;
-    audioData.analyser.getByteFrequencyData(audioData.dataArray);
-    // calculate an overall volume value
-    let total = 0;
-    for (let i = 0; i < 50; i++) {
-      // get the volume from the first 50 bins, else it gets too loud with treble
-      total += audioData.dataArray[i];
-    }
-    self.volume = total;
-  };
-  setInterval(sampleAudioStream, 20);
-  // public properties and methods
-  this.volume = 0;
-  // this.streamData = new Uint8Array(128);
-};
+import VolumeSampler from "./VolumeSampler"
+
+const PlayerAudioSource = VolumeSampler;
+
 /**
  * The Visualizer object, after being instantiated, must be initialized with the init() method,
  * which takes an options object specifying the element to append the canvases to and the audiosource which will
@@ -512,7 +501,7 @@ function initSpaceVisualizer(audioDataRaw, canvasContainer) {
   audioData = audioDataRaw;
   container = canvasContainer;
 
-  audioSource = new PlayerAudioSource();
+  audioSource = new PlayerAudioSource(audioData);
 
   visualizer.init({
     containerId: "visualizer",

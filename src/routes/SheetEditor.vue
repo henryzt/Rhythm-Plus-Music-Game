@@ -3,20 +3,35 @@
     <!-- visualizer canvas -->
     <Visualizer ref="visualizer" v-show="srcMode==='url'"></Visualizer>
 
-    <div class="toolbar blurBackground">
-      <div class="logo">R+ Sheet Editor</div>
+    <div class="toolbar blurBackground" style="padding-left:0">
+      <div class="logo">
+        <img
+          src="/assets/editor_logo.png"
+          style="height:8vh;cursor:pointer;pointer-events:all;"
+          @click="goToMenu"
+        />
+        Sheet Editor
+      </div>
       <div style="flex-grow:1"></div>
+      <a href="#" @click.prevent="newEditor">New</a>
       <div style="display:flex" :class="{disabled:!initialized}">
-        <a href="#" @click.prevent="newEditor">New</a>
-        <a href="#" @click.prevent="saveSheet">Save</a>
+        <a href="#" @click.prevent="saveSheet" :class="{disabled:!isSheetOwner}">Save</a>
         <a href="#" @click.prevent="togglePlayMode">{{playMode?"Edit":"Test"}}</a>
-        <a href="#" @click.prevent="showPublishModal">Publish</a>
+        <a href="#" @click.prevent="showPublishModal" :class="{disabled:!isSheetOwner}">Publish</a>
       </div>
     </div>
 
     <div class="main">
       <div class="column side left blurBackground">
-        <info-editor style="flex-grow:1" ref="info"></info-editor>
+        <div class="tabs" :class="{disabled:!initialized}">
+          <div class="tab" :class="{active:leftTab===1}" @click="leftTab=1">Info</div>
+          <div class="tab" :class="{active:leftTab===2}" @click="leftTab=2">Options</div>
+        </div>
+        <!-- tab 1 - info editor -->
+        <info-editor style="flex-grow:1" ref="info" v-show="leftTab===1"></info-editor>
+        <!-- tab 2 - options -->
+        <PlayControl style="flex-grow:1" ref="control" v-if="leftTab===2" :playData="$data"></PlayControl>
+        <!-- song control -->
         <SongListItem
           v-if="songInfo.id"
           :song="songInfo"
@@ -47,7 +62,14 @@
           <canvas ref="mainCanvas" id="gameCanvas" :class="{perspective}"></canvas>
         </div>
         <!-- mark indicator -->
-        <div class="center" v-show="playMode" ref="hitIndicator">{{markJudge}} {{result.combo}}</div>
+        <div
+          class="center_judge"
+          v-show="playMode"
+          ref="hitIndicator"
+        >{{markJudge}} {{result.combo}}</div>
+
+        <!-- center text -->
+        <ZoomText style="z-index:1000" ref="zoom"></ZoomText>
       </div>
 
       <div
@@ -56,7 +78,15 @@
         :class="{disabled:!initialized}"
       >
         <h2>Mappings</h2>
-        <SheetTable></SheetTable>
+        <SheetTable v-if="!disableMappingTable"></SheetTable>
+        <div v-else>
+          To improve editor performance, mapping table is disabled.
+          <div
+            class="btn-action btn-dark"
+            style="margin: 10px 0;width:100px;"
+            @click="disableMappingTable=false"
+          >Enable</div>
+        </div>
       </div>
     </div>
 
@@ -85,7 +115,7 @@
         ></vue-slider>
       </div>
       <div style="width:90px;margin-left:30px;">
-        <select id="songSelect" v-model="playbackSpeed">
+        <select id="songSelect" v-model="playbackSpeed" :disabled="playMode">
           <option disabled>Playback Speed</option>
           <option value="0.25">0.25X</option>
           <option value="0.5">0.5X</option>
@@ -118,6 +148,8 @@ import Visualizer from '../components/Visualizer.vue';
 import InfoEditor from '../components/InfoEditor.vue';
 import SheetTable from '../components/SheetTable.vue';
 import SongListItem from '../components/SongListItem.vue';
+import PlayControl from '../components/PlayControl.vue';
+import ZoomText from '../components/ZoomText.vue';
 import Modal from '../components/Modal.vue';
 import Publish from '../components/Publish.vue';
 import Loading from '../components/Loading.vue';
@@ -141,7 +173,9 @@ export default {
       SongListItem,
       Loading,
       Modal,
-      Publish
+      Publish,
+      PlayControl,
+      ZoomText
   },
   mixins: [GameInstanceMixin],
   data(){
@@ -160,12 +194,21 @@ export default {
           },
           gameSheetInfo: null,
           loading: false,
-          showExistingNote: true
+          showExistingNote: true,
+          selectedNotes: [],
+          leftTab: 1,
+          disableMappingTable: false
         }
     },
     computed: {
       currentTime(){
         return (this.instance.playTime - this.noteSpeedInSec).toFixed(2) 
+      },
+      isSheetOwner(){
+        return !this.sheetInfo.id || this.sheetInfo.createdBy === this.$store.state.currentUser.uid;
+      },
+      isSongOwner(){
+        return !this.songInfo.id || this.songInfo.createdBy === this.$store.state.currentUser.uid;
       }
 
     },
@@ -188,14 +231,14 @@ export default {
           this.gameSheetInfo.sheet = this.gameSheetInfo.sheet ?? [];
           console.log(this.gameSheetInfo)
           this.instance.loadSong(this.gameSheetInfo);
+          if(!this.isSheetOwner)
+            this.$store.state.alert.warn("Warning, you do not have edit access to this sheet, any changes will not be saved!", 10000)
         }catch(err){
           console.error(err);
           this.$store.state.gModal.show({bodyText:"Sorry, something went wrong, maybe try refresh?", 
           isError: true, showCancel: false})
         }
         this.loading = false
-      }else{
-
       }
     },
     methods: {
@@ -247,6 +290,10 @@ export default {
         }else{
           this.audio.seek(Number(time))
         }
+        setTimeout(()=>{
+          this.instance.seeked()
+          this.instance.repositionNotes()
+        },200)
       },
       setPlaybackRate(rate){
         if(this.srcMode==="youtube"){
@@ -257,6 +304,8 @@ export default {
       },
       togglePlayMode(){
         this.playMode = !this.playMode;
+        this.playbackSpeed = 1;
+        this.instance.clearNotes()
         this.restartGame()
       },
       updateSongDetail(){
@@ -264,6 +313,7 @@ export default {
       },
       newEditor(){
         this.$router.push("/editor/")
+        this.$router.go()
       },
       showPublishModal(){
         this.$refs.publishModal.show()
@@ -273,7 +323,7 @@ export default {
       reorderSheet(){
         this.instance.timeArr.sort((a,b) => parseFloat(a.t) - parseFloat(b.t))
       },
-      saveSheet(){
+      async saveSheet(){
         this.reorderSheet()
         this.countTotal()
         const sheet = {
@@ -282,7 +332,12 @@ export default {
           length: this.sheetInfo.length,
           noteCount: this.sheetInfo.noteCount
           }
-        updateSheet(sheet);
+        try{
+          await updateSheet(sheet);
+          this.$store.state.alert.success("Sheet saved!")
+        }catch(err){
+          this.$store.state.alert.error("Error occurred while saving, please try again.", 6000)
+        }
         // save local backup
         let local = JSON.parse(localStorage.getItem("localSheetBackup")) || {};
         local[this.sheetInfo.id] = sheet;
@@ -311,6 +366,9 @@ export default {
 
 .logo {
   padding: 20px;
+  padding-left: 0;
+  display: flex;
+  align-items: center;
 }
 
 .action_buttons {
@@ -334,6 +392,11 @@ export default {
 .toolbar a:hover {
   background-color: #ddd;
   color: black;
+}
+
+.perspective {
+  transform: rotateX(30deg) scaleY(1.5);
+  transform-origin: 50% 100%;
 }
 
 .main {
@@ -374,14 +437,29 @@ export default {
   width: 50%;
 }
 
-.disabled {
-  opacity: 0.6;
-  pointer-events: none;
-  cursor: not-allowed;
-}
-
 .vicon {
   cursor: pointer;
+}
+
+.tabs {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.tab {
+  padding: 20px;
+  cursor: pointer;
+  transition: background-color 0.5s;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.active {
+  border-bottom: solid 2px white;
+}
+
+.tab:hover {
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 @media screen and (max-width: 600px) {

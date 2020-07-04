@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="sheet">
-      <PageBackground songSrc="/songs/result.mp3" :imageSrc="sheet.image"></PageBackground>
+      <PageBackground songSrc="/audio/bgm/result.mp3" :imageSrc="sheet.image" :showNav="false"></PageBackground>
       <div class="blurFilter">
         <div class="center_logo darker flex_hori">
           <div class="scoreCircle" ref="resultDiv">
@@ -26,9 +26,9 @@
           <div class="rightScore">
             <div>
               Score
-              <br />
+              <div class="markChip acheivementChip highScoreChip" v-if="newRecord">New Record</div>
               <ICountUp
-                style="font-size:2.7em"
+                style="font-size:2.7em;display:block;"
                 :endVal="result.result.score"
                 :options="{decimalPlaces:0}"
               />
@@ -36,6 +36,7 @@
             <div>
               Max Combo -
               <ICountUp :endVal="result.result.maxCombo" :options="{decimalPlaces:0}" />
+              <div class="markChip acheivementChip comboChip" v-if="result.isFullCombo">Full Combo</div>
             </div>
           </div>
 
@@ -97,7 +98,7 @@ import PageBackground from '../components/PageBackground.vue';
 import SongListItem from '../components/SongListItem.vue';
 import UserProfileCard from '../components/UserProfileCard.vue';
 import Modal from '../components/Modal.vue';
-import { getGameSheet, getResult } from "../javascript/db"
+import { getGameSheet, getResult, getBestScore } from "../javascript/db"
 import ICountUp from 'vue-countup-v2';
 import VueCircle from 'vue2-circle-progress/src/index.vue'
 import Loading from '../components/Loading.vue';
@@ -120,7 +121,8 @@ export default {
             showModal: false,
             result: null,
             sheet: null,
-            windowWidth: window.innerWidth
+            windowWidth: window.innerWidth,
+            newRecord: false
         }
     },
     computed: {
@@ -132,8 +134,18 @@ export default {
     async mounted() {
       //FIXME add id and route validation
       if(this.$route.params.resultId && this.$route.params.resultId!="null"){
-        this.result = await getResult(this.$route.params.resultId)
-        this.sheet = await getGameSheet(this.result.sheetId)
+        try{
+          this.result = await getResult(this.$route.params.resultId)
+          this.sheet = await getGameSheet(this.result.sheetId)
+          const bestResult = await getBestScore(this.result.sheetId)
+          if(bestResult && bestResult.result.score <= this.result.result.score){
+            this.newRecord = true;
+          }
+        }catch(err){
+          this.showError()
+        }
+      }else{
+        this.showError()
       }
 
       window.onresize = () => {
@@ -147,7 +159,14 @@ export default {
             });
       })
     },
+    beforeDestroy(){
+      this.$store.state.audio.stop();
+    },
     methods: {
+      showError(){
+          this.$store.state.gModal.show({bodyText:"This result is unavaliable.", 
+          isError: true, showCancel: false, okCallback: this.toMenu})
+      },
       replay(){
         this.$router.push("/game/"+this.sheet.sheetId);
       },
@@ -232,6 +251,22 @@ export default {
 .miss {
   background: rgba(112, 0, 0, 0.8);
 }
+
+.acheivementChip {
+  margin-top: 10px;
+  width: fit-content;
+}
+
+.highScoreChip {
+  box-shadow: #ffab2d 0px 0px 20px;
+  background: #ff8b2d;
+}
+
+.comboChip {
+  box-shadow: #68ff2d 0px 0px 20px;
+  background: #00b609;
+}
+
 .song_item_sec {
   position: fixed;
   top: 10vh;
@@ -315,6 +350,12 @@ export default {
     font-size: 6em;
   }
 
+  .acheivementChip {
+    display: block;
+    margin: auto;
+    margin-top: 10px;
+  }
+
   .song_item_sec {
     background: rgba(0, 0, 0, 0.4);
     position: relative;
@@ -325,6 +366,7 @@ export default {
     line-height: 1.5em;
     margin: 10px auto;
     padding: 20px;
+    opacity: 1;
   }
   .song_item_sec .title {
     font-size: 1.4em;

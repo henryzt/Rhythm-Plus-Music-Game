@@ -1,8 +1,8 @@
 <template>
   <div>
-    <PageBackground songSrc="/songs/login.mp3"></PageBackground>
+    <PageBackground></PageBackground>
 
-    <div class="center_logo">
+    <div class="center_logo" style="z-index: 1000;">
       <div v-show="!$store.state.authed">
         <h3>Signin or Register Now for Complete Experience!</h3>
         <div id="firebaseui-auth-container"></div>
@@ -12,6 +12,7 @@
         <div class="text_button" @click="confirmSignOut">Logout</div>
       </div>
     </div>
+
     <Modal
       ref="modal"
       :show="showModal"
@@ -113,5 +114,15 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
+#firebaseui-auth-container {
+  z-index: 1000;
+}
+#firebaseui-auth-container input[type="text"] {
+  background-color: white;
+  padding-left: 0;
+  color: black;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
 </style>

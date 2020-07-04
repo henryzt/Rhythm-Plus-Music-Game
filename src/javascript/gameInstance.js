@@ -1,6 +1,6 @@
 import DropTrack from "./track";
+import FeverEffect from "./FeverEffect";
 import YoutubePlayer from "./youtube";
-import ZingTouch from "zingtouch";
 
 export default class GameInstance {
   constructor(vm) {
@@ -13,7 +13,8 @@ export default class GameInstance {
     this.timeArrIdx = 0;
 
     // time elapsed relative to audio play time (+Number(vm.noteSpeedInSec))
-    this.playTime = 0;
+    this.currentTime = 0;
+    this.playTime = 0; // Current time + note drop delay
     this.loading = false;
     this.paused = true;
 
@@ -24,7 +25,14 @@ export default class GameInstance {
     // clock for counting time
     this.intervalPlay = null;
 
+    // store whether key is holding
+    this.keyStatus = {};
+
+    // store holding key
+    this.holdingNote = {};
+
     this.ytPlayer = new YoutubePlayer(vm);
+    this.feverEff = new FeverEffect(vm, this);
 
     this.createTracks(4);
 
@@ -94,7 +102,13 @@ export default class GameInstance {
       this.dropTrackArr[counter].updateHitGradient();
     }
 
-    this.vm.checkHitLineY = (this.canvas.height / 10) * 9;
+    this.startX = startX;
+    this.endX = startX + (trackWidth + 1) * this.dropTrackArr.length - 1;
+
+    const isMobile = window.innerWidth < 1000;
+    const hitLineProp = isMobile ? 8.5 : 9;
+
+    this.vm.checkHitLineY = (this.canvas.height / 10) * hitLineProp;
     this.vm.noteSpeedPxPerSec =
       this.vm.checkHitLineY / Number(this.vm.noteSpeedInSec);
   }
@@ -116,59 +130,203 @@ export default class GameInstance {
       "keydown",
       (event) => {
         this.onKeyDown(event.key);
+        if (this.vm.inEditor) {
+          // editor time minor adjust by arrow keys
+          const KeyCode = {
+            KEY_LEFT: 37,
+            KEY_RIGHT: 39,
+          };
+          if (event.keyCode === KeyCode.KEY_LEFT) {
+            // left
+            this.vm.seekTo(this.currentTime - 0.03);
+          } else if (event.keyCode === KeyCode.KEY_RIGHT) {
+            // right
+            this.vm.seekTo(this.currentTime + 0.03);
+          }
+        }
       },
       false
     );
 
-    const tapEvent = (e) => {
-      for (let pointer of e.detail.events) {
+    document.addEventListener(
+      "keyup",
+      (event) => {
+        this.onKeyUp(event.key);
+      },
+      false
+    );
+
+    let touches = {};
+
+    const tapEvent = (e, start) => {
+      e.preventDefault();
+      for (let pointer of e.changedTouches) {
+        console.log(e);
         const x = pointer.clientX;
 
         this.dropTrackArr.forEach((track) => {
           if (x > track.x && x < track.x + track.width) {
-            this.onKeyDown(track.keyBind);
+            if (start) {
+              this.onKeyDown(track.keyBind);
+              touches[pointer.identifier] = track.keyBind;
+            } else {
+              this.onKeyUp(track.keyBind);
+              touches[pointer.identifier] = null;
+            }
           }
         });
       }
     };
 
-    this.touchRegion = ZingTouch.Region(this.canvas);
+    const moveEvent = (e) => {
+      for (let pointer of e.changedTouches) {
+        const x = pointer.clientX;
+        if (!touches[pointer.identifier]) return;
 
-    for (let numInputs of [1, 2, 3, 4]) {
-      this.touchRegion.bind(
-        this.canvas,
-        new ZingTouch.Tap({ numInputs }),
-        tapEvent
-      );
-    }
+        this.dropTrackArr.forEach((track) => {
+          if (x > track.x && x < track.x + track.width) {
+            if (touches[pointer.identifier] !== track.keyBind) {
+              this.onKeyUp(touches[pointer.identifier]);
+              touches[pointer.identifier] = null;
+            }
+          }
+        });
+      }
+    };
+
+    this.canvas.ontouchstart = (e) => {
+      tapEvent(e, true);
+    };
+    this.canvas.ontouchmove = moveEvent;
+    this.canvas.ontouchcancel = (e) => {
+      tapEvent(e, false);
+    };
+    this.canvas.ontouchend = (e) => {
+      tapEvent(e, false);
+    };
   }
 
   // log key and touch events
-  async onKeyDown(key) {
+  async onKeyDown(keyRaw) {
+    const key = keyRaw.toLowerCase();
+    // avoid repeated triggering when key is held
+    if (this.keyStatus[key]) return;
+    this.keyStatus[key] = true;
+    if (!this.trackKeyBind.includes(key)) return;
+    // if in create mode, create note
     if (!this.vm.playMode && !this.paused) {
       const cTime = await this.getCurrentTime();
-      if (this.trackKeyBind.includes(key)) {
-        // this.timeArr.push({ t: cTime.toFixed(3), k: key });
-        // this.timeArrIdx = this.timeArr.length - 1;
-        if (this.lastAddedTime && cTime - this.lastAddedTime < 0.05) {
-          this.timeArr[this.lastAddedIdx].k += key;
-        } else {
-          // add at idx
-          this.timeArr.splice(this.timeArrIdx, 0, {
-            t: Number(cTime.toFixed(3)),
-            k: key,
-          });
-          this.lastAddedTime = cTime;
-          this.lastAddedIdx = this.timeArrIdx;
+      this.createSingleNote(key, cTime);
+      const singleNoteObj = this.timeArr[this.lastAddedIdx];
+      // convert to hold note
+      setTimeout(() => {
+        if (
+          this.keyStatus[key] &&
+          singleNoteObj == this.timeArr[this.lastAddedIdx]
+        ) {
+          this.createHoldNote(key, singleNoteObj);
         }
-      }
+      }, 300);
     }
-    this.registerKeyDown(key);
+    // register key down
+    for (const track of this.dropTrackArr) {
+      track.keyDown(key);
+    }
   }
 
-  registerKeyDown(key, colorOverride) {
+  async onKeyUp(key) {
+    this.keyStatus[key] = false;
+    if (this.holdingNote[key]) {
+      const cTime = await this.getCurrentTime();
+      this.holdingNote[key].h[key] = cTime; // Hold note creation complete, set the end time
+      this.holdingNote[key] = null; // set current holding key store to null
+    }
     for (const track of this.dropTrackArr) {
-      track.keyDown(key, colorOverride);
+      track.keyUp(key);
+    }
+  }
+
+  dropNote(key, keyObj) {
+    for (const track of this.dropTrackArr) {
+      track.dropNote(key, keyObj);
+    }
+  }
+
+  clearNotes() {
+    for (const track of this.dropTrackArr) {
+      track.noteArr = [];
+    }
+  }
+
+  repositionNotes() {
+    let filteredNotes = this.timeArr.filter((e) => {
+      return this.isWithinTime(e.t);
+    });
+    for (const track of this.dropTrackArr) {
+      track.repositionNotes(filteredNotes);
+    }
+    const idx = this.timeArr.findIndex(
+      (e) => e === filteredNotes[filteredNotes.length - 1]
+    );
+    this.timeArrIdx = idx + 1;
+  }
+
+  createSingleNote(key, cTime) {
+    const waitTimeForMultiNote = 0.05;
+    // this.timeArr.push({ t: cTime.toFixed(3), k: key });
+    // this.timeArrIdx = this.timeArr.length - 1;
+    if (
+      this.lastAddedTime &&
+      this.timeArr[this.lastAddedIdx] &&
+      this.lastAddedKey !== key &&
+      cTime - this.lastAddedTime < waitTimeForMultiNote
+    ) {
+      this.timeArr[this.lastAddedIdx].k += key;
+    } else {
+      // this.timeArr.push({
+      //   t: Number(cTime.toFixed(3)),
+      //   k: key,
+      // });
+      // this.timeArrIdx = this.timeArr.length - 1;
+      // add at idx
+      this.timeArr.splice(this.timeArrIdx, 0, {
+        t: Number(cTime.toFixed(3)),
+        k: key,
+      });
+      this.lastAddedTime = cTime;
+      this.lastAddedIdx = this.timeArrIdx;
+      this.lastAddedKey = key;
+      this.timeArrIdx++;
+      setTimeout(() => {
+        if (!this.timeArr[this.lastAddedIdx]) return;
+        const k = this.timeArr[this.lastAddedIdx].k;
+        this.dropNote(k, this.timeArr[this.lastAddedIdx]);
+      }, waitTimeForMultiNote * 1000 + 5);
+    }
+  }
+
+  createHoldNote(key, obj) {
+    console.log("hold", key, obj);
+    obj.h = obj.h ?? {}; // key.hold = {key: endTime}
+    obj.h[key] = -1; // -1: not yet completed
+    this.holdingNote[key] = obj;
+  }
+
+  seeked() {
+    // advance time arr idx if play time is changed
+    if (this.vm.inEditor) {
+      this.timeArrIdx = -1;
+      const cTime = this.currentTime;
+      let idx = this.timeArr.findIndex((e) => e.t >= cTime);
+      if (idx === -1) {
+        const endIdx = this.timeArr.length - 1;
+        idx =
+          this.timeArr[endIdx] && this.timeArr[endIdx].t < cTime
+            ? endIdx + 1
+            : 0;
+      }
+      this.clearNotes();
+      this.timeArrIdx = idx;
     }
   }
 
@@ -176,9 +334,10 @@ export default class GameInstance {
   update() {
     if (this.destoryed) return;
     requestAnimationFrame(this.update.bind(this));
-    if (this.vm.started && this.paused && this.vm.playMode) return;
+    if (this.vm.started && this.paused && !this.vm.inEditor) return;
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.vm.visualizerInstance.renderVisualizer();
+    this.feverEff.update();
     let shouldAdvance = false;
     for (const track of this.dropTrackArr) {
       shouldAdvance = track.update() || shouldAdvance;
@@ -194,63 +353,62 @@ export default class GameInstance {
     const intervalPrePlay = setInterval(() => {
       const elapsedTime = Date.now() - startTime;
       this.playTime = Number(elapsedTime / 1000);
+      this.paused = false;
       if (this.playTime > Number(this.vm.noteSpeedInSec)) {
         if (!this.vm.started || !this.paused) this.resumeGame();
         // this.vm.visualizerInstance.initAllVisualizersIfRequried();
         clearInterval(intervalPrePlay);
         clearInterval(this.intervalPlay);
         this.vm.started = true;
-        this.intervalPlay = setInterval(async () => {
-          const cTime = await this.getCurrentTime();
-          this.playTime = cTime + Number(this.vm.noteSpeedInSec);
-          const lastIdx = this.timeArr.length - 1;
-          // advance time arr idx if it's behind current play time
-          if (this.vm.inEditor && !this.vm.playMode && !this.paused) {
-            const lastIdx = this.timeArrIdx;
-            let idx = this.timeArr.findIndex((e) => e.t >= cTime);
-            if (idx === -1) {
-              const endIdx = this.timeArr.length - 1;
-              idx =
-                this.timeArr[endIdx] && this.timeArr[endIdx].t < cTime
-                  ? endIdx + 1
-                  : 0;
-            }
-            this.timeArrIdx = idx;
-            if (
-              this.vm.showExistingNote &&
-              lastIdx !== idx &&
-              this.timeArr[idx]
-            )
-              this.registerKeyDown(this.timeArr[idx].k, "grey");
-          }
-          // check game end
-          if (
-            !this.vm.inEditor &&
-            this.vm.playMode &&
-            this.timeArrIdx >= lastIdx &&
-            this.timeArr[lastIdx] &&
-            this.playTime > Number(this.timeArr[lastIdx].t) + 5
-          ) {
-            this.vm.gameEnded();
-          }
-        }, 100);
+        this.intervalPlay = setInterval(this.gameTimingLoop.bind(this), 100);
       }
     }, 100);
   }
 
-  getCurrentTime() {
+  async gameTimingLoop() {
+    const cTime = await this.getCurrentTime();
+    this.playTime = cTime + Number(this.vm.noteSpeedInSec);
+    this.currentTime = cTime;
+
+    // check game end
+    const lastIdx = this.timeArr.length - 1;
+    if (
+      !this.vm.inEditor &&
+      this.vm.playMode &&
+      this.timeArrIdx >= lastIdx &&
+      this.timeArr[lastIdx] &&
+      this.playTime > Number(this.timeArr[lastIdx].t) + 5 // FIXME: Number Casting
+    ) {
+      this.vm.gameEnded();
+    }
+  }
+
+  async getCurrentTime() {
     // it seems that 'getPlayerTime' is async, thus all places calling this func need to await res [help wanted]
     return this.vm.srcMode === "youtube"
       ? this.ytPlayer.getPlayerTime()
-      : this.audio.getCurrentTime();
+      : Promise.resolve(this.audio.getCurrentTime());
+  }
+
+  getNoteTiming() {
+    return this.vm.playMode ? this.playTime : this.currentTime; // in editor mode, time without note drop delay is used.
+  }
+
+  isWithinTime(time) {
+    // check if a note with start time is currently on screen
+    const sec = Number(this.vm.noteSpeedInSec);
+    const current = Number(this.getNoteTiming());
+    return time <= current && time >= current - sec;
   }
 
   resetPlaying(resetTimeArr) {
     clearInterval(this.intervalPlay);
     this.ytPlayer.resetVideo();
+    this.clearNotes();
     if (resetTimeArr) this.timeArr = [];
     this.timeArrIdx = 0;
     this.playTime = 0;
+    this.currentTime = 0;
     this.audio.stop();
   }
 
@@ -270,7 +428,8 @@ export default class GameInstance {
         song.url,
         false,
         this.vm.songLoaded,
-        this.vm.gameEnded
+        this.vm.gameEnded,
+        this.vm.ytError
       );
     }
   }

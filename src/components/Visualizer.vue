@@ -1,7 +1,13 @@
 <template>
-  <div class="visualizer" v-if="audioDataLoaded && vComponent">
+  <div class="visualizer">
     <div class="blurFilter" v-if="blur"></div>
-    <component ref="visualizerIns" :is="vComponent" :name="vComponent" :audioData="audioData"></component>
+    <component
+      ref="visualizerIns"
+      v-if="audioDataLoaded && vComponent"
+      :is="vComponent"
+      :name="vComponent"
+      :audioData="audioData"
+    ></component>
   </div>
 </template>
 
@@ -9,6 +15,8 @@
 <script>
 import BarVisualizer from '../visualizers/BarVisualizer.vue';
 import SpaceVisualizer from '../visualizers/SpaceVisualizer.vue';
+import ColorPoly from '../visualizers/ColorPoly.vue';
+import Swirl from '../visualizers/swirl/Swirl.vue';
 
 
 const visualizers = {
@@ -16,6 +24,8 @@ const visualizers = {
   "Space Visualizer" : "space",
   "Bar Visualizer" : "bar",
   "Space with Polygon" : "spacePoly",
+  "Colored Polygon" : "colorPoly",
+  "Swirl" : "swirl",
 };
 
 export default {
@@ -24,7 +34,9 @@ export default {
   components:{
       'bar' : BarVisualizer,
       'space' : SpaceVisualizer,
-      'spacePoly' : SpaceVisualizer
+      'spacePoly' : SpaceVisualizer,
+      'colorPoly' : ColorPoly,
+      'swirl' : Swirl
   },
   data: function(){
     return {

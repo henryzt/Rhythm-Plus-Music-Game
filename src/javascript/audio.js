@@ -8,18 +8,26 @@ export default class Audio {
       bufferLength: null,
       dataArray: null,
     };
-    this.maxVolume = 0.5;
+    this.maxVolume = 0.3;
     this.player = null;
+    this.muteBg = false;
     document.addEventListener("visibilitychange", () => {
-      if (this.player) this.mute(document.hidden);
+      if (this.player && !this.muteBg) this.mute(document.hidden);
     });
   }
 
-  async loadSong(songSrc, asBackground, loadedCallback, finishedCallback) {
+  async loadSong(
+    songSrc,
+    asBackground,
+    loadedCallback,
+    finishedCallback,
+    errorCallback
+  ) {
     this.player?.unload();
+    this.asBackground = asBackground;
 
     this.player = new Howl({
-      volume: this.maxVolume,
+      volume: this.muteBg && asBackground ? 0 : this.maxVolume,
       src: [songSrc],
       loop: asBackground,
     });
@@ -49,11 +57,39 @@ export default class Audio {
     });
     this.player.on("end", () => {
       if (finishedCallback) finishedCallback();
+      if (asBackground) this.playBgm(this.player._src);
     });
+    this.player.on("loaderror", () => {
+      if (errorCallback) errorCallback();
+    });
+  }
+
+  playBgm(songToExclude) {
+    // randomly play background music
+    if (this.player?.playing() && !songToExclude) return;
+    let bgmUrlArr = ["/audio/bgm/aurora.mp3", "/audio/bgm/kontekst.mp3"];
+    shuffle(bgmUrlArr);
+    bgmUrlArr.filter((e) => e !== songToExclude);
+    this.stop();
+    console.log(bgmUrlArr);
+    this.loadSong(bgmUrlArr[0], true);
+  }
+
+  playEffect(url) {
+    const effectPlayer = new Howl({
+      volume: 0.5,
+      src: [url],
+      loop: false,
+    });
+    effectPlayer.play();
   }
 
   stop() {
     this.player?.stop();
+    if (this.asBackground) {
+      this.player?.unload();
+      this.player = null;
+    }
   }
 
   pause() {
@@ -68,6 +104,11 @@ export default class Audio {
   mute(mute) {
     if (mute) this.player.fade(this.maxVolume, 0, 500);
     else this.player.fade(0, this.maxVolume, 2000);
+  }
+
+  toggleBgMute() {
+    this.muteBg = !this.muteBg;
+    this.mute(this.muteBg);
   }
 
   getCurrentTime() {
@@ -85,4 +126,26 @@ export default class Audio {
   setRate(rate) {
     this.player?.rate(rate);
   }
+}
+
+function shuffle(array) {
+  //ref https://stackoverflow.com/questions/2450954/
+
+  let currentIndex = array.length;
+  let randomIndex = 0;
+
+  // While there remain elements to shuffle...
+  while (currentIndex !== 0) {
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex],
+      array[currentIndex],
+    ];
+  }
+
+  return array;
 }

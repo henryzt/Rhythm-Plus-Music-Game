@@ -1,12 +1,11 @@
 <template>
   <div class="control">
-    <div class="text">
+    <div class="text" v-if="playData.srcMode==='url' && playData.visualizerInstance">
       Visualizer
       <br />
       <select
         id="songSelect"
         @change="toggleVisualizer($event.target.value)"
-        v-if="playData.visualizerInstance"
         :value="playData.visualizerInstance.currentVisualizer"
       >
         <option
@@ -46,34 +45,20 @@
     </label>
 
     <!-- create mode only -->
-    <div v-if="!playData.playMode">
+    <div v-if="playData.inEditor">
       <br />
-      <br />
-      Current Mode - {{playData.srcMode}}
-      <br />
-      <button @click="playData.srcMode='youtube'">Youtube Mode</button>
-      <button @click="playData.srcMode='url'">URL Mode</button>
-      <button @click="playData.instance.playVideo()">Play Youtube</button>
-      <br />
-      <br />
-      <button @click="playData.instance.startSong()">Start</button>
-      <button @click="playData.instance.resetPlaying(true)">Reset</button>
-      <br />
-      <br />
-      <!-- load youtube -->
-      <div>
-        <input v-model="youtubeId" placeholder="enter youtube id" />
-        <button @click="playData.instance.loadYoutubeVideo(youtubeId)">Load</button>
-      </div>
-      <br />
-      <div id="mode">{{playData.playMode ? "Play Mode" : "Create Mode"}}</div>
       <br />
       <!-- score -->
-      <div>
-        score - {{playData.result.score}} | combo - {{playData.result.combo}} | max combo - {{playData.result.maxCombo}}
+      <div style="padding:15px">
+        score - {{playData.result.score}}
+        <br />
+        combo - {{playData.result.combo}} | max combo - {{playData.result.maxCombo}}
         <br />
         perfect - {{playData.result.marks.perfect}} | good - {{playData.result.marks.good}} | offbeat - {{playData.result.marks.offbeat}} | miss
         - {{playData.result.marks.miss}}
+        <br />
+        <br />
+        fever level - {{playData.fever.value}} | fever time - {{playData.fever.time}} s | fever up percent - {{playData.fever.percent.toFixed(2)}} |
       </div>
     </div>
   </div>

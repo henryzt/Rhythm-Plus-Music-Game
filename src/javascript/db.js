@@ -24,11 +24,11 @@ export function createSong(songInfo) {
       .set({
         title,
         artist,
-        image,
-        youtubeId,
+        image: image ?? null,
+        youtubeId: youtubeId ?? null,
+        url: url ?? null,
+        tags: tags ?? null,
         srcMode,
-        url,
-        tags,
         visibility,
         dateCreated,
         dateUpdated,
@@ -83,6 +83,7 @@ export function getSongList(getPrivate) {
 
 function filterSongData(doc) {
   let song = doc.data();
+
   song.id = doc.id;
   song.image = song.youtubeId
     ? `https://img.youtube.com/vi/${song.youtubeId}/mqdefault.jpg`
@@ -193,6 +194,7 @@ export function updateSheet(info) {
     .catch(function (error) {
       // The document probably doesn't exist.
       console.error("Error updating document: ", error);
+      throw error;
     });
 }
 
@@ -249,6 +251,7 @@ export async function getGameSheet(sheetId) {
       sheet.song = song;
       sheet.sheet = JSON.parse(sheet.sheet);
       sheet.sheetId = doc.id;
+      replaceBaseUrl(sheet);
       console.log("Sheet data:", sheet);
       return sheet;
     } else {
@@ -282,6 +285,10 @@ export function getSheet(sheetId) {
   });
 }
 
+function replaceBaseUrl(sheet) {
+  sheet.url = sheet.url ? sheet.url.replace("{base}", "/audio/songs") : null; // replace local songs
+}
+
 export function uploadResult(data) {
   let uploader = functions.httpsCallable("uploadResult");
   return uploader(data);
@@ -297,6 +304,29 @@ export async function getResult(resultId) {
       console.error("No such document");
       throw new Error("No such document");
     }
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error reading document");
+  }
+}
+
+export async function getBestScore(sheetId) {
+  try {
+    let snapshot = await resultsCollection
+      .where("uid", "==", store.state.currentUser?.uid)
+      .where("sheetId", "==", sheetId)
+      .orderBy("result.score", "desc")
+      .limit(1)
+      .get();
+
+    let res = null;
+    snapshot.forEach((doc) => {
+      if (doc.exists) {
+        res = doc.data();
+      }
+    });
+
+    return res;
   } catch (error) {
     console.error(error);
     throw new Error("Error reading document");

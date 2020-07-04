@@ -1,18 +1,26 @@
 <template>
   <div>
+    <Navbar v-if="showNav"></Navbar>
     <UserProfileCard></UserProfileCard>
     <div
       v-if="imageSrc"
       class="bgImage"
       :style="{ background: `url('${imageSrc}') no-repeat fixed center`, backgroundSize: 'cover' }"
     ></div>
-    <Visualizer v-else ref="visualizer" :setVisualizer="visualizer" :autoUpdate="true"></Visualizer>
+    <Visualizer
+      v-else
+      ref="visualizer"
+      style="opacity:1"
+      :setVisualizer="visualizer"
+      :autoUpdate="true"
+    ></Visualizer>
   </div>
 </template>
 
 
 <script>
 import Visualizer from '../components/Visualizer.vue';
+import Navbar from '../components/Navbar.vue';
 import UserProfileCard from './UserProfileCard.vue';
 
 export default {
@@ -20,20 +28,25 @@ export default {
   props: {
     songSrc : {
       type: String,
-      default: "songs/login.mp3"
+      default: null
     },
     visualizer : {
       type: String,
-      default: "space"
+      default: "swirl"
     },
     imageSrc : {
       type: String,
       default: null
     },
+    showNav: {
+      type: Boolean,
+      default: true
+    }
   },
   components:{
       Visualizer,
-      UserProfileCard
+      UserProfileCard,
+      Navbar
   },
   data(){
         return {
@@ -41,10 +54,13 @@ export default {
         }
     },
     mounted() {
-        this.$store.state.audio.loadSong(this.songSrc, true)
+        if(this.songSrc){
+          this.$store.state.audio.loadSong(this.songSrc, true)
+        }else{
+          this.$store.state.audio.playBgm()
+        }
     },
     destroyed(){
-        this.$store.state.audio.stop()
     }
 };
 </script>

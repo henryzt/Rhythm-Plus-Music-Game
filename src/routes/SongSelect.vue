@@ -1,8 +1,10 @@
 <template>
   <div>
-    <PageBackground songSrc="/songs/select.mp3"></PageBackground>
+    <PageBackground></PageBackground>
 
-    <div style="font-size:2.3em; font-weight: bold;text-align:center;padding:40px;">Song Select</div>
+    <div
+      style="font-size:2.3em; font-weight: bold;text-align:center;padding:10px;margin-top:70px"
+    >Song Select</div>
 
     <div class="mContainer">
       <div class="song_list" :class="{'list_collapsed': selectedSong}" v-if="songList">
@@ -25,7 +27,7 @@
       </div>
     </div>
 
-    <Loading :show="(!songList || songList.length===0)&& delayedLoading">Fetching Latest Songs...</Loading>
+    <Loading :show="(!songList || songList.length===0)" :delay="true">Fetching Latest Songs...</Loading>
   </div>
 </template>
 
@@ -51,7 +53,6 @@ export default {
             songList: null,
             sheetList: null,
             selectedSong: null,
-            delayedLoading: false
         }
     },
     computed: {
@@ -59,6 +60,7 @@ export default {
     },
     watch: {
       async selectedSong(){
+        this.sheetList = null;
         if(this.selectedSong)
           this.sheetList = await getSheetList(this.selectedSong.id);
       }
@@ -69,9 +71,6 @@ export default {
         }).catch(err=>{
           console.error(err)
         })
-        setTimeout(() => {
-          this.delayedLoading = true
-        }, 1000);
     },
     methods: {
     }
@@ -80,7 +79,7 @@ export default {
 
 <style scoped>
 .mContainer {
-  perspective: 60em;
+  perspective: 100em;
   display: flex;
   justify-content: center;
   transition: 2s;
@@ -97,7 +96,7 @@ export default {
 }
 .detail {
   transition: 1s;
-  width: 300px;
+  width: 350px;
 }
 
 @media only screen and (max-width: 800px) {
@@ -110,9 +109,9 @@ export default {
     transform: none;
   }
 
-  .detail {
+  /* .detail {
     width: 80%;
-  }
+  } */
 }
 
 @media only screen and (min-width: 800px) {

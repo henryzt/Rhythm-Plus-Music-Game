@@ -1,25 +1,45 @@
 <template>
-  <div
-    class="song_item"
-    :class="{'song_item_bg':!hideBg, 'song_item_small': hideBg}"
-    ref="item"
-    @click="$emit('selected', song)"
-    v-if="song"
-  >
-    <div class="image">
-      <img :src="song.image" />
+  <div>
+    <div
+      class="song_item"
+      :class="{'song_item_bg':!hideBg, 'song_item_small': hideBg}"
+      ref="item"
+      @click="$emit('selected', song)"
+      v-if="song"
+    >
+      <div class="image">
+        <img :src="song.image" />
+      </div>
+      <div class="detail">
+        <div style="font-size:1.3em; font-weight: bold;">{{song.title}}</div>
+        <div>{{song.artist}}</div>
+      </div>
     </div>
-    <div class="detail">
-      <div style="font-size:1.3em; font-weight: bold;">{{song.title}}</div>
-      <div>{{song.artist}}</div>
+    <div v-if="selected&&!hideBg">
+      <div v-if="sheets">
+        <div v-for="sheet in sheets" :value="sheet.id" :key="sheet.id">
+          <div
+            @click="selectedSheet = sheet"
+            :class="{'sheet':true, 'active':selectedSheet==sheet}"
+          >
+            <SheetDetailLine :sheet="sheet"></SheetDetailLine>
+          </div>
+        </div>
+      </div>
+      <div v-else>Loading...</div>
     </div>
   </div>
 </template>
 
 <script>
+import SheetDetailLine from './SheetDetailLine.vue';
+
 export default {
     name:"SongListItem",
-    props: ["song", "hideBg"],
+    props: ["song", "hideBg", "sheets", "selected"],
+    components:{
+      SheetDetailLine
+    },
     data() {
         return {
         }
@@ -54,7 +74,7 @@ export default {
 }
 .song_item_bg:hover {
   background: rgba(255, 255, 255, 0.4);
-  transform: scale(1.2);
+  transform: scale(1.1);
   z-index: 500;
 }
 .detail {

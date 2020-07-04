@@ -19,7 +19,9 @@ export default {
         maxCombo: 0,
         marks: { perfect: 0, good: 0, offbeat: 0, miss: 0 },
       },
+      fever: { value: 1, time: 0, percent: 0 },
       markJudge: "",
+      feverInterval: null,
       srcMode: "youtube",
       instance: null,
       visualizerInstance: null,
@@ -31,6 +33,7 @@ export default {
       showStartButton: false,
       isGameEnded: false,
       initialized: false,
+      soundEffect: true, //eidtor hit sound effect
     };
   },
   computed: {
@@ -69,12 +72,17 @@ export default {
     // get audio element
     this.audio = this.$store.state.audio;
 
+    this.audio.stop();
+
     this.instance = new GameInstance(this);
     this.instance.reposition();
 
+    this.feverInterval = setInterval(this.feverTimer, 500);
+
     window.addEventListener("blur", this.pauseGame);
   },
-  destroyed() {
+  beforeDestroy() {
+    clearInterval(this.feverInterval);
     window.removeEventListener("blur", this.pauseGame);
     this.instance.destroyInstance();
   },
@@ -88,6 +96,29 @@ export default {
         maxCombo: 0,
         marks: { perfect: 0, good: 0, offbeat: 0, miss: 0 },
       };
+      this.clearFever();
+    },
+    clearFever() {
+      this.fever = { value: 1, time: 0, percent: 0 };
+    },
+    feverTimer() {
+      if (!this.started || this.instance.paused || !this.playMode) return;
+      console.log(this.fever.percent, this.fever.time, this.fever.value);
+      if (this.fever.value < 1) this.fever.value = 1;
+      if (this.fever.percent < 0) this.fever.percent = 0;
+      if (this.fever.percent >= 1) {
+        // this.audio.playEffect("/audio/effects/swoosh2.mp3");
+        this.fever.percent = 0;
+        this.fever.time = 30;
+        this.fever.value =
+          this.fever.value < 5 ? this.fever.value + 1 : this.fever.value;
+        this.$refs?.zoom?.show("X" + this.fever.value, "30%", "fever");
+      }
+      if (this.fever.time > 0) {
+        this.fever.time -= 0.5;
+      } else if (this.fever.value > 1) {
+        this.clearFever();
+      }
     },
     ytPaused() {
       console.log("pasued");
@@ -95,9 +126,10 @@ export default {
     },
     ytError() {
       console.error("youtube error");
+      this.instance.loading = false;
       this.$store.state.gModal.show({
         bodyText:
-          "Sorry, there is a problem with this video right now, which makes this sheet unavaliable. Please try again later.",
+          "Sorry, there is a problem with the source right now, which makes this sheet unavaliable. Please try again later.",
         isError: true,
         showCancel: false,
         okCallback: this.exitGame,

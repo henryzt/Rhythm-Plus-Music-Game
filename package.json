@@ -33,8 +33,7 @@
     "vue-spinner": "^1.0.3",
     "vue-youtube": "^1.4.0",
     "vue2-circle-progress": "^1.2.3",
-    "vuex": "^3.3.0",
-    "zingtouch": "^1.0.6"
+    "vuex": "^3.3.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",

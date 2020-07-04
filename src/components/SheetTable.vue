@@ -18,33 +18,32 @@
           <tr
             v-for="(entry, idx) in instance.timeArr"
             :key="idx"
-            :class="{onScreen:$parent.playMode && isWithinTime(entry.t), current:idx===instance.timeArrIdx}"
-            @dblclick="seekTo(entry.t)"
+            :class="{onScreen: instance.isWithinTime(entry.t), current:idx===instance.timeArrIdx}"
           >
             <td>
               <label class="cb_container cb_small">
-                <input type="checkbox" v-model="selectedNotes" :value="entry" />
+                <input type="checkbox" v-model="$parent.selectedNotes" :value="entry" />
                 <span class="checkmark"></span>
               </label>
             </td>
-            <td>{{entry.t}}</td>
+            <td @dblclick="seekTo(entry.t)">{{entry.t}}</td>
             <td>{{entry.k===" "?"-":entry.k}}</td>
           </tr>
           <tr class="last"></tr>
         </tbody>
       </table>
     </div>
-    <div class="buttons">
+    <div class="buttons" :class="{disabled: !instance.paused}">
       <a @click="reorder">Reorder</a>
       <a @click="removeSelected">Delete</a>
       <a @click="selectBetween">Select Between</a>
       <a @click="clearSelected">Clear</a>
-      <label class="cb_container cb_small">
-        <input type="checkbox" v-model="follow" />
-        <span class="checkmark"></span>
-        Follow Current
-      </label>
     </div>
+    <label class="cb_container cb_small">
+      <input type="checkbox" v-model="follow" />
+      <span class="checkmark"></span>
+      Follow Current
+    </label>
   </div>
 </template>
 
@@ -54,11 +53,10 @@ export default {
     computed: {
       instance(){
         return this.$parent.instance;
-      }
+      },
     },
     data() {
       return {
-        selectedNotes: [],
         selectedAll: false,
         follow: true
       }
@@ -72,43 +70,46 @@ export default {
                 element?.scrollIntoView({block: "end", behavior: "smooth"})
             })
         },
-        selectedNotes(){
-          this.selectedAll = this.selectedNotes.length!==0 && this.selectedNotes.length===this.instance.timeArr.length;
+        '$parent.selectedNotes'(){
+          this.selectedAll = this.$parent.selectedNotes.length!==0 && this.$parent.selectedNotes.length===this.instance.timeArr.length;
+        },
+        'instance.timeArr'(){
+          if(this.instance.timeArr.length>200 && !this.instance.paused){
+            this.$parent.disableMappingTable = true;
+          }
         }
     },
     methods:{
-      isWithinTime(time){
-        const sec = Number(this.$parent.noteSpeedInSec);
-        const current = Number(this.$parent.currentTime);
-        return time <= current + sec && time >= current;
-      },
       selectAll(){
           if(this.selectedAll){
             this.clearSelected()
           }else{
-            this.selectedNotes = this.instance.timeArr;
+            this.$parent.selectedNotes = this.instance.timeArr;
           }
       },
       clearSelected(){
-        this.selectedNotes = []
+        this.$parent.selectedNotes = []
       },
       removeSelected(){
+        if(this.$parent.selectedNotes == []) return;
         this.instance.timeArr = this.instance.timeArr.filter(( el ) => {
-          return !this.selectedNotes.includes( el );
+          return !this.$parent.selectedNotes.includes( el );
         } );
         this.clearSelected()
+        this.instance.repositionNotes()
+        this.$store.state.alert.success("Selected notes deleted")
       },
       reorder(){
         this.$parent.reorderSheet()
-        this.selectedNotes.sort((a,b) => parseFloat(a.t) - parseFloat(b.t))
+        this.$parent.selectedNotes.sort((a,b) => parseFloat(a.t) - parseFloat(b.t))
       },
       selectBetween(){
-        if(this.selectedNotes.length < 2) return;
+        if(this.$parent.selectedNotes.length < 2) return;
         this.reorder()
         let sheet = this.instance.timeArr;
-        const minIdx = sheet.indexOf(this.selectedNotes[0]);
-        const maxIdx = sheet.indexOf(this.selectedNotes[this.selectedNotes.length-1]);
-        this.selectedNotes = sheet.slice(minIdx, maxIdx + 1);
+        const minIdx = sheet.indexOf(this.$parent.selectedNotes[0]);
+        const maxIdx = sheet.indexOf(this.$parent.selectedNotes[this.$parent.selectedNotes.length-1]);
+        this.$parent.selectedNotes = sheet.slice(minIdx, maxIdx + 1);
       },
       seekTo(t){
         this.$parent.seekTo(t)

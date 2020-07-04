@@ -9,10 +9,11 @@
       >
         <v-icon name="regular/pause-circle" scale="1.5" />
       </a>
+      <Navbar v-else-if="!started" :gameNav="true"></Navbar>
     </transition>
 
     <!-- mark indicator -->
-    <div class="center" ref="hitIndicator">{{markJudge}} {{result.combo>=5?result.combo:''}}</div>
+    <div class="center_judge" ref="hitIndicator">{{markJudge}} {{result.combo>=5?result.combo:''}}</div>
 
     <!-- game canvas -->
     <div class="gameWrapper" :class="{'no-events':hideGameForYtButton}">
@@ -33,6 +34,7 @@
     <!-- youtube player -->
     <div v-if="srcMode==='youtube' && !isGameEnded" v-show="initialized">
       <Youtube
+        class="ytPlayerMobileExtend"
         id="ytPlayer"
         ref="youtube"
         :video-id="youtubeId"
@@ -49,6 +51,15 @@
     <!-- ready screen -->
     <transition name="modal-fade">
       <div class="modal-backdrop" :class="{'no-events':hideGameForYtButton}" v-if="showStartButton">
+        <!-- option button -->
+        <div
+          class="flex_hori start_page_button"
+          @click="advancedMenuOptions=true;$refs.menu.show()"
+        >
+          <v-icon name="cog" scale="1.5" />
+        </div>
+
+        <!-- play button -->
         <div class="modal blurBackground" :class="{'darker':hideGameForYtButton}" ref="playButton">
           <div class="modal-body" @click="hideGameForYtButton?()=>{}:startGame()">
             <div class="flex_hori">
@@ -57,23 +68,17 @@
             </div>
           </div>
         </div>
-        <!-- todo, option buttons-->
-        <!-- <div>
-          <div
-            class="flex_hori start_page_button"
-            @click="advancedMenuOptions=true;$refs.menu.show()"
-          >
-            <v-icon name="cog" scale="1.5" />
-            <div class="start_button_text">Options</div>
-          </div>
-
+        <!-- info button -->
+        <div>
           <div class="flex_hori start_page_button">
             <v-icon name="info-circle" scale="1.5" />
-            <div class="start_button_text">Song Detail</div>
           </div>
-        </div>-->
+        </div>
       </div>
     </transition>
+
+    <!-- center text (fever x2 etc) -->
+    <ZoomText style="z-index:1000" ref="zoom"></ZoomText>
 
     <!-- loading popup -->
     <Loading style="z-index:200" :show="instance && instance.loading">Song Loading...</Loading>
@@ -121,6 +126,8 @@ import PlayControl from '../components/PlayControl.vue';
 import Visualizer from '../components/Visualizer.vue';
 import Loading from '../components/Loading.vue';
 import Modal from '../components/Modal.vue';
+import ZoomText from '../components/ZoomText.vue';
+import Navbar from '../components/Navbar.vue';
 import GameInstance from '../javascript/gameInstance';
 import GameInstanceMixin from '../mixins/gameInstanceMixin';
 import { Youtube } from 'vue-youtube'
@@ -139,7 +146,9 @@ export default {
         Youtube,
         Loading,
         Modal,
-        ICountUp
+        ICountUp,
+        ZoomText,
+        Navbar
     },
     mixins: [GameInstanceMixin],
     data(){
@@ -177,6 +186,7 @@ export default {
           this.ytPlayer?.setVolume(0)
           this.instance?.startSong()
           this.showStartButton = false
+          this.$refs.zoom.show("Get Ready...")
         }else{
           this.resumeGame()
         }
@@ -200,6 +210,7 @@ export default {
           this.ytPlayer?.playVideo();
           this.ytPlayer?.setVolume(0);
         }else{
+          this.$refs.zoom.show("Get Ready...")
           this.instance.startSong()
         }
       },
@@ -293,7 +304,7 @@ export default {
 }
 
 .start_page_button {
-  margin: 30px 10%;
+  margin: 30px;
   opacity: 0.5;
   cursor: pointer;
   transition: 0.5s;
@@ -348,6 +359,11 @@ export default {
   animation: none;
   width: auto;
   cursor: pointer;
+}
+
+.modal-backdrop {
+  display: flex;
+  flex-direction: row;
 }
 
 .flex_hori {

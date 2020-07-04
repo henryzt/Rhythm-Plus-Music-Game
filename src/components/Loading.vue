@@ -1,6 +1,6 @@
 <template>
   <transition name="modal-fade">
-    <div class="modal-backdrop" v-if="show">
+    <div class="modal-backdrop" v-if="show && !delaying">
       <div class="modal blurBackground">
         <section class="modal-body">
           <Loader color="white" style="display:inline;float:left" />
@@ -26,6 +26,10 @@ import Loader from 'vue-spinner/src/FadeLoader.vue'
         show:{
             type: Boolean,
             default: false
+        },
+        delay:{
+            type: Boolean,
+            default: false
         }
     },
     components:{
@@ -33,11 +37,24 @@ import Loader from 'vue-spinner/src/FadeLoader.vue'
     },
     data: function(){
         return {
+          delaying: false
         }
     },
     methods: {
+      delayLoading(){
+        this.delaying = true
+        setTimeout(() => {
+          this.delaying = false
+        }, 1000);
+      }
+    },
+    mounted(){
+        if(this.delay) this.delayLoading();
     },
     watch:{
+      show(){
+        if(this.delay) this.delayLoading();
+      }
     }
   };
 </script>

@@ -1,6 +1,6 @@
 <template>
-  <div class="wrap">
-    <button class="button" @click="clicked">{{text}}</button>
+  <div class="wrap colored">
+    <button class="main_button" @click="clicked">{{text}}</button>
   </div>
 </template>
 
@@ -37,10 +37,10 @@ export default {
   transform: scale(0.7);
 }
 
-.button {
+.main_button {
   min-width: 300px;
   min-height: 60px;
-  font-family: "Nunito", sans-serif;
+  /* font-family: "Nunito", sans-serif; */
   font-size: 22px;
   text-transform: uppercase;
   letter-spacing: 1.3px;
@@ -58,7 +58,7 @@ export default {
   padding: 10px;
 }
 
-button::before {
+.main_button::before {
   content: "";
   border-radius: 1000px;
   min-width: calc(300px + 12px);
@@ -73,14 +73,14 @@ button::before {
   transition: all 0.3s ease-in-out 0s;
 }
 
-.button:hover,
-.button:focus {
+.main_button:hover,
+.main_button:focus {
   color: #ffffff;
   transform: translateY(-6px);
 }
 
-button:hover::before,
-button:focus::before {
+.main_button:hover::before,
+.main_button:focus::before {
   opacity: 1;
 }
 
@@ -96,10 +96,36 @@ button:focus::before {
   left: 50%;
   transform: translate(-50%, -50%);
   animation: ring 1s infinite;
+  pointer-events: none;
 }
 
-button:hover::after,
-button:focus::after {
+.colored .main_button {
+  background: #a166ab;
+  background: linear-gradient(
+    60deg,
+    #f79533,
+    #f37055,
+    #ef4e7b,
+    #a166ab,
+    #5073b8,
+    #1098ad,
+    #07b39b,
+    #6fba82
+  );
+  box-shadow: 12px 12px 24px rgba(161, 102, 171, 0.5);
+}
+
+.colored .main_button::before {
+  border: 6px solid #07b39b;
+  box-shadow: 0px 0px 60px #1098ad;
+}
+
+.colored::after {
+  border: 6px solid #ef4e7b;
+}
+
+.main_button:hover::after,
+.main_button:focus::after {
   animation: none;
   display: none;
 }

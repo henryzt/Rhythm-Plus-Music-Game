@@ -9,11 +9,35 @@
     </div>
     <div style="background:rgba(0,0,0,0.2); padding: 20px 0; box-sizing:border-box; width: 100%">
       <div style="opacity:0.4">Select Sheet or Press Play</div>
-      <div v-for="sheet in sheets" :value="sheet.id" :key="sheet.id">
-        <div
-          @click="selectedSheet = sheet"
-          :class="{'sheet':true, 'active':selectedSheet==sheet}"
-        >{{sheet.id}}</div>
+      <div v-if="sheets">
+        <div v-for="sheet in sheets" :value="sheet.id" :key="sheet.id">
+          <div
+            @click="selectedSheet = sheet"
+            :class="{'sheet':true, 'active':selectedSheet==sheet}"
+          >
+            <SheetDetailLine :sheet="sheet" :compact="true"></SheetDetailLine>
+          </div>
+        </div>
+      </div>
+      <div style="padding:20px;" v-else>Sheets loading...</div>
+    </div>
+
+    <div class="bestRes" v-if="bestResult">
+      <div class="brBlock">
+        <div class="brTxt">Rank</div>
+        {{bestResult.rank}}
+      </div>
+      <div class="brBlock">
+        <div class="brTxt">Combo</div>
+        {{bestResult.result.maxCombo}}
+      </div>
+      <div class="brBlock">
+        <div class="brTxt">Accuracy</div>
+        {{bestResult.result.percentage.toFixed(2)}}%
+      </div>
+      <div class="brBlock">
+        <div class="brTxt">Score</div>
+        {{bestResult.result.score.toFixed(0)}}
       </div>
     </div>
 
@@ -26,16 +50,21 @@
 
 <script>
 import Button from './Button.vue';
+import SheetDetailLine from './SheetDetailLine.vue';
+import { getBestScore } from "../javascript/db"
+
 export default {
     name:"SongDetailPanel",
     props: ["song", "sheets"],
       data(){
         return {
-            selectedSheet: null
+            selectedSheet: null,
+            bestResult: null
         }
     },
     components:{
-      Button
+      Button,
+      SheetDetailLine
     },
     computed: {
     },
@@ -53,6 +82,13 @@ export default {
       sheets(){
         if(this.song)
           this.selectedSheet = null;
+      },
+      async selectedSheet(){
+        if(this.selectedSheet){
+          this.bestResult = await getBestScore(this.selectedSheet.id);
+        }else{
+          this.bestResult = null;
+        }
       }
     }
 }
@@ -75,8 +111,8 @@ export default {
   padding: 0;
   transition: 0.5s;
   text-align: center;
-  overflow: hidden;
-  min-width: 300px;
+  min-width: 350px;
+  white-space: normal;
 }
 .song_item:hover {
   background: rgba(255, 255, 255, 0.35);
@@ -85,6 +121,7 @@ export default {
   display: flex;
   flex-direction: column;
   padding: 20px;
+  width: 100%;
 }
 .image {
   width: 100%;
@@ -103,5 +140,23 @@ export default {
 }
 .active {
   background: rgba(255, 255, 255, 0.3);
+}
+.bestRes {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  width: 100%;
+  margin-top: 10px;
+}
+.brBlock {
+  width: 30%;
+  padding: 10px;
+}
+.brBlock + .brBlock {
+  border-left: 1px solid grey;
+}
+.brTxt {
+  font-size: 14px;
+  color: grey;
 }
 </style>

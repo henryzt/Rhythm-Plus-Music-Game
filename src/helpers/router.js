@@ -6,6 +6,8 @@ import Result from "../routes/Result.vue";
 import Rankings from "../routes/Rankings.vue";
 import SongSelect from "../routes/SongSelect.vue";
 import SheetEditor from "../routes/SheetEditor.vue";
+import { store } from "./store";
+
 const router = new VueRouter({
   mode: "history",
   routes: [
@@ -27,6 +29,13 @@ const router = new VueRouter({
       path: "/editor",
       component: SheetEditor,
       children: [{ path: ":sheet", component: SheetEditor }],
+      beforeEnter: (to, from, next) => {
+        if (store.state.authed && store.state.verified) {
+          next();
+        } else {
+          next({ path: "/account", query: { warn: true } });
+        }
+      },
     },
     { path: "/account", component: Auth },
     { path: "*", redirect: { path: "/" } },

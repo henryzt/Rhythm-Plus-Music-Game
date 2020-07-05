@@ -19,7 +19,11 @@
           style="font-size:20px;padding-bottom:30px"
         >Please check your email to verify your account!</div>
         <div class="text_button" @click="$router.go()">Refresh</div>
-        <div class="text_button" @click="sendVerificationEmail">Resend Email</div>
+        <div
+          class="text_button"
+          :class="{disabled:emailSentTimeout}"
+          @click="sendVerificationEmail"
+        >Resend Email</div>
         <div class="text_button" @click="confirmSignOut">Logout</div>
       </div>
     </div>
@@ -57,7 +61,8 @@ export default {
   },
   data(){
         return {
-            showModal: false
+            showModal: false,
+            emailSentTimeout: false
         }
     },
     computed: {
@@ -71,7 +76,8 @@ export default {
         signInFlow: 'popup',
         signInOptions: [
             firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-            firebase.auth.EmailAuthProvider.PROVIDER_ID
+            firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+            firebase.auth.EmailAuthProvider.PROVIDER_ID,
             ],
         autoUpgradeAnonymousUsers: true,
         callbacks: {
@@ -113,6 +119,13 @@ export default {
       let ui = firebaseui.auth.AuthUI.getInstance() ?? new firebaseui.auth.AuthUI(firebase.auth());
       ui.start('#firebaseui-auth-container', uiConfig);
 
+      if(this.$route.query.warn){
+        this.$router.push({query:null})
+        this.$store.state.alert.warn(
+            "You need to login and verify your account before using the sheet editor", 8000
+          );
+      }
+
     },
   methods: {
       confirmSignOut(){
@@ -140,10 +153,18 @@ export default {
         const user = firebase.auth().currentUser;
 
         user.sendEmailVerification().then(()=> {
-          this.$store.state.alert.success("Verification email sent! Please check your inbox or spam folder.")
+          this.$store.state.alert.success("Verification email sent! Please check your inbox or spam folder.");
+          this.emailSentTimeout = true
+          setTimeout(()=>{
+            this.emailSentTimeout = false
+          }, 30000)
         }).catch((error) => {
           console.error(error)
-          this.$store.state.alert.error("Sorry, something went wrong, please try again.")
+          if(error.code==="auth/too-many-requests"){
+            this.$store.state.alert.error("You have sent to many emails, please try again later.", 8000)
+          }else{
+            this.$store.state.alert.error("Sorry, something went wrong, please try again.", 8000)
+          }
         });
       }
   }
@@ -160,6 +181,11 @@ export default {
   color: black;
   border: none;
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.disabled {
+  cursor: not-allowed;
+  opacity: 0.2;
 }
 
 .mContainer {

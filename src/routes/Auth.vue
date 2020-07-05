@@ -7,6 +7,7 @@
         <UserProfileCard :extend="true" />
         <div class="clip" @click="confirmSignOut">Logout</div>
       </div>
+      <Settings></Settings>
     </div>
 
     <div class="center_logo" style="z-index: 1000;">
@@ -47,6 +48,7 @@ import PageBackground from '../components/PageBackground.vue';
 import Modal from '../components/Modal.vue';
 import Loading from '../components/Loading.vue';
 import UserProfileCard from '../components/UserProfileCard.vue';
+import Settings from '../components/Settings.vue';
 import firebase from 'firebase';
 import * as firebaseui from "firebaseui"
 import "firebaseui/dist/firebaseui.css";
@@ -57,7 +59,8 @@ export default {
       PageBackground,
       Modal,
       Loading,
-      UserProfileCard
+      UserProfileCard,
+      Settings
   },
   data(){
         return {
@@ -193,7 +196,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   transition: 2s;
-  width: 100%;
+  width: 90%;
   max-width: 600px;
   margin: auto;
   margin-top: 100px;

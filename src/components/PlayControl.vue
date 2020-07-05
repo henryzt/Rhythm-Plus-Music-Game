@@ -33,15 +33,15 @@
 
     <p>
       <label></label>
-      <Checkbox label="Vibration" :model="{bind:playData.vibrate}" :cbStyle="cbStyle"></Checkbox>
+      <Checkbox label="Vibration" :model="playData" modelKey="vibrate" :cbStyle="cbStyle"></Checkbox>
     </p>
     <p>
       <label></label>
-      <Checkbox label="Blur Background" :model="{bind:playData.blur}" :cbStyle="cbStyle"></Checkbox>
+      <Checkbox label="Blur Background" :model="playData" modelKey="blur" :cbStyle="cbStyle"></Checkbox>
     </p>
     <p>
       <label></label>
-      <Checkbox label="3D Perspective" :model="{bind:playData.perspective}" :cbStyle="cbStyle"></Checkbox>
+      <Checkbox label="3D Perspective" :model="playData" modelKey="perspective" :cbStyle="cbStyle"></Checkbox>
     </p>
 
     <!-- create mode only -->

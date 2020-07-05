@@ -8,7 +8,7 @@
       <Settings></Settings>
     </div>
 
-    <div class="center_logo" style="z-index: 1000;">
+    <div class="center_logo" style="z-index: 900;">
       <div v-show="!$store.state.authed">
         <h3>Signin or Register Now for Complete Experience!</h3>
         <div id="firebaseui-auth-container"></div>
@@ -36,7 +36,7 @@
       @ok="signOut"
     ></Modal>
 
-    <Loading style="z-index: 1000;" :show="!$store.state.initialized">Communicating...</Loading>
+    <Loading style="z-index: 999;" :show="!$store.state.initialized">Communicating...</Loading>
   </div>
 </template>
 
@@ -123,6 +123,11 @@ export default {
         this.$store.state.alert.warn(
             "You need to login and verify your account before using the sheet editor", 8000
           );
+      }
+
+      if(this.$route.query.success){
+        this.$router.push({query:null})
+        this.$store.state.alert.success("Settings updated");
       }
 
     },

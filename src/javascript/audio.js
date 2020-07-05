@@ -70,8 +70,9 @@ export default class Audio {
 
   playBgm(songToExclude) {
     // randomly play background music
-    if (this.player?.playing() && !songToExclude) return;
+    // if (this.player?.playing() && !songToExclude) return;
     let bgmUrlArr = ["/audio/bgm/aurora.mp3", "/audio/bgm/kontekst.mp3"];
+    shuffle(bgmUrlArr);
     bgmUrlArr.filter((e) => e !== songToExclude);
     this.stop();
     console.log(bgmUrlArr);
@@ -87,7 +88,9 @@ export default class Audio {
     effectPlayer.play();
   }
 
-  stop() {
+  stop(stopBackground) {
+    if (!stopBackground && this.asBackground) return;
+    console.warn("stop", this.player, this.asBackground);
     this.player?.stop();
     if (this.asBackground) {
       this.player?.unload();

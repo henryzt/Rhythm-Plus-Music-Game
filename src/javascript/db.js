@@ -54,7 +54,7 @@ export function getSongList(getPrivate) {
 
         res.push(song);
         // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, " => ", doc.data());
+        // console.log(doc.id, " => ", doc.data());
       });
       resolve(res);
     };

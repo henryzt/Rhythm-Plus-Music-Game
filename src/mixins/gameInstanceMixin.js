@@ -72,7 +72,7 @@ export default {
     // get audio element
     this.audio = this.$store.state.audio;
 
-    this.audio.stop();
+    this.audio.stop(true);
 
     this.instance = new GameInstance(this);
     this.instance.reposition();

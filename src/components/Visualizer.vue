@@ -89,7 +89,7 @@ export default {
         setVisualizer: () => {
             this.vComponent = this.setVisualizer;
         },
-        setBlur: () => {
+        setBlur(){
             this.blur = this.setBlur;
         }
     },

@@ -369,6 +369,17 @@ input::placeholder {
   background: rgba(145, 145, 145, 1); 
 }
 
+#firebaseui-auth-container {
+  z-index: 1000;
+}
+#firebaseui-auth-container input[type="text"] {
+  background-color: white;
+  padding-left: 0;
+  color: black;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
 
 @keyframes enter {
   from {

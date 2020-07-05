@@ -22,10 +22,6 @@
       <p>
         <label>Avatar</label>
         <input v-model="profileSt.photoURL" name="photoURL" placeholder="Avatar URL" type="text" />
-        <span style="opacity:0.5;font-size:14px;">
-          You can upload a new avatar from your login provider, or leave this field empty and go to
-          gravatar.com to change the avatar associated with your email.
-        </span>
       </p>
       <p>
         <label>Password</label>
@@ -43,7 +39,7 @@
         </select>
       </p>
       <p v-if="$store.state.visualizerArr">
-        <label>Background Visual</label>
+        <label>Visualizer</label>
         <select id="visualizer" v-model="appearanceSt.visualizer">
           <option
             v-for="[key, value] in Object.entries($store.state.visualizerArr)"

@@ -11,13 +11,19 @@ import { store } from "./store";
 const router = new VueRouter({
   mode: "history",
   routes: [
-    { path: "/", component: Home, meta: { requireBg: true } },
+    {
+      path: "/",
+      component: Home,
+      meta: { requireBg: true, requireSignin: true },
+    },
     { path: "/menu", component: SongSelect, meta: { requireBg: true } },
     { path: "/rankings", component: Rankings, meta: { requireBg: true } },
     {
       path: "/game",
       component: Game,
-      children: [{ path: ":sheet", component: Game }],
+      children: [
+        { path: ":sheet", component: Game, meta: { requireSignin: true } },
+      ],
     },
     {
       path: "/result",
@@ -28,7 +34,13 @@ const router = new VueRouter({
     {
       path: "/editor",
       component: SheetEditor,
-      children: [{ path: ":sheet", component: SheetEditor }],
+      children: [
+        {
+          path: ":sheet",
+          component: SheetEditor,
+          meta: { requireSignin: true },
+        },
+      ],
     },
     { path: "/account", component: Auth, meta: { requireBg: true } },
     { path: "*", redirect: { path: "/" } },

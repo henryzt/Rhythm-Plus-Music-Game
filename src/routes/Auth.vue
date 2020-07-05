@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-show="render">
     <div class="mContainer" v-if="$store.state.verified">
       <div class="flex_hori">
         <UserProfileCard :extend="true" />
@@ -61,7 +61,8 @@ export default {
   data(){
         return {
             showModal: false,
-            emailSentTimeout: false
+            emailSentTimeout: false,
+            render: true
         }
     },
     computed: {
@@ -147,7 +148,10 @@ export default {
         const user = firebase.auth().currentUser;
 
         if(user.emailVerified){
-          window.location.assign('/');
+          this.render = false;
+          this.$router.push({path:"/"})
+          this.$router.go()
+
         }else{
           this.$router.go()
           this.sendVerificationEmail()
@@ -176,17 +180,6 @@ export default {
 </script>
 
 <style scoped>
-#firebaseui-auth-container {
-  z-index: 1000;
-}
-#firebaseui-auth-container input[type="text"] {
-  background-color: white;
-  padding-left: 0;
-  color: black;
-  border: none;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-}
-
 .disabled {
   cursor: not-allowed;
   opacity: 0.2;

@@ -1,10 +1,16 @@
 <template>
   <div id="app" class="unselectable">
-    <PageBackground v-if="$store.state.audio && $route.meta.requireBg"></PageBackground>
+    <PageBackground v-if="$store.state.audio && $route.meta.requireBg && showOnPageRequireSignin"></PageBackground>
     <ModalGlobal ref="gm"></ModalGlobal>
     <FloatingAlert ref="alert"></FloatingAlert>
     <transition name="fade" v-if="$store.state.audio">
-      <router-view :key="$route.path" />
+      <router-view :key="$route.path" v-if="showOnPageRequireSignin" />
+      <div v-else>
+        <div class="center blink_me">
+          <img src="/assets/logo2.png" style="max-width: 350px; padding: 20px 0; width:100%;" />
+          <div>Logging you in...</div>
+        </div>
+      </div>
     </transition>
   </div>
 </template>
@@ -45,6 +51,12 @@ export default {
       else
         this.$store.state.alert.error("No internet connection")
     }
+  },
+  computed:{
+    showOnPageRequireSignin(){
+      console.log("AAA",this.$route.meta.requireSignin)
+      return !this.$route.meta.requireSignin || (this.$store.state.initialized && this.$route.meta.requireSignin);
+    }
   }
 };
 </script>
@@ -56,5 +68,16 @@ export default {
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
+}
+
+.blink_me {
+  opacity: 0.5;
+  animation: blinker 2s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0.2;
+  }
 }
 </style>

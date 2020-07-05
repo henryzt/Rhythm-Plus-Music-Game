@@ -84,7 +84,7 @@ export default {
     const gameSettings = this.$store.state?.userProfile?.gameSt;
     if (gameSettings) {
       this.blur = gameSettings.blur;
-      this.blnoteSpeedInSecur = gameSettings.noteSpeedInSec;
+      this.noteSpeedInSec = gameSettings.noteSpeedInSec;
       this.perspective = gameSettings.perspective;
       this.vibrate = gameSettings.vibrate;
     }

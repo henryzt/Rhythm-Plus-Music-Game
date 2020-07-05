@@ -122,4 +122,9 @@ export default {
 .settingStyle input {
   display: table-cell;
 }
+@media only screen and (max-width: 1000px) {
+  .settingStyle label {
+    width: 35%;
+  }
+}
 </style>

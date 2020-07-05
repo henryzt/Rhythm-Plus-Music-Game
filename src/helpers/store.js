@@ -27,6 +27,7 @@ export const store = new Vuex.Store({
       } else {
         this.commit("setUserProfile", null);
         this.commit("setProfilePciture", null);
+        this.commit("setTheme");
       }
     },
     async fetchProfilePicture({ commit, state }) {
@@ -52,10 +53,30 @@ export const store = new Vuex.Store({
         try {
           const res = await fb.usersCollection.doc(state.currentUser.uid).get();
           commit("setUserProfile", res.data());
+          commit("setTheme");
         } catch (err) {
           console.error(err);
         }
       }
+    },
+  },
+  mutations: {
+    setCurrentUser(state, val) {
+      state.authed = val && !val.isAnonymous;
+      state.verified = state.authed && val.emailVerified;
+      state.currentUser = val;
+      this.dispatch("fetchUserProfile");
+    },
+    setUserProfile(state, val) {
+      state.userProfile = val;
+      if (val && val.exp) {
+        let level = calculateUserLevel(val.exp);
+        state.userProfile.lvBefore = state.userProfile.lv ?? level;
+        state.userProfile.lv = level;
+        state.userProfile.lvd = Math.floor(level);
+      }
+    },
+    setTheme(state) {
       // set themes
       const purpleSwirl = {
         visualizer: "swirl",
@@ -75,23 +96,6 @@ export const store = new Vuex.Store({
         state.theme.blur = userTheme.blur;
       }
       state.initialized = true;
-    },
-  },
-  mutations: {
-    setCurrentUser(state, val) {
-      state.authed = val && !val.isAnonymous;
-      state.verified = state.authed && val.emailVerified;
-      state.currentUser = val;
-      this.dispatch("fetchUserProfile");
-    },
-    setUserProfile(state, val) {
-      state.userProfile = val;
-      if (val && val.exp) {
-        let level = calculateUserLevel(val.exp);
-        state.userProfile.lvBefore = state.userProfile.lv ?? level;
-        state.userProfile.lv = level;
-        state.userProfile.lvd = Math.floor(level);
-      }
     },
     setProfilePciture(state, val) {
       state.profilePicture = val;

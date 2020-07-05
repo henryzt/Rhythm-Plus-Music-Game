@@ -9,7 +9,7 @@
       >
         <v-icon name="regular/pause-circle" scale="1.5" />
       </a>
-      <Navbar v-else style="z-index:1000" :gameNav="true"></Navbar>
+      <Navbar v-else-if="!isGameEnded" style="z-index:1000" :gameNav="true"></Navbar>
     </transition>
 
     <!-- mark indicator -->

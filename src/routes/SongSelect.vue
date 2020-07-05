@@ -80,6 +80,7 @@ export default {
   justify-content: center;
   transition: 2s;
   white-space: nowrap;
+  margin-bottom: 300px !important;
 }
 .song_list {
   width: 100%;

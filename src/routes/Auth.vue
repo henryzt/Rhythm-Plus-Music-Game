@@ -196,6 +196,7 @@ export default {
   max-width: 600px;
   margin: auto;
   margin-top: 100px;
+  margin-bottom: 300px;
 }
 
 .flex_hori {

@@ -111,6 +111,7 @@
           :interval="0.001"
           :min="-noteSpeedInSec"
           :max="songLength"
+          :contained="true"
           @change="seekTo"
         ></vue-slider>
       </div>

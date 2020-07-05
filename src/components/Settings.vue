@@ -59,7 +59,12 @@
     </form>
 
     <div class="st_title">Default Game Settings</div>
-    <play-control :playData="gameSt"></play-control>
+    <play-control :playData="gameSt" :formStyle="true" :settingStyle="true"></play-control>
+
+    <div class="btn-action btn-dark" @click="save">
+      <v-icon name="arrow-right" />
+      <span>Save Changes</span>
+    </div>
   </div>
 </template>
 
@@ -87,6 +92,14 @@ export default {
 
             }
         }
+    },
+    mounted(){
+
+    },
+    methods:{
+      save(){
+
+      }
     }
     
 }
@@ -95,6 +108,7 @@ export default {
 <style scoped>
 .st_title {
   margin: 30px 0;
+  margin-top: 40px;
   font-size: 2em;
 }
 form {
@@ -113,6 +127,19 @@ label {
 }
 input {
   display: table-cell;
+}
+.fa-icon {
+  vertical-align: middle;
+  margin-right: 5px;
+}
+.btn-dark {
+  background: rgba(78, 78, 78, 0.575);
+  line-height: 30px;
+  margin-top: 50px;
+  max-width: 100%;
+}
+.btn-dark:hover {
+  background: white;
 }
 
 @media only screen and (max-width: 1000px) {

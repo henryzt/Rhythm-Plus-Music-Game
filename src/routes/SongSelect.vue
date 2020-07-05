@@ -1,7 +1,5 @@
 <template>
   <div>
-    <PageBackground></PageBackground>
-
     <div
       style="font-size:2.3em; font-weight: bold;text-align:center;padding:10px;margin-top:70px"
     >Song Select</div>
@@ -33,7 +31,6 @@
 
 
 <script>
-import PageBackground from '../components/PageBackground.vue';
 import SongListItem from '../components/SongListItem.vue';
 import SongDetailPanel from '../components/SongDetailPanel.vue';
 import Loading from '../components/Loading.vue';
@@ -43,7 +40,6 @@ import { getSheetList, getSongList } from "../javascript/db"
 export default {
   name: 'SongSelect',
   components:{
-      PageBackground,
       SongListItem,
       SongDetailPanel,
       Loading

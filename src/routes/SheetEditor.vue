@@ -127,6 +127,7 @@
     </div>
 
     <Loading style="z-index:500" :show="loading">Just a second...</Loading>
+    <Loading style="z-index: 1000;" :show="!$store.state.initialized">Communicating...</Loading>
 
     <Modal
       ref="publishModal"
@@ -215,6 +216,11 @@ export default {
     watch: {
       playbackSpeed(){
         this.setPlaybackRate(this.playbackSpeed)
+      },
+      '$store.state.initialized'(){
+        if (!this.$store.state.verified) {
+          this.$router.push({ path: "/account", query: { warn: true } });
+        }
       }
     },
     async mounted() {

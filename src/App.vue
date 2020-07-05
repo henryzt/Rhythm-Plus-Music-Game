@@ -1,5 +1,6 @@
 <template>
   <div id="app" class="unselectable">
+    <PageBackground v-if="$store.state.audio && $route.meta.requireBg"></PageBackground>
     <ModalGlobal ref="gm"></ModalGlobal>
     <FloatingAlert ref="alert"></FloatingAlert>
     <transition name="fade" v-if="$store.state.audio">
@@ -12,6 +13,7 @@
 import Audio from './javascript/audio.js';
 import ModalGlobal from './components/ModalGlobal.vue';
 import FloatingAlert from './components/FloatingAlert.vue';
+import PageBackground from './components/PageBackground.vue';
 import 'vue-awesome/icons/volume-up'
 import 'vue-awesome/icons/volume-mute'
 import 'vue-awesome/icons/expand'
@@ -21,7 +23,8 @@ export default {
   name: 'App',
   components: {
     ModalGlobal,
-    FloatingAlert
+    FloatingAlert,
+    PageBackground
   },
   mounted(){
     this.$store.commit("setAudio", new Audio());
@@ -42,7 +45,7 @@ export default {
       else
         this.$store.state.alert.error("No internet connection")
     }
-  },
+  }
 };
 </script>
 

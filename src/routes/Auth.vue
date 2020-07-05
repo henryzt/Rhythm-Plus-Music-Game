@@ -1,7 +1,5 @@
 <template>
   <div>
-    <PageBackground></PageBackground>
-
     <div class="mContainer" v-if="$store.state.verified">
       <div class="flex_hori">
         <UserProfileCard :extend="true" />
@@ -44,7 +42,6 @@
 
 
 <script>
-import PageBackground from '../components/PageBackground.vue';
 import Modal from '../components/Modal.vue';
 import Loading from '../components/Loading.vue';
 import UserProfileCard from '../components/UserProfileCard.vue';
@@ -56,7 +53,6 @@ import "firebaseui/dist/firebaseui.css";
 export default {
   name: 'Auth',
   components:{
-      PageBackground,
       Modal,
       Loading,
       UserProfileCard,

@@ -1,7 +1,5 @@
 <template>
   <div>
-    <PageBackground></PageBackground>
-
     <div class="center_logo">
       <img
         src="assets/logo2.png"
@@ -17,7 +15,6 @@
 </template>
 
 <script>
-import PageBackground from '../components/PageBackground.vue';
 import Button from '../components/Button.vue';
 
 
@@ -25,7 +22,6 @@ import Button from '../components/Button.vue';
 export default {
     name: 'Home',
     components: {
-        PageBackground,
         Button
     },
     data(){

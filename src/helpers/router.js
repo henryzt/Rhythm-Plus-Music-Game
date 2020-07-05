@@ -11,9 +11,9 @@ import { store } from "./store";
 const router = new VueRouter({
   mode: "history",
   routes: [
-    { path: "/", component: Home },
-    { path: "/menu", component: SongSelect },
-    { path: "/rankings", component: Rankings },
+    { path: "/", component: Home, meta: { requireBg: true } },
+    { path: "/menu", component: SongSelect, meta: { requireBg: true } },
+    { path: "/rankings", component: Rankings, meta: { requireBg: true } },
     {
       path: "/game",
       component: Game,
@@ -29,15 +29,8 @@ const router = new VueRouter({
       path: "/editor",
       component: SheetEditor,
       children: [{ path: ":sheet", component: SheetEditor }],
-      beforeEnter: (to, from, next) => {
-        if (store.state.authed && store.state.verified) {
-          next();
-        } else {
-          next({ path: "/account", query: { warn: true } });
-        }
-      },
     },
-    { path: "/account", component: Auth },
+    { path: "/account", component: Auth, meta: { requireBg: true } },
     { path: "*", redirect: { path: "/" } },
   ],
 });

@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div class="center_logo">
+    <div class="center_logo" v-if="$store.state">
       <img
-        src="assets/logo2.png"
+        :src="'assets/' + ($store.state.theme ? $store.state.theme.logoAsset : 'logo2.png')"
         style="max-width: 550px; padding: 50px 0; width:100%;box-sizing: border-box;"
       />
       <Button text="Start Game" @click="goToGame"></Button>

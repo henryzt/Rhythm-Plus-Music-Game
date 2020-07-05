@@ -1,5 +1,5 @@
 <template>
-  <div class="wrap colored">
+  <div class="wrap" v-if="$store.state.theme" :class="{[$store.state.theme.buttonStyle]:true}">
     <button class="main_button" @click="clicked">{{text}}</button>
   </div>
 </template>

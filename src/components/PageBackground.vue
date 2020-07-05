@@ -8,10 +8,11 @@
       :style="{ background: `url('${imageSrc}') no-repeat fixed center`, backgroundSize: 'cover' }"
     ></div>
     <Visualizer
-      v-else
+      v-else-if="$store.state.theme && $store.state.theme.visualizer"
       ref="visualizer"
       style="opacity:1"
-      :setVisualizer="visualizer"
+      :setVisualizer="$store.state.theme.visualizer"
+      :setBlur="$store.state.theme.blur"
       :autoUpdate="true"
     ></Visualizer>
   </div>
@@ -32,7 +33,7 @@ export default {
     },
     visualizer : {
       type: String,
-      default: "swirl"
+      default: 'swirl'
     },
     imageSrc : {
       type: String,

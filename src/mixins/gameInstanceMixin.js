@@ -80,6 +80,15 @@ export default {
 
     this.feverInterval = setInterval(this.feverTimer, 500);
 
+    // setup user default settings
+    const gameSettings = this.$store.state?.userProfile?.gameSt;
+    if (gameSettings) {
+      this.blur = gameSettings.blur;
+      this.blnoteSpeedInSecur = gameSettings.noteSpeedInSec;
+      this.perspective = gameSettings.perspective;
+      this.vibrate = gameSettings.vibrate;
+    }
+
     window.addEventListener("blur", this.pauseGame);
   },
   beforeDestroy() {

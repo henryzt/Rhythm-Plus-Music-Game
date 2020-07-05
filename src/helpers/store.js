@@ -17,6 +17,7 @@ export const store = new Vuex.Store({
     initialized: false,
     isFullscreen: false,
     visualizerArr: null,
+    theme: null,
   },
   actions: {
     fetchUserProfile() {
@@ -46,26 +47,42 @@ export const store = new Vuex.Store({
         }
       }
     },
-    updateUserProfile({ commit, state }) {
+    async updateUserProfile({ commit, state }) {
       if (state.currentUser) {
-        fb.usersCollection
-          .doc(state.currentUser.uid)
-          .get()
-          .then((res) => {
-            commit("setUserProfile", res.data());
-          })
-          .catch((err) => {
-            console.error(err);
-          });
+        try {
+          const res = await fb.usersCollection.doc(state.currentUser.uid).get();
+          commit("setUserProfile", res.data());
+        } catch (err) {
+          console.error(err);
+        }
       }
+      // set themes
+      const purpleSwirl = {
+        visualizer: "swirl",
+        buttonStyle: "colored",
+        logoAsset: "logo2.png",
+      };
+      const flameSpace = {
+        visualizer: "space",
+        buttonStyle: "",
+        logoAsset: "logo.png",
+      };
+      const userTheme = state.userProfile?.appearanceSt;
+      state.theme =
+        userTheme?.theme === "flameSpace" ? flameSpace : purpleSwirl;
+      if (userTheme) {
+        state.theme.visualizer = userTheme.visualizer;
+        state.theme.blur = userTheme.blur;
+      }
+      state.initialized = true;
     },
   },
   mutations: {
     setCurrentUser(state, val) {
-      state.initialized = true;
       state.authed = val && !val.isAnonymous;
       state.verified = state.authed && val.emailVerified;
       state.currentUser = val;
+      this.dispatch("fetchUserProfile");
     },
     setUserProfile(state, val) {
       state.userProfile = val;

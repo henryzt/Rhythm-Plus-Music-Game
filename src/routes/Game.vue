@@ -21,7 +21,7 @@
     </div>
 
     <!-- visualizer canvas -->
-    <Visualizer ref="visualizer" v-show="!hideGameForYtButton"></Visualizer>
+    <Visualizer ref="visualizer" :setBlur="blur" v-show="!hideGameForYtButton"></Visualizer>
 
     <!-- score panel -->
     <div class="score">

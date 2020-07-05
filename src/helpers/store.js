@@ -13,8 +13,10 @@ export const store = new Vuex.Store({
     userProfile: {},
     profilePicture: null,
     authed: false,
+    verified: false,
     initialized: false,
     isFullscreen: false,
+    visualizerArr: null,
   },
   actions: {
     fetchUserProfile() {
@@ -85,6 +87,9 @@ export const store = new Vuex.Store({
     },
     setFloatingAlert(state, val) {
       state.alert = val;
+    },
+    setVisualizerArr(state, val) {
+      state.visualizerArr = val;
     },
     async toggleFullscreen(state) {
       state.isFullscreen = document.fullscreen;

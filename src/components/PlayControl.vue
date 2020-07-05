@@ -9,7 +9,7 @@
         :value="playData.visualizerInstance.currentVisualizer"
       >
         <option
-          v-for="visualizer in Object.keys(playData.visualizerInstance.visualizerArr)"
+          v-for="visualizer in Object.keys($store.state.visualizerArr)"
           :value="visualizer"
           :key="visualizer"
         >{{visualizer}}</option>
@@ -21,7 +21,15 @@
     <div class="text">
       Note Speed
       <br />
-      <input v-model="playData.noteSpeedInSec" placeholder="Speed" type="number" />
+      <br />
+      <vue-slider
+        :value="3.01-playData.noteSpeedInSec"
+        :interval="0.01"
+        :min="0.01"
+        :max="3"
+        :tooltip-formatter="val => val.toFixed(1)+'x'"
+        @change="changeSpeed"
+      ></vue-slider>
     </div>
 
     <br />
@@ -34,7 +42,7 @@
 
     <label class="cb_container">
       Blur Background
-      <input type="checkbox" v-model="playData.visualizerInstance.blur" />
+      <input type="checkbox" v-model="playData.blur" />
       <span class="checkmark"></span>
     </label>
 
@@ -65,6 +73,7 @@
 </template>
 
 <script>
+import VueSlider from 'vue-slider-component'
 
 
 export default {
@@ -75,9 +84,15 @@ export default {
         youtubeId: "",
     }
   },
+  components:{
+    VueSlider
+  },
   methods: {
     toggleVisualizer(name) {
       this.playData.visualizerInstance.setVisualizerByKey(name)
+    },
+    changeSpeed(speed){
+      this.playData.noteSpeedInSec = 3.01 - speed;
     }
   }
 };

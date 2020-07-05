@@ -321,7 +321,7 @@ img{
 
 /* inputs */
 
-input[type=text], input[type="number"], input[type="submit"], input[type="button"], select {
+input[type=text], input[type="number"], input[type="submit"], input[type="button"], select, .input {
   background-color: rgba(109, 109, 109, 0.7);
   color: white;
   padding: 6px 15px;
@@ -333,11 +333,11 @@ input[type=text], input[type="number"], input[type="submit"], input[type="button
   width: 100%;
 }
 
-input[type=text]:hover, input[type="number"]:hover,input[type="submit"]:hover, input[type="button"]:hover, select:hover {
+input[type=text]:hover, input[type="number"]:hover,input[type="submit"]:hover, input[type="button"]:hover, select:hover, .input:hover  {
   border: 3px solid  rgb(150, 150, 150);
 }
 
-input[type=text]:focus, input[type="number"]:focus,input[type="submit"]:focus, input[type="button"]:hover, select:focus {
+input[type=text]:focus, input[type="number"]:focus,input[type="submit"]:focus, input[type="button"]:focus, select:focus, .input:focus  {
   border: 3px solid #ccc;
 }
 

@@ -34,6 +34,7 @@ export default {
       isGameEnded: false,
       initialized: false,
       soundEffect: true, //eidtor hit sound effect
+      blur: false,
     };
   },
   computed: {

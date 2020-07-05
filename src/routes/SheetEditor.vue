@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- visualizer canvas -->
-    <Visualizer ref="visualizer" v-show="srcMode==='url'"></Visualizer>
+    <Visualizer ref="visualizer" :setBlur="blur" v-show="srcMode==='url'"></Visualizer>
 
     <div class="toolbar blurBackground" style="padding-left:0">
       <div class="logo">

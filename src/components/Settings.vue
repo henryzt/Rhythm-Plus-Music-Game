@@ -42,21 +42,37 @@
           <option value="purple">Dark Purple Swirl</option>
         </select>
       </p>
+      <p v-if="$store.state.visualizerArr">
+        <label>Background Visual</label>
+        <select id="visualizer" v-model="appearanceSt.overrideVisualizer">
+          <option
+            v-for="[key, value] in Object.entries($store.state.visualizerArr)"
+            :value="value"
+            :key="key"
+          >{{key}}</option>
+        </select>
+      </p>
       <p>
-        <label>Password</label>
-        <input type="button" value="Reset password" />
+        <label></label>
+        <Checkbox label="Blur Background" :model="{bind:appearanceSt.blur}"></Checkbox>
       </p>
     </form>
 
     <div class="st_title">Default Game Settings</div>
+    <play-control :playData="gameSt"></play-control>
   </div>
 </template>
 
 <script>
+import Checkbox from './Checkbox.vue';
+import PlayControl from './PlayControl.vue';
+
 
 export default {
     name: "Settings",
     components: {
+      Checkbox,
+      PlayControl
     },
     data: function(){
         return {
@@ -64,7 +80,8 @@ export default {
 
             },
             appearanceSt:{
-                theme: "purple"
+                theme: "purple",
+                blur: false
             },
             gameSt:{
 

@@ -55,6 +55,8 @@ export default {
             this.vComponent = this.setVisualizer;
         if(this.setBlur)
             this.blur = this.setBlur;
+        if(!this.$store.state.visualizerArr)
+            this.$store.commit("setVisualizerArr", visualizers);
     },
     beforeDestroy(){
         window.removeEventListener("resize", this.resizeCanvas);

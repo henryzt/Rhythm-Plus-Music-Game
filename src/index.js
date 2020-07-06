@@ -1,5 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+import "animate.css";
 import App from "./App.vue";
 import router from "./helpers/router";
 import { store } from "./helpers/store";

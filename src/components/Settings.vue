@@ -1,65 +1,71 @@
 <template>
-  <div>
-    <div class="st_title">Profile Settings</div>
-    <form>
-      <p>
-        <label>Display Name</label>
-        <input
-          v-model="profileSt.displayName"
-          name="displayName"
-          placeholder="Display Name"
-          type="text"
-        />
-      </p>
-      <p>
-        <label>Email</label>
-        <input v-model="profileSt.email" name="email" placeholder="Email" type="text" disabled />
-      </p>
-      <p>
-        <label>User ID</label>
-        <input v-model="profileSt.uid" name="uid" placeholder="UID" type="text" disabled />
-      </p>
-      <p>
-        <label>Avatar</label>
-        <input v-model="profileSt.photoURL" name="photoURL" placeholder="Avatar URL" type="text" />
-      </p>
-      <p>
-        <label>Password</label>
-        <input type="button" value="Reset password" />
-      </p>
-    </form>
+  <div class="settings">
+    <div class="animate__animated animate__zoomIn">
+      <div class="st_title">Profile Settings</div>
+      <form>
+        <p>
+          <label>Display Name</label>
+          <input
+            v-model="profileSt.displayName"
+            name="displayName"
+            placeholder="Display Name"
+            type="text"
+          />
+        </p>
+        <p>
+          <label>Email</label>
+          <input v-model="profileSt.email" name="email" placeholder="Email" type="text" disabled />
+        </p>
+        <p>
+          <label>User ID</label>
+          <input v-model="profileSt.uid" name="uid" placeholder="UID" type="text" disabled />
+        </p>
+        <p>
+          <label>Avatar</label>
+          <input v-model="profileSt.photoURL" name="photoURL" placeholder="Avatar URL" type="text" />
+        </p>
+        <p>
+          <label>Password</label>
+          <input type="button" value="Reset password" />
+        </p>
+      </form>
+    </div>
 
-    <div class="st_title">Appearance Settings</div>
-    <form>
-      <p>
-        <label>Main Theme</label>
-        <select id="songSelect" v-model="appearanceSt.theme" @change="changeVisualizer">
-          <option value="flameSpace">Flame Space</option>
-          <option value="purpleSwirl">Dark Purple Swirl</option>
-        </select>
-      </p>
-      <p v-if="$store.state.visualizerArr">
-        <label>Visualizer</label>
-        <select id="visualizer" v-model="appearanceSt.visualizer">
-          <option
-            v-for="[key, value] in Object.entries($store.state.visualizerArr)"
-            :value="value"
-            :key="key"
-          >{{key}}</option>
-        </select>
-      </p>
-      <p>
-        <label></label>
-        <Checkbox label="Blur Background" :model="appearanceSt" modelKey="blur"></Checkbox>
-      </p>
-    </form>
+    <div class="animate__animated animate__zoomIn animate__delay-1s">
+      <div class="st_title">Appearance Settings</div>
+      <form>
+        <p>
+          <label>Main Theme</label>
+          <select id="songSelect" v-model="appearanceSt.theme" @change="changeVisualizer">
+            <option value="flameSpace">Flame Space</option>
+            <option value="purpleSwirl">Dark Purple Swirl</option>
+          </select>
+        </p>
+        <p v-if="$store.state.visualizerArr">
+          <label>Visualizer</label>
+          <select id="visualizer" v-model="appearanceSt.visualizer">
+            <option
+              v-for="[key, value] in Object.entries($store.state.visualizerArr)"
+              :value="value"
+              :key="key"
+            >{{key}}</option>
+          </select>
+        </p>
+        <p>
+          <label></label>
+          <Checkbox label="Blur Background" :model="appearanceSt" modelKey="blur"></Checkbox>
+        </p>
+      </form>
+    </div>
 
-    <div class="st_title">Default Game Settings</div>
-    <play-control :playData="gameSt" :formStyle="true" :settingStyle="true"></play-control>
+    <div class="animate__animated animate__zoomIn animate__delay-2s">
+      <div class="st_title">Default Game Settings</div>
+      <play-control :playData="gameSt" :formStyle="true" :settingStyle="true"></play-control>
 
-    <div class="btn-action btn-dark" @click="saveSettings">
-      <v-icon name="arrow-right" />
-      <span>Save Changes</span>
+      <div class="btn-action btn-dark" @click="saveSettings">
+        <v-icon name="arrow-right" />
+        <span>Save Changes</span>
+      </div>
     </div>
 
     <Loading style="z-index: 999;" :show="loading">Saving...</Loading>
@@ -195,6 +201,10 @@ input {
 }
 .btn-dark:hover {
   background: white;
+}
+
+.settings {
+  --animate-delay: 0.1s;
 }
 
 @media only screen and (max-width: 1000px) {

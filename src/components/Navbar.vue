@@ -72,6 +72,7 @@ export default {
   max-width: 80%;
   overflow: scroll;
   z-index: 800;
+  scrollbar-width: none;
 }
 
 .navtext {

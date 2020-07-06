@@ -1,5 +1,8 @@
 <template>
-  <div ref="visualizerContainer"></div>
+  <div>
+    <!-- <div class="blurSwirl"></div> -->
+    <div ref="visualizerContainer"></div>
+  </div>
 </template>
 
 <script>
@@ -266,3 +269,16 @@ function draw() {
 
 
 </script>
+
+<style scoped>
+.blurSwirl {
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10;
+}
+</style>

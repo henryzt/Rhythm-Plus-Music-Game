@@ -1,5 +1,5 @@
 <template>
-  <div v-show="render">
+  <div>
     <div class="mContainer" v-if="$store.state.verified">
       <div class="flex_hori">
         <UserProfileCard :extend="true" />
@@ -61,8 +61,7 @@ export default {
   data(){
         return {
             showModal: false,
-            emailSentTimeout: false,
-            render: true
+            emailSentTimeout: false
         }
     },
     computed: {
@@ -107,6 +106,7 @@ export default {
             }
 
             try{
+              this.$store.state.redirecting = true;
               await firebase.auth().signInWithCredential(cred);
               this.signInRedirect()
             }catch(err){
@@ -148,7 +148,7 @@ export default {
         const user = firebase.auth().currentUser;
 
         if(user.emailVerified){
-          this.render = false;
+          this.$store.state.redirecting = true;
           this.$router.push({path:"/"})
           this.$router.go()
 

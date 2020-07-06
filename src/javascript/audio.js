@@ -14,7 +14,7 @@ export default class Audio {
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) {
         this.pause();
-      } else {
+      } else if (this.asBackground) {
         this.play();
       }
     });

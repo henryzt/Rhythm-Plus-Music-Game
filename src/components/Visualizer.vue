@@ -87,6 +87,7 @@ export default {
             // required to watch vuex change
         },
         setVisualizer: () => {
+            if(!this) return;
             this.vComponent = this.setVisualizer;
         },
         setBlur(){

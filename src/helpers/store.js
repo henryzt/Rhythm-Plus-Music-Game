@@ -18,6 +18,7 @@ export const store = new Vuex.Store({
     isFullscreen: false,
     visualizerArr: null,
     theme: null,
+    redirecting: false,
   },
   actions: {
     fetchUserProfile() {
@@ -62,7 +63,7 @@ export const store = new Vuex.Store({
   },
   mutations: {
     setCurrentUser(state, val) {
-      state.authed = val && !val.isAnonymous;
+      state.authed = val && !val.isAnonymous && val.providerData?.length > 0;
       state.verified = state.authed && val.emailVerified;
       state.currentUser = val;
       this.dispatch("fetchUserProfile");

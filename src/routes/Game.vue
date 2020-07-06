@@ -112,7 +112,7 @@
             <div
               class="btn-action btn-dark"
               style="display:inline-block"
-              @click="started?resumeGame():$refs.menu.close()"
+              @click="started?resumeGame():hideMenu()"
             >Done</div>
           </div>
         </transition>

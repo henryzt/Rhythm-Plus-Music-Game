@@ -4,7 +4,7 @@
     <ModalGlobal ref="gm"></ModalGlobal>
     <FloatingAlert ref="alert"></FloatingAlert>
     <transition name="fade" v-if="$store.state.audio">
-      <router-view :key="$route.path" v-if="showOnPageRequireSignin" />
+      <router-view :key="$route.path" v-if="showOnPageRequireSignin && !$store.state.redirecting" />
       <div v-else>
         <div class="center blink_me">
           <img src="/assets/logo2.png" style="max-width: 350px; padding: 20px 0; width:100%;" />
@@ -54,7 +54,6 @@ export default {
   },
   computed:{
     showOnPageRequireSignin(){
-      console.log("AAA",this.$route.meta.requireSignin)
       return !this.$route.meta.requireSignin || (this.$store.state.initialized && this.$route.meta.requireSignin);
     }
   }

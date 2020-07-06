@@ -5,6 +5,9 @@ body {
   color: white;
   font-family: "Raleway";
   -webkit-tap-highlight-color: rgba(255, 255, 255, 0.3);
+  scrollbar-width: none; /* Also needed to disable scrollbar Firefox */
+  -ms-overflow-style: none;  /* Disable scrollbar IE 10+ */
+  overflow-y: scroll;
 }
 
 .center_judge {
@@ -347,6 +350,11 @@ input::placeholder {
 }
 
 /* scrollbar - todo */
+@-moz-document url-prefix() { /* Disable scrollbar Firefox */
+  html{
+    scrollbar-width: none;
+  }
+}
 
 ::-webkit-scrollbar {
   width: 0; 

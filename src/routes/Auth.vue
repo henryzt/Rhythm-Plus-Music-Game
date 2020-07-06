@@ -138,6 +138,7 @@ export default {
       },
       async signOut(){
         try{
+          this.$store.state.redirecting = true;
           await firebase.auth().signOut();
           this.$router.go();
         }catch(err){
@@ -145,13 +146,12 @@ export default {
         }
       },
       signInRedirect(){
+        this.$store.state.redirecting = true;
         const user = firebase.auth().currentUser;
 
         if(user.emailVerified){
-          this.$store.state.redirecting = true;
           this.$router.push({path:"/"})
           this.$router.go()
-
         }else{
           this.$router.go()
           this.sendVerificationEmail()

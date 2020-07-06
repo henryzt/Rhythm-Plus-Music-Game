@@ -127,4 +127,8 @@ export default {
     width: 35%;
   }
 }
+
+p {
+  margin: 0;
+}
 </style>

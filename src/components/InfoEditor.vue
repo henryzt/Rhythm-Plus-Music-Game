@@ -162,7 +162,7 @@ export default {
               this.$parent.loading = true
               await updateSong(this.songFormData);
               this.$router.push({query: { update: true }})
-              this.$router.go();
+              this.$parent.reloadEditor();
             }else{
               let songId = await createSong(this.songFormData)
               this.$parent.songInfo = await getSong(songId);
@@ -201,7 +201,7 @@ export default {
                 let sheetId = await createSheet(this.sheetFormData)
                 this.$router.push('/editor/'+sheetId)
               }
-              this.$router.go();
+              this.$parent.reloadEditor();
             }catch(err){
               this.$parent.loading = false
               this.$store.state.alert.error("An error occurred, please try again", 5000)
@@ -213,7 +213,7 @@ export default {
             if(selectedSheet){
               this.$parent.loading = true
               this.$router.push('/editor/'+selectedSheet.id+'/')
-              this.$router.go()
+              this.$parent.reloadEditor();
             }
         },
         async openSongUpdate(){

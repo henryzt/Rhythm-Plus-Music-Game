@@ -30,7 +30,13 @@
         <!-- tab 1 - info editor -->
         <info-editor style="flex-grow:1" ref="info" v-show="leftTab===1"></info-editor>
         <!-- tab 2 - options -->
-        <PlayControl style="flex-grow:1" ref="control" v-if="leftTab===2" :playData="$data"></PlayControl>
+        <PlayControl
+          style="flex-grow:1; padding:0 30px; box-sizing: border-box;"
+          ref="control"
+          v-if="leftTab===2"
+          :playData="$data"
+          :formStyle="true"
+        ></PlayControl>
         <!-- song control -->
         <SongListItem
           v-if="songInfo.id"
@@ -242,7 +248,7 @@ export default {
             // refresh sheet data
             await this.saveSheet()
             this.$router.push({query: { update: true }});
-            this.$router.go();
+            this.reloadEditor();
             return;
           }
           if(!this.isSheetOwner){
@@ -268,7 +274,7 @@ export default {
       async songLoaded(){
         if(!this.initialized){
           this.songLength = await this.getLength();
-          this.pauseGame()
+          this.instance.pauseGame()
           this.initialized = true;
         }else if(!this.started){
           this.instance.paused = false;
@@ -329,8 +335,8 @@ export default {
         this.$refs.info.openSongUpdate()
       },
       newEditor(){
-        this.$router.push("/editor/")
-        this.$router.go()
+        this.$router.push("/editor/");
+        this.reloadEditor();
       },
       showPublishModal(){
         this.$refs.publishModal.show()
@@ -364,6 +370,13 @@ export default {
         const lastNote = this.instance.timeArr[this.instance.timeArr.length-1]
         this.sheetInfo.length = this.sheetInfo.endAt ?? (lastNote ? Math.min.apply(Math,[this.songLength, lastNote.t+5]):this.songLength);
         this.sheetInfo.noteCount = this.instance.timeArr.length
+      },
+
+      reloadEditor(){
+        this.$store.state.redirecting = true;
+        this.$nextTick(()=>{
+          this.$store.state.redirecting = false;
+        })
       }
     }
 };

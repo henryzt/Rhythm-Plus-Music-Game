@@ -4,7 +4,11 @@
     <ModalGlobal ref="gm"></ModalGlobal>
     <FloatingAlert ref="alert"></FloatingAlert>
     <transition name="fade" v-if="$store.state.audio">
-      <router-view :key="$route.path" v-if="showOnPageRequireSignin && !$store.state.redirecting" />
+      <router-view
+        class="routerView"
+        :key="$route.path"
+        v-if="showOnPageRequireSignin && !$store.state.redirecting"
+      />
       <div v-else>
         <div class="center blink_me">
           <img src="/assets/logo2.png" style="max-width: 350px; padding: 20px 0; width:100%;" />
@@ -72,6 +76,15 @@ export default {
 .blink_me {
   opacity: 0.5;
   animation: blinker 2s linear infinite;
+}
+
+.routerView {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  overflow-y: scroll;
 }
 
 @keyframes blinker {

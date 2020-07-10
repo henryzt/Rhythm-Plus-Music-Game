@@ -5,6 +5,7 @@ import Auth from "../routes/Auth.vue";
 import Result from "../routes/Result.vue";
 import Rankings from "../routes/Rankings.vue";
 import SongSelect from "../routes/SongSelect.vue";
+import MyStudio from "../routes/MyStudio.vue";
 import SheetEditor from "../routes/SheetEditor.vue";
 import { store } from "./store";
 
@@ -17,6 +18,7 @@ const router = new VueRouter({
       meta: { requireBg: true, requireSignin: true },
     },
     { path: "/menu", component: SongSelect, meta: { requireBg: true } },
+    { path: "/studio", component: MyStudio, meta: { requireBg: true } },
     { path: "/rankings", component: Rankings, meta: { requireBg: true } },
     {
       path: "/game",

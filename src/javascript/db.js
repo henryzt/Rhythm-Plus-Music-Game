@@ -218,7 +218,9 @@ export function getSheetList(songId, getPrivate) {
       reject(error);
     };
 
-    let songSheets = sheetsCollection.where("songId", "==", songId);
+    let songSheets = songId
+      ? sheetsCollection.where("songId", "==", songId)
+      : sheetsCollection;
 
     if (getPrivate) {
       songSheets

@@ -7,19 +7,25 @@
           <div class="navtext">Home</div>
         </div>
       </router-link>
-      <router-link to="/menu">
+      <router-link to="/menu/">
         <div class="nav">
           <v-icon name="stream" scale="1.7" />
           <div class="navtext">Song Select</div>
         </div>
       </router-link>
-      <router-link to="/rankings">
+      <router-link to="/studio/">
+        <div class="nav">
+          <v-icon name="pencil-ruler" scale="1.7" />
+          <div class="navtext">My Studio</div>
+        </div>
+      </router-link>
+      <router-link to="/rankings/">
         <div class="nav">
           <v-icon name="medal" scale="1.7" />
           <span class="navtext">Rankings</span>
         </div>
       </router-link>
-      <router-link to="/account">
+      <router-link to="/account/">
         <div class="nav">
           <v-icon name="cog" scale="1.7" />
           <span class="navtext">Account & Options</span>
@@ -28,7 +34,7 @@
     </div>
 
     <div class="navbar gameNav" v-else>
-      <router-link to="/menu" exact>
+      <router-link to="/menu/" exact>
         <div class="nav">
           <v-icon name="home" scale="1.5" />
           <div class="navtext">Back</div>
@@ -56,6 +62,7 @@ import 'vue-awesome/icons/stream'
 import 'vue-awesome/icons/medal'
 import 'vue-awesome/icons/cog'
 import 'vue-awesome/icons/share'
+import 'vue-awesome/icons/pencil-ruler'
 
 export default {
     name: "Navbar",

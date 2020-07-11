@@ -118,6 +118,8 @@
           :min="-noteSpeedInSec"
           :max="songLength"
           :contained="true"
+          :lazy="true"
+          @dragging="seeking"
           @change="seekTo"
         ></vue-slider>
       </div>
@@ -311,15 +313,21 @@ export default {
         this.instance.paused = false
         this.instance.startSong()
       },
-      seekTo(time){
+      seeking(time){
+        if(!this.instance.paused) this.pauseGame();
+        this.instance.seekingTime = time;
+        this.instance.gameTimingLoop();
+        this.instance.seeked();
+        this.instance.repositionNotes();
+      },
+      async seekTo(time){
         if(time<this.instance.startSongAt){
           this.restartGame()
           return
         }
-        this.instance.seekTo(time)
+        await this.instance.seekTo(time)
         setTimeout(()=>{
-          this.instance.seeked()
-          this.instance.repositionNotes()
+          this.instance.seekingTime = null;
         },200)
       },
       setPlaybackRate(rate){

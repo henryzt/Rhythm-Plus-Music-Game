@@ -25,6 +25,9 @@ export default class GameInstance {
     // clock for counting time
     this.intervalPlay = null;
 
+    // if eidtor slider is dragging, override play time
+    this.seekingTime = null;
+
     // store whether key is holding
     this.keyHoldingStatus = {};
 
@@ -318,9 +321,9 @@ export default class GameInstance {
 
   seekTo(time) {
     if (this.vm.srcMode === "youtube") {
-      this.vm.ytPlayer.seekTo(Number(time));
+      return this.vm.ytPlayer.seekTo(Number(time));
     } else {
-      this.audio.seek(Number(time));
+      return this.audio.seek(Number(time));
     }
   }
 
@@ -399,6 +402,7 @@ export default class GameInstance {
   }
 
   async getCurrentTime() {
+    if (this.seekingTime) return this.seekingTime;
     // it seems that 'getPlayerTime' is async, thus all places calling this func need to await res [help wanted]
     return this.vm.srcMode === "youtube"
       ? this.ytPlayer.getPlayerTime()

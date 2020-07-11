@@ -49,7 +49,7 @@
         </div>
       </div>
     </div>
-    <Loading :show="loading" :delay="false">Fetching Your Creations...({{finshedPercent}}%)</Loading>
+    <Loading :show="loading" :delay="false">Fetching Your Creations...</Loading>
   </div>
 </template>
 
@@ -70,8 +70,7 @@ export default {
     data(){
         return {
             songAndSheetList : null,
-            loading: true,
-            finshedPercent: 0
+            loading: true
         }
     },
     computed: {
@@ -91,7 +90,6 @@ export default {
         const song = await getSong(songId);
         const sheets = userSheets.filter(e=>e.songId===songId)
         songAndSheetList.push({song, sheets})
-        this.finshedPercent = (songAndSheetList.length / songIds.length * 100).toFixed(0)
       }
       this.songAndSheetList = songAndSheetList;
       this.loading = false

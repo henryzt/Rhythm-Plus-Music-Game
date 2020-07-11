@@ -199,7 +199,7 @@ export function updateSheet(info) {
     });
 }
 
-export function getSheetList(songId, getPrivate) {
+export function getSheetList(songId, getUserOwned, getOnlyUnpublished) {
   return new Promise((resolve, reject) => {
     const processRes = (querySnapshot) => {
       let res = [];
@@ -222,10 +222,15 @@ export function getSheetList(songId, getPrivate) {
       ? sheetsCollection.where("songId", "==", songId)
       : sheetsCollection;
 
-    if (getPrivate) {
+    if (getUserOwned) {
+      if (getOnlyUnpublished) {
+        songSheets = songSheets.where("visibility", "in", [
+          "private",
+          "unlisted",
+        ]);
+      }
       songSheets
         .where("createdBy", "==", store.state.currentUser?.uid)
-        .where("visibility", "in", ["private", "unlisted"])
         .get()
         .then(processRes)
         .catch(processErr);

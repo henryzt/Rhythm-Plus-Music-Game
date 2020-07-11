@@ -185,7 +185,7 @@ export default {
         async getSheets() {
           const songId = this.$parent.songInfo.id;
           this.sheetFormOptions.publicList = await getSheetList(songId);
-          this.sheetFormOptions.privateList = await getSheetList(songId, true);
+          this.sheetFormOptions.privateList = await getSheetList(songId, true, true);
         },
         async submitSheetForm(){
             this.$parent.loading = true

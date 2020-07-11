@@ -8,7 +8,7 @@
       <div class="sBlock">{{sheet.keys}}Key</div>
       <div class="sBlock">{{sheet.noteCount}} Notes</div>
     </div>
-    <div style="text-align:left" v-else>
+    <div class="detailed" v-else>
       <div class="sBlock">
         <span class="clip">Difficulty</span>
         {{getDifficulty(sheet.difficulty)}}
@@ -66,5 +66,10 @@ export default {
   overflow: scroll;
   white-space: nowrap;
   margin: 0 10px;
+}
+.detailed {
+  text-align: left;
+  overflow: scroll;
+  padding: 5px 0;
 }
 </style>

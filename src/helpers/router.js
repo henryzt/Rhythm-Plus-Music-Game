@@ -18,7 +18,11 @@ const router = new VueRouter({
       meta: { requireBg: true, requireSignin: true },
     },
     { path: "/menu", component: SongSelect, meta: { requireBg: true } },
-    { path: "/studio", component: MyStudio, meta: { requireBg: true } },
+    {
+      path: "/studio",
+      component: MyStudio,
+      meta: { requireBg: true, requireSignin: true },
+    },
     { path: "/rankings", component: Rankings, meta: { requireBg: true } },
     {
       path: "/game",

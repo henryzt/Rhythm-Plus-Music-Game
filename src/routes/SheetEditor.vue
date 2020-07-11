@@ -225,15 +225,14 @@ export default {
         this.setPlaybackRate(this.playbackSpeed)
       },
       '$store.state.initialized'(){
-        if (!this.$store.state.verified) {
-          this.$router.push({ path: "/account", query: { warn: true } });
-        }
+        this.checkLoggedIn()
       }
     },
     async mounted() {
       this.wrapper = this.$refs.wrapper;
       this.instance.reposition()
       const sheetId = this.$route.params.sheet;
+      this.checkLoggedIn()
 
       if(sheetId){
         this.loading = true
@@ -268,6 +267,11 @@ export default {
       }
     },
     methods: {
+      checkLoggedIn(){
+        if (!this.$store.state.verified) {
+          this.$router.push({ path: "/account", query: { warn: true } });
+        }
+      },
       goToMenu(){
         this.$router.push('/menu')
       },

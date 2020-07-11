@@ -6,10 +6,12 @@ import router from "./helpers/router";
 import { store } from "./helpers/store";
 import * as fb from "./helpers/firebaseConfig";
 import Icon from "vue-awesome/components/Icon.vue";
+import VueMoment from "vue-moment";
 
 Vue.config.productionTip = false;
 Vue.config.devtools = process.env.NODE_ENV === "development";
 
+Vue.use(VueMoment);
 Vue.use(VueRouter);
 Vue.component("v-icon", Icon);
 

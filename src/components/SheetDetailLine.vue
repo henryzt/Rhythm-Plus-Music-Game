@@ -10,6 +10,14 @@
     </div>
     <div class="detailed" v-else>
       <div class="sBlock">
+        <span class="clip">Status</span>
+        {{sheet.visibility}}
+      </div>
+      <div class="sBlock" v-if="sheet.dateCreated">
+        <span class="clip">Date Created</span>
+        {{sheet.dateCreated.seconds | moment('from')}}
+      </div>
+      <div class="sBlock">
         <span class="clip">Difficulty</span>
         {{getDifficulty(sheet.difficulty)}}
       </div>

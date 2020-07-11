@@ -1,10 +1,15 @@
 <template>
   <div>
-    <div>
-      <div class="pageTitle">My Studio</div>
-      <div style="margin-top:30px;white-space: nowrap;">
+    <div v-if="songAndSheetList && songAndSheetList.length>0">
+      <div class="pageTitle">
+        My Studio
+        <div class="btn-action btn-dark" style="font-size:18px;width:160px;" @click="goToEditor">
+          <v-icon name="arrow-right" />
+          <span>Go to Editor</span>
+        </div>
+      </div>
+      <div class="mContainer">
         <transition-group
-          v-if="songAndSheetList"
           appear
           tag="div"
           name="slide-in"
@@ -15,14 +20,38 @@
               :song="song.song"
               :sheets="song.sheets"
               :selected="true"
-              @selected="selectedSong = $event"
+              @selectedSheet="goToSheet($event)"
             ></SongListItem>
+          </div>
+          <div
+            class="btn-action btn-dark"
+            key="btn"
+            style="width:100%;max-width:800px;line-height:80px"
+            @click="goToEditor"
+          >
+            <v-icon name="arrow-right" />
+            <span>Create New</span>
           </div>
         </transition-group>
       </div>
     </div>
-    <!-- <div class="center_logo" v-else></div> -->
-    <Loading :show="(!songAndSheetList)" :delay="true">Fetching Your Creations...</Loading>
+    <div class="center_logo" v-else>
+      <div class="pageTitle">My Studio</div>
+      <div style="width:100%;max-width:600px;margin:auto;">
+        <div>Create or import your favorite songs to play and share!</div>
+        <div style="margin-top:50px;">
+          <div
+            class="btn-action btn-dark"
+            @click="$store.state.authed ? goToEditor() : $router.push('/account/')"
+          >
+            <v-icon name="arrow-right" />
+            <span>Get Started</span>
+          </div>
+          {{$store.state.authed? "Go to the sheet Editor now to get started" : "Login or Register now to get started"}}
+        </div>
+      </div>
+    </div>
+    <Loading :show="!songAndSheetList" :delay="false">Fetching Your Creations...</Loading>
   </div>
 </template>
 
@@ -66,33 +95,25 @@ export default {
       this.songAndSheetList = songAndSheetList;
     },
     methods: {
-    beforeEnter: function (el) {
-      el.style.opacity = 0
-      el.style.height = 0
-    },
-    enter: function (el, done) {
-      var delay = el.dataset.index * 150
-      setTimeout(function () {
-        Velocity(
-          el,
-          { opacity: 1, height: '1.6em' },
-          { complete: done }
-        )
-      }, delay)
-    },
-    leave: function (el, done) {
-      var delay = el.dataset.index * 150
-      setTimeout(function () {
-        Velocity(
-          el,
-          { opacity: 0, height: 0 },
-          { complete: done }
-        )
-      }, delay)
-    }
+      goToEditor(){
+        this.$router.push('/editor/')
+      },
+      goToSheet(sheet){
+        this.$router.push('/editor/'+sheet.id)
+      }
     }
 };
 </script>
 
 <style scoped>
+.mContainer {
+  /* perspective: 100em; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: 2s;
+  white-space: nowrap;
+  margin-top: 30px;
+  margin-bottom: 300px !important;
+}
 </style>

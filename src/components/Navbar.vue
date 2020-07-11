@@ -71,6 +71,10 @@ export default {
 </script>
 
 <style>
+.fa-icon svg {
+  box-shadow: 4px 3px 24px -2px rgba(0, 0, 0, 1);
+}
+
 .navbar {
   position: fixed;
   top: 0;
@@ -123,12 +127,6 @@ a {
   text-align: center;
 }
 
-.nav:hover {
-  background: rgba(255, 255, 255, 0.7);
-  color: black;
-  opacity: 1;
-}
-
 .gameNav .nav {
   min-width: 48px;
   width: 48px;
@@ -172,7 +170,8 @@ a {
     background: rgba(0, 0, 0, 0.7);
     background: linear-gradient(
       0deg,
-      rgba(0, 0, 0, 0.7) 0%,
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 0.6) 60%,
       rgba(0, 0, 0, 0) 100%
     );
   }

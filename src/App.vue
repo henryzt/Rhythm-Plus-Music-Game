@@ -28,6 +28,7 @@ import 'vue-awesome/icons/volume-up'
 import 'vue-awesome/icons/volume-mute'
 import 'vue-awesome/icons/expand'
 import 'vue-awesome/icons/compress'
+import 'vue-awesome/icons/plus'
 
 export default {
   name: 'App',

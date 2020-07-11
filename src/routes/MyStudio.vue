@@ -26,16 +26,15 @@
           <div
             class="btn-action btn-dark"
             key="btn"
-            style="width:100%;max-width:800px;line-height:80px"
+            style="width:100%;max-width:780px;line-height:80px"
             @click="goToEditor"
           >
-            <v-icon name="arrow-right" />
-            <span>Create New</span>
+            <v-icon name="plus" scale="2" />
           </div>
         </transition-group>
       </div>
     </div>
-    <div class="center_logo" v-else>
+    <div class="center_logo" v-else-if="!loading">
       <div class="pageTitle">My Studio</div>
       <div style="width:100%;max-width:600px;margin:auto;">
         <div>Create or import your favorite songs to play and share!</div>
@@ -47,11 +46,10 @@
             <v-icon name="arrow-right" />
             <span>Get Started</span>
           </div>
-          {{$store.state.authed? "Go to the sheet Editor now to get started" : "Login or Register now to get started"}}
         </div>
       </div>
     </div>
-    <Loading :show="!songAndSheetList" :delay="false">Fetching Your Creations...</Loading>
+    <Loading :show="loading" :delay="false">Fetching Your Creations...({{finshedPercent}}%)</Loading>
   </div>
 </template>
 
@@ -71,7 +69,9 @@ export default {
     },
     data(){
         return {
-            songAndSheetList : null
+            songAndSheetList : null,
+            loading: true,
+            finshedPercent: 0
         }
     },
     computed: {
@@ -91,8 +91,10 @@ export default {
         const song = await getSong(songId);
         const sheets = userSheets.filter(e=>e.songId===songId)
         songAndSheetList.push({song, sheets})
+        this.finshedPercent = (songAndSheetList.length / songIds.length * 100).toFixed(0)
       }
       this.songAndSheetList = songAndSheetList;
+      this.loading = false
     },
     methods: {
       goToEditor(){
@@ -115,5 +117,9 @@ export default {
   white-space: nowrap;
   margin-top: 30px;
   margin-bottom: 300px !important;
+}
+.fa-icon {
+  vertical-align: middle;
+  margin-right: 5px;
 }
 </style>

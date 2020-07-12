@@ -279,6 +279,7 @@ export default {
       },
       async songLoaded(){
         if(!this.initialized){
+          this.instance.resetPlaying()
           this.songLength = await this.getLength();
           this.instance.pauseGame()
           this.initialized = true;

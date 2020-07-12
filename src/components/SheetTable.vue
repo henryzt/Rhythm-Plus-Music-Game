@@ -1,5 +1,5 @@
 <template>
-  <div style="height:100%">
+  <div style="height:73vh;display:flex;flex-direction:column">
     <div class="tableHead">
       <div style="width:10%">
         <label class="cb_container cb_small">
@@ -13,27 +13,37 @@
     <div class="sheetTable" ref="table">
       <div>
         <div v-for="(entry, idx) in instance.timeArr" :key="idx">
-          <NoteTableItem :note="entry" :idx="idx" :instance="instance" :parent="$parent"></NoteTableItem>
+          <NoteTableItem
+            :note="entry"
+            :idx="idx"
+            :instance="instance"
+            :parent="$parent"
+            @select="noteToEdit=$event"
+          ></NoteTableItem>
         </div>
         <div class="last"></div>
       </div>
     </div>
+    <NoteEditPanel v-if="noteToEdit" :note="noteToEdit" :instance="instance"></NoteEditPanel>
     <div class="buttons" :class="{disabled: !instance.paused}">
       <a @click="reorder">Reorder</a>
       <a @click="removeSelected">Delete</a>
       <a @click="selectBetween">Select Between</a>
       <a @click="clearSelected">Clear</a>
     </div>
-    <label class="cb_container cb_small">
-      <input type="checkbox" v-model="follow" />
-      <span class="checkmark"></span>
-      Follow Current
-    </label>
+    <div>
+      <label class="cb_container cb_small">
+        <input type="checkbox" v-model="follow" />
+        <span class="checkmark"></span>
+        Follow Current
+      </label>
+    </div>
   </div>
 </template>
 
 <script>
 import NoteTableItem from './NoteTableItem.vue';
+import NoteEditPanel from './NoteEditPanel.vue';
 
 export default {
     name: "SheetTable",
@@ -43,12 +53,14 @@ export default {
       },
     },
     components:{
-      NoteTableItem
+      NoteTableItem,
+      NoteEditPanel
     },
     data() {
       return {
         selectedAll: false,
-        follow: true
+        follow: true,
+        noteToEdit: null
       }
     },
     watch: {
@@ -108,7 +120,7 @@ export default {
 
 <style scoped>
 .sheetTable {
-  height: 70%;
+  flex-grow: 1;
   overflow: scroll;
   position: relative;
 }
@@ -126,7 +138,6 @@ export default {
 
 .buttons {
   padding: 10px;
-  overflow: scroll;
 }
 
 .buttons a {

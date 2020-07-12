@@ -15,6 +15,7 @@ export default class GameInstance {
     // time elapsed relative to audio play time (+Number(vm.noteSpeedInSec))
     this.currentTime = 0;
     this.playTime = 0; // Current time + note drop delay
+    this.startSongAt = 0;
     this.loading = false;
     this.paused = true;
 
@@ -428,8 +429,8 @@ export default class GameInstance {
     this.clearNotes();
     if (resetTimeArr) this.timeArr = [];
     this.timeArrIdx = 0;
-    this.playTime = 0;
-    this.currentTime = 0;
+    this.playTime = this.startSongAt;
+    this.currentTime = this.startSongAt;
     this.audio.stop();
   }
 

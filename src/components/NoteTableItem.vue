@@ -9,9 +9,9 @@
         <span class="checkmark"></span>
       </label>
     </div>
-    <div style="width:25%" @dblclick="parent.seekTo(note.t)">{{note.t}}</div>
+    <div style="width:25%;overflow:hidden;" @dblclick="parent.seekTo(note.t)">{{note.t}}</div>
     <div style="width:55%">
-      <div class="keyWrapper">
+      <div class="keyWrapper" @click="$emit('select', note)">
         <div
           v-for="k in instance.trackKeyBind"
           :key="k"
@@ -47,6 +47,7 @@ export default {
 .keyWrapper {
   width: 100%;
   display: inline-flex !important;
+  cursor: pointer;
 }
 
 .keyWrapper div {

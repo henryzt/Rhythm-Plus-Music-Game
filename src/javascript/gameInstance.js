@@ -367,6 +367,11 @@ export default class GameInstance {
       const elapsedTime = Date.now() - startTime;
       this.playTime = elapsedTime / 1000 + this.startSongAt;
       this.paused = false;
+      if (this.seekingTime && this.seekingTime > this.startSongAt) {
+        this.gameTimingLoop();
+        this.seekTo(this.currentTime);
+        this.seeked();
+      }
       if (this.playTime > this.vm.noteSpeedInSec + this.startSongAt) {
         if (!this.vm.started || !this.paused) this.resumeGame();
         clearInterval(intervalPrePlay);

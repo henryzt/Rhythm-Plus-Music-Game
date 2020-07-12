@@ -1,37 +1,22 @@
 <template>
   <div style="height:100%">
+    <div class="tableHead">
+      <div style="width:10%">
+        <label class="cb_container cb_small">
+          <input type="checkbox" v-model="selectedAll" @click="selectAll" />
+          <span class="checkmark"></span>
+        </label>
+      </div>
+      <div style="width:25%">Time</div>
+      <div style="width:55%">Keys</div>
+    </div>
     <div class="sheetTable" ref="table">
-      <table>
-        <thead>
-          <tr>
-            <th>
-              <label class="cb_container cb_small">
-                <input type="checkbox" v-model="selectedAll" @click="selectAll" />
-                <span class="checkmark"></span>
-              </label>
-            </th>
-            <th>Time</th>
-            <th>Keys</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="(entry, idx) in instance.timeArr"
-            :key="idx"
-            :class="{onScreen: instance.isWithinTime(entry.t), current:idx===instance.timeArrIdx}"
-          >
-            <td>
-              <label class="cb_container cb_small">
-                <input type="checkbox" v-model="$parent.selectedNotes" :value="entry" />
-                <span class="checkmark"></span>
-              </label>
-            </td>
-            <td @dblclick="seekTo(entry.t)">{{entry.t}}</td>
-            <td>{{entry.k===" "?"-":entry.k}}</td>
-          </tr>
-          <tr class="last"></tr>
-        </tbody>
-      </table>
+      <div>
+        <div v-for="(entry, idx) in instance.timeArr" :key="idx">
+          <NoteTableItem :note="entry" :idx="idx" :instance="instance" :parent="$parent"></NoteTableItem>
+        </div>
+        <div class="last"></div>
+      </div>
     </div>
     <div class="buttons" :class="{disabled: !instance.paused}">
       <a @click="reorder">Reorder</a>
@@ -48,12 +33,17 @@
 </template>
 
 <script>
+import NoteTableItem from './NoteTableItem.vue';
+
 export default {
     name: "SheetTable",
     computed: {
       instance(){
         return this.$parent.instance;
       },
+    },
+    components:{
+      NoteTableItem
     },
     data() {
       return {
@@ -110,9 +100,6 @@ export default {
         const minIdx = sheet.indexOf(this.$parent.selectedNotes[0]);
         const maxIdx = sheet.indexOf(this.$parent.selectedNotes[this.$parent.selectedNotes.length-1]);
         this.$parent.selectedNotes = sheet.slice(minIdx, maxIdx + 1);
-      },
-      seekTo(t){
-        this.$parent.seekTo(t)
       }
     }
 
@@ -121,44 +108,20 @@ export default {
 
 <style scoped>
 .sheetTable {
-  height: 75%;
+  height: 70%;
   overflow: scroll;
   position: relative;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th {
-  height: 30px;
+.tableHead {
+  padding: 4px 0;
   text-align: left;
-  background-color: #0b0b0b !important;
-  position: sticky;
-  top: 0;
-  z-index: 30;
+  width: 100%;
 }
 
-tr {
-  transition: 0.2s;
-}
-
-tr:hover {
-  background-color: rgba(255, 255, 255, 0.3);
-}
-
-th,
-td {
+.tableHead div {
   padding: 3px;
-}
-
-.onScreen {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-.current {
-  background-color: rgba(145, 255, 0, 0.3);
+  display: inline-block;
 }
 
 .buttons {

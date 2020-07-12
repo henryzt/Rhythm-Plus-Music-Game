@@ -310,8 +310,6 @@ export default {
         await this.instance.pauseGame()
         this.clearResult()
         this.instance.resetPlaying()
-        this.instance.paused = false
-        this.instance.startSong()
       },
       async seeking(time){
         if(!this.instance.paused) this.pauseGame();
@@ -323,6 +321,7 @@ export default {
       seekTo(time){
         if(time<this.instance.startSongAt){
           this.restartGame()
+          this.pauseGame()
         }else{
           this.seeking(time)
           this.instance.seekTo(time)

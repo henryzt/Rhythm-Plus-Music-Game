@@ -10,7 +10,15 @@
       </label>
     </div>
     <div style="width:25%" @dblclick="parent.seekTo(note.t)">{{note.t}}</div>
-    <div style="width:55%">{{note.k===" "?"-":note.k}}</div>
+    <div style="width:55%">
+      <div class="keyWrapper">
+        <div
+          v-for="k in instance.trackKeyBind"
+          :key="k"
+          :class="{activeNote:note.k.includes(k), holdNote:note.h&&note.h[k]}"
+        >{{k===" "?"-":k}}</div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -32,8 +40,31 @@ export default {
 }
 
 .row div {
-  padding: 3px;
+  padding: 1%;
   display: inline-block;
+}
+
+.keyWrapper {
+  width: 100%;
+  display: inline-flex !important;
+}
+
+.keyWrapper div {
+  display: inline-block;
+  flex: 1 100%;
+  text-align: center;
+  margin-right: -1px;
+  color: rgb(68, 68, 68);
+  border: 1px solid rgb(68, 68, 68);
+}
+
+.activeNote {
+  color: white !important;
+}
+
+.holdNote {
+  text-decoration: underline;
+  color: rgb(255, 249, 162) !important;
 }
 
 .onScreen {

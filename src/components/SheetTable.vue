@@ -120,7 +120,7 @@ export default {
 }
 
 .tableHead div {
-  padding: 3px;
+  padding: 1%;
   display: inline-block;
 }
 

@@ -13,6 +13,10 @@
         <span class="clip">Status</span>
         {{sheet.visibility}}
       </div>
+      <div class="sBlock" v-if="sheet.title">
+        <span class="clip">Sheet Name</span>
+        {{sheet.title}}
+      </div>
       <div class="sBlock" v-if="sheet.dateCreated">
         <span class="clip">Date Created</span>
         {{sheet.dateCreated.seconds | moment('from')}}
@@ -32,10 +36,6 @@
       <div class="sBlock">
         <span class="clip">Length</span>
         {{getLengthFormatted(sheet.length)}}
-      </div>
-      <div class="sBlock" v-if="sheet.title">
-        <span class="clip">Sheet Name</span>
-        {{sheet.title}}
       </div>
     </div>
   </div>

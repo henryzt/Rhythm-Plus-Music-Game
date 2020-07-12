@@ -193,6 +193,7 @@ export default {
               if(this.sheetFormOptions.isUpdate){
                 this.sheetFormData.startAt = this.sheetFormData.startAt ? Number(this.sheetFormData.startAt) : null;
                 this.sheetFormData.endAt = this.sheetFormData.endAt ? Number(this.sheetFormData.endAt) : null;
+                delete this.sheetFormData.sheet;
                 await updateSheet(this.sheetFormData)
                 this.$router.push({query: { save: true }})
               }else{

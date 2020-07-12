@@ -19,7 +19,8 @@
             <SongListItem
               :song="song.song"
               :sheets="song.sheets"
-              :selected="true"
+              :selected="selectedSong === song.song"
+              @selected="selectedSong = $event"
               @selectedSheet="goToSheet($event)"
             ></SongListItem>
           </div>
@@ -69,6 +70,7 @@ export default {
     },
     data(){
         return {
+            selectedSong: null,
             songAndSheetList : null,
             loading: true
         }

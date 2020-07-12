@@ -313,22 +313,20 @@ export default {
         this.instance.paused = false
         this.instance.startSong()
       },
-      seeking(time){
+      async seeking(time){
         if(!this.instance.paused) this.pauseGame();
         this.instance.seekingTime = time;
-        this.instance.gameTimingLoop();
+        await this.instance.gameTimingLoop();
         this.instance.seeked();
         this.instance.repositionNotes();
       },
-      async seekTo(time){
+      seekTo(time){
         if(time<this.instance.startSongAt){
           this.restartGame()
-          return
+        }else{
+          this.seeking(time)
+          this.instance.seekTo(time)
         }
-        await this.instance.seekTo(time)
-        setTimeout(()=>{
-          this.instance.seekingTime = null;
-        },200)
       },
       setPlaybackRate(rate){
         if(this.srcMode==="youtube"){

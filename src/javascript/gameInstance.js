@@ -335,10 +335,7 @@ export default class GameInstance {
       let idx = this.timeArr.findIndex((e) => e.t >= cTime);
       if (idx === -1) {
         const endIdx = this.timeArr.length - 1;
-        idx =
-          this.timeArr[endIdx] && this.timeArr[endIdx].t < cTime
-            ? endIdx + 1
-            : 0;
+        idx = this.timeArr[endIdx] ? endIdx + 1 : 0;
       }
       this.clearNotes();
       this.timeArrIdx = idx;
@@ -470,6 +467,7 @@ export default class GameInstance {
 
   resumeGame() {
     this.paused = false;
+    this.seekingTime = null;
     this.reposition();
     if (this.vm.srcMode === "url") {
       this.audio.play();

@@ -118,6 +118,7 @@ export default class GameInstance {
     this.vm.checkHitLineY = (this.canvas.height / 10) * hitLineProp;
     this.vm.noteSpeedPxPerSec =
       this.vm.checkHitLineY / Number(this.vm.noteSpeedInSec);
+    this.repositionNotes();
   }
 
   registerInput() {

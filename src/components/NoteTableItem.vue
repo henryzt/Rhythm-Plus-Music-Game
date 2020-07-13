@@ -15,7 +15,7 @@
         <div
           v-for="k in instance.trackKeyBind"
           :key="k"
-          :class="{activeNote:note.k.includes(k), holdNote:note.h&&note.h[k]}"
+          :class="{activeNote:note.k.includes(k), holdNote:note.h&&note.h[k], editing:isEditing}"
         >{{k===" "?"-":k}}</div>
       </div>
     </div>
@@ -25,7 +25,12 @@
 <script>
 export default {
     name:'NoteTableItem',
-    props:['note', 'idx', 'instance', 'parent']
+    props:['note', 'idx', 'instance', 'parent'],
+    computed: {
+        isEditing(){
+            return this.$parent.noteToEdit?.includes(this.note) || this.$parent.noteToEdit==this.note;
+        }
+    }
 
 }
 </script>
@@ -74,6 +79,10 @@ export default {
 
 .current {
   background-color: rgba(145, 255, 0, 0.3);
+}
+
+.editing {
+  background-color: rgba(255, 123, 0, 0.3);
 }
 
 .cb_container .checkmark {

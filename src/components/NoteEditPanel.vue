@@ -2,7 +2,7 @@
   <div class="panel">
     <div style="padding-bottom:5px;">
       <span>Edit Note Timing</span>
-      <v-icon style="float:right" name="times" scale="1.1" />
+      <v-icon style="float:right;cursor:pointer;" name="times" scale="1.1" @click="$parent.noteToEdit=null"/>
     </div>
     <div class="flex_hori">
       <v-icon class="btn-action btn-dark" name="minus" @click="minus(note,'t')" />
@@ -18,6 +18,14 @@
           :class="{activeNote:note.k.includes(k)}"
           @click="toggleKey(k)"
         >{{k===" "?"-":k}}</div>
+      </div>
+    </div>
+    <div v-if="note.h" style="padding-top:20px;">
+      <div>Holding Notes</div>
+      <div v-for="k in Object.keys(note.h)" :key="k" class="flex_hori" style="margin-top: 10px;">
+        <div class="note">{{k===" "?"-":k}}</div>
+        <input step="0.01" v-model="note.h[k]" placeholder="End Time" type="number" />
+        <div class="btn-action btn-dark btn-test">Remove</div>
       </div>
     </div>
   </div>
@@ -51,8 +59,26 @@ export default {
 
     },
     watch:{
-        'note.t'(){
+        'note.t'(val, oldVal){
+            // TODO why TF will html number input return string??????????????????
+            if(this.note.h){
+                for(let key of Object.keys(this.note.h)){
+                    this.note.h[key] = Number(this.note.h[key]) + Number(val) - Number(oldVal)
+                }
+            }
+            this.note.t = Number(this.note.t)
             this.instance.repositionNotes()
+        },
+        'note.k'(){
+            this.instance.repositionNotes()
+        },
+        'note.h'(){
+            // TODO Again, WHY??
+            if(this.note.h){
+                for(let key of Object.keys(this.note.h)){
+                    this.note.h[key] = Number(this.note.h[key])
+                }
+            }
         }
     }
 
@@ -63,6 +89,7 @@ export default {
 .keyWrapper {
   width: 100%;
   display: inline-flex !important;
+  cursor: pointer;
 }
 
 .keyWrapper div {
@@ -73,7 +100,6 @@ export default {
   color: rgb(68, 68, 68);
   border: 1px solid rgb(68, 68, 68);
   line-height: 25px;
-  cursor:pointer;
 }
 
 .activeNote {
@@ -94,17 +120,29 @@ export default {
   text-align: center;
 }
 
-.flex_hori input{
-    width:30%;text-align:center;
+.flex_hori input {
+  width: 30%;
+  text-align: center;
 }
 
-.btn-dark{
-    min-width:10%;
-    flex-grow: 0.5;
-    height: 12.5px;
+.btn-dark {
+  min-width: 10%;
+  flex-grow: 0.5;
+  height: 12.5px;
 }
 
-.btn-test{
-    margin-left:5px;flex-grow:1
+.btn-test {
+  margin-left: 5px;
+  flex-grow: 1;
+}
+
+.note {
+  display: block;
+  color: yellow;
+  border: 1px solid yellow;
+  opacity: 0.5;
+  flex: 1 20%;
+  margin-right: 5px;
+  line-height: 30px;
 }
 </style>

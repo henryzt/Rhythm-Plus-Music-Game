@@ -18,7 +18,7 @@
             :idx="idx"
             :instance="instance"
             :parent="$parent"
-            @select="noteToEdit=$event"
+            @select="selectNoteToEdit($event)"
           ></NoteTableItem>
         </div>
         <div class="last"></div>
@@ -112,6 +112,24 @@ export default {
         const minIdx = sheet.indexOf(this.$parent.selectedNotes[0]);
         const maxIdx = sheet.indexOf(this.$parent.selectedNotes[this.$parent.selectedNotes.length-1]);
         this.$parent.selectedNotes = sheet.slice(minIdx, maxIdx + 1);
+      },
+      selectNoteToEdit(note){
+        this.noteToEdit = null;
+        this.$nextTick(()=>{
+          // re-render note edit panel
+          this.noteToEdit = note;
+        })
+        let counter = 4;
+        let blinkNoteInterval = setInterval(()=>{
+          const selectedIdx = this.$parent.selectedNotes.indexOf(note);
+          if(selectedIdx !== -1){
+            this.$parent.selectedNotes.splice(selectedIdx, 1);
+          }else{
+            this.$parent.selectedNotes.push(note)
+          }
+          counter--;
+          if(counter<=0) clearInterval(blinkNoteInterval);
+        },200)
       }
     }
 

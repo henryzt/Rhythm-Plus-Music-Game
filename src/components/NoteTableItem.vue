@@ -1,7 +1,7 @@
 <template>
   <div
     class="row"
-    :class="{onScreen: instance.isWithinTime(note.t), current:idx===instance.timeArrIdx}"
+    :class="{onScreen: instance.isWithinTime(note.t), current:idx===instance.timeArrIdx, editing:isEditing}"
   >
     <div style="width:10%">
       <label class="cb_container cb_small">
@@ -9,13 +9,13 @@
         <span class="checkmark"></span>
       </label>
     </div>
-    <div style="width:25%;overflow:hidden;" @dblclick="parent.seekTo(note.t)">{{note.t}}</div>
+    <div style="width:25%;" class="time" @dblclick="seek(note)">{{note.t}}</div>
     <div style="width:55%">
-      <div class="keyWrapper" @click="$emit('select', note)">
+      <div class="keyWrapper" @click="edit(note)">
         <div
           v-for="k in instance.trackKeyBind"
           :key="k"
-          :class="{activeNote:note.k.includes(k), holdNote:note.h&&note.h[k], editing:isEditing}"
+          :class="{activeNote:note.k.includes(k), holdNote:note.h&&note.h[k]}"
         >{{k===" "?"-":k}}</div>
       </div>
     </div>
@@ -28,7 +28,16 @@ export default {
     props:['note', 'idx', 'instance', 'parent'],
     computed: {
         isEditing(){
-            return this.$parent.noteToEdit?.includes(this.note) || this.$parent.noteToEdit==this.note;
+            return this.$parent.noteToEdit==this.note;
+        }
+    },
+    methods: {
+        seek(note){
+            this.parent.seekTo(note.t+0.1);
+        },
+        edit(note){
+            if(!this.instance.isWithinTime(note.t)) this.seek(note);
+            this.$emit('select', note);
         }
     }
 
@@ -64,6 +73,11 @@ export default {
   border: 1px solid rgb(68, 68, 68);
 }
 
+.time{
+    overflow:hidden;vertical-align: middle;
+    cursor: pointer;
+}
+
 .activeNote {
   color: white !important;
 }
@@ -78,11 +92,12 @@ export default {
 }
 
 .current {
-  background-color: rgba(145, 255, 0, 0.3);
+  background-color: rgba(66, 66, 66, 0.3);
 }
 
 .editing {
-  background-color: rgba(255, 123, 0, 0.3);
+  background-color: rgba(145, 255, 0, 0.3);
+  /* background-color: rgba(255, 196, 0, 0.596); */
 }
 
 .cb_container .checkmark {

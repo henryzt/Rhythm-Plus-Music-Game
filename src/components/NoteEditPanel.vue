@@ -20,18 +20,19 @@
         >{{k===" "?"-":k}}</div>
       </div>
     </div>
-    <div v-if="note.h" style="padding-top:20px;">
-      <div>Holding Notes</div>
-      <div v-for="k in Object.keys(note.h)" :key="k" class="flex_hori" style="margin-top: 10px;">
+    <div v-if="note.h">
+      <div style="padding-top:20px;">Holding Notes</div>
+      <div v-for="k in Object.keys(note.h)" :key="k" class="flex_hori">
         <div class="note">{{k===" "?"-":k}}</div>
         <input step="0.01" v-model="note.h[k]" placeholder="End Time" type="number" />
-        <div class="btn-action btn-dark btn-test">Remove</div>
+        <div class="btn-action btn-dark btn-test" @click="removeHoldNote(k)">Remove</div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import Vue from "vue";
 import 'vue-awesome/icons/minus'
 import 'vue-awesome/icons/times'
 
@@ -55,6 +56,15 @@ export default {
         },
         removeKey(k){
             this.note.k = this.note.k.replace(k,"");
+            this.removeHoldNote(k)
+        },
+        removeHoldNote(k){
+            // using js delete will not be reactive
+            Vue.delete(this.note.h, k);
+            if(Object.keys(this.note.h).length === 0){
+                Vue.delete(this.note, 'h');
+            }
+            this.instance.repositionNotes()
         }
 
     },
@@ -79,6 +89,7 @@ export default {
                     this.note.h[key] = Number(this.note.h[key])
                 }
             }
+            this.instance.repositionNotes()
         }
     }
 

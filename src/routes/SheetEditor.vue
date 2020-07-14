@@ -270,7 +270,7 @@ export default {
     },
     methods: {
       checkLoggedIn(){
-        if (!this.$store.state.verified) {
+        if (this.$store.state.initialized && !this.$store.state.verified) {
           this.$router.push({ path: "/account", query: { warn: true } });
         }
       },

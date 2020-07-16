@@ -305,7 +305,7 @@ export default class GameInstance {
       this.lastAddedTime = cTime;
       this.lastAddedIdx = this.timeArr.length - 1;
       this.lastAddedKey = key;
-      // this.timeArrIdx++;
+      if (this.lastAddedIdx === this.timeArrIdx) this.timeArrIdx++;
       setTimeout(() => {
         if (!this.timeArr[this.lastAddedIdx]) return;
         const k = this.timeArr[this.lastAddedIdx].k;

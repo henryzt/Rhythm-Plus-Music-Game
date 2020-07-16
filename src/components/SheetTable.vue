@@ -22,17 +22,16 @@
     </div>
     <NoteEditPanel v-if="noteToEdit" :note="noteToEdit" :instance="instance"></NoteEditPanel>
     <div class="buttons" :class="{disabled: !instance.paused}">
-      <a @click="reorder">Reorder</a>
-      <a @click="removeSelected">Delete</a>
-      <a @click="selectBetween">Select Between</a>
-      <a @click="clearSelected">Clear</a>
+      <a class="btn-action btn-dark" @click="reorder">Reorder</a>
+      <a class="btn-action btn-dark" @click="removeSelected">Delete</a>
+      <a class="btn-action btn-dark" @click="selectBetween">Between</a>
+      <a class="btn-action btn-dark" @click="clearSelected">Clear</a>
     </div>
-    <div>
-      <label class="cb_container cb_small">
-        <input type="checkbox" v-model="follow" />
-        <span class="checkmark"></span>
-        Follow Current
-      </label>
+    <div class="flex_hori" :class="{disabled: !$parent.playMode && !instance.paused}">
+      <div style="flex-grow:0.5">
+      <Checkbox label="Auto Follow" :model="this" modelKey="follow" cbStyle="form"></Checkbox>
+      </div>
+      <a style="flex-grow:0.4" class="btn-action btn-dark" @click="scrollToCurrent">Follow</a>
     </div>
   </div>
 </template>
@@ -40,6 +39,7 @@
 <script>
 import NoteTableItem from './NoteTableItem.vue';
 import NoteEditPanel from './NoteEditPanel.vue';
+import Checkbox from './Checkbox.vue';
 import VirtualList from 'vue-virtual-scroll-list'
 
 export default {
@@ -52,6 +52,7 @@ export default {
     components:{
       NoteEditPanel,
       VirtualList,
+      Checkbox
     },
     data() {
       return {
@@ -63,7 +64,7 @@ export default {
     },
     watch: {
         'instance.timeArrIdx'(){
-            if(!this.follow) return;
+            if(!this.follow || (!this.$parent.playMode && !this.instance.paused)) return;
             this.scrollToCurrent()
         },
         '$parent.selectedNotes'(){
@@ -160,18 +161,33 @@ export default {
 }
 
 .buttons {
-  padding: 10px;
+  padding-top: 5px;
+}
+
+.btn-dark{
+  margin:0;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-right: 5px;
 }
 
 .buttons a {
   box-sizing: border-box;
   display: inline-block;
   cursor: pointer;
-  padding: 10px;
+  /* padding: 10px; */
 }
 
 .cb_container .checkmark {
   background-color: transparent;
   border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.flex_hori {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+  text-align: center;
 }
 </style>

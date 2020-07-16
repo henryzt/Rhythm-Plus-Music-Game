@@ -72,6 +72,7 @@ export default class Audio {
     // randomly play background music
     // if (this.player?.playing() && !songToExclude) return;
     let bgmUrlArr = ["/audio/bgm/aurora.mp3", "/audio/bgm/kontekst.mp3"];
+    if (songToExclude && !bgmUrlArr.includes(songToExclude)) return; // is playing result bgm
     shuffle(bgmUrlArr);
     bgmUrlArr.filter((e) => e !== songToExclude);
     this.stop();

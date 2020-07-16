@@ -33,6 +33,7 @@
     "vue-router": "^3.3.4",
     "vue-slider-component": "^3.1.5",
     "vue-spinner": "^1.0.3",
+    "vue-virtual-scroll-list": "^2.3.0",
     "vue-youtube": "^1.4.0",
     "vue2-circle-progress": "^1.2.3",
     "vuex": "^3.5.1"

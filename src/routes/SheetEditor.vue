@@ -304,6 +304,7 @@ export default {
         if(!this.started) return;
         this.reorderSheet()
         this.instance.pauseGame()
+        this.disableMappingTable = false;
       },
       async restartGame(){
         if(!this.started) return;

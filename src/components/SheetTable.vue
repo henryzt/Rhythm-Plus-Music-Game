@@ -10,19 +10,15 @@
       <div style="width:25%">Time</div>
       <div style="width:55%">Keys</div>
     </div>
-    <div class="sheetTable" ref="table">
-      <div>
-        <div v-for="(entry, idx) in instance.timeArr" :key="idx">
-          <NoteTableItem
-            :note="entry"
-            :idx="idx"
-            :instance="instance"
-            :parent="$parent"
-            @select="selectNoteToEdit($event)"
-          ></NoteTableItem>
-        </div>
-        <div class="last"></div>
-      </div>
+    <div class="sheetTable">
+      <virtual-list
+        style="height: calc(100% - 0px); overflow-y: auto;"
+        ref="table"
+        :data-key="'t'"
+        :data-sources="instance.timeArr"
+        :data-component="NoteTableItem"
+        :extra-props="{instance, noteToEdit, parent: $parent, select: selectNoteToEdit}"
+      />
     </div>
     <NoteEditPanel v-if="noteToEdit" :note="noteToEdit" :instance="instance"></NoteEditPanel>
     <div class="buttons" :class="{disabled: !instance.paused}">
@@ -44,6 +40,7 @@
 <script>
 import NoteTableItem from './NoteTableItem.vue';
 import NoteEditPanel from './NoteEditPanel.vue';
+import VirtualList from 'vue-virtual-scroll-list'
 
 export default {
     name: "SheetTable",
@@ -53,24 +50,21 @@ export default {
       },
     },
     components:{
-      NoteTableItem,
-      NoteEditPanel
+      NoteEditPanel,
+      VirtualList,
     },
     data() {
       return {
         selectedAll: false,
         follow: true,
-        noteToEdit: null
+        noteToEdit: null,
+        NoteTableItem
       }
     },
     watch: {
         'instance.timeArrIdx'(){
             if(!this.follow) return;
-            this.$nextTick(()=>{
-                let element = this.$el.querySelector(".current");
-                if(!element) element = this.$el.querySelector(".last");
-                element?.scrollIntoView({block: "end", behavior: "smooth"})
-            })
+            this.scrollToCurrent()
         },
         '$parent.selectedNotes'(){
           this.selectedAll = this.$parent.selectedNotes.length!==0 && this.$parent.selectedNotes.length===this.instance.timeArr.length;
@@ -100,6 +94,16 @@ export default {
         this.clearSelected()
         this.instance.repositionNotes()
         this.$store.state.alert.success("Selected notes deleted")
+      },
+      scrollToCurrent(){
+        const idx = this.instance.timeArrIdx;
+        const table = this.$refs.table;
+        if(idx < this.instance.timeArr.length){
+          table.scrollToIndex(idx)
+          table.scrollToOffset(table.getOffset() - 230)
+        }else{
+          table.scrollToBottom()
+        }
       },
       reorder(){
         this.$parent.reorderSheet()
@@ -139,7 +143,8 @@ export default {
 <style scoped>
 .sheetTable {
   flex-grow: 1;
-  overflow: scroll;
+  /* overflow: scroll; */
+  overflow-y: auto;
   position: relative;
 }
 

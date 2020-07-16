@@ -9,7 +9,16 @@ import {
 import { store } from "../helpers/store";
 
 export function createSong(songInfo) {
-  const { title, artist, image, youtubeId, url, srcMode, tags } = songInfo;
+  const {
+    title,
+    subtitle,
+    artist,
+    image,
+    youtubeId,
+    url,
+    srcMode,
+    tags,
+  } = songInfo;
   let randomId = btoa(parseInt(Date.now() * Math.random())).slice(0, 9);
   let songId = songInfo.title.trim() + "-" + songInfo.artist.trim();
   songId =
@@ -29,6 +38,7 @@ export function createSong(songInfo) {
         youtubeId: youtubeId ?? null,
         url: url ?? null,
         tags: tags ?? null,
+        subtitle: subtitle ?? null,
         srcMode,
         visibility,
         dateCreated,

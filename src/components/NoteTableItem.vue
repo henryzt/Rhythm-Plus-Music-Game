@@ -1,7 +1,7 @@
 <template>
   <div
     class="row"
-    :class="{onScreen: instance.isWithinTime(note.t), current:idx===instance.timeArrIdx, editing:isEditing}"
+    :class="{onScreen: instance.isWithinTime(note.t), current:index===instance.timeArrIdx, editing:isEditing}"
   >
     <div style="width:10%">
       <label class="cb_container cb_small">
@@ -25,10 +25,13 @@
 <script>
 export default {
     name:'NoteTableItem',
-    props:['note', 'idx', 'instance', 'parent'],
+    props:['index','noteToEdit','instance','parent','source',"select"],
     computed: {
         isEditing(){
-            return this.$parent.noteToEdit==this.note;
+            return this.noteToEdit==this.note;
+        },
+        note(){
+          return this.source;
         }
     },
     methods: {
@@ -37,7 +40,7 @@ export default {
         },
         edit(note){
             if(!this.instance.isWithinTime(note.t)) this.seek(note);
-            this.$emit('select', note);
+            this.select(note);
         }
     }
 
@@ -73,9 +76,10 @@ export default {
   border: 1px solid rgb(68, 68, 68);
 }
 
-.time{
-    overflow:hidden;vertical-align: middle;
-    cursor: pointer;
+.time {
+  overflow: hidden;
+  vertical-align: middle;
+  cursor: pointer;
 }
 
 .activeNote {

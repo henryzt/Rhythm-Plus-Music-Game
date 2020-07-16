@@ -292,20 +292,20 @@ export default class GameInstance {
     ) {
       this.timeArr[this.lastAddedIdx].k += key;
     } else {
-      // this.timeArr.push({
-      //   t: Number(cTime.toFixed(3)),
-      //   k: key,
-      // });
-      // this.timeArrIdx = this.timeArr.length - 1;
-      // add at idx
-      this.timeArr.splice(this.timeArrIdx, 0, {
+      this.timeArr.push({
         t: Number(cTime.toFixed(3)),
         k: key,
       });
+      // this.timeArrIdx = this.timeArr.length - 1;
+      // add at idx
+      // this.timeArr.splice(this.timeArrIdx, 0, {
+      //   t: Number(cTime.toFixed(3)),
+      //   k: key,
+      // });
       this.lastAddedTime = cTime;
-      this.lastAddedIdx = this.timeArrIdx;
+      this.lastAddedIdx = this.timeArr.length - 1;
       this.lastAddedKey = key;
-      this.timeArrIdx++;
+      // this.timeArrIdx++;
       setTimeout(() => {
         if (!this.timeArr[this.lastAddedIdx]) return;
         const k = this.timeArr[this.lastAddedIdx].k;

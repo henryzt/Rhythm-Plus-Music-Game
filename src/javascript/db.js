@@ -104,9 +104,10 @@ function filterSongData(doc) {
   let song = doc.data();
 
   song.id = doc.id;
-  song.image = song.youtubeId
-    ? `https://img.youtube.com/vi/${song.youtubeId}/mqdefault.jpg`
-    : song.image;
+  song.image =
+    !song.image && song.youtubeId
+      ? `https://img.youtube.com/vi/${song.youtubeId}/mqdefault.jpg`
+      : song.image;
   return song;
 }
 

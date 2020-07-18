@@ -349,6 +349,7 @@ export default class GameInstance {
     if (this.destoryed) return;
     requestAnimationFrame(this.update.bind(this));
     if (this.vm.started && this.paused && !this.vm.inEditor) return;
+    if (!this.vm.inEditor) this.getCurrentTime();
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.vm.visualizerInstance.renderVisualizer();
     this.feverEff.update();
@@ -385,9 +386,8 @@ export default class GameInstance {
   }
 
   async gameTimingLoop() {
-    const cTime = await this.getCurrentTime();
-    this.playTime = cTime + this.vm.noteSpeedInSec;
-    this.currentTime = cTime;
+    await this.getCurrentTime();
+
     const gameEndAt = this.vm.currentSong.length;
 
     // check game end
@@ -406,11 +406,19 @@ export default class GameInstance {
   }
 
   async getCurrentTime() {
-    if (this.seekingTime) return this.seekingTime;
-    // it seems that 'getPlayerTime' is async, thus all places calling this func need to await res [help wanted]
-    return this.vm.srcMode === "youtube"
-      ? this.ytPlayer.getPlayerTime()
-      : Promise.resolve(this.audio.getCurrentTime());
+    let cTime;
+    if (this.seekingTime) {
+      cTime = this.seekingTime;
+    } else {
+      cTime =
+        this.vm.srcMode === "youtube"
+          ? await this.ytPlayer.getPlayerTime()
+          : this.audio.getCurrentTime();
+      if (!this.vm.started) return cTime;
+    }
+    this.playTime = cTime + this.vm.noteSpeedInSec;
+    this.currentTime = cTime;
+    return cTime;
   }
 
   getNoteTiming() {

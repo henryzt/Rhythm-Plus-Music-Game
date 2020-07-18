@@ -17,7 +17,7 @@
         :data-key="'t'"
         :data-sources="instance.timeArr"
         :data-component="NoteTableItem"
-        :extra-props="{instance, noteToEdit, parent: $parent, select: selectNoteToEdit}"
+        :extra-props="{instance, noteToEdit, parent: $parent, table: this}"
       />
     </div>
     <NoteEditPanel v-if="noteToEdit" :note="noteToEdit" :instance="instance"></NoteEditPanel>

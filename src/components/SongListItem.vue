@@ -25,7 +25,7 @@
             @click="$emit('selectedSheet', sheet)"
             :class="{'sheet':true, 'active':selectedSheet==sheet}"
           >
-            <SheetDetailLine :sheet="sheet"></SheetDetailLine>
+            <SheetDetailLine :sheet="sheet" :compactDetailed="true"></SheetDetailLine>
           </div>
         </div>
       </div>

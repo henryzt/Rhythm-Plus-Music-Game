@@ -104,7 +104,7 @@
     <div class="toolbar blurBackground" v-if="instance" :class="{disabled:!initialized}">
       <div style="font-size:30px;width:80px;text-align:center;">{{currentTime}}</div>
       <div class="action_buttons">
-        <v-icon class="vicon" name="undo" scale="1" @click="seekTo(Number(currentTime)-5)" />
+        <v-icon class="vicon" name="undo" scale="1" @click="seekTo(Number(currentTime)-noteSpeedInSec)" />
         <v-icon
           class="vicon"
           name="play"
@@ -113,7 +113,7 @@
           v-if="instance && instance.paused"
         />
         <v-icon class="vicon" name="pause" scale="1.5" @click="pauseGame" v-else />
-        <v-icon class="vicon" name="redo" scale="1" @click="seekTo(Number(currentTime)+5)" />
+        <v-icon class="vicon" name="redo" scale="1" @click="seekTo(Number(currentTime)+noteSpeedInSec)" />
       </div>
       <div style="flex-grow:1">
         <vue-slider
@@ -365,12 +365,12 @@ export default {
       async saveSheet(){
         this.reorderSheet()
         this.countTotal()
-        const sheet = {
+        let sheet = {
           id: this.sheetInfo.id,
-          sheet: JSON.stringify(this.instance.timeArr),
-          length: this.sheetInfo.length,
-          noteCount: this.sheetInfo.noteCount
-          }
+          sheet: JSON.stringify(this.instance.timeArr)
+        }
+        if(this.sheetInfo.length) sheet.length = this.sheetInfo.length;
+        if(this.sheetInfo.noteCount) sheet.noteCount = this.sheetInfo.noteCount;
         try{
           await updateSheet(sheet);
           this.$store.state.alert.success("Sheet saved!")

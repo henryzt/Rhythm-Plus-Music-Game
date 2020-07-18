@@ -25,7 +25,7 @@
 <script>
 export default {
     name:'NoteTableItem',
-    props:['index','noteToEdit','instance','parent','source',"select"],
+    props:['index','noteToEdit','instance','parent','source',"table"],
     computed: {
         isEditing(){
             return this.noteToEdit==this.note;
@@ -36,11 +36,16 @@ export default {
     },
     methods: {
         seek(note){
-            this.parent.seekTo(note.t+0.1);
+          const follow = this.table.follow;
+          this.table.follow = false;
+          this.parent.seekTo(note.t+0.1);
+          setTimeout(()=>{
+            this.table.follow = follow;
+          }, 100)
         },
         edit(note){
-            if(!this.instance.isWithinTime(note.t)) this.seek(note);
-            this.select(note);
+          if(!this.instance.isWithinTime(note.t)) this.seek(note);
+          this.table.selectNoteToEdit(note);
         }
     }
 

@@ -77,12 +77,14 @@
             <input
               v-if="sheetFormOptions.isUpdate"
               v-model="sheetFormData.startAt"
+              step="0.1"
               placeholder="Start time (In seconds, Optional)"
               type="number"
             />
             <input
               v-if="sheetFormOptions.isUpdate"
               v-model="sheetFormData.endAt"
+              step="0.1"
               placeholder="End time (In seconds, Optional)"
               type="number"
             />

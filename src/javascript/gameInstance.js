@@ -269,7 +269,7 @@ export default class GameInstance {
 
   repositionNotes() {
     let filteredNotes = this.timeArr.filter((e) => {
-      return this.isWithinTime(e.t);
+      return this.isWithinTime(e);
     });
     for (const track of this.dropTrackArr) {
       track.repositionNotes(filteredNotes);
@@ -425,11 +425,18 @@ export default class GameInstance {
     return this.vm.playMode ? this.playTime : this.currentTime; // in editor mode, time without note drop delay is used.
   }
 
-  isWithinTime(time) {
+  isWithinTime(note) {
     // check if a note with start time is currently on screen
+    const time = note.t;
     const sec = Number(this.vm.noteSpeedInSec);
     const current = Number(this.getNoteTiming());
-    return time <= current && time >= current - sec;
+    let isWithinStartTime = time >= current - sec;
+    let isWithinEndTime = time <= current;
+    if (note.h) {
+      const holdTime = Math.max(...Object.values(note.h));
+      isWithinStartTime = holdTime >= current - sec;
+    }
+    return isWithinStartTime && isWithinEndTime;
   }
 
   resetPlaying(resetTimeArr) {

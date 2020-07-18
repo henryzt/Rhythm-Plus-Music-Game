@@ -1,7 +1,7 @@
 <template>
   <div
     class="row"
-    :class="{onScreen: instance.isWithinTime(note.t), current:index===instance.timeArrIdx, editing:isEditing}"
+    :class="{onScreen: instance.isWithinTime(note), current:index===instance.timeArrIdx, editing:isEditing}"
   >
     <div style="width:10%">
       <label class="cb_container cb_small">
@@ -44,7 +44,7 @@ export default {
           }, 100)
         },
         edit(note){
-          if(!this.instance.isWithinTime(note.t)) this.seek(note);
+          if(!this.instance.isWithinTime(note)) this.seek(note);
           this.table.selectNoteToEdit(note);
         }
     }

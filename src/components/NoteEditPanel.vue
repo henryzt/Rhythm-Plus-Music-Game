@@ -17,6 +17,7 @@
           :key="k"
           :class="{activeNote:note.k.includes(k)}"
           @click="toggleKey(k)"
+          @dblclick="createHoldNote(k)"
         >{{k===" "?"-":k}}</div>
       </div>
     </div>
@@ -65,6 +66,15 @@ export default {
                 Vue.delete(this.note, 'h');
             }
             this.instance.repositionNotes()
+        },
+        createHoldNote(k){
+          if(!this.note.k.includes(k)){
+            this.toggleKey(k)
+          }
+          if(!this.note.h){
+            this.note.h = {}
+          }
+          if(!this.note.h[k]) this.note.h[k] = this.note.t + 0.2;
         }
 
     },

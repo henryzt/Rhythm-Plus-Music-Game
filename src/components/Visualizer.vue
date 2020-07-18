@@ -1,9 +1,9 @@
 <template>
-  <div class="visualizer" v-if="shouldRender">
+  <div class="visualizer">
     <div class="blurFilter" v-if="blur"></div>
     <component
       ref="visualizerIns"
-      v-if="audioDataLoaded && vComponent"
+      v-if="shouldRender"
       :is="vComponent"
       :name="vComponent"
       :audioData="audioData"

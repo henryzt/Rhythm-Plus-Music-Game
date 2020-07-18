@@ -16,7 +16,7 @@
       <a href="#" @click.prevent="newEditor">New</a>
       <div style="display:flex" :class="{disabled:!initialized}">
         <a href="#" @click.prevent="saveSheet" :class="{disabled:!isSheetOwner}">Save</a>
-        <a href="#" @click.prevent="togglePlayMode">{{playMode?"Edit":"Test"}}</a>
+        <a href="#" @click.prevent="togglePlayMode(false)">{{playMode?"Edit":"Test"}}</a>
         <a href="#" @click.prevent="showPublishModal" :class="{disabled:!isSheetOwner}">Publish</a>
       </div>
     </div>
@@ -46,14 +46,19 @@
           style="cursor:pointer"
         ></SongListItem>
         <div v-show="gameSheetInfo" v-if="srcMode=='youtube'&&youtubeId">
+          <div
+            v-if="initialized"
+            style="position:absolute; width:100%;height:100%;cursor:pointer;"
+            @click="instance.paused ? songLoaded() : pauseGame()"
+          ></div>
           <Youtube
             id="ytPlayer_editor"
             style="min-height:240px"
             ref="youtube"
             width="100%"
-            height="240px"
+            height="100%"
             :video-id="youtubeId"
-            :player-vars="{ rel: 0, playsinline: 1, disablekb: 1, autoplay: 0 }"
+            :player-vars="{ rel: 0, playsinline: 1, disablekb: 1, autoplay: 0, controls: 0, modestbranding: 1 }"
             @playing="songLoaded"
             @error="ytError"
             @paused="ytPaused"
@@ -104,7 +109,12 @@
     <div class="toolbar blurBackground" v-if="instance" :class="{disabled:!initialized}">
       <div style="font-size:30px;width:80px;text-align:center;">{{currentTime}}</div>
       <div class="action_buttons">
-        <v-icon class="vicon" name="undo" scale="1" @click="seekTo(Number(currentTime)-noteSpeedInSec)" />
+        <v-icon
+          class="vicon"
+          name="undo"
+          scale="1"
+          @click="seekTo(Number(currentTime)-noteSpeedInSec)"
+        />
         <v-icon
           class="vicon"
           name="play"
@@ -113,7 +123,12 @@
           v-if="instance && instance.paused"
         />
         <v-icon class="vicon" name="pause" scale="1.5" @click="pauseGame" v-else />
-        <v-icon class="vicon" name="redo" scale="1" @click="seekTo(Number(currentTime)+noteSpeedInSec)" />
+        <v-icon
+          class="vicon"
+          name="redo"
+          scale="1"
+          @click="seekTo(Number(currentTime)+noteSpeedInSec)"
+        />
       </div>
       <div style="flex-grow:1">
         <vue-slider
@@ -341,11 +356,14 @@ export default {
           this.audio.setRate(Number(rate))
         }
       },
-      togglePlayMode(){
+      togglePlayMode(clean){
         this.playMode = !this.playMode;
         this.playbackSpeed = 1;
-        this.instance.clearNotes()
-        this.restartGame()
+        if(clean){
+          this.instance.clearNotes()
+          this.restartGame()
+        }
+        this.instance.repositionNotes()
       },
       updateSongDetail(){
         this.$refs.info.openSongUpdate()

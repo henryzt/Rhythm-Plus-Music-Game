@@ -83,6 +83,11 @@
         v-if="instance"
         :class="{disabled:!initialized}"
       >
+        <div
+          v-if="!disableMappingTable"
+          @click="disableMappingTable=true"
+          style="float:right;padding-top:30px;opacity:0.5;cursor:pointer;"
+        >Disable</div>
         <h2>Mappings</h2>
         <SheetTable v-if="!disableMappingTable"></SheetTable>
         <div v-else>

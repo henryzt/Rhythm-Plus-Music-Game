@@ -1,5 +1,5 @@
 <template>
-  <div class="visualizer">
+  <div class="visualizer" v-if="shouldRender">
     <div class="blurFilter" v-if="blur"></div>
     <component
       ref="visualizerIns"
@@ -41,7 +41,7 @@ export default {
   data: function(){
     return {
         visualizerArr: visualizers,
-        vComponent: 'space',
+        vComponent: null,
         blur: false,
         audioDataLoaded: false,
     }
@@ -66,19 +66,19 @@ export default {
     },
   methods: {
     renderVisualizer() {
-        if (!this.audioDataLoaded || !this.vComponent) return;
+        if (!this.shouldRender) return;
         this.$refs.visualizerIns.update()
     },
     setVisualizerByKey(name){
         this.vComponent = visualizers[name];
     },
     update() {
-        if(!this.autoUpdate || !this.vComponent) return;
+        if(!this.autoUpdate || !this.shouldRender) return;
         requestAnimationFrame(this.update.bind(this));
         this.renderVisualizer();
     },
     resizeCanvas(){
-        if (!this.audioDataLoaded || !this.vComponent) return;
+        if (!this.shouldRender) return;
         this.$refs.visualizerIns.resizeCanvas()
     }
   },
@@ -103,6 +103,9 @@ export default {
             if(data.analyser)
                 this.audioDataLoaded = true
             return data;
+        },
+        shouldRender(){
+            return this.audioDataLoaded && this.vComponent;
         }
     }
 };

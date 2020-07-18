@@ -53,7 +53,7 @@
         </p>
         <p>
           <label></label>
-          <Checkbox label="Blur Background" :model="appearanceSt" modelKey="blur"></Checkbox>
+          <Checkbox label="Blur Background" :model="appearanceSt" cbStyle="form" modelKey="blur"></Checkbox>
         </p>
       </form>
     </div>
@@ -97,7 +97,7 @@ export default {
             },
             appearanceSt:{
                 theme: "purpleSwirl",
-                visualizer: null,
+                visualizer: "swirl",
                 blur: false
             },
             gameSt:{

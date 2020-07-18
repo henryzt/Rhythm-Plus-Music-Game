@@ -8,7 +8,7 @@
       :style="{ background: `url('${imageSrc}') no-repeat fixed center`, backgroundSize: 'cover' }"
     ></div>
     <Visualizer
-      v-else-if="$store.state.theme && $store.state.theme.visualizer"
+      v-else-if="$store.state.theme"
       ref="visualizer"
       style="opacity:1"
       :setVisualizer="$store.state.theme.visualizer"

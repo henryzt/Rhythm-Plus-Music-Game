@@ -31,6 +31,11 @@
 
       <div v-if="$parent.songInfo.id">
         <div>
+          <div
+            v-if="!sheetFormOptions.isUpdate"
+            @click="$router.push('/editor/');$parent.reloadEditor()"
+            style="float:right;line-height:30px;opacity:0.5;cursor:pointer;"
+          >Change Song</div>
           <h2>Sheet Detail</h2>
           <InfoForm
             :formData="sheetFormData"

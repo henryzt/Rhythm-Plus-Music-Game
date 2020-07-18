@@ -20,12 +20,12 @@
     >
       <img v-if="$store.state.profilePicture" :src="$store.state.profilePicture" />
       <div class="detail">
-        <div>{{$store.state.currentUser.displayName}}</div>
+        <div>{{$store.state.currentUser.displayName?$store.state.currentUser.displayName:"Name not set"}}</div>
         <div
           style="opacity:0.6"
           v-if="$store.state.userProfile.lvd && $store.state.verified"
         >Level.{{$store.state.userProfile.lvd}}</div>
-        <div class="wrapper" v-if="extend">
+        <div class="wrapper" v-if="extend && $store.state.userProfile.lvd">
           <div class="progress-bar">
             <span class="progress-bar-fill increased" :style="{width: percentage+'%'}"></span>
             <span class="progress-bar-fill" :style="{width: percentage+'%'}"></span>

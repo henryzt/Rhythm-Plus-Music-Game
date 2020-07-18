@@ -2,6 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import * as fb from "./firebaseConfig";
 import md5 from "js-md5";
+import firebase from "firebase";
 
 Vue.use(Vuex);
 
@@ -21,10 +22,10 @@ export const store = new Vuex.Store({
     redirecting: false,
   },
   actions: {
-    fetchUserProfile() {
+    async fetchUserProfile() {
       if (this.state.currentUser && !this.state.currentUser.isAnonymous) {
-        this.dispatch("updateUserProfile");
-        this.dispatch("fetchProfilePicture");
+        await this.dispatch("updateUserProfile");
+        await this.dispatch("fetchProfilePicture");
       } else {
         this.commit("setUserProfile", null);
         this.commit("setProfilePciture", null);
@@ -53,11 +54,31 @@ export const store = new Vuex.Store({
       if (state.currentUser) {
         try {
           const res = await fb.usersCollection.doc(state.currentUser.uid).get();
-          commit("setUserProfile", res.data());
+          let data = res.data();
+          commit("setUserProfile", data ?? {});
           commit("setTheme");
         } catch (err) {
           console.error(err);
         }
+        // update display name and photo for first time login
+        const user = firebase.auth().currentUser;
+        const providerDisplayName =
+          state.currentUser.providerData?.[0]?.displayName;
+        let reloadRequired = false;
+        if (!state.currentUser.displayName && providerDisplayName) {
+          state.redirecting = true;
+          await user.updateProfile({ displayName: providerDisplayName });
+          reloadRequired = true;
+          console.warn("Display name updated using provider data");
+        }
+        const providerPhoto = state.currentUser.providerData?.[0]?.photoURL;
+        if (!state.currentUser.photoURL && providerPhoto) {
+          state.redirecting = true;
+          await user.updateProfile({ photoURL: providerPhoto });
+          console.warn("Photo URL updated using provider data");
+          reloadRequired = true;
+        }
+        if (reloadRequired) window.location.reload();
       }
     },
   },
@@ -95,6 +116,8 @@ export const store = new Vuex.Store({
       if (userTheme) {
         state.theme.visualizer = userTheme.visualizer;
         state.theme.blur = userTheme.blur;
+      } else {
+        state.theme.visualizer = state.theme.visualizer;
       }
       state.initialized = true;
     },

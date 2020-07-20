@@ -227,7 +227,10 @@ export default {
           showExistingNote: true,
           selectedNotes: [],
           leftTab: 1,
-          disableMappingTable: false
+          disableMappingTable: false,
+          options:{
+            soundEffect: true, //eidtor hit sound effect
+          }
         }
     },
     computed: {
@@ -323,6 +326,7 @@ export default {
       pauseGame(){
         if(!this.started) return;
         this.reorderSheet()
+        this.clearFever()
         this.instance.pauseGame()
         this.disableMappingTable = false;
       },
@@ -363,6 +367,7 @@ export default {
           this.instance.clearNotes()
           this.restartGame()
         }
+        this.clearFever()
         this.instance.repositionNotes()
       },
       updateSongDetail(){

@@ -49,14 +49,14 @@ export default {
   mounted() {
         window.addEventListener("resize", this.resizeCanvas, false);
         window.addEventListener("orientationchange",this.resizeCanvas,false);
-        if(this.autoUpdate)
-            this.update();
         if(this.setVisualizer)
             this.vComponent = this.setVisualizer;
         if(this.setBlur)
             this.blur = this.setBlur;
         if(!this.$store.state.visualizerArr)
             this.$store.commit("setVisualizerArr", visualizers);
+        if(this.autoUpdate)
+            this.update();
     },
     beforeDestroy(){
         window.removeEventListener("resize", this.resizeCanvas);
@@ -67,7 +67,7 @@ export default {
   methods: {
     renderVisualizer() {
         if (!this.shouldRender) return;
-        this.$refs.visualizerIns.update()
+        this.$refs.visualizerIns?.update()
     },
     setVisualizerByKey(name){
         this.vComponent = visualizers[name];

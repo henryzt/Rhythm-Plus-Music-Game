@@ -194,7 +194,8 @@ export default class Note {
   }
 
   playSoundEffect() {
-    if (!this.vm.inEditor || !this.vm.soundEffect || !this.vm.playMode) return;
+    if (!this.vm.inEditor || !this.vm.options.soundEffect || !this.vm.playMode)
+      return;
     if (!this.sePlayed && this.y >= this.vm.checkHitLineY) {
       this.sePlayed = true;
       this.vm.$store.state.audio.playEffect("/audio/effects/du.mp3");

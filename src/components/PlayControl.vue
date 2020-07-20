@@ -47,6 +47,15 @@
     <!-- create mode only -->
     <div v-if="playData.inEditor">
       <br />
+      <p>
+        <label></label>
+        <Checkbox
+          label="Hit Sound Effect"
+          :model="$parent.options"
+          modelKey="soundEffect"
+          :cbStyle="cbStyle"
+        ></Checkbox>
+      </p>
       <br />
       <!-- score -->
       <div style="padding:15px">

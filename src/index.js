@@ -24,7 +24,7 @@ new Vue({
       await this.$store.commit("setCurrentUser", user);
       if (!user && !this.$store.state.redirecting) {
         console.warn("User not logged in, creating anonymous profile...");
-        fb.auth.signInAnonymously().catch(function (error) {
+        fb.auth.signInAnonymously().catch((error) => {
           console.error(error.message);
         });
       }

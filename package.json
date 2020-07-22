@@ -17,6 +17,7 @@
     "deploy": "yarn build && firebase deploy && git push"
   },
   "dependencies": {
+    "animate.css": "^4.1.0",
     "axios": "^0.19.2",
     "countup.js": "^2.0.5",
     "firebase": "^7.15.5",
@@ -28,9 +29,11 @@
     "vue": "^2.6.11",
     "vue-awesome": "^4.0.2",
     "vue-countup-v2": "^4.0.0",
+    "vue-moment": "^4.1.0",
     "vue-router": "^3.3.4",
     "vue-slider-component": "^3.1.5",
     "vue-spinner": "^1.0.3",
+    "vue-virtual-scroll-list": "^2.3.0",
     "vue-youtube": "^1.4.0",
     "vue2-circle-progress": "^1.2.3",
     "vuex": "^3.5.1"
@@ -43,7 +46,7 @@
     "babel-loader": "^8.1.0",
     "babel-polyfill": "^6.26.0",
     "babel-preset-es2020": "^1.0.2",
-    "copy-webpack-plugin": "^6.0.3",
+    "copy-webpack-plugin": "^5.1.1",
     "css-loader": "^3.5.3",
     "eslint": "^7.3.1",
     "eslint-config-prettier": "^6.11.0",

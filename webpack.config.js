@@ -2,6 +2,7 @@ const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const VueLoaderPlugin = require("vue-loader/lib/plugin");
+const CopyPlugin = require("copy-webpack-plugin");
 
 const isProduction = () => process.env.NODE_ENV === "production";
 
@@ -75,5 +76,10 @@ module.exports = {
       inject: "body",
     }),
     new VueLoaderPlugin(),
+    new CopyPlugin([
+      {
+        from: path.resolve(__dirname, "src", "public"),
+      },
+    ]),
   ],
 };

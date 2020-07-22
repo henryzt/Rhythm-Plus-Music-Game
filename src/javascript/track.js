@@ -113,7 +113,7 @@ export default class DropTrack {
   }
 
   playSoundEffect() {
-    if (!this.vm.inEditor || !this.vm.soundEffect) return;
+    if (!this.vm.inEditor || !this.vm.options.soundEffect) return;
     this.vm.$store.state.audio.playEffect("/audio/effects/du.mp3");
   }
 

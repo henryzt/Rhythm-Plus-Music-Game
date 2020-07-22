@@ -9,7 +9,7 @@
       >
         <v-icon name="regular/pause-circle" scale="1.5" />
       </a>
-      <Navbar v-else-if="!started" :gameNav="true"></Navbar>
+      <Navbar v-else-if="!isGameEnded" style="z-index:1000" :gameNav="true"></Navbar>
     </transition>
 
     <!-- mark indicator -->
@@ -21,7 +21,7 @@
     </div>
 
     <!-- visualizer canvas -->
-    <Visualizer ref="visualizer" v-show="!hideGameForYtButton"></Visualizer>
+    <Visualizer ref="visualizer" :setBlur="blur" v-show="!hideGameForYtButton"></Visualizer>
 
     <!-- score panel -->
     <div class="score">
@@ -85,7 +85,7 @@
     <Loading style="z-index:500" :show="isGameEnded">Syncing Results...</Loading>
 
     <!-- pause menu modal -->
-    <Modal ref="menu" :hideFooter="true" style="text-align:center;z-index:1000">
+    <Modal ref="menu" :hideFooter="true" style="text-align:center;z-index:500">
       <template v-slot:header>
         <div style="width:100%;font-size:23px">{{advancedMenuOptions?"Options":"Pause Menu"}}</div>
       </template>
@@ -112,7 +112,7 @@
             <div
               class="btn-action btn-dark"
               style="display:inline-block"
-              @click="started?resumeGame():$refs.menu.close()"
+              @click="started?resumeGame():hideMenu()"
             >Done</div>
           </div>
         </transition>
@@ -253,7 +253,7 @@ export default {
         }catch(error){
           console.error(error)
           this.$store.state.gModal.show({bodyText:"We are sorry, due to a connection failure, we are unable to save the result. Would you like to try again?", 
-        isError: true, okCallback: this.gameEnded, cancelCallback: this.exitGame})
+        isError: true, showCancel:true, okCallback: this.gameEnded, cancelCallback: this.exitGame})
         }
       },
       addTilt(){

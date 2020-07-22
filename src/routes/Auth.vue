@@ -1,14 +1,28 @@
 <template>
   <div>
-    <PageBackground></PageBackground>
+    <div class="mContainer" v-if="$store.state.verified">
+      <div class="flex_hori">
+        <UserProfileCard :extend="true" />
+        <div class="clip" @click="confirmSignOut">Logout</div>
+      </div>
+      <Settings></Settings>
+    </div>
 
-    <div class="center_logo" style="z-index: 1000;">
+    <div class="center_logo" style="z-index: 900;">
       <div v-show="!$store.state.authed">
         <h3>Signin or Register Now for Complete Experience!</h3>
         <div id="firebaseui-auth-container"></div>
       </div>
-      <div v-show="$store.state.authed">
-        You are already logged in!
+      <div v-if="$store.state.authed && !$store.state.verified">
+        <div
+          style="font-size:20px;padding-bottom:30px"
+        >Please check your email to verify your account!</div>
+        <div class="text_button" @click="$router.go()">Refresh</div>
+        <div
+          class="text_button"
+          :class="{disabled:emailSentTimeout}"
+          @click="sendVerificationEmail"
+        >Resend Email</div>
         <div class="text_button" @click="confirmSignOut">Logout</div>
       </div>
     </div>
@@ -16,20 +30,22 @@
     <Modal
       ref="modal"
       :show="showModal"
+      style="z-index: 1000;"
       bodyText="Are you sure you want to log out?"
       okText="Logout"
       @ok="signOut"
     ></Modal>
 
-    <Loading :show="!$store.state.initialized">Communicating...</Loading>
+    <Loading style="z-index: 999;" :show="!$store.state.initialized">Communicating...</Loading>
   </div>
 </template>
 
 
 <script>
-import PageBackground from '../components/PageBackground.vue';
 import Modal from '../components/Modal.vue';
 import Loading from '../components/Loading.vue';
+import UserProfileCard from '../components/UserProfileCard.vue';
+import Settings from '../components/Settings.vue';
 import firebase from 'firebase';
 import * as firebaseui from "firebaseui"
 import "firebaseui/dist/firebaseui.css";
@@ -37,13 +53,15 @@ import "firebaseui/dist/firebaseui.css";
 export default {
   name: 'Auth',
   components:{
-      PageBackground,
       Modal,
-      Loading
+      Loading,
+      UserProfileCard,
+      Settings
   },
   data(){
         return {
-            showModal: false
+            showModal: false,
+            emailSentTimeout: false
         }
     },
     computed: {
@@ -54,15 +72,17 @@ export default {
     },
     mounted() {
       const uiConfig = {
-        signInSuccessUrl: '/',
         signInFlow: 'popup',
         signInOptions: [
             firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-            firebase.auth.EmailAuthProvider.PROVIDER_ID
+            firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+            firebase.auth.EmailAuthProvider.PROVIDER_ID,
             ],
         autoUpgradeAnonymousUsers: true,
         callbacks: {
-          signInSuccessWithAuthResult: function(authResult, redirectUrl) {
+          signInSuccessWithAuthResult: (authResult, redirectUrl) => {
+            console.log(authResult)
+            this.signInRedirect();
             return true;
           },
           // handle merge conflicts which occur when an existing credential is linked to an anonymous user.
@@ -78,7 +98,7 @@ export default {
             let app = firebase.app();
             // Save anonymous user data first.
             try{
-              if(this.$store.state.userProfile.exp > 5)
+              if(this.$store.state.userProfile && this.$store.state.userProfile.exp > 5)
                 await firebase.firestore().collection("users").doc(anonymousUser.uid).set({isAnonymousDeleted: true})
               await anonymousUser.delete();
             }catch(err){
@@ -86,8 +106,9 @@ export default {
             }
 
             try{
+              this.$store.state.redirecting = true;
               await firebase.auth().signInWithCredential(cred);
-              window.location.assign('/');
+              this.signInRedirect()
             }catch(err){
               console.error(err)
             }
@@ -98,31 +119,96 @@ export default {
       let ui = firebaseui.auth.AuthUI.getInstance() ?? new firebaseui.auth.AuthUI(firebase.auth());
       ui.start('#firebaseui-auth-container', uiConfig);
 
+      if(this.$route.query.warn){
+        this.$router.push({query:null})
+        this.$store.state.alert.warn(
+            "You need to login and verify your account before using the sheet editor", 8000
+          );
+      }
+
+      if(this.$route.query.success){
+        this.$router.push({query:null})
+        this.$store.state.alert.success("Settings updated");
+      }
+
     },
   methods: {
       confirmSignOut(){
         this.$refs.modal.show()
       },
-      signOut(){
+      async signOut(){
         try{
-          firebase.auth().signOut();
+          this.$store.state.redirecting = true;
+          await firebase.auth().signOut();
+          this.$router.go();
         }catch(err){
           console.error(err)
         }
+      },
+      signInRedirect(){
+        this.$store.state.redirecting = true;
+        const user = firebase.auth().currentUser;
+
+        if(user.emailVerified){
+          this.$router.push({path:"/"})
+          this.$router.go()
+        }else{
+          this.$router.go()
+          this.sendVerificationEmail()
+        }
+      },
+      sendVerificationEmail(){
+        const user = firebase.auth().currentUser;
+
+        user.sendEmailVerification().then(()=> {
+          this.$store.state.alert.success("Verification email sent! Please check your inbox or spam folder.");
+          this.emailSentTimeout = true
+          setTimeout(()=>{
+            this.emailSentTimeout = false
+          }, 30000)
+        }).catch((error) => {
+          console.error(error)
+          if(error.code==="auth/too-many-requests"){
+            this.$store.state.alert.error("You have sent to many emails, please try again later.", 8000)
+          }else{
+            this.$store.state.alert.error("Sorry, something went wrong, please try again.", 8000)
+          }
+        });
       }
   }
 };
 </script>
 
-<style>
-#firebaseui-auth-container {
-  z-index: 1000;
+<style scoped>
+.disabled {
+  cursor: not-allowed;
+  opacity: 0.2;
 }
-#firebaseui-auth-container input[type="text"] {
-  background-color: white;
-  padding-left: 0;
-  color: black;
-  border: none;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+
+.mContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: 2s;
+  width: 90%;
+  max-width: 600px;
+  margin: auto;
+  margin-top: 100px;
+  margin-bottom: 300px;
+}
+
+.flex_hori {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.clip {
+  background: rgba(184, 184, 184, 0.5);
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 15px;
+  cursor: pointer;
 }
 </style>

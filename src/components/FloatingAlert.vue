@@ -1,6 +1,10 @@
 <template>
   <transition name="alert-fade">
-    <div v-if="visible" class="horizontal" :class="[className]">{{text}}</div>
+    <div
+      v-if="visible"
+      class="horizontal animate__animated"
+      :class="[className, emphasize]"
+    >{{text}}</div>
   </transition>
 </template>
 
@@ -11,19 +15,26 @@ export default {
         return {
             visible: false,
             text: "This is a floating notification",
-            className: ""
+            className: "",
+            emphasize: ""
         }
     },
     methods: {
         show(text, time){
+          if(this.visible && this.text === text){
+            this.emphasize = "animate__flash"
+            setTimeout(() => {
+              this.emphasize = ""
+            }, 1000)
+          }
           this.visible = true;
-            this.text = text;
-            clearTimeout(this.hideTimeout)
-            if(time && time!==0){
-              this.hideTimeout = setTimeout(()=>{
-                this.visible = false;
-                }, time)
-            }
+          this.text = text;
+          clearTimeout(this.hideTimeout)
+          if(time && time!==0){
+            this.hideTimeout = setTimeout(()=>{
+              this.visible = false;
+              }, time)
+          }
             // this.$store.state.audio.playEffect("/audio/effects/error.mp3");
         },
         info(text, time){
@@ -59,7 +70,7 @@ export default {
   transition: 0.5s;
 }
 .info {
-  background: rgb(0, 120, 156);
+  background: rgb(0, 151, 197);
 }
 .warn {
   background: orange;

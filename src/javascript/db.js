@@ -1,19 +1,29 @@
 import {
-  dbi,
+  firestore,
   songsCollection,
   sheetsCollection,
+  usersCollection,
   functions,
   resultsCollection,
 } from "../helpers/firebaseConfig"; //usersCollection
 import { store } from "../helpers/store";
 
 export function createSong(songInfo) {
-  const { title, artist, image, youtubeId, url, srcMode, tags } = songInfo;
+  const {
+    title,
+    subtitle,
+    artist,
+    image,
+    youtubeId,
+    url,
+    srcMode,
+    tags,
+  } = songInfo;
   let randomId = btoa(parseInt(Date.now() * Math.random())).slice(0, 9);
   let songId = songInfo.title.trim() + "-" + songInfo.artist.trim();
   songId =
     songId.replace(/ /gi, "-").replace(/[^a-z0-9-]/gi, "") + "-" + randomId;
-  let dateCreated = dbi.Timestamp.now();
+  let dateCreated = firestore.Timestamp.now();
   let dateUpdated = dateCreated;
   let createdBy = store.state.currentUser?.uid;
   let visibility = "private";
@@ -28,6 +38,7 @@ export function createSong(songInfo) {
         youtubeId: youtubeId ?? null,
         url: url ?? null,
         tags: tags ?? null,
+        subtitle: subtitle ?? null,
         srcMode,
         visibility,
         dateCreated,
@@ -45,7 +56,7 @@ export function createSong(songInfo) {
   });
 }
 
-export function getSongList(getPrivate) {
+export function getSongList(getPrivate, filterIdArr) {
   return new Promise((resolve, reject) => {
     const processRes = (querySnapshot) => {
       let res = [];
@@ -53,8 +64,6 @@ export function getSongList(getPrivate) {
         let song = filterSongData(doc);
 
         res.push(song);
-        // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, " => ", doc.data());
       });
       resolve(res);
     };
@@ -63,6 +72,14 @@ export function getSongList(getPrivate) {
       console.error("Error getting document:", error);
       reject(error);
     };
+
+    if (filterIdArr) {
+      songsCollection.where(
+        firestore.FieldPath.documentId(),
+        "in",
+        filterIdArr
+      );
+    }
 
     if (getPrivate) {
       songsCollection
@@ -85,9 +102,10 @@ function filterSongData(doc) {
   let song = doc.data();
 
   song.id = doc.id;
-  song.image = song.youtubeId
-    ? `https://img.youtube.com/vi/${song.youtubeId}/mqdefault.jpg`
-    : song.image;
+  song.image =
+    !song.image && song.youtubeId
+      ? `https://img.youtube.com/vi/${song.youtubeId}/mqdefault.jpg`
+      : song.image;
   return song;
 }
 
@@ -128,13 +146,12 @@ export function updateSong(info) {
 }
 
 function cleanForUpdate(obj) {
-  obj.dateUpdated = dbi.Timestamp.now();
-  // FIXME handle this logic better
-  for (let propName in obj) {
-    if (obj[propName] === null || obj[propName] === undefined) {
-      delete obj[propName];
+  obj.dateUpdated = firestore.Timestamp.now();
+  Object.keys(obj).forEach((key) => {
+    if (obj[key] === undefined) {
+      delete obj[key];
     }
-  }
+  });
 }
 
 export function createSheet(sheetInfo) {
@@ -149,7 +166,7 @@ export function createSheet(sheetInfo) {
     keys,
     sheet,
   } = sheetInfo;
-  let dateCreated = dbi.Timestamp.now();
+  let dateCreated = firestore.Timestamp.now();
   let dateUpdated = dateCreated;
   let createdBy = store.state.currentUser?.uid;
   return new Promise((resolve, reject) => {
@@ -198,7 +215,7 @@ export function updateSheet(info) {
     });
 }
 
-export function getSheetList(songId, getPrivate) {
+export function getSheetList(songId, getUserOwned, getOnlyUnpublished) {
   return new Promise((resolve, reject) => {
     const processRes = (querySnapshot) => {
       let res = [];
@@ -217,12 +234,19 @@ export function getSheetList(songId, getPrivate) {
       reject(error);
     };
 
-    let songSheets = sheetsCollection.where("songId", "==", songId);
+    let songSheets = songId
+      ? sheetsCollection.where("songId", "==", songId)
+      : sheetsCollection;
 
-    if (getPrivate) {
+    if (getUserOwned) {
+      if (getOnlyUnpublished) {
+        songSheets = songSheets.where("visibility", "in", [
+          "private",
+          "unlisted",
+        ]);
+      }
       songSheets
         .where("createdBy", "==", store.state.currentUser?.uid)
-        .where("visibility", "in", ["private", "unlisted"])
         .get()
         .then(processRes)
         .catch(processErr);
@@ -330,5 +354,23 @@ export async function getBestScore(sheetId) {
   } catch (error) {
     console.error(error);
     throw new Error("Error reading document");
+  }
+}
+
+export async function updateUserProfile(data) {
+  const uid = store.state.currentUser?.uid;
+  if (!uid) throw new Error("User not logged in");
+
+  console.log(uid, data);
+
+  cleanForUpdate(data);
+
+  try {
+    await usersCollection.doc(uid).set(data, { merge: true });
+    console.log("Document successfully updated!");
+  } catch (error) {
+    // The document probably doesn't exist.
+    console.error("Error updating document: ", error);
+    throw error;
   }
 }

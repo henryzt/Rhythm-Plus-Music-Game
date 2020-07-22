@@ -7,19 +7,25 @@
           <div class="navtext">Home</div>
         </div>
       </router-link>
-      <router-link to="/menu">
+      <router-link to="/menu/">
         <div class="nav">
           <v-icon name="stream" scale="1.7" />
           <div class="navtext">Song Select</div>
         </div>
       </router-link>
-      <router-link to="/rankings">
+      <router-link to="/studio/">
+        <div class="nav">
+          <v-icon name="pencil-ruler" scale="1.7" />
+          <div class="navtext">My Studio</div>
+        </div>
+      </router-link>
+      <router-link to="/rankings/">
         <div class="nav">
           <v-icon name="medal" scale="1.7" />
           <span class="navtext">Rankings</span>
         </div>
       </router-link>
-      <router-link to="/account">
+      <router-link to="/account/">
         <div class="nav">
           <v-icon name="cog" scale="1.7" />
           <span class="navtext">Account & Options</span>
@@ -28,7 +34,7 @@
     </div>
 
     <div class="navbar gameNav" v-else>
-      <router-link to="/menu" exact>
+      <router-link to="/menu/" exact>
         <div class="nav">
           <v-icon name="home" scale="1.5" />
           <div class="navtext">Back</div>
@@ -56,6 +62,7 @@ import 'vue-awesome/icons/stream'
 import 'vue-awesome/icons/medal'
 import 'vue-awesome/icons/cog'
 import 'vue-awesome/icons/share'
+import 'vue-awesome/icons/pencil-ruler'
 
 export default {
     name: "Navbar",
@@ -64,6 +71,10 @@ export default {
 </script>
 
 <style>
+.fa-icon svg {
+  box-shadow: 4px 3px 24px -2px rgba(0, 0, 0, 1);
+}
+
 .navbar {
   position: fixed;
   top: 0;
@@ -72,6 +83,7 @@ export default {
   max-width: 80%;
   overflow: scroll;
   z-index: 800;
+  scrollbar-width: none;
 }
 
 .navtext {
@@ -113,12 +125,6 @@ a {
   max-width: 68px;
   color: white;
   text-align: center;
-}
-
-.nav:hover {
-  background: rgba(255, 255, 255, 0.7);
-  color: black;
-  opacity: 1;
 }
 
 .gameNav .nav {
@@ -164,7 +170,8 @@ a {
     background: rgba(0, 0, 0, 0.7);
     background: linear-gradient(
       0deg,
-      rgba(0, 0, 0, 0.7) 0%,
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 0.6) 60%,
       rgba(0, 0, 0, 0) 100%
     );
   }

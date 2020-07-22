@@ -31,6 +31,11 @@
 
       <div v-if="$parent.songInfo.id">
         <div>
+          <div
+            v-if="!sheetFormOptions.isUpdate"
+            @click="$router.push('/editor/');$parent.reloadEditor()"
+            style="float:right;line-height:30px;opacity:0.5;cursor:pointer;"
+          >Change Song</div>
           <h2>Sheet Detail</h2>
           <InfoForm
             :formData="sheetFormData"
@@ -69,6 +74,20 @@
               <option :value="null" disabled>Select Key Number...</option>
               <option v-for="keys in [4,5,6,7,8]" :value="keys" :key="keys">{{keys + ' Key'}}</option>
             </select>
+            <input
+              v-if="sheetFormOptions.isUpdate"
+              v-model="sheetFormData.startAt"
+              step="0.1"
+              placeholder="Start time (In seconds, Optional)"
+              type="number"
+            />
+            <input
+              v-if="sheetFormOptions.isUpdate"
+              v-model="sheetFormData.endAt"
+              step="0.1"
+              placeholder="End time (In seconds, Optional)"
+              type="number"
+            />
           </InfoForm>
           <div v-if="!$parent.isSheetOwner">You have no edit access to this sheet.</div>
         </div>
@@ -149,7 +168,8 @@ export default {
             if(this.songFormOptions.isUpdate){
               this.$parent.loading = true
               await updateSong(this.songFormData);
-              this.$router.go();
+              this.$router.push({query: { update: true }})
+              this.$parent.reloadEditor();
             }else{
               let songId = await createSong(this.songFormData)
               this.$parent.songInfo = await getSong(songId);
@@ -172,20 +192,24 @@ export default {
         async getSheets() {
           const songId = this.$parent.songInfo.id;
           this.sheetFormOptions.publicList = await getSheetList(songId);
-          this.sheetFormOptions.privateList = await getSheetList(songId, true);
+          this.sheetFormOptions.privateList = await getSheetList(songId, true, true);
         },
         async submitSheetForm(){
             this.$parent.loading = true
             try{
               if(this.sheetFormOptions.isUpdate){
+                this.sheetFormData.startAt = this.sheetFormData.startAt ? Number(this.sheetFormData.startAt) : null;
+                this.sheetFormData.endAt = this.sheetFormData.endAt ? Number(this.sheetFormData.endAt) : null;
+                delete this.sheetFormData.sheet;
                 await updateSheet(this.sheetFormData)
+                this.$router.push({query: { save: true }})
               }else{
                 const songId = this.$parent.songInfo.id;
                 this.sheetFormData.songId = songId;
                 let sheetId = await createSheet(this.sheetFormData)
                 this.$router.push('/editor/'+sheetId)
               }
-              this.$router.go();
+              this.$parent.reloadEditor();
             }catch(err){
               this.$parent.loading = false
               this.$store.state.alert.error("An error occurred, please try again", 5000)
@@ -197,7 +221,7 @@ export default {
             if(selectedSheet){
               this.$parent.loading = true
               this.$router.push('/editor/'+selectedSheet.id+'/')
-              this.$router.go()
+              this.$parent.reloadEditor();
             }
         },
         async openSongUpdate(){

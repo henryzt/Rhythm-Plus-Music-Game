@@ -3,7 +3,7 @@
     <div class="blurFilter" v-if="blur"></div>
     <component
       ref="visualizerIns"
-      v-if="audioDataLoaded && vComponent"
+      v-if="shouldRender"
       :is="vComponent"
       :name="vComponent"
       :audioData="audioData"
@@ -41,7 +41,7 @@ export default {
   data: function(){
     return {
         visualizerArr: visualizers,
-        vComponent: 'space',
+        vComponent: null,
         blur: false,
         audioDataLoaded: false,
     }
@@ -49,12 +49,14 @@ export default {
   mounted() {
         window.addEventListener("resize", this.resizeCanvas, false);
         window.addEventListener("orientationchange",this.resizeCanvas,false);
-        if(this.autoUpdate)
-            this.update();
         if(this.setVisualizer)
             this.vComponent = this.setVisualizer;
         if(this.setBlur)
             this.blur = this.setBlur;
+        if(!this.$store.state.visualizerArr)
+            this.$store.commit("setVisualizerArr", visualizers);
+        if(this.autoUpdate)
+            this.update();
     },
     beforeDestroy(){
         window.removeEventListener("resize", this.resizeCanvas);
@@ -64,19 +66,19 @@ export default {
     },
   methods: {
     renderVisualizer() {
-        if (!this.audioDataLoaded || !this.vComponent) return;
-        this.$refs.visualizerIns.update()
+        if (!this.shouldRender) return;
+        this.$refs.visualizerIns?.update()
     },
     setVisualizerByKey(name){
         this.vComponent = visualizers[name];
     },
     update() {
-        if(!this.autoUpdate || !this.vComponent) return;
+        if(!this.autoUpdate || !this.shouldRender) return;
         requestAnimationFrame(this.update.bind(this));
         this.renderVisualizer();
     },
     resizeCanvas(){
-        if (!this.audioDataLoaded || !this.vComponent) return;
+        if (!this.shouldRender) return;
         this.$refs.visualizerIns.resizeCanvas()
     }
   },
@@ -85,9 +87,10 @@ export default {
             // required to watch vuex change
         },
         setVisualizer: () => {
+            if(!this) return;
             this.vComponent = this.setVisualizer;
         },
-        setBlur: () => {
+        setBlur(){
             this.blur = this.setBlur;
         }
     },
@@ -100,6 +103,9 @@ export default {
             if(data.analyser)
                 this.audioDataLoaded = true
             return data;
+        },
+        shouldRender(){
+            return this.audioDataLoaded && this.vComponent;
         }
     }
 };

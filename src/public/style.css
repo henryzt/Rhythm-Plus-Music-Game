@@ -5,6 +5,9 @@ body {
   color: white;
   font-family: "Raleway";
   -webkit-tap-highlight-color: rgba(255, 255, 255, 0.3);
+  scrollbar-width: none; /* Also needed to disable scrollbar Firefox */
+  -ms-overflow-style: none;  /* Disable scrollbar IE 10+ */
+  overflow-y: scroll;
 }
 
 .center_judge {
@@ -57,6 +60,12 @@ body {
 
 .gameWrapper {
   perspective: 600px;
+}
+
+.pageTitle{
+  font-size:2.3em; font-weight: bold;text-align:center;padding:10px;margin-top:70px;
+  animation-name: fadeInDown;
+  animation-duration: 1s;
 }
 
 #gameCanvas {
@@ -142,6 +151,8 @@ img{
   z-index: 100;
   transition: 1s;
   opacity: 0.5;
+  width: fit-content;
+  margin: auto;
 }
 
 .text_button:hover {
@@ -155,6 +166,10 @@ img{
   -webkit-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+.ui-shadow{
+  box-shadow: 4px 3px 24px -2px rgba(0,0,0,0.8);
 }
 
 /* modal */
@@ -319,23 +334,23 @@ img{
 
 /* inputs */
 
-input[type=text], input[type="number"], input[type="submit"], select {
-  background-color: rgb(109, 109, 109);
+input[type=text], input[type="number"], input[type="submit"], input[type="button"], select, .input {
+  background-color: rgba(109, 109, 109, 0.7);
   color: white;
   padding: 6px 15px;
   margin: 3px 0;
   box-sizing: border-box;
-  border: 3px solid rgb(109, 109, 109);
+  border: 3px solid transparent;
   transition: 0.5s;
   outline: none;
   width: 100%;
 }
 
-input[type=text]:hover, input[type="number"]:hover,input[type="submit"]:hover, select:hover {
+input[type=text]:hover, input[type="number"]:hover,input[type="submit"]:hover, input[type="button"]:hover, select:hover, .input:hover  {
   border: 3px solid  rgb(150, 150, 150);
 }
 
-input[type=text]:focus, input[type="number"]:focus,input[type="submit"]:focus, select:focus {
+input[type=text]:focus, input[type="number"]:focus,input[type="submit"]:focus, input[type="button"]:focus, select:focus, .input:focus  {
   border: 3px solid #ccc;
 }
 
@@ -345,6 +360,11 @@ input::placeholder {
 }
 
 /* scrollbar - todo */
+@-moz-document url-prefix() { /* Disable scrollbar Firefox */
+  html{
+    scrollbar-width: none;
+  }
+}
 
 ::-webkit-scrollbar {
   width: 0; 
@@ -366,6 +386,56 @@ input::placeholder {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(145, 145, 145, 1); 
 }
+
+#firebaseui-auth-container {
+  z-index: 1000;
+}
+#firebaseui-auth-container input[type="text"] {
+  background-color: white;
+  padding-left: 0;
+  color: black;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+
+
+
+/* staggered list view enter */
+/* ref https://codepen.io/shshaw/pen/YLmdxz */
+
+.list-enter-active,
+.list-leave-active {
+  transition: all 1s;
+}
+.list-enter, .list-leave-to /* .list-leave-active below version 2.1.8 */ {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.slide-in-move {
+  transition: opacity 0.5s linear, transform 0.5s ease-in-out;
+}
+.slide-in-leave-active {
+  transition: opacity 0.4s linear, transform 0.4s cubic-bezier(0.5, 0, 0.7, 0.4);
+  transition-delay: calc(0.2s * (var(--total) - var(--i)));
+}
+.slide-in-enter-active {
+  transition: opacity 0.5s linear, transform 0.5s cubic-bezier(0.2, 0.5, 0.1, 1);
+  transition-delay: calc(0.2s * var(--i));
+}
+.slide-in-enter,
+.slide-in-leave-to {
+  opacity: 0;
+}
+.slide-in-enter {
+  transform: translateX(-1em);
+}
+.slide-in-leave-to {
+  transform: translateX(1em);
+}
+
+
 
 
 @keyframes enter {

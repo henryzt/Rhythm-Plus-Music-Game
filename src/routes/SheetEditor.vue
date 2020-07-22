@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- visualizer canvas -->
-    <Visualizer ref="visualizer" v-show="srcMode==='url'"></Visualizer>
+    <Visualizer ref="visualizer" :setBlur="blur" v-show="srcMode==='url'"></Visualizer>
 
     <div class="toolbar blurBackground" style="padding-left:0">
       <div class="logo">
@@ -16,7 +16,7 @@
       <a href="#" @click.prevent="newEditor">New</a>
       <div style="display:flex" :class="{disabled:!initialized}">
         <a href="#" @click.prevent="saveSheet" :class="{disabled:!isSheetOwner}">Save</a>
-        <a href="#" @click.prevent="togglePlayMode">{{playMode?"Edit":"Test"}}</a>
+        <a href="#" @click.prevent="togglePlayMode(false)">{{playMode?"Edit":"Test"}}</a>
         <a href="#" @click.prevent="showPublishModal" :class="{disabled:!isSheetOwner}">Publish</a>
       </div>
     </div>
@@ -30,7 +30,13 @@
         <!-- tab 1 - info editor -->
         <info-editor style="flex-grow:1" ref="info" v-show="leftTab===1"></info-editor>
         <!-- tab 2 - options -->
-        <PlayControl style="flex-grow:1" ref="control" v-if="leftTab===2" :playData="$data"></PlayControl>
+        <PlayControl
+          style="flex-grow:1; padding:0 30px; box-sizing: border-box;"
+          ref="control"
+          v-if="leftTab===2"
+          :playData="$data"
+          :formStyle="true"
+        ></PlayControl>
         <!-- song control -->
         <SongListItem
           v-if="songInfo.id"
@@ -40,14 +46,19 @@
           style="cursor:pointer"
         ></SongListItem>
         <div v-show="gameSheetInfo" v-if="srcMode=='youtube'&&youtubeId">
+          <div
+            v-if="initialized"
+            style="position:absolute; width:100%;height:100%;cursor:pointer;"
+            @click="instance.paused ? songLoaded() : pauseGame()"
+          ></div>
           <Youtube
             id="ytPlayer_editor"
             style="min-height:240px"
             ref="youtube"
             width="100%"
-            height="240px"
+            height="100%"
             :video-id="youtubeId"
-            :player-vars="{ rel: 0, playsinline: 1, disablekb: 1, autoplay: 0 }"
+            :player-vars="{ rel: 0, playsinline: 1, disablekb: 1, autoplay: 0, controls: 0, modestbranding: 1 }"
             @playing="songLoaded"
             @error="ytError"
             @paused="ytPaused"
@@ -77,6 +88,11 @@
         v-if="instance"
         :class="{disabled:!initialized}"
       >
+        <div
+          v-if="!disableMappingTable"
+          @click="disableMappingTable=true"
+          style="float:right;padding-top:30px;opacity:0.5;cursor:pointer;"
+        >Disable</div>
         <h2>Mappings</h2>
         <SheetTable v-if="!disableMappingTable"></SheetTable>
         <div v-else>
@@ -93,7 +109,12 @@
     <div class="toolbar blurBackground" v-if="instance" :class="{disabled:!initialized}">
       <div style="font-size:30px;width:80px;text-align:center;">{{currentTime}}</div>
       <div class="action_buttons">
-        <v-icon class="vicon" name="undo" scale="1" @click="seekTo(Number(currentTime)-5)" />
+        <v-icon
+          class="vicon"
+          name="undo"
+          scale="1"
+          @click="seekTo(Number(currentTime)-noteSpeedInSec)"
+        />
         <v-icon
           class="vicon"
           name="play"
@@ -102,7 +123,12 @@
           v-if="instance && instance.paused"
         />
         <v-icon class="vicon" name="pause" scale="1.5" @click="pauseGame" v-else />
-        <v-icon class="vicon" name="redo" scale="1" @click="seekTo(Number(currentTime)+5)" />
+        <v-icon
+          class="vicon"
+          name="redo"
+          scale="1"
+          @click="seekTo(Number(currentTime)+noteSpeedInSec)"
+        />
       </div>
       <div style="flex-grow:1">
         <vue-slider
@@ -111,6 +137,9 @@
           :interval="0.001"
           :min="-noteSpeedInSec"
           :max="songLength"
+          :contained="true"
+          :lazy="true"
+          @dragging="seeking"
           @change="seekTo"
         ></vue-slider>
       </div>
@@ -127,6 +156,7 @@
     </div>
 
     <Loading style="z-index:500" :show="loading">Just a second...</Loading>
+    <Loading style="z-index: 1000;" :show="!$store.state.initialized">Communicating...</Loading>
 
     <Modal
       ref="publishModal"
@@ -197,7 +227,10 @@ export default {
           showExistingNote: true,
           selectedNotes: [],
           leftTab: 1,
-          disableMappingTable: false
+          disableMappingTable: false,
+          options:{
+            soundEffect: true, //eidtor hit sound effect
+          }
         }
     },
     computed: {
@@ -215,12 +248,16 @@ export default {
     watch: {
       playbackSpeed(){
         this.setPlaybackRate(this.playbackSpeed)
+      },
+      '$store.state.initialized'(){
+        this.checkLoggedIn()
       }
     },
     async mounted() {
       this.wrapper = this.$refs.wrapper;
       this.instance.reposition()
       const sheetId = this.$route.params.sheet;
+      this.checkLoggedIn()
 
       if(sheetId){
         this.loading = true
@@ -229,26 +266,45 @@ export default {
           this.songInfo = await getSong(this.sheetInfo.songId);
           this.gameSheetInfo = await getGameSheet(sheetId);
           this.gameSheetInfo.sheet = this.gameSheetInfo.sheet ?? [];
-          console.log(this.gameSheetInfo)
           this.instance.loadSong(this.gameSheetInfo);
-          if(!this.isSheetOwner)
-            this.$store.state.alert.warn("Warning, you do not have edit access to this sheet, any changes will not be saved!", 10000)
+          console.log(this.gameSheetInfo)
+          if(this.$route.query.save){
+            // refresh sheet data
+            await this.saveSheet()
+            this.$router.push({query: { update: true }});
+            this.reloadEditor();
+            return;
+          }
+          if(!this.isSheetOwner){
+            this.$store.state.alert.warn("Warning, you do not have edit access to this sheet, any changes will not be saved!", 10000);
+          }
         }catch(err){
           console.error(err);
           this.$store.state.gModal.show({bodyText:"Sorry, something went wrong, maybe try refresh?", 
           isError: true, showCancel: false})
         }
         this.loading = false
+
+        if(this.$route.query.update){
+          this.$store.state.alert.success("Successfully updated!")
+          this.$router.push({query:null})
+        }
       }
     },
     methods: {
+      checkLoggedIn(){
+        if (this.$store.state.initialized && !this.$store.state.verified) {
+          this.$router.push({ path: "/account", query: { warn: true } });
+        }
+      },
       goToMenu(){
         this.$router.push('/menu')
       },
       async songLoaded(){
         if(!this.initialized){
+          this.instance.resetPlaying()
           this.songLength = await this.getLength();
-          this.pauseGame()
+          this.instance.pauseGame()
           this.initialized = true;
         }else if(!this.started){
           this.instance.paused = false;
@@ -268,8 +324,11 @@ export default {
         return Number(length.toFixed(3))
       },
       pauseGame(){
+        if(!this.started) return;
         this.reorderSheet()
+        this.clearFever()
         this.instance.pauseGame()
+        this.disableMappingTable = false;
       },
       async restartGame(){
         if(!this.started) return;
@@ -277,23 +336,22 @@ export default {
         await this.instance.pauseGame()
         this.clearResult()
         this.instance.resetPlaying()
-        this.instance.paused = false
-        this.instance.startSong()
+      },
+      async seeking(time){
+        if(!this.instance.paused) this.pauseGame();
+        this.instance.seekingTime = time;
+        await this.instance.gameTimingLoop();
+        this.instance.seeked();
+        this.instance.repositionNotes();
       },
       seekTo(time){
-        if(time<0){
+        if(time<this.instance.startSongAt){
           this.restartGame()
-          return
-        }
-        if(this.srcMode==="youtube"){
-          this.ytPlayer.seekTo(Number(time))
+          this.pauseGame()
         }else{
-          this.audio.seek(Number(time))
+          this.seeking(time)
+          this.instance.seekTo(time)
         }
-        setTimeout(()=>{
-          this.instance.seeked()
-          this.instance.repositionNotes()
-        },200)
       },
       setPlaybackRate(rate){
         if(this.srcMode==="youtube"){
@@ -302,18 +360,22 @@ export default {
           this.audio.setRate(Number(rate))
         }
       },
-      togglePlayMode(){
+      togglePlayMode(clean){
         this.playMode = !this.playMode;
         this.playbackSpeed = 1;
-        this.instance.clearNotes()
-        this.restartGame()
+        if(clean){
+          this.instance.clearNotes()
+          this.restartGame()
+        }
+        this.clearFever()
+        this.instance.repositionNotes()
       },
       updateSongDetail(){
         this.$refs.info.openSongUpdate()
       },
       newEditor(){
-        this.$router.push("/editor/")
-        this.$router.go()
+        this.$router.push("/editor/");
+        this.reloadEditor();
       },
       showPublishModal(){
         this.$refs.publishModal.show()
@@ -326,12 +388,12 @@ export default {
       async saveSheet(){
         this.reorderSheet()
         this.countTotal()
-        const sheet = {
+        let sheet = {
           id: this.sheetInfo.id,
-          sheet: JSON.stringify(this.instance.timeArr),
-          length: this.sheetInfo.length,
-          noteCount: this.sheetInfo.noteCount
-          }
+          sheet: JSON.stringify(this.instance.timeArr)
+        }
+        if(this.sheetInfo.length) sheet.length = this.sheetInfo.length;
+        if(this.sheetInfo.noteCount) sheet.noteCount = this.sheetInfo.noteCount;
         try{
           await updateSheet(sheet);
           this.$store.state.alert.success("Sheet saved!")
@@ -345,8 +407,15 @@ export default {
       },
       countTotal(){
         const lastNote = this.instance.timeArr[this.instance.timeArr.length-1]
-        this.sheetInfo.length = Math.min.apply(Math,[this.songLength, lastNote.t+2])
+        this.sheetInfo.length = this.sheetInfo.endAt ?? (lastNote ? Math.min.apply(Math,[this.songLength, lastNote.t+5]):this.songLength);
         this.sheetInfo.noteCount = this.instance.timeArr.length
+      },
+
+      reloadEditor(){
+        this.$store.state.redirecting = true;
+        this.$nextTick(()=>{
+          this.$store.state.redirecting = false;
+        })
       }
     }
 };

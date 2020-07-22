@@ -33,7 +33,7 @@ export default {
       showStartButton: false,
       isGameEnded: false,
       initialized: false,
-      soundEffect: true, //eidtor hit sound effect
+      blur: false,
     };
   },
   computed: {
@@ -72,12 +72,21 @@ export default {
     // get audio element
     this.audio = this.$store.state.audio;
 
-    this.audio.stop();
+    this.audio.stop(true);
 
     this.instance = new GameInstance(this);
     this.instance.reposition();
 
     this.feverInterval = setInterval(this.feverTimer, 500);
+
+    // setup user default settings
+    const gameSettings = this.$store.state?.userProfile?.gameSt;
+    if (gameSettings) {
+      this.blur = gameSettings.blur;
+      this.noteSpeedInSec = gameSettings.noteSpeedInSec;
+      this.perspective = gameSettings.perspective;
+      this.vibrate = gameSettings.vibrate;
+    }
 
     window.addEventListener("blur", this.pauseGame);
   },

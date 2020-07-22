@@ -158,6 +158,8 @@ export default {
               scale: 1.1,
             });
       })
+
+      this.$store.dispatch("updateUserProfile");
     },
     beforeDestroy(){
       this.$store.state.audio.stop();

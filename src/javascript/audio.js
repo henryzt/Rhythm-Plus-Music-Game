@@ -12,7 +12,11 @@ export default class Audio {
     this.player = null;
     this.muteBg = false;
     document.addEventListener("visibilitychange", () => {
-      if (this.player && !this.muteBg) this.mute(document.hidden);
+      if (document.hidden) {
+        this.pause();
+      } else if (this.asBackground) {
+        this.play();
+      }
     });
   }
 
@@ -66,8 +70,8 @@ export default class Audio {
 
   playBgm(songToExclude) {
     // randomly play background music
-    if (this.player?.playing() && !songToExclude) return;
     let bgmUrlArr = ["/audio/bgm/aurora.mp3", "/audio/bgm/kontekst.mp3"];
+    if (songToExclude && !bgmUrlArr.includes(songToExclude)) return; // is playing result bgm
     shuffle(bgmUrlArr);
     bgmUrlArr.filter((e) => e !== songToExclude);
     this.stop();
@@ -84,7 +88,9 @@ export default class Audio {
     effectPlayer.play();
   }
 
-  stop() {
+  stop(stopBackground) {
+    if (!stopBackground && this.asBackground) return;
+    console.warn("stop", this.player, this.asBackground);
     this.player?.stop();
     if (this.asBackground) {
       this.player?.unload();

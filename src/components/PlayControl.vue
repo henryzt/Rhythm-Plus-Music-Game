@@ -1,52 +1,61 @@
 <template>
-  <div class="control">
-    <div class="text" v-if="playData.srcMode==='url' && playData.visualizerInstance">
-      Visualizer
-      <br />
+  <div class="control" :class="{formStyle, settingStyle}">
+    <p v-if="playData.srcMode==='url' && playData.visualizerInstance">
+      <label>Visualizer</label>
       <select
         id="songSelect"
         @change="toggleVisualizer($event.target.value)"
         :value="playData.visualizerInstance.currentVisualizer"
       >
         <option
-          v-for="visualizer in Object.keys(playData.visualizerInstance.visualizerArr)"
+          v-for="visualizer in Object.keys($store.state.visualizerArr)"
           :value="visualizer"
           :key="visualizer"
         >{{visualizer}}</option>
       </select>
-    </div>
+    </p>
 
-    <br />
+    <p>
+      <label>Note Speed</label>
+      <span>
+        <vue-slider
+          style="padding:20px 0;"
+          :value="3.01-playData.noteSpeedInSec"
+          :interval="0.01"
+          :min="0.01"
+          :max="3"
+          :contained="true"
+          :tooltip-formatter="val => val.toFixed(1)+'x'"
+          @change="changeSpeed"
+        ></vue-slider>
+      </span>
+    </p>
 
-    <div class="text">
-      Note Speed
-      <br />
-      <input v-model="playData.noteSpeedInSec" placeholder="Speed" type="number" />
-    </div>
-
-    <br />
-
-    <label class="cb_container">
-      Vibration
-      <input type="checkbox" v-model="playData.vibrate" />
-      <span class="checkmark"></span>
-    </label>
-
-    <label class="cb_container">
-      Blur Background
-      <input type="checkbox" v-model="playData.visualizerInstance.blur" />
-      <span class="checkmark"></span>
-    </label>
-
-    <label class="cb_container">
-      3D Perspective
-      <input type="checkbox" v-model="playData.perspective" />
-      <span class="checkmark"></span>
-    </label>
+    <p>
+      <label></label>
+      <Checkbox label="Vibration" :model="playData" modelKey="vibrate" :cbStyle="cbStyle"></Checkbox>
+    </p>
+    <p>
+      <label></label>
+      <Checkbox label="Blur Background" :model="playData" modelKey="blur" :cbStyle="cbStyle"></Checkbox>
+    </p>
+    <p>
+      <label></label>
+      <Checkbox label="3D Perspective" :model="playData" modelKey="perspective" :cbStyle="cbStyle"></Checkbox>
+    </p>
 
     <!-- create mode only -->
     <div v-if="playData.inEditor">
       <br />
+      <p>
+        <label></label>
+        <Checkbox
+          label="Hit Sound Effect"
+          :model="$parent.options"
+          modelKey="soundEffect"
+          :cbStyle="cbStyle"
+        ></Checkbox>
+      </p>
       <br />
       <!-- score -->
       <div style="padding:15px">
@@ -65,28 +74,70 @@
 </template>
 
 <script>
+import VueSlider from 'vue-slider-component'
+import Checkbox from './Checkbox.vue';
 
 
 export default {
   name: 'PlayControl',
-  props: ["playData"],
+  props: ["playData", "formStyle", "settingStyle"],
   data: function(){
     return {
         youtubeId: "",
     }
   },
+  components:{
+    VueSlider,
+    Checkbox
+  },
   methods: {
     toggleVisualizer(name) {
       this.playData.visualizerInstance.setVisualizerByKey(name)
+    },
+    changeSpeed(speed){
+      this.playData.noteSpeedInSec = 3.01 - speed;
+    }
+  },
+  computed:{
+    cbStyle(){
+      return this.formStyle? 'form' : 'no-bg';
     }
   }
 };
 </script>
 
 <style scoped>
-.text {
+.control {
   text-align: left;
   margin: auto;
   width: 240px;
+}
+.formStyle {
+  display: table;
+  width: 100%;
+  vertical-align: middle;
+}
+.settingStyle p {
+  display: table-row;
+  width: 100%;
+}
+.settingStyle label {
+  display: table-cell;
+  width: 25%;
+  text-align: right;
+  padding-right: 10px;
+  vertical-align: middle;
+}
+.settingStyle input {
+  display: table-cell;
+}
+@media only screen and (max-width: 1000px) {
+  .settingStyle label {
+    width: 35%;
+  }
+}
+
+p {
+  margin: 0;
 }
 </style>

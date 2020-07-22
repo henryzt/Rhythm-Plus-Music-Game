@@ -52,7 +52,6 @@ export default class Note {
     // FIXME calculation logic
     this.percentage = 1 - ((1 - this.getDiffPercentage() - 0.2) / 4) * 5;
     this.percentage = this.percentage < 1 ? this.percentage : 1;
-    this.judge();
   }
 
   judge() {
@@ -73,12 +72,14 @@ export default class Note {
     this.judge();
     const { percentage } = this;
     let accuracyPercent = 100 * (1 - percentage);
-    if (!isHolding) {
+    if (!this.accuracyJudged) {
       // hold note does not count towards accuracy percent
       this.vm.result.totalPercentage += accuracyPercent;
       this.vm.result.totalHitNotes += 1;
+      this.accuracyJudged = true;
     }
-    this.vm.result.score += 2 * accuracyPercent * this.vm.fever.value;
+    const buff = isHolding ? 1 : 2;
+    this.vm.result.score += buff * accuracyPercent * this.vm.fever.value;
     this.vm.result.combo += 1;
     this.vm.result.maxCombo =
       this.vm.result.combo > this.vm.result.maxCombo
@@ -193,7 +194,8 @@ export default class Note {
   }
 
   playSoundEffect() {
-    if (!this.vm.inEditor || !this.vm.soundEffect || !this.vm.playMode) return;
+    if (!this.vm.inEditor || !this.vm.options.soundEffect || !this.vm.playMode)
+      return;
     if (!this.sePlayed && this.y >= this.vm.checkHitLineY) {
       this.sePlayed = true;
       this.vm.$store.state.audio.playEffect("/audio/effects/du.mp3");

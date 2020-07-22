@@ -2,6 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import * as fb from "./firebaseConfig";
 import md5 from "js-md5";
+import firebase from "firebase";
 
 Vue.use(Vuex);
 
@@ -13,17 +14,22 @@ export const store = new Vuex.Store({
     userProfile: {},
     profilePicture: null,
     authed: false,
+    verified: false,
     initialized: false,
     isFullscreen: false,
+    visualizerArr: null,
+    theme: null,
+    redirecting: false,
   },
   actions: {
-    fetchUserProfile() {
+    async fetchUserProfile() {
       if (this.state.currentUser && !this.state.currentUser.isAnonymous) {
-        this.dispatch("updateUserProfile");
-        this.dispatch("fetchProfilePicture");
+        await this.dispatch("updateUserProfile");
+        await this.dispatch("fetchProfilePicture");
       } else {
         this.commit("setUserProfile", null);
         this.commit("setProfilePciture", null);
+        this.commit("setTheme");
       }
     },
     async fetchProfilePicture({ commit, state }) {
@@ -44,25 +50,44 @@ export const store = new Vuex.Store({
         }
       }
     },
-    updateUserProfile({ commit, state }) {
+    async updateUserProfile({ commit, state }) {
       if (state.currentUser) {
-        fb.usersCollection
-          .doc(state.currentUser.uid)
-          .get()
-          .then((res) => {
-            commit("setUserProfile", res.data());
-          })
-          .catch((err) => {
-            console.error(err);
-          });
+        try {
+          const res = await fb.usersCollection.doc(state.currentUser.uid).get();
+          let data = res.data();
+          commit("setUserProfile", data ?? {});
+          commit("setTheme");
+        } catch (err) {
+          console.error(err);
+        }
+        // update display name and photo for first time login
+        const user = firebase.auth().currentUser;
+        const providerDisplayName =
+          state.currentUser.providerData?.[0]?.displayName;
+        let reloadRequired = false;
+        if (!state.currentUser.displayName && providerDisplayName) {
+          state.redirecting = true;
+          await user.updateProfile({ displayName: providerDisplayName });
+          reloadRequired = true;
+          console.warn("Display name updated using provider data");
+        }
+        const providerPhoto = state.currentUser.providerData?.[0]?.photoURL;
+        if (!state.currentUser.photoURL && providerPhoto) {
+          state.redirecting = true;
+          await user.updateProfile({ photoURL: providerPhoto });
+          console.warn("Photo URL updated using provider data");
+          reloadRequired = true;
+        }
+        if (reloadRequired) window.location.reload();
       }
     },
   },
   mutations: {
     setCurrentUser(state, val) {
-      state.initialized = true;
-      state.authed = val && !val.isAnonymous;
+      state.authed = val && !val.isAnonymous && val.providerData?.length > 0;
+      state.verified = state.authed && val.emailVerified;
       state.currentUser = val;
+      this.dispatch("fetchUserProfile");
     },
     setUserProfile(state, val) {
       state.userProfile = val;
@@ -72,6 +97,27 @@ export const store = new Vuex.Store({
         state.userProfile.lv = level;
         state.userProfile.lvd = Math.floor(level);
       }
+    },
+    setTheme(state) {
+      // set themes
+      const purpleSwirl = {
+        visualizer: "swirl",
+        buttonStyle: "colored",
+        logoAsset: "logo2.png",
+      };
+      const flameSpace = {
+        visualizer: "space",
+        buttonStyle: "",
+        logoAsset: "logo.png",
+      };
+      const userTheme = state.userProfile?.appearanceSt;
+      state.theme =
+        userTheme?.theme === "flameSpace" ? flameSpace : purpleSwirl;
+      if (userTheme) {
+        state.theme.visualizer = userTheme.visualizer;
+        state.theme.blur = userTheme.blur;
+      }
+      state.initialized = true;
     },
     setProfilePciture(state, val) {
       state.profilePicture = val;
@@ -84,6 +130,9 @@ export const store = new Vuex.Store({
     },
     setFloatingAlert(state, val) {
       state.alert = val;
+    },
+    setVisualizerArr(state, val) {
+      state.visualizerArr = val;
     },
     async toggleFullscreen(state) {
       state.isFullscreen = document.fullscreen;

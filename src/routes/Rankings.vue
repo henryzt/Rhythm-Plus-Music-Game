@@ -1,19 +1,22 @@
 <template>
   <div>
-    <PageBackground></PageBackground>
-
-    <div class="center_logo">Coming soon...</div>
+    <div class="center">
+      <div class="animate__animated animate__bounce" style="opacity:0.4;">
+        <v-icon name="regular/laugh" scale="7" style="padding:10px;"></v-icon>
+        <div>Stay Tuned...</div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import PageBackground from '../components/PageBackground.vue';
 import Button from '../components/Button.vue';
+import 'vue-awesome/icons/regular/laugh'
+
 
 export default {
     name: 'Rankings',
     components: {
-        PageBackground,
         Button
     },
     data(){

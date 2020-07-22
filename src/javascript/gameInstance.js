@@ -2,6 +2,13 @@ import DropTrack from "./track";
 import FeverEffect from "./FeverEffect";
 import YoutubePlayer from "./youtube";
 
+const KeyCode = {
+  KEY_LEFT: 37,
+  KEY_RIGHT: 39,
+  ESC: 27,
+  P: 80,
+};
+
 export default class GameInstance {
   constructor(vm) {
     this.canvas = vm.canvas;
@@ -15,6 +22,7 @@ export default class GameInstance {
     // time elapsed relative to audio play time (+Number(vm.noteSpeedInSec))
     this.currentTime = 0;
     this.playTime = 0; // Current time + note drop delay
+    this.startSongAt = 0;
     this.loading = false;
     this.paused = true;
 
@@ -25,11 +33,17 @@ export default class GameInstance {
     // clock for counting time
     this.intervalPlay = null;
 
+    // if eidtor slider is dragging, override play time
+    this.seekingTime = null;
+
     // store whether key is holding
-    this.keyStatus = {};
+    this.keyHoldingStatus = {};
 
     // store holding key
     this.holdingNote = {};
+
+    // timeouts for holding note
+    this.holdingNoteTimeout = {};
 
     this.ytPlayer = new YoutubePlayer(vm);
     this.feverEff = new FeverEffect(vm, this);
@@ -111,6 +125,7 @@ export default class GameInstance {
     this.vm.checkHitLineY = (this.canvas.height / 10) * hitLineProp;
     this.vm.noteSpeedPxPerSec =
       this.vm.checkHitLineY / Number(this.vm.noteSpeedInSec);
+    this.repositionNotes();
   }
 
   registerInput() {
@@ -129,18 +144,15 @@ export default class GameInstance {
     document.addEventListener(
       "keydown",
       (event) => {
-        this.onKeyDown(event.key);
+        this.onKeyDown(event.key.toLowerCase());
+        if (event.keyCode === KeyCode.ESC || event.keyCode === KeyCode.P) {
+          this.vm.pauseGame();
+        }
         if (this.vm.inEditor) {
           // editor time minor adjust by arrow keys
-          const KeyCode = {
-            KEY_LEFT: 37,
-            KEY_RIGHT: 39,
-          };
           if (event.keyCode === KeyCode.KEY_LEFT) {
-            // left
             this.vm.seekTo(this.currentTime - 0.03);
           } else if (event.keyCode === KeyCode.KEY_RIGHT) {
-            // right
             this.vm.seekTo(this.currentTime + 0.03);
           }
         }
@@ -151,7 +163,7 @@ export default class GameInstance {
     document.addEventListener(
       "keyup",
       (event) => {
-        this.onKeyUp(event.key);
+        this.onKeyUp(event.key.toLowerCase());
       },
       false
     );
@@ -207,11 +219,10 @@ export default class GameInstance {
   }
 
   // log key and touch events
-  async onKeyDown(keyRaw) {
-    const key = keyRaw.toLowerCase();
+  async onKeyDown(key) {
     // avoid repeated triggering when key is held
-    if (this.keyStatus[key]) return;
-    this.keyStatus[key] = true;
+    if (this.keyHoldingStatus[key]) return;
+    this.keyHoldingStatus[key] = true;
     if (!this.trackKeyBind.includes(key)) return;
     // if in create mode, create note
     if (!this.vm.playMode && !this.paused) {
@@ -219,13 +230,11 @@ export default class GameInstance {
       this.createSingleNote(key, cTime);
       const singleNoteObj = this.timeArr[this.lastAddedIdx];
       // convert to hold note
-      setTimeout(() => {
-        if (
-          this.keyStatus[key] &&
-          singleNoteObj == this.timeArr[this.lastAddedIdx]
-        ) {
+      this.holdingNoteTimeout[key] = setTimeout(() => {
+        if (this.keyHoldingStatus[key]) {
           this.createHoldNote(key, singleNoteObj);
         }
+        this.holdingNoteTimeout[key] = null;
       }, 300);
     }
     // register key down
@@ -235,7 +244,8 @@ export default class GameInstance {
   }
 
   async onKeyUp(key) {
-    this.keyStatus[key] = false;
+    this.keyHoldingStatus[key] = false;
+    clearTimeout(this.holdingNoteTimeout[key]);
     if (this.holdingNote[key]) {
       const cTime = await this.getCurrentTime();
       this.holdingNote[key].h[key] = cTime; // Hold note creation complete, set the end time
@@ -260,7 +270,7 @@ export default class GameInstance {
 
   repositionNotes() {
     let filteredNotes = this.timeArr.filter((e) => {
-      return this.isWithinTime(e.t);
+      return this.isWithinTime(e);
     });
     for (const track of this.dropTrackArr) {
       track.repositionNotes(filteredNotes);
@@ -283,20 +293,20 @@ export default class GameInstance {
     ) {
       this.timeArr[this.lastAddedIdx].k += key;
     } else {
-      // this.timeArr.push({
-      //   t: Number(cTime.toFixed(3)),
-      //   k: key,
-      // });
-      // this.timeArrIdx = this.timeArr.length - 1;
-      // add at idx
-      this.timeArr.splice(this.timeArrIdx, 0, {
+      this.timeArr.push({
         t: Number(cTime.toFixed(3)),
         k: key,
       });
+      // this.timeArrIdx = this.timeArr.length - 1;
+      // add at idx
+      // this.timeArr.splice(this.timeArrIdx, 0, {
+      //   t: Number(cTime.toFixed(3)),
+      //   k: key,
+      // });
       this.lastAddedTime = cTime;
-      this.lastAddedIdx = this.timeArrIdx;
+      this.lastAddedIdx = this.timeArr.length - 1;
       this.lastAddedKey = key;
-      this.timeArrIdx++;
+      if (this.lastAddedIdx === this.timeArrIdx) this.timeArrIdx++;
       setTimeout(() => {
         if (!this.timeArr[this.lastAddedIdx]) return;
         const k = this.timeArr[this.lastAddedIdx].k;
@@ -312,6 +322,14 @@ export default class GameInstance {
     this.holdingNote[key] = obj;
   }
 
+  seekTo(time) {
+    if (this.vm.srcMode === "youtube") {
+      return this.vm.ytPlayer.seekTo(time);
+    } else {
+      return this.audio.seek(time);
+    }
+  }
+
   seeked() {
     // advance time arr idx if play time is changed
     if (this.vm.inEditor) {
@@ -320,10 +338,7 @@ export default class GameInstance {
       let idx = this.timeArr.findIndex((e) => e.t >= cTime);
       if (idx === -1) {
         const endIdx = this.timeArr.length - 1;
-        idx =
-          this.timeArr[endIdx] && this.timeArr[endIdx].t < cTime
-            ? endIdx + 1
-            : 0;
+        idx = this.timeArr[endIdx] ? endIdx + 1 : 0;
       }
       this.clearNotes();
       this.timeArrIdx = idx;
@@ -335,6 +350,7 @@ export default class GameInstance {
     if (this.destoryed) return;
     requestAnimationFrame(this.update.bind(this));
     if (this.vm.started && this.paused && !this.vm.inEditor) return;
+    if (!this.vm.inEditor) this.getCurrentTime();
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.vm.visualizerInstance.renderVisualizer();
     this.feverEff.update();
@@ -349,14 +365,19 @@ export default class GameInstance {
     this.resetPlaying();
     const startTime = Date.now();
     window.focus();
+    this.seekTo(this.startSongAt);
 
     const intervalPrePlay = setInterval(() => {
       const elapsedTime = Date.now() - startTime;
-      this.playTime = Number(elapsedTime / 1000);
+      this.playTime = elapsedTime / 1000 + this.startSongAt;
       this.paused = false;
-      if (this.playTime > Number(this.vm.noteSpeedInSec)) {
+      if (this.seekingTime && this.seekingTime > this.startSongAt) {
+        this.gameTimingLoop();
+        this.seekTo(this.currentTime);
+        this.seeked();
+      }
+      if (this.playTime > this.vm.noteSpeedInSec + this.startSongAt) {
         if (!this.vm.started || !this.paused) this.resumeGame();
-        // this.vm.visualizerInstance.initAllVisualizersIfRequried();
         clearInterval(intervalPrePlay);
         clearInterval(this.intervalPlay);
         this.vm.started = true;
@@ -366,49 +387,68 @@ export default class GameInstance {
   }
 
   async gameTimingLoop() {
-    const cTime = await this.getCurrentTime();
-    this.playTime = cTime + Number(this.vm.noteSpeedInSec);
-    this.currentTime = cTime;
+    await this.getCurrentTime();
+
+    const gameEndAt = this.vm.currentSong.length;
 
     // check game end
-    const lastIdx = this.timeArr.length - 1;
-    if (
-      !this.vm.inEditor &&
-      this.vm.playMode &&
-      this.timeArrIdx >= lastIdx &&
-      this.timeArr[lastIdx] &&
-      this.playTime > Number(this.timeArr[lastIdx].t) + 5 // FIXME: Number Casting
-    ) {
-      this.vm.gameEnded();
+    if (this.currentTime >= gameEndAt) {
+      if (!this.vm.inEditor) {
+        this.vm.gameEnded();
+      } else if (!this.paused && this.vm.currentSong.endAt === gameEndAt) {
+        this.vm.pauseGame();
+        this.seekTo(gameEndAt);
+        this.vm.$store.state.alert.info(
+          `Game ended at ${gameEndAt} seconds`,
+          3000
+        );
+      }
     }
   }
 
   async getCurrentTime() {
-    // it seems that 'getPlayerTime' is async, thus all places calling this func need to await res [help wanted]
-    return this.vm.srcMode === "youtube"
-      ? this.ytPlayer.getPlayerTime()
-      : Promise.resolve(this.audio.getCurrentTime());
+    let cTime;
+    if (this.seekingTime) {
+      cTime = this.seekingTime;
+    } else {
+      cTime =
+        this.vm.srcMode === "youtube"
+          ? await this.ytPlayer.getPlayerTime()
+          : this.audio.getCurrentTime();
+      if (!this.vm.started) return cTime;
+    }
+    this.playTime = cTime + this.vm.noteSpeedInSec;
+    this.currentTime = cTime;
+    return cTime;
   }
 
   getNoteTiming() {
     return this.vm.playMode ? this.playTime : this.currentTime; // in editor mode, time without note drop delay is used.
   }
 
-  isWithinTime(time) {
+  isWithinTime(note) {
     // check if a note with start time is currently on screen
+    const time = note.t;
     const sec = Number(this.vm.noteSpeedInSec);
     const current = Number(this.getNoteTiming());
-    return time <= current && time >= current - sec;
+    let isWithinStartTime = time >= current - sec;
+    let isWithinEndTime = time <= current;
+    if (note.h) {
+      const holdTime = Math.max(...Object.values(note.h));
+      isWithinStartTime = holdTime >= current - sec;
+    }
+    return isWithinStartTime && isWithinEndTime;
   }
 
   resetPlaying(resetTimeArr) {
     clearInterval(this.intervalPlay);
+    this.vm.started = false;
     this.ytPlayer.resetVideo();
     this.clearNotes();
     if (resetTimeArr) this.timeArr = [];
     this.timeArrIdx = 0;
-    this.playTime = 0;
-    this.currentTime = 0;
+    this.playTime = this.startSongAt;
+    this.currentTime = this.startSongAt;
     this.audio.stop();
   }
 
@@ -420,6 +460,7 @@ export default class GameInstance {
     this.timeArr = song.sheet;
     this.vm.visualizerInstance.vComponent =
       song.visualizerName !== null ? song.visualizerName : 0;
+    this.startSongAt = song.startAt ?? 0;
     if (song.keys && song.keys != 4) this.createTracks(Number(song.keys));
     if (song.srcMode === "youtube") {
       this.ytPlayer.loadYoutubeVideo(song.youtubeId);
@@ -450,6 +491,7 @@ export default class GameInstance {
 
   resumeGame() {
     this.paused = false;
+    this.seekingTime = null;
     this.reposition();
     if (this.vm.srcMode === "url") {
       this.audio.play();

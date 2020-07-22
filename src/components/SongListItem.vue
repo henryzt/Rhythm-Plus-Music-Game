@@ -11,18 +11,21 @@
         <img :src="song.image" />
       </div>
       <div class="detail">
-        <div style="font-size:1.3em; font-weight: bold;">{{song.title}}</div>
+        <div style="font-size:1.3em; font-weight: bold;">
+          {{song.title}}
+          <span v-if="song.subtitle" style="opacity:0.6">({{song.subtitle}})</span>
+        </div>
         <div>{{song.artist}}</div>
       </div>
     </div>
     <div v-if="selected&&!hideBg">
-      <div v-if="sheets">
+      <div v-if="sheets" style="padding-bottom:20px;">
         <div v-for="sheet in sheets" :value="sheet.id" :key="sheet.id">
           <div
-            @click="selectedSheet = sheet"
+            @click="$emit('selectedSheet', sheet)"
             :class="{'sheet':true, 'active':selectedSheet==sheet}"
           >
-            <SheetDetailLine :sheet="sheet"></SheetDetailLine>
+            <SheetDetailLine :sheet="sheet" :compactDetailed="true"></SheetDetailLine>
           </div>
         </div>
       </div>
@@ -42,6 +45,7 @@ export default {
     },
     data() {
         return {
+          selectedSheet: null
         }
     },
     mounted(){
@@ -102,6 +106,18 @@ export default {
 }
 .song_item_small {
   font-size: 0.8em;
+}
+.sheet {
+  max-width: 800px;
+  cursor: pointer;
+  transition: 0.5s;
+  margin: auto;
+}
+.sheet:hover {
+  /* text-align: center; */
+  /* min-width: 800px; */
+  /* max-width: fit-content; */
+  background: rgba(255, 255, 255, 0.3);
 }
 @media only screen and (max-width: 1000px) {
   .image {

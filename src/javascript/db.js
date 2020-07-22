@@ -64,8 +64,6 @@ export function getSongList(getPrivate, filterIdArr) {
         let song = filterSongData(doc);
 
         res.push(song);
-        // doc.data() is never undefined for query doc snapshots
-        // console.log(doc.id, " => ", doc.data());
       });
       resolve(res);
     };
@@ -149,12 +147,11 @@ export function updateSong(info) {
 
 function cleanForUpdate(obj) {
   obj.dateUpdated = firestore.Timestamp.now();
-  // FIXME handle this logic better
-  for (let propName in obj) {
-    if (obj[propName] === undefined) {
-      delete obj[propName];
+  Object.keys(obj).forEach((key) => {
+    if (obj[key] === undefined) {
+      delete obj[key];
     }
-  }
+  });
 }
 
 export function createSheet(sheetInfo) {

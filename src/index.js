@@ -1,12 +1,12 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import "animate.css";
+import VueMoment from "vue-moment";
 import App from "./App.vue";
 import router from "./helpers/router";
 import { store } from "./helpers/store";
 import * as fb from "./helpers/firebaseConfig";
 import Icon from "vue-awesome/components/Icon.vue";
-import VueMoment from "vue-moment";
+import "animate.css";
 
 Vue.config.productionTip = false;
 Vue.config.devtools = process.env.NODE_ENV === "development";

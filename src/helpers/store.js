@@ -116,8 +116,6 @@ export const store = new Vuex.Store({
       if (userTheme) {
         state.theme.visualizer = userTheme.visualizer;
         state.theme.blur = userTheme.blur;
-      } else {
-        state.theme.visualizer = state.theme.visualizer;
       }
       state.initialized = true;
     },

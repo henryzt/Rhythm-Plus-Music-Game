@@ -2,6 +2,13 @@ import DropTrack from "./track";
 import FeverEffect from "./FeverEffect";
 import YoutubePlayer from "./youtube";
 
+const KeyCode = {
+  KEY_LEFT: 37,
+  KEY_RIGHT: 39,
+  ESC: 27,
+  P: 80,
+};
+
 export default class GameInstance {
   constructor(vm) {
     this.canvas = vm.canvas;
@@ -138,12 +145,6 @@ export default class GameInstance {
       "keydown",
       (event) => {
         this.onKeyDown(event.key.toLowerCase());
-        const KeyCode = {
-          KEY_LEFT: 37,
-          KEY_RIGHT: 39,
-          ESC: 27,
-          P: 80,
-        };
         if (event.keyCode === KeyCode.ESC || event.keyCode === KeyCode.P) {
           this.vm.pauseGame();
         }
@@ -323,9 +324,9 @@ export default class GameInstance {
 
   seekTo(time) {
     if (this.vm.srcMode === "youtube") {
-      return this.vm.ytPlayer.seekTo(Number(time));
+      return this.vm.ytPlayer.seekTo(time);
     } else {
-      return this.audio.seek(Number(time));
+      return this.audio.seek(time);
     }
   }
 

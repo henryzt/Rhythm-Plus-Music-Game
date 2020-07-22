@@ -7,7 +7,6 @@ import Rankings from "../routes/Rankings.vue";
 import SongSelect from "../routes/SongSelect.vue";
 import MyStudio from "../routes/MyStudio.vue";
 import SheetEditor from "../routes/SheetEditor.vue";
-import { store } from "./store";
 
 const router = new VueRouter({
   mode: "history",

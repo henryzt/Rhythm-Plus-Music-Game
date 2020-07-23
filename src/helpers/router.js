@@ -53,12 +53,12 @@ const router = new VueRouter({
   ],
 });
 
-router.afterEach((to) => {
+router.afterEach(async (to) => {
   const path = to.path;
-  window.gaPageview(path);
-  analytics.setCurrentScreen(path);
-  analytics.logEvent("page_view");
-  analytics.logEvent("changed");
+  // window.gaPageview(path);
+  analytics().setCurrentScreen(window.location.pathname);
+  analytics().logEvent("page_view", { type: "internal" });
+  analytics().logEvent("screen_view", { screen_name: path });
 });
 
 export default router;

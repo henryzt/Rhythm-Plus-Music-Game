@@ -146,7 +146,11 @@ export default class GameInstance {
       (event) => {
         this.onKeyDown(event.key.toLowerCase());
         if (event.keyCode === KeyCode.ESC || event.keyCode === KeyCode.P) {
-          this.vm.pauseGame();
+          if (this.paused) {
+            this.vm.resumeGame();
+          } else {
+            this.vm.pauseGame();
+          }
         }
         if (this.vm.inEditor) {
           // editor time minor adjust by arrow keys

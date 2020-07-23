@@ -77,23 +77,22 @@
           @selected="updateSongDetail"
           style="cursor: pointer;"
         ></SongListItem>
-        <div v-show="gameSheetInfo" v-if="srcMode == 'youtube' && youtubeId">
+        <div v-show="gameSheetInfo" style="height: 200px;" v-if="srcMode == 'youtube' && youtubeId">
           <div
             v-if="initialized"
             style="
               position: absolute;
               width: 100%;
-              height: 100%;
+              height: 200px;
               cursor: pointer;
             "
             @click="instance.paused ? songLoaded() : pauseGame()"
           ></div>
           <Youtube
             id="ytPlayer_editor"
-            style="min-height: 240px;"
             ref="youtube"
             width="100%"
-            height="100%"
+            height="200px"
             :video-id="youtubeId"
             :player-vars="{
               rel: 0,
@@ -389,7 +388,7 @@ export default {
         this.instance.paused = false;
         this.instance.startSong();
       } else {
-        this.instance.resumeGame();
+        this.resumeGame();
       }
     },
     async getLength() {
@@ -408,6 +407,9 @@ export default {
       this.clearFever();
       this.instance.pauseGame();
       this.disableMappingTable = false;
+    },
+    resumeGame() {
+      this.instance.resumeGame();
     },
     async restartGame() {
       if (!this.started) return;

@@ -1,5 +1,6 @@
 import firebase from "firebase";
 import "firebase/firestore";
+import "firebase/analytics";
 
 // firebase init goes here
 const config = {
@@ -14,19 +15,19 @@ const config = {
 };
 firebase.initializeApp(config);
 
+// Init analytics
+firebase.analytics();
+
 // firebase utils
 const db = firebase.firestore();
 const firestore = firebase.firestore; //db instance
 const auth = firebase.auth();
 const functions = firebase.functions();
-const analytics = firebase.analytics();
+const analytics = firebase.analytics;
 const currentUser = auth.currentUser;
 
 // Initialize Performance Monitoring and get a reference to the service
 const perf = firebase.performance();
-
-// Init analytics
-firebase.analytics();
 
 // firebase collections
 const usersCollection = db.collection("users");

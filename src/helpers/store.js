@@ -89,8 +89,8 @@ export const store = new Vuex.Store({
       state.currentUser = val;
       this.dispatch("fetchUserProfile");
       if (!val) return;
-      analytics.setUserId(val.uid);
-      analytics.setUserProperties({
+      analytics().setUserId(val.uid);
+      analytics().setUserProperties({
         displayName: val.displayName,
         emailVerified: val.emailVerified,
         isAnonymous: val.isAnonymous,
@@ -125,6 +125,7 @@ export const store = new Vuex.Store({
         state.theme.blur = userTheme.blur;
       }
       state.initialized = true;
+      analytics().logEvent("app_initialized");
     },
     setProfilePciture(state, val) {
       state.profilePicture = val;

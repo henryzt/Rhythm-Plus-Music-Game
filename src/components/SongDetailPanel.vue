@@ -1,46 +1,60 @@
 <template>
-  <div class="song_item" @click="$emit('selected', song)" :key="song.id" v-if="song">
+  <div
+    class="song_item"
+    @click="$emit('selected', song)"
+    :key="song.id"
+    v-if="song"
+  >
     <div class="image">
       <img :src="song.image" />
     </div>
     <div class="detail">
-      <div style="font-size:1.3em; font-weight: bold;">
-        {{song.title}}
-        <span v-if="song.subtitle" style="opacity:0.6">({{song.subtitle}})</span>
+      <div style="font-size: 1.3em; font-weight: bold;">
+        {{ song.title }}
+        <span v-if="song.subtitle" style="opacity: 0.6;"
+          >({{ song.subtitle }})</span
+        >
       </div>
-      <div>{{song.artist}}</div>
+      <div>{{ song.artist }}</div>
     </div>
-    <div style="background:rgba(0,0,0,0.2); padding: 20px 0; box-sizing:border-box; width: 100%">
-      <div style="opacity:0.4">Select Sheet or Press Play</div>
+    <div
+      style="
+        background: rgba(0, 0, 0, 0.2);
+        padding: 20px 0;
+        box-sizing: border-box;
+        width: 100%;
+      "
+    >
+      <div style="opacity: 0.4;">Select Sheet or Press Play</div>
       <div v-if="sheets" key="1">
         <div v-for="sheet in sheets" :value="sheet.id" :key="sheet.id">
           <div
             @click="selectedSheet = sheet"
-            :class="{'sheet':true, 'active':selectedSheet==sheet}"
+            :class="{ sheet: true, active: selectedSheet == sheet }"
           >
             <SheetDetailLine :sheet="sheet" :compact="true"></SheetDetailLine>
           </div>
         </div>
       </div>
-      <div style="padding:20px;" v-else key="2">Sheets loading...</div>
+      <div style="padding: 20px;" v-else key="2">Sheets loading...</div>
     </div>
 
     <div class="bestRes" v-if="bestResult">
       <div class="brBlock">
         <div class="brTxt">Rank</div>
-        {{bestResult.rank}}
+        {{ bestResult.rank }}
       </div>
       <div class="brBlock">
         <div class="brTxt">Combo</div>
-        {{bestResult.result.maxCombo}}
+        {{ bestResult.result.maxCombo }}
       </div>
       <div class="brBlock">
         <div class="brTxt">Accuracy</div>
-        {{bestResult.result.percentage.toFixed(2)}}%
+        {{ bestResult.result.percentage.toFixed(2) }}%
       </div>
       <div class="brBlock">
         <div class="brTxt">Score</div>
-        {{bestResult.result.score.toFixed(0)}}
+        {{ bestResult.result.score.toFixed(0) }}
       </div>
     </div>
 
@@ -52,49 +66,46 @@
 </template>
 
 <script>
-import Button from './Button.vue';
-import SheetDetailLine from './SheetDetailLine.vue';
-import { getBestScore } from "../javascript/db"
+import Button from "./Button.vue";
+import SheetDetailLine from "./SheetDetailLine.vue";
+import { getBestScore } from "../javascript/db";
 
 export default {
-    name:"SongDetailPanel",
-    props: ["song", "sheets"],
-      data(){
-        return {
-            selectedSheet: null,
-            bestResult: null
-        }
+  name: "SongDetailPanel",
+  props: ["song", "sheets"],
+  data() {
+    return {
+      selectedSheet: null,
+      bestResult: null,
+    };
+  },
+  components: {
+    Button,
+    SheetDetailLine,
+  },
+  computed: {},
+  methods: {
+    startSelected() {
+      this.selectedSheet = this.selectedSheet ?? this.sheets[0];
+      this.$router.push("/game/" + this.selectedSheet.id);
     },
-    components:{
-      Button,
-      SheetDetailLine
+  },
+  watch: {
+    song() {
+      if (this.song) this.selectedSheet = null;
     },
-    computed: {
+    sheets() {
+      if (this.song) this.selectedSheet = null;
     },
-    methods: {
-        startSelected(){
-            this.selectedSheet = this.selectedSheet ?? this.sheets[0];
-            this.$router.push("/game/"+this.selectedSheet.id);
-        }
-    },
-    watch:{
-      song(){
-        if(this.song)
-          this.selectedSheet = null;
-      },
-      sheets(){
-        if(this.song)
-          this.selectedSheet = null;
-      },
-      async selectedSheet(){
-        if(this.selectedSheet){
-          this.bestResult = await getBestScore(this.selectedSheet.id);
-        }else{
-          this.bestResult = null;
-        }
+    async selectedSheet() {
+      if (this.selectedSheet) {
+        this.bestResult = await getBestScore(this.selectedSheet.id);
+      } else {
+        this.bestResult = null;
       }
-    }
-}
+    },
+  },
+};
 </script>
 
 <style scoped>

@@ -1,22 +1,33 @@
 <template>
   <div
     class="row"
-    :class="{onScreen: instance.isWithinTime(note), current:index===instance.timeArrIdx, editing:isEditing}"
+    :class="{
+      onScreen: instance.isWithinTime(note),
+      current: index === instance.timeArrIdx,
+      editing: isEditing,
+    }"
   >
-    <div style="width:10%">
+    <div style="width: 10%;">
       <label class="cb_container cb_small">
         <input type="checkbox" v-model="parent.selectedNotes" :value="note" />
         <span class="checkmark"></span>
       </label>
     </div>
-    <div style="width:25%;" class="time" @dblclick="seek(note)">{{note.t}}</div>
-    <div style="width:55%">
+    <div style="width: 25%;" class="time" @dblclick="seek(note)">
+      {{ note.t }}
+    </div>
+    <div style="width: 55%;">
       <div class="keyWrapper" @click="edit(note)">
         <div
           v-for="k in instance.trackKeyBind"
           :key="k"
-          :class="{activeNote:note.k.includes(k), holdNote:note.h&&note.h[k]}"
-        >{{k===" "?"-":k}}</div>
+          :class="{
+            activeNote: note.k.includes(k),
+            holdNote: note.h && note.h[k],
+          }"
+        >
+          {{ k === " " ? "-" : k }}
+        </div>
       </div>
     </div>
   </div>
@@ -24,32 +35,31 @@
 
 <script>
 export default {
-    name:'NoteTableItem',
-    props:['index','noteToEdit','instance','parent','source',"table"],
-    computed: {
-        isEditing(){
-            return this.noteToEdit==this.note;
-        },
-        note(){
-          return this.source;
-        }
+  name: "NoteTableItem",
+  props: ["index", "noteToEdit", "instance", "parent", "source", "table"],
+  computed: {
+    isEditing() {
+      return this.noteToEdit == this.note;
     },
-    methods: {
-        seek(note){
-          const follow = this.table.follow;
-          this.table.follow = false;
-          this.parent.seekTo(note.t+0.1);
-          setTimeout(()=>{
-            this.table.follow = follow;
-          }, 100)
-        },
-        edit(note){
-          if(!this.instance.isWithinTime(note)) this.seek(note);
-          this.table.selectNoteToEdit(note);
-        }
-    }
-
-}
+    note() {
+      return this.source;
+    },
+  },
+  methods: {
+    seek(note) {
+      const follow = this.table.follow;
+      this.table.follow = false;
+      this.parent.seekTo(note.t + 0.1);
+      setTimeout(() => {
+        this.table.follow = follow;
+      }, 100);
+    },
+    edit(note) {
+      if (!this.instance.isWithinTime(note)) this.seek(note);
+      this.table.selectNoteToEdit(note);
+    },
+  },
+};
 </script>
 
 <style scoped>

@@ -1,28 +1,26 @@
 <template>
-  <div class="wrap" v-if="$store.state.theme" :class="{[$store.state.theme.buttonStyle]:true}">
-    <button class="main_button" @click="clicked">{{text}}</button>
+  <div
+    class="wrap"
+    v-if="$store.state.theme"
+    :class="{ [$store.state.theme.buttonStyle]: true }"
+  >
+    <button class="main_button" @click="clicked">{{ text }}</button>
   </div>
 </template>
 
-
 <script>
-
 export default {
-  name: 'Button',
+  name: "Button",
   props: ["text"],
-  data: function(){
-    return {
-
-    }
+  data: function () {
+    return {};
   },
-  mounted() {
-
-    },
+  mounted() {},
   methods: {
-    clicked(){
-        this.$emit("click", null)
-    }
-  }
+    clicked() {
+      this.$emit("click", null);
+    },
+  },
 };
 </script>
 

@@ -1,7 +1,11 @@
 <template>
   <div>
     <div v-if="sheet">
-      <PageBackground songSrc="/audio/bgm/result.mp3" :imageSrc="sheet.image" :showNav="false"></PageBackground>
+      <PageBackground
+        songSrc="/audio/bgm/result.mp3"
+        :imageSrc="sheet.image"
+        :showNav="false"
+      ></PageBackground>
       <div class="blurFilter">
         <div class="center_logo darker flex_hori">
           <div class="scoreCircle" ref="resultDiv">
@@ -11,14 +15,17 @@
               :fill="{ gradient: ['darkorange', '#ffab2d'] }"
               empty-fill="rgba(100, 100, 100, .5)"
               :thickness="10"
-              :start-angle="-1/2*Math.PI"
+              :start-angle="(-1 / 2) * Math.PI"
               insert-mode="append"
               :show-percent="false"
             >
               <div class="circleBg"></div>
-              <div class="score scoreShadow">{{result.rank}}</div>
-              <div style="margin-top:-20px;transform: translateZ(20px);">
-                <ICountUp :endVal="result.result.percentage" :options="{decimalPlaces:2}" />%
+              <div class="score scoreShadow">{{ result.rank }}</div>
+              <div style="margin-top: -20px; transform: translateZ(20px);">
+                <ICountUp
+                  :endVal="result.result.percentage"
+                  :options="{ decimalPlaces: 2 }"
+                />%
               </div>
             </VueCircle>
           </div>
@@ -26,21 +33,34 @@
           <div class="rightScore">
             <div>
               Score
-              <div class="markChip acheivementChip highScoreChip" v-if="newRecord">New Record</div>
+              <div
+                class="markChip acheivementChip highScoreChip"
+                v-if="newRecord"
+              >
+                New Record
+              </div>
               <ICountUp
-                style="font-size:2.7em;display:block;"
+                style="font-size: 2.7em; display: block;"
                 :endVal="result.result.score"
-                :options="{decimalPlaces:0}"
+                :options="{ decimalPlaces: 0 }"
               />
             </div>
             <div>
               Max Combo -
-              <ICountUp :endVal="result.result.maxCombo" :options="{decimalPlaces:0}" />
-              <div class="markChip acheivementChip comboChip" v-if="result.isFullCombo">Full Combo</div>
+              <ICountUp
+                :endVal="result.result.maxCombo"
+                :options="{ decimalPlaces: 0 }"
+              />
+              <div
+                class="markChip acheivementChip comboChip"
+                v-if="result.isFullCombo"
+              >
+                Full Combo
+              </div>
             </div>
           </div>
 
-          <div class="rightScore" style="text-align:left">
+          <div class="rightScore" style="text-align: left;">
             <div>
               <div class="markChip perfect">Perfect</div>
               <ICountUp :endVal="result.result.marks.perfect" />
@@ -63,15 +83,18 @@
         <!-- song section -->
         <div class="song_item_sec">
           <div class="detail">
-            <div class="title">{{sheet.song.title}}</div>
-            <div>{{sheet.song.artist}}</div>
+            <div class="title">{{ sheet.song.title }}</div>
+            <div>{{ sheet.song.artist }}</div>
           </div>
         </div>
 
         <!-- profile section -->
         <div
           class="user_sec"
-          v-if="$store.state.currentUser&&result.uid===$store.state.currentUser.uid"
+          v-if="
+            $store.state.currentUser &&
+            result.uid === $store.state.currentUser.uid
+          "
         >
           <UserProfileCard :extend="true" />
         </div>
@@ -92,91 +115,89 @@
   </div>
 </template>
 
-
 <script>
-import PageBackground from '../components/PageBackground.vue';
-import SongListItem from '../components/SongListItem.vue';
-import UserProfileCard from '../components/UserProfileCard.vue';
-import Modal from '../components/Modal.vue';
-import { getGameSheet, getResult, getBestScore } from "../javascript/db"
-import ICountUp from 'vue-countup-v2';
-import VueCircle from 'vue2-circle-progress/src/index.vue'
-import Loading from '../components/Loading.vue';
-import 'vue-awesome/icons/redo'
-import 'vue-awesome/icons/arrow-right'
+import PageBackground from "../components/PageBackground.vue";
+import SongListItem from "../components/SongListItem.vue";
+import UserProfileCard from "../components/UserProfileCard.vue";
+import Modal from "../components/Modal.vue";
+import { getGameSheet, getResult, getBestScore } from "../javascript/db";
+import ICountUp from "vue-countup-v2";
+import VueCircle from "vue2-circle-progress/src/index.vue";
+import Loading from "../components/Loading.vue";
+import "vue-awesome/icons/redo";
+import "vue-awesome/icons/arrow-right";
 
 export default {
-  name: 'Result',
-  components:{
-      PageBackground,
-      Modal,
-      ICountUp,
-      VueCircle,
-      Loading,
-      SongListItem,
-      UserProfileCard
+  name: "Result",
+  components: {
+    PageBackground,
+    Modal,
+    ICountUp,
+    VueCircle,
+    Loading,
+    SongListItem,
+    UserProfileCard,
   },
-  data(){
-        return {
-            showModal: false,
-            result: null,
-            sheet: null,
-            windowWidth: window.innerWidth,
-            newRecord: false
+  data() {
+    return {
+      showModal: false,
+      result: null,
+      sheet: null,
+      windowWidth: window.innerWidth,
+      newRecord: false,
+    };
+  },
+  computed: {},
+  watch: {},
+  async mounted() {
+    //FIXME add id and route validation
+    if (this.$route.params.resultId && this.$route.params.resultId != "null") {
+      try {
+        this.result = await getResult(this.$route.params.resultId);
+        this.sheet = await getGameSheet(this.result.sheetId);
+        const bestResult = await getBestScore(this.result.sheetId);
+        if (bestResult && bestResult.result.score <= this.result.result.score) {
+          this.newRecord = true;
         }
-    },
-    computed: {
-
-    },
-    watch: {
-
-    },
-    async mounted() {
-      //FIXME add id and route validation
-      if(this.$route.params.resultId && this.$route.params.resultId!="null"){
-        try{
-          this.result = await getResult(this.$route.params.resultId)
-          this.sheet = await getGameSheet(this.result.sheetId)
-          const bestResult = await getBestScore(this.result.sheetId)
-          if(bestResult && bestResult.result.score <= this.result.result.score){
-            this.newRecord = true;
-          }
-        }catch(err){
-          this.showError()
-        }
-      }else{
-        this.showError()
+      } catch (err) {
+        this.showError();
       }
-
-      window.onresize = () => {
-        this.windowWidth = window.innerWidth
-      }
-      
-      this.$nextTick(()=>{
-        VanillaTilt.init(this.$refs.resultDiv, {
-              max: 20,
-              scale: 1.1,
-            });
-      })
-
-      this.$store.dispatch("updateUserProfile");
-    },
-    beforeDestroy(){
-      this.$store.state.audio.stop();
-    },
-    methods: {
-      showError(){
-          this.$store.state.gModal.show({bodyText:"This result is unavaliable.", 
-          isError: true, showCancel: false, okCallback: this.toMenu})
-      },
-      replay(){
-        this.$router.push("/game/"+this.sheet.sheetId);
-      },
-      toMenu(){
-        this.$router.push("/menu/")
-      }
-
+    } else {
+      this.showError();
     }
+
+    window.onresize = () => {
+      this.windowWidth = window.innerWidth;
+    };
+
+    this.$nextTick(() => {
+      VanillaTilt.init(this.$refs.resultDiv, {
+        max: 20,
+        scale: 1.1,
+      });
+    });
+
+    this.$store.dispatch("updateUserProfile");
+  },
+  beforeDestroy() {
+    this.$store.state.audio.stop();
+  },
+  methods: {
+    showError() {
+      this.$store.state.gModal.show({
+        bodyText: "This result is unavaliable.",
+        isError: true,
+        showCancel: false,
+        okCallback: this.toMenu,
+      });
+    },
+    replay() {
+      this.$router.push("/game/" + this.sheet.sheetId);
+    },
+    toMenu() {
+      this.$router.push("/menu/");
+    },
+  },
 };
 </script>
 

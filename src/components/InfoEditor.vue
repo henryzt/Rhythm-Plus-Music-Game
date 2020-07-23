@@ -1,11 +1,22 @@
 <template>
-  <div class="padding" style="height:100%;overflow: scroll;">
+  <div class="padding" style="height: 100%; overflow: scroll;">
     <div v-if="!$parent.songInfo.id && welcomeScreen">
       <h2>Welcome to R+ Sheet Editor</h2>
-      <p>It is very easy to create a beatmap in Rhythm+, just create as you are playing one!</p>
+      <p>
+        It is very easy to create a beatmap in Rhythm+, just create as you are
+        playing one!
+      </p>
       <p>What would you like to create today?</p>
-      <input type="submit" value="Create a new sheet" @click="welcomeScreen=false" />
-      <input type="submit" value="Choose existing or Continue your work" @click="continueExisting" />
+      <input
+        type="submit"
+        value="Create a new sheet"
+        @click="welcomeScreen = false"
+      />
+      <input
+        type="submit"
+        value="Choose existing or Continue your work"
+        @click="continueExisting"
+      />
     </div>
 
     <div v-else>
@@ -19,23 +30,37 @@
           item-type="Song"
           @submitForm="submitSongForm"
           @submitExisting="submitExistingSong"
-          :class="{disabled:!$parent.isSongOwner}"
+          :class="{ disabled: !$parent.isSongOwner }"
         ></InfoForm>
-        <div v-if="!$parent.isSongOwner">You have no edit access to this song.</div>
+        <div v-if="!$parent.isSongOwner">
+          You have no edit access to this song.
+        </div>
         <div
           v-if="songFormOptions.isUpdate"
           class="switch_tab"
-          @click="songFormOptions.isUpdate=false"
-        >Cancel</div>
+          @click="songFormOptions.isUpdate = false"
+        >
+          Cancel
+        </div>
       </div>
 
       <div v-if="$parent.songInfo.id">
         <div>
           <div
             v-if="!sheetFormOptions.isUpdate"
-            @click="$router.push('/editor/');$parent.reloadEditor()"
-            style="float:right;line-height:30px;opacity:0.5;cursor:pointer;"
-          >Change Song</div>
+            @click="
+              $router.push('/editor/');
+              $parent.reloadEditor();
+            "
+            style="
+              float: right;
+              line-height: 30px;
+              opacity: 0.5;
+              cursor: pointer;
+            "
+          >
+            Change Song
+          </div>
           <h2>Sheet Detail</h2>
           <InfoForm
             :formData="sheetFormData"
@@ -43,7 +68,7 @@
             item-type="Sheet"
             @submitForm="submitSheetForm"
             @submitExisting="submitExistingSheet"
-            :class="{disabled:!$parent.isSheetOwner}"
+            :class="{ disabled: !$parent.isSheetOwner }"
           >
             <input
               v-model="sheetFormData.title"
@@ -53,26 +78,43 @@
             />
             <select v-model="sheetFormData.difficulty">
               <option :value="null" disabled>Select difficulty...</option>
-              <option
-                v-for="diff in 10"
-                :value="diff"
-                :key="diff"
-              >{{diff + ' - ' + ((diff > 9)?"Expert":((diff > 6)?"Hard":((diff > 3)?"Normal":"Easy")))}}</option>
+              <option v-for="diff in 10" :value="diff" :key="diff">{{
+                diff +
+                " - " +
+                (diff > 9
+                  ? "Expert"
+                  : diff > 6
+                  ? "Hard"
+                  : diff > 3
+                  ? "Normal"
+                  : "Easy")
+              }}</option>
             </select>
             <select
               v-model="sheetFormData.visualizerName"
-              v-if="$parent.songInfo.srcMode=='url' && $parent.visualizerInstance"
+              v-if="
+                $parent.songInfo.srcMode == 'url' && $parent.visualizerInstance
+              "
             >
-              <option :value="null" disabled>Select Default Visualizer...</option>
+              <option :value="null" disabled
+                >Select Default Visualizer...</option
+              >
               <option
-                v-for="(idx, visualizer) in $parent.visualizerInstance.visualizerArr"
+                v-for="(idx, visualizer) in $parent.visualizerInstance
+                  .visualizerArr"
                 :value="idx"
                 :key="idx"
-              >{{visualizer}}</option>
+                >{{ visualizer }}</option
+              >
             </select>
             <select v-model="sheetFormData.keys">
               <option :value="null" disabled>Select Key Number...</option>
-              <option v-for="keys in [4,5,6,7,8]" :value="keys" :key="keys">{{keys + ' Key'}}</option>
+              <option
+                v-for="keys in [4, 5, 6, 7, 8]"
+                :value="keys"
+                :key="keys"
+                >{{ keys + " Key" }}</option
+              >
             </select>
             <input
               v-if="sheetFormOptions.isUpdate"
@@ -89,150 +131,174 @@
               type="number"
             />
           </InfoForm>
-          <div v-if="!$parent.isSheetOwner">You have no edit access to this sheet.</div>
+          <div v-if="!$parent.isSheetOwner">
+            You have no edit access to this sheet.
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-
 <script>
-import { createSong, createSheet, getSongList, getSong, getSheetList, updateSong, updateSheet } from "../javascript/db"
-import InfoForm from '../components/InfoForm.vue';
+import {
+  createSong,
+  createSheet,
+  getSongList,
+  getSong,
+  getSheetList,
+  updateSong,
+  updateSheet,
+} from "../javascript/db";
+import InfoForm from "../components/InfoForm.vue";
 
 export default {
-  name: 'InfoEditor',
-  components:{
-    InfoForm
+  name: "InfoEditor",
+  components: {
+    InfoForm,
   },
-  data(){
-        return {
-           songFormData: { 
-               title: null, 
-               artist: null, 
-               image: null, 
-               srcMode: null,
-               tags: null
-            },
-            songFormOptions:{
-              isYoutubeMode: true,
-              tab: "form",
-              publicList: null,
-              privateList: null,
-              selected: null,
-              isUpdate: false
-            },
-            sheetFormData: { 
-               title: null, 
-               difficulty: null,
-               visualizerName: null,
-               keys: null,
-            },
-            sheetFormOptions:{
-              isYoutubeMode: true,
-              tab: "form",
-              publicList: null,
-              privateList: null,
-              selected: null,
-              isUpdate: false
-            },
-            welcomeScreen: true
+  data() {
+    return {
+      songFormData: {
+        title: null,
+        artist: null,
+        image: null,
+        srcMode: null,
+        tags: null,
+      },
+      songFormOptions: {
+        isYoutubeMode: true,
+        tab: "form",
+        publicList: null,
+        privateList: null,
+        selected: null,
+        isUpdate: false,
+      },
+      sheetFormData: {
+        title: null,
+        difficulty: null,
+        visualizerName: null,
+        keys: null,
+      },
+      sheetFormOptions: {
+        isYoutubeMode: true,
+        tab: "form",
+        publicList: null,
+        privateList: null,
+        selected: null,
+        isUpdate: false,
+      },
+      welcomeScreen: true,
+    };
+  },
+  computed: {},
+  watch: {
+    "$parent.sheetInfo"() {
+      let sheetInfo = this.$parent.sheetInfo;
+      if (sheetInfo.id != null) {
+        this.sheetFormData = this.$parent.sheetInfo;
+        this.sheetFormOptions.isUpdate = true;
+        this.sheetFormOptions.tab = "form";
+      }
+    },
+  },
+  async mounted() {
+    this.songFormOptions.publicList = await getSongList();
+    this.songFormOptions.privateList = await getSongList(true);
+  },
+  methods: {
+    continueExisting() {
+      this.welcomeScreen = false;
+      this.songFormOptions.tab = "choose";
+      this.sheetFormOptions.tab = "choose";
+    },
+    async submitSongForm() {
+      try {
+        if (this.songFormOptions.isUpdate) {
+          this.$parent.loading = true;
+          await updateSong(this.songFormData);
+          this.$router.push({ query: { update: true } });
+          this.$parent.reloadEditor();
+        } else {
+          let songId = await createSong(this.songFormData);
+          this.$parent.songInfo = await getSong(songId);
+          this.getSheets();
+          this.$store.state.alert.success("Song created");
         }
+      } catch (err) {
+        this.$parent.loading = false;
+        this.$store.state.alert.error(
+          "An error occurred, please try again",
+          5000
+        );
+        console.error(err);
+      }
     },
-    computed: {
-
+    submitExistingSong() {
+      let selectedSong = this.songFormOptions.selected;
+      if (selectedSong) {
+        this.$parent.songInfo = selectedSong;
+        this.getSheets();
+      }
     },
-    watch: {
-        '$parent.sheetInfo'(){
-          let sheetInfo = this.$parent.sheetInfo;
-          if(sheetInfo.id!=null){
-            this.sheetFormData = this.$parent.sheetInfo;
-            this.sheetFormOptions.isUpdate = true;
-            this.sheetFormOptions.tab = 'form';
-          }
-        }
+    async getSheets() {
+      const songId = this.$parent.songInfo.id;
+      this.sheetFormOptions.publicList = await getSheetList(songId);
+      this.sheetFormOptions.privateList = await getSheetList(
+        songId,
+        true,
+        true
+      );
     },
-    async mounted() {
-        this.songFormOptions.publicList = await getSongList();
-        this.songFormOptions.privateList = await getSongList(true);
-    },
-    methods: {
-        continueExisting(){
-          this.welcomeScreen = false;
-          this.songFormOptions.tab = 'choose';
-          this.sheetFormOptions.tab = 'choose';
-        },
-        async submitSongForm(){
-          try{
-            if(this.songFormOptions.isUpdate){
-              this.$parent.loading = true
-              await updateSong(this.songFormData);
-              this.$router.push({query: { update: true }})
-              this.$parent.reloadEditor();
-            }else{
-              let songId = await createSong(this.songFormData)
-              this.$parent.songInfo = await getSong(songId);
-              this.getSheets()
-              this.$store.state.alert.success("Song created")
-            }
-          }catch(err){
-            this.$parent.loading = false
-            this.$store.state.alert.error("An error occurred, please try again", 5000)
-            console.error(err)
-          }
-        },
-        submitExistingSong(){
-            let selectedSong = this.songFormOptions.selected;
-            if(selectedSong){
-              this.$parent.songInfo = selectedSong;
-              this.getSheets()
-            }
-        },
-        async getSheets() {
+    async submitSheetForm() {
+      this.$parent.loading = true;
+      try {
+        if (this.sheetFormOptions.isUpdate) {
+          this.sheetFormData.startAt = this.sheetFormData.startAt
+            ? Number(this.sheetFormData.startAt)
+            : null;
+          this.sheetFormData.endAt = this.sheetFormData.endAt
+            ? Number(this.sheetFormData.endAt)
+            : null;
+          delete this.sheetFormData.sheet;
+          await updateSheet(this.sheetFormData);
+          this.$router.push({ query: { save: true } });
+        } else {
           const songId = this.$parent.songInfo.id;
-          this.sheetFormOptions.publicList = await getSheetList(songId);
-          this.sheetFormOptions.privateList = await getSheetList(songId, true, true);
-        },
-        async submitSheetForm(){
-            this.$parent.loading = true
-            try{
-              if(this.sheetFormOptions.isUpdate){
-                this.sheetFormData.startAt = this.sheetFormData.startAt ? Number(this.sheetFormData.startAt) : null;
-                this.sheetFormData.endAt = this.sheetFormData.endAt ? Number(this.sheetFormData.endAt) : null;
-                delete this.sheetFormData.sheet;
-                await updateSheet(this.sheetFormData)
-                this.$router.push({query: { save: true }})
-              }else{
-                const songId = this.$parent.songInfo.id;
-                this.sheetFormData.songId = songId;
-                let sheetId = await createSheet(this.sheetFormData)
-                this.$router.push('/editor/'+sheetId)
-              }
-              this.$parent.reloadEditor();
-            }catch(err){
-              this.$parent.loading = false
-              this.$store.state.alert.error("An error occurred, please try again", 5000)
-              console.error(err)
-            }
-        },
-        submitExistingSheet(){
-          let selectedSheet = this.sheetFormOptions.selected;
-            if(selectedSheet){
-              this.$parent.loading = true
-              this.$router.push('/editor/'+selectedSheet.id+'/')
-              this.$parent.reloadEditor();
-            }
-        },
-        async openSongUpdate(){
-          this.songFormOptions.tab = "form";
-          this.songFormOptions.isUpdate = true;
-          this.songFormData = await getSong(this.$parent.songInfo.id);
-          if(this.songFormData.image && this.songFormData.image.includes("img.youtube.com")){
-            this.songFormData.image = null
-          }
+          this.sheetFormData.songId = songId;
+          let sheetId = await createSheet(this.sheetFormData);
+          this.$router.push("/editor/" + sheetId);
         }
-    }
+        this.$parent.reloadEditor();
+      } catch (err) {
+        this.$parent.loading = false;
+        this.$store.state.alert.error(
+          "An error occurred, please try again",
+          5000
+        );
+        console.error(err);
+      }
+    },
+    submitExistingSheet() {
+      let selectedSheet = this.sheetFormOptions.selected;
+      if (selectedSheet) {
+        this.$parent.loading = true;
+        this.$router.push("/editor/" + selectedSheet.id + "/");
+        this.$parent.reloadEditor();
+      }
+    },
+    async openSongUpdate() {
+      this.songFormOptions.tab = "form";
+      this.songFormOptions.isUpdate = true;
+      this.songFormData = await getSong(this.$parent.songInfo.id);
+      if (
+        this.songFormData.image &&
+        this.songFormData.image.includes("img.youtube.com")
+      ) {
+        this.songFormData.image = null;
+      }
+    },
+  },
 };
 </script>
 

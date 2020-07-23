@@ -1,13 +1,22 @@
 <template>
   <div class="panel">
-    <div style="padding-bottom:5px;">
+    <div style="padding-bottom: 5px;">
       <span>Edit Note Timing</span>
-      <v-icon style="float:right;cursor:pointer;" name="times" scale="1.1" @click="$parent.noteToEdit=null"/>
+      <v-icon
+        style="float: right; cursor: pointer;"
+        name="times"
+        scale="1.1"
+        @click="$parent.noteToEdit = null"
+      />
     </div>
     <div class="flex_hori">
-      <v-icon class="btn-action btn-dark" name="minus" @click="minus(note,'t')" />
+      <v-icon
+        class="btn-action btn-dark"
+        name="minus"
+        @click="minus(note, 't')"
+      />
       <input step="0.01" v-model="note.t" placeholder="Time" type="number" />
-      <v-icon class="btn-action btn-dark" name="plus" @click="add(note,'t')" />
+      <v-icon class="btn-action btn-dark" name="plus" @click="add(note, 't')" />
       <div class="btn-action btn-dark btn-test">Test</div>
     </div>
     <div>
@@ -15,18 +24,27 @@
         <div
           v-for="k in instance.trackKeyBind"
           :key="k"
-          :class="{activeNote:note.k.includes(k)}"
+          :class="{ activeNote: note.k.includes(k) }"
           @click="toggleKey(k)"
           @dblclick="createHoldNote(k)"
-        >{{k===" "?"-":k}}</div>
+        >
+          {{ k === " " ? "-" : k }}
+        </div>
       </div>
     </div>
     <div v-if="note.h">
-      <div style="padding-top:20px;">Holding Notes</div>
+      <div style="padding-top: 20px;">Holding Notes</div>
       <div v-for="k in Object.keys(note.h)" :key="k" class="flex_hori">
-        <div class="note">{{k===" "?"-":k}}</div>
-        <input step="0.01" v-model="note.h[k]" placeholder="End Time" type="number" />
-        <div class="btn-action btn-dark btn-test" @click="removeHoldNote(k)">Remove</div>
+        <div class="note">{{ k === " " ? "-" : k }}</div>
+        <input
+          step="0.01"
+          v-model="note.h[k]"
+          placeholder="End Time"
+          type="number"
+        />
+        <div class="btn-action btn-dark btn-test" @click="removeHoldNote(k)">
+          Remove
+        </div>
       </div>
     </div>
   </div>
@@ -34,76 +52,75 @@
 
 <script>
 import Vue from "vue";
-import 'vue-awesome/icons/minus'
-import 'vue-awesome/icons/times'
+import "vue-awesome/icons/minus";
+import "vue-awesome/icons/times";
 
 export default {
-    name:'NoteEditPanel',
-    props:['note', 'instance', 'parent'],
-    methods: {
-        // to remove tailing zeros
-        add(target, att){
-            target[att] = Number((target[att]+0.05).toFixed(3));
-        },
-        minus(target, att){
-            target[att] = Number((target[att]-0.05).toFixed(3));
-        },
-        toggleKey(k){
-            if(this.note.k.includes(k)){
-                this.removeKey(k)
-            }else{
-                this.note.k = this.note.k.concat(k);
-            }
-        },
-        removeKey(k){
-            this.note.k = this.note.k.replace(k,"");
-            this.removeHoldNote(k)
-        },
-        removeHoldNote(k){
-            // using js delete will not be reactive
-            Vue.delete(this.note.h, k);
-            if(Object.keys(this.note.h).length === 0){
-                Vue.delete(this.note, 'h');
-            }
-            this.instance.repositionNotes()
-        },
-        createHoldNote(k){
-          if(!this.note.k.includes(k)){
-            this.toggleKey(k)
-          }
-          if(!this.note.h){
-            this.note.h = {}
-          }
-          if(!this.note.h[k]) this.note.h[k] = this.note.t + 0.2;
-        }
-
+  name: "NoteEditPanel",
+  props: ["note", "instance", "parent"],
+  methods: {
+    // to remove tailing zeros
+    add(target, att) {
+      target[att] = Number((target[att] + 0.05).toFixed(3));
     },
-    watch:{
-        'note.t'(val, oldVal){
-            // TODO why TF will html number input return string??????????????????
-            if(this.note.h){
-                for(let key of Object.keys(this.note.h)){
-                    this.note.h[key] = Number(this.note.h[key]) + Number(val) - Number(oldVal)
-                }
-            }
-            this.note.t = Number(this.note.t)
-            this.instance.repositionNotes()
-        },
-        'note.k'(){
-            this.instance.repositionNotes()
-        },
-        'note.h'(){
-            // TODO Again, WHY??
-            if(this.note.h){
-                for(let key of Object.keys(this.note.h)){
-                    this.note.h[key] = Number(this.note.h[key])
-                }
-            }
-            this.instance.repositionNotes()
+    minus(target, att) {
+      target[att] = Number((target[att] - 0.05).toFixed(3));
+    },
+    toggleKey(k) {
+      if (this.note.k.includes(k)) {
+        this.removeKey(k);
+      } else {
+        this.note.k = this.note.k.concat(k);
+      }
+    },
+    removeKey(k) {
+      this.note.k = this.note.k.replace(k, "");
+      this.removeHoldNote(k);
+    },
+    removeHoldNote(k) {
+      // using js delete will not be reactive
+      Vue.delete(this.note.h, k);
+      if (Object.keys(this.note.h).length === 0) {
+        Vue.delete(this.note, "h");
+      }
+      this.instance.repositionNotes();
+    },
+    createHoldNote(k) {
+      if (!this.note.k.includes(k)) {
+        this.toggleKey(k);
+      }
+      if (!this.note.h) {
+        this.note.h = {};
+      }
+      if (!this.note.h[k]) this.note.h[k] = this.note.t + 0.2;
+    },
+  },
+  watch: {
+    "note.t"(val, oldVal) {
+      // TODO why TF will html number input return string??????????????????
+      if (this.note.h) {
+        for (let key of Object.keys(this.note.h)) {
+          this.note.h[key] =
+            Number(this.note.h[key]) + Number(val) - Number(oldVal);
         }
-    }
-
-}
+      }
+      this.note.t = Number(this.note.t);
+      this.instance.repositionNotes();
+    },
+    "note.k"() {
+      this.instance.repositionNotes();
+    },
+    "note.h"() {
+      // TODO Again, WHY??
+      if (this.note.h) {
+        for (let key of Object.keys(this.note.h)) {
+          this.note.h[key] = Number(this.note.h[key]);
+        }
+      }
+      this.instance.repositionNotes();
+    },
+  },
+};
 </script>
 
 <style scoped>

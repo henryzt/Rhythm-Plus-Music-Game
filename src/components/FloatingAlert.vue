@@ -4,58 +4,59 @@
       v-if="visible"
       class="horizontal animate__animated"
       :class="[className, emphasize]"
-    >{{text}}</div>
+    >
+      {{ text }}
+    </div>
   </transition>
 </template>
 
 <script>
 export default {
-    name: "FloatingAlert",
-    data: function(){
-        return {
-            visible: false,
-            text: "This is a floating notification",
-            className: "",
-            emphasize: ""
-        }
+  name: "FloatingAlert",
+  data: function () {
+    return {
+      visible: false,
+      text: "This is a floating notification",
+      className: "",
+      emphasize: "",
+    };
+  },
+  methods: {
+    show(text, time) {
+      if (this.visible && this.text === text) {
+        this.emphasize = "animate__flash";
+        setTimeout(() => {
+          this.emphasize = "";
+        }, 1000);
+      }
+      this.visible = true;
+      this.text = text;
+      clearTimeout(this.hideTimeout);
+      if (time && time !== 0) {
+        this.hideTimeout = setTimeout(() => {
+          this.visible = false;
+        }, time);
+      }
+      // this.$store.state.audio.playEffect("/audio/effects/error.mp3");
     },
-    methods: {
-        show(text, time){
-          if(this.visible && this.text === text){
-            this.emphasize = "animate__flash"
-            setTimeout(() => {
-              this.emphasize = ""
-            }, 1000)
-          }
-          this.visible = true;
-          this.text = text;
-          clearTimeout(this.hideTimeout)
-          if(time && time!==0){
-            this.hideTimeout = setTimeout(()=>{
-              this.visible = false;
-              }, time)
-          }
-            // this.$store.state.audio.playEffect("/audio/effects/error.mp3");
-        },
-        info(text, time){
-            this.className="info"
-            this.show(text, time)
-        },
-        warn(text, time){
-            this.className="warn"
-            this.show(text, time)
-        },
-        error(text, time){
-            this.className="error"
-            this.show(text, time)
-        },
-        success(text){
-            this.className="success"
-            this.show(text, 3500)
-        }
-    }
-
-}
+    info(text, time) {
+      this.className = "info";
+      this.show(text, time);
+    },
+    warn(text, time) {
+      this.className = "warn";
+      this.show(text, time);
+    },
+    error(text, time) {
+      this.className = "error";
+      this.show(text, time);
+    },
+    success(text) {
+      this.className = "success";
+      this.show(text, 3500);
+    },
+  },
+};
 </script>
 
 <style scoped>

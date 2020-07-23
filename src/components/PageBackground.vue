@@ -5,12 +5,15 @@
     <div
       v-if="imageSrc"
       class="bgImage"
-      :style="{ background: `url('${imageSrc}') no-repeat fixed center`, backgroundSize: 'cover' }"
+      :style="{
+        background: `url('${imageSrc}') no-repeat fixed center`,
+        backgroundSize: 'cover',
+      }"
     ></div>
     <Visualizer
       v-else-if="$store.state.theme"
       ref="visualizer"
-      style="opacity:1"
+      style="opacity: 1;"
       :setVisualizer="$store.state.theme.visualizer"
       :setBlur="$store.state.theme.blur"
       :autoUpdate="true"
@@ -18,51 +21,49 @@
   </div>
 </template>
 
-
 <script>
-import Visualizer from '../components/Visualizer.vue';
-import Navbar from '../components/Navbar.vue';
-import UserProfileCard from './UserProfileCard.vue';
+import Visualizer from "../components/Visualizer.vue";
+import Navbar from "../components/Navbar.vue";
+import UserProfileCard from "./UserProfileCard.vue";
 
 export default {
-  name: 'PageBackground',
+  name: "PageBackground",
   props: {
-    songSrc : {
+    songSrc: {
       type: String,
-      default: null
+      default: null,
     },
-    visualizer : {
+    visualizer: {
       type: String,
-      default: 'swirl'
+      default: "swirl",
     },
-    imageSrc : {
+    imageSrc: {
       type: String,
-      default: null
+      default: null,
     },
     showNav: {
       type: Boolean,
-      default: true
+      default: true,
+    },
+  },
+  components: {
+    Visualizer,
+    UserProfileCard,
+    Navbar,
+  },
+  data() {
+    return {
+      audio: null,
+    };
+  },
+  mounted() {
+    if (this.songSrc) {
+      this.$store.state.audio.loadSong(this.songSrc, true);
+    } else {
+      this.$store.state.audio.playBgm();
     }
   },
-  components:{
-      Visualizer,
-      UserProfileCard,
-      Navbar
-  },
-  data(){
-        return {
-            audio: null
-        }
-    },
-    mounted() {
-        if(this.songSrc){
-          this.$store.state.audio.loadSong(this.songSrc, true)
-        }else{
-          this.$store.state.audio.playBgm()
-        }
-    },
-    destroyed(){
-    }
+  destroyed() {},
 };
 </script>
 

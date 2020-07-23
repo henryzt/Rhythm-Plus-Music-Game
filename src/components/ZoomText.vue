@@ -1,8 +1,8 @@
 <template>
-  <div class="center" :style="{top:position}">
+  <div class="center" :style="{ top: position }">
     <transition name="bounce" v-on:after-enter="enter">
       <div :class="classObj" v-if="display">
-        <slot>{{text}}</slot>
+        <slot>{{ text }}</slot>
       </div>
     </transition>
   </div>
@@ -10,29 +10,29 @@
 
 <script>
 export default {
-    name: "ZoomText",
-    data: ()=>{
-        return {
-            display: false,
-            text: "Get Ready",
-            position: "50%",
-            duration: "1s",
-            classObj: {}
-        }
+  name: "ZoomText",
+  data: () => {
+    return {
+      display: false,
+      text: "Get Ready",
+      position: "50%",
+      duration: "1s",
+      classObj: {},
+    };
+  },
+  methods: {
+    enter() {
+      this.display = false;
     },
-    methods: {
-        enter(){
-            this.display = false;
-        },
-        show(text, position, classObj, duration){
-            this.text = text;
-            this.position = position ?? this.position;
-            this.duration = duration ?? this.duration;
-            if(classObj) this.classObj = { [classObj]:true };
-           this.display = true;
-        }
-    }
-}
+    show(text, position, classObj, duration) {
+      this.text = text;
+      this.position = position ?? this.position;
+      this.duration = duration ?? this.duration;
+      if (classObj) this.classObj = { [classObj]: true };
+      this.display = true;
+    },
+  },
+};
 </script>
 
 <style scoped>

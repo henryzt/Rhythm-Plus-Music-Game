@@ -1,14 +1,14 @@
 <template>
-  <div style="height:73vh;display:flex;flex-direction:column">
+  <div style="height: 73vh; display: flex; flex-direction: column;">
     <div class="tableHead">
-      <div style="width:10%">
+      <div style="width: 10%;">
         <label class="cb_container cb_small">
           <input type="checkbox" v-model="selectedAll" @click="selectAll" />
           <span class="checkmark"></span>
         </label>
       </div>
-      <div style="width:25%">Time</div>
-      <div style="width:55%">Keys</div>
+      <div style="width: 25%;">Time</div>
+      <div style="width: 55%;">Keys</div>
     </div>
     <div class="sheetTable">
       <virtual-list
@@ -17,128 +17,151 @@
         :data-key="'t'"
         :data-sources="instance.timeArr"
         :data-component="NoteTableItem"
-        :extra-props="{instance, noteToEdit, parent: $parent, table: this}"
+        :extra-props="{ instance, noteToEdit, parent: $parent, table: this }"
       />
     </div>
-    <NoteEditPanel v-if="noteToEdit" :note="noteToEdit" :instance="instance"></NoteEditPanel>
-    <div class="buttons" :class="{disabled: !instance.paused}">
+    <NoteEditPanel
+      v-if="noteToEdit"
+      :note="noteToEdit"
+      :instance="instance"
+    ></NoteEditPanel>
+    <div class="buttons" :class="{ disabled: !instance.paused }">
       <a class="btn-action btn-dark" @click="reorder">Reorder</a>
       <a class="btn-action btn-dark" @click="removeSelected">Delete</a>
       <a class="btn-action btn-dark" @click="selectBetween">Between</a>
       <a class="btn-action btn-dark" @click="clearSelected">Clear</a>
     </div>
-    <div class="flex_hori" :class="{disabled: !$parent.playMode && !instance.paused}">
-      <div style="flex-grow:0.5">
-      <Checkbox label="Auto Follow" :model="this" modelKey="follow" cbStyle="form"></Checkbox>
+    <div
+      class="flex_hori"
+      :class="{ disabled: !$parent.playMode && !instance.paused }"
+    >
+      <div style="flex-grow: 0.5;">
+        <Checkbox
+          label="Auto Follow"
+          :model="this"
+          modelKey="follow"
+          cbStyle="form"
+        ></Checkbox>
       </div>
-      <a style="flex-grow:0.4" class="btn-action btn-dark" @click="scrollToCurrent">Follow</a>
+      <a
+        style="flex-grow: 0.4;"
+        class="btn-action btn-dark"
+        @click="scrollToCurrent"
+        >Follow</a
+      >
     </div>
   </div>
 </template>
 
 <script>
-import NoteTableItem from './NoteTableItem.vue';
-import NoteEditPanel from './NoteEditPanel.vue';
-import Checkbox from './Checkbox.vue';
-import VirtualList from 'vue-virtual-scroll-list'
+import NoteTableItem from "./NoteTableItem.vue";
+import NoteEditPanel from "./NoteEditPanel.vue";
+import Checkbox from "./Checkbox.vue";
+import VirtualList from "vue-virtual-scroll-list";
 
 export default {
-    name: "SheetTable",
-    computed: {
-      instance(){
-        return this.$parent.instance;
-      },
+  name: "SheetTable",
+  computed: {
+    instance() {
+      return this.$parent.instance;
     },
-    components:{
-      NoteEditPanel,
-      VirtualList,
-      Checkbox
+  },
+  components: {
+    NoteEditPanel,
+    VirtualList,
+    Checkbox,
+  },
+  data() {
+    return {
+      selectedAll: false,
+      follow: true,
+      noteToEdit: null,
+      NoteTableItem,
+    };
+  },
+  watch: {
+    "instance.timeArrIdx"() {
+      if (!this.follow || (!this.$parent.playMode && !this.instance.paused))
+        return;
+      this.scrollToCurrent();
     },
-    data() {
-      return {
-        selectedAll: false,
-        follow: true,
-        noteToEdit: null,
-        NoteTableItem
+    "$parent.selectedNotes"() {
+      this.selectedAll =
+        this.$parent.selectedNotes.length !== 0 &&
+        this.$parent.selectedNotes.length === this.instance.timeArr.length;
+    },
+    "instance.timeArr"() {
+      if (this.instance.timeArr.length > 300 && !this.instance.paused) {
+        this.$parent.disableMappingTable = true;
       }
     },
-    watch: {
-        'instance.timeArrIdx'(){
-            if(!this.follow || (!this.$parent.playMode && !this.instance.paused)) return;
-            this.scrollToCurrent()
-        },
-        '$parent.selectedNotes'(){
-          this.selectedAll = this.$parent.selectedNotes.length!==0 && this.$parent.selectedNotes.length===this.instance.timeArr.length;
-        },
-        'instance.timeArr'(){
-          if(this.instance.timeArr.length>300 && !this.instance.paused){
-            this.$parent.disableMappingTable = true;
-          }
-        }
-    },
-    methods:{
-      selectAll(){
-          if(this.selectedAll){
-            this.clearSelected()
-          }else{
-            this.$parent.selectedNotes = this.instance.timeArr;
-          }
-      },
-      clearSelected(){
-        this.$parent.selectedNotes = []
-      },
-      removeSelected(){
-        if(this.$parent.selectedNotes == []) return;
-        this.instance.timeArr = this.instance.timeArr.filter(( el ) => {
-          return !this.$parent.selectedNotes.includes( el );
-        } );
-        this.clearSelected()
-        this.instance.repositionNotes()
-        this.$store.state.alert.success("Selected notes deleted")
-      },
-      scrollToCurrent(){
-        const idx = this.instance.timeArrIdx;
-        const table = this.$refs.table;
-        if(idx < this.instance.timeArr.length){
-          table.scrollToIndex(idx)
-          table.scrollToOffset(table.getOffset() - 230)
-        }else{
-          table.scrollToBottom()
-        }
-      },
-      reorder(){
-        this.$parent.reorderSheet()
-        this.$parent.selectedNotes.sort((a,b) => parseFloat(a.t) - parseFloat(b.t))
-      },
-      selectBetween(){
-        if(this.$parent.selectedNotes.length < 2) return;
-        this.reorder()
-        let sheet = this.instance.timeArr;
-        const minIdx = sheet.indexOf(this.$parent.selectedNotes[0]);
-        const maxIdx = sheet.indexOf(this.$parent.selectedNotes[this.$parent.selectedNotes.length-1]);
-        this.$parent.selectedNotes = sheet.slice(minIdx, maxIdx + 1);
-      },
-      selectNoteToEdit(note){
-        this.noteToEdit = null;
-        this.$nextTick(()=>{
-          // re-render note edit panel
-          this.noteToEdit = note;
-        })
-        let counter = 4;
-        let blinkNoteInterval = setInterval(()=>{
-          const selectedIdx = this.$parent.selectedNotes.indexOf(note);
-          if(selectedIdx !== -1){
-            this.$parent.selectedNotes.splice(selectedIdx, 1);
-          }else{
-            this.$parent.selectedNotes.push(note)
-          }
-          counter--;
-          if(counter<=0) clearInterval(blinkNoteInterval);
-        },200)
+  },
+  methods: {
+    selectAll() {
+      if (this.selectedAll) {
+        this.clearSelected();
+      } else {
+        this.$parent.selectedNotes = this.instance.timeArr;
       }
-    }
-
-}
+    },
+    clearSelected() {
+      this.$parent.selectedNotes = [];
+    },
+    removeSelected() {
+      if (this.$parent.selectedNotes == []) return;
+      this.instance.timeArr = this.instance.timeArr.filter((el) => {
+        return !this.$parent.selectedNotes.includes(el);
+      });
+      this.clearSelected();
+      this.instance.repositionNotes();
+      this.$store.state.alert.success("Selected notes deleted");
+    },
+    scrollToCurrent() {
+      const idx = this.instance.timeArrIdx;
+      const table = this.$refs.table;
+      if (idx < this.instance.timeArr.length) {
+        table.scrollToIndex(idx);
+        table.scrollToOffset(table.getOffset() - 230);
+      } else {
+        table.scrollToBottom();
+      }
+    },
+    reorder() {
+      this.$parent.reorderSheet();
+      this.$parent.selectedNotes.sort(
+        (a, b) => parseFloat(a.t) - parseFloat(b.t)
+      );
+    },
+    selectBetween() {
+      if (this.$parent.selectedNotes.length < 2) return;
+      this.reorder();
+      let sheet = this.instance.timeArr;
+      const minIdx = sheet.indexOf(this.$parent.selectedNotes[0]);
+      const maxIdx = sheet.indexOf(
+        this.$parent.selectedNotes[this.$parent.selectedNotes.length - 1]
+      );
+      this.$parent.selectedNotes = sheet.slice(minIdx, maxIdx + 1);
+    },
+    selectNoteToEdit(note) {
+      this.noteToEdit = null;
+      this.$nextTick(() => {
+        // re-render note edit panel
+        this.noteToEdit = note;
+      });
+      let counter = 4;
+      let blinkNoteInterval = setInterval(() => {
+        const selectedIdx = this.$parent.selectedNotes.indexOf(note);
+        if (selectedIdx !== -1) {
+          this.$parent.selectedNotes.splice(selectedIdx, 1);
+        } else {
+          this.$parent.selectedNotes.push(note);
+        }
+        counter--;
+        if (counter <= 0) clearInterval(blinkNoteInterval);
+      }, 200);
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -164,8 +187,8 @@ export default {
   padding-top: 5px;
 }
 
-.btn-dark{
-  margin:0;
+.btn-dark {
+  margin: 0;
   margin-top: 5px;
   margin-bottom: 5px;
   margin-right: 5px;

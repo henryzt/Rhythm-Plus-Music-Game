@@ -11,105 +11,100 @@
   </div>
 </template>
 
-
 <script>
-import BarVisualizer from '../visualizers/BarVisualizer.vue';
-import SpaceVisualizer from '../visualizers/SpaceVisualizer.vue';
-import ColorPoly from '../visualizers/ColorPoly.vue';
-import Swirl from '../visualizers/swirl/Swirl.vue';
-
+import BarVisualizer from "../visualizers/BarVisualizer.vue";
+import SpaceVisualizer from "../visualizers/SpaceVisualizer.vue";
+import ColorPoly from "../visualizers/ColorPoly.vue";
+import Swirl from "../visualizers/swirl/Swirl.vue";
 
 const visualizers = {
-  "Visualizer Off" : null,
-  "Space Visualizer" : "space",
-  "Bar Visualizer" : "bar",
-  "Space with Polygon" : "spacePoly",
-  "Colored Polygon" : "colorPoly",
-  "Swirl" : "swirl",
+  "Visualizer Off": null,
+  "Space Visualizer": "space",
+  "Bar Visualizer": "bar",
+  "Space with Polygon": "spacePoly",
+  "Colored Polygon": "colorPoly",
+  Swirl: "swirl",
 };
 
 export default {
-  name: 'Visualizer',
+  name: "Visualizer",
   props: ["autoUpdate", "setVisualizer", "setBlur"],
-  components:{
-      'bar' : BarVisualizer,
-      'space' : SpaceVisualizer,
-      'spacePoly' : SpaceVisualizer,
-      'colorPoly' : ColorPoly,
-      'swirl' : Swirl
+  components: {
+    bar: BarVisualizer,
+    space: SpaceVisualizer,
+    spacePoly: SpaceVisualizer,
+    colorPoly: ColorPoly,
+    swirl: Swirl,
   },
-  data: function(){
+  data: function () {
     return {
-        visualizerArr: visualizers,
-        vComponent: null,
-        blur: false,
-        audioDataLoaded: false,
-    }
+      visualizerArr: visualizers,
+      vComponent: null,
+      blur: false,
+      audioDataLoaded: false,
+    };
   },
   mounted() {
-        window.addEventListener("resize", this.resizeCanvas, false);
-        window.addEventListener("orientationchange",this.resizeCanvas,false);
-        if(this.setVisualizer)
-            this.vComponent = this.setVisualizer;
-        if(this.setBlur)
-            this.blur = this.setBlur;
-        if(!this.$store.state.visualizerArr)
-            this.$store.commit("setVisualizerArr", visualizers);
-        if(this.autoUpdate)
-            this.update();
-    },
-    beforeDestroy(){
-        window.removeEventListener("resize", this.resizeCanvas);
-        window.removeEventListener("orientationchange",this.resizeCanvas);
-        this.audioDataLoaded = false
-        this.vComponent = null
-    },
+    window.addEventListener("resize", this.resizeCanvas, false);
+    window.addEventListener("orientationchange", this.resizeCanvas, false);
+    if (this.setVisualizer) this.vComponent = this.setVisualizer;
+    if (this.setBlur) this.blur = this.setBlur;
+    if (!this.$store.state.visualizerArr)
+      this.$store.commit("setVisualizerArr", visualizers);
+    if (this.autoUpdate) this.update();
+  },
+  beforeDestroy() {
+    window.removeEventListener("resize", this.resizeCanvas);
+    window.removeEventListener("orientationchange", this.resizeCanvas);
+    this.audioDataLoaded = false;
+    this.vComponent = null;
+  },
   methods: {
     renderVisualizer() {
-        if (!this.shouldRender) return;
-        this.$refs.visualizerIns?.update()
+      if (!this.shouldRender) return;
+      this.$refs.visualizerIns?.update();
     },
-    setVisualizerByKey(name){
-        this.vComponent = visualizers[name];
+    setVisualizerByKey(name) {
+      this.vComponent = visualizers[name];
     },
     update() {
-        if(!this.autoUpdate || !this.shouldRender) return;
-        requestAnimationFrame(this.update.bind(this));
-        this.renderVisualizer();
+      if (!this.autoUpdate || !this.shouldRender) return;
+      requestAnimationFrame(this.update.bind(this));
+      this.renderVisualizer();
     },
-    resizeCanvas(){
-        if (!this.shouldRender) return;
-        this.$refs.visualizerIns.resizeCanvas()
-    }
+    resizeCanvas() {
+      if (!this.shouldRender) return;
+      this.$refs.visualizerIns.resizeCanvas();
+    },
   },
-    watch : {
-        audioData: () => {
-            // required to watch vuex change
-        },
-        setVisualizer: () => {
-            if(!this) return;
-            this.vComponent = this.setVisualizer;
-        },
-        setBlur(){
-            this.blur = this.setBlur;
-        }
+  watch: {
+    audioData: () => {
+      // required to watch vuex change
     },
-    computed:{
-        currentVisualizer() {
-            return Object.keys(visualizers).find(key => visualizers[key] === this.vComponent);
-        },
-        audioData() {
-            let data = this.$store.state.audio.audioData;
-            if(data.analyser)
-                this.audioDataLoaded = true
-            return data;
-        },
-        shouldRender(){
-            return this.audioDataLoaded && this.vComponent;
-        }
-    }
+    setVisualizer: () => {
+      if (!this) return;
+      this.vComponent = this.setVisualizer;
+    },
+    setBlur() {
+      this.blur = this.setBlur;
+    },
+  },
+  computed: {
+    currentVisualizer() {
+      return Object.keys(visualizers).find(
+        (key) => visualizers[key] === this.vComponent
+      );
+    },
+    audioData() {
+      let data = this.$store.state.audio.audioData;
+      if (data.analyser) this.audioDataLoaded = true;
+      return data;
+    },
+    shouldRender() {
+      return this.audioDataLoaded && this.vComponent;
+    },
+  },
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

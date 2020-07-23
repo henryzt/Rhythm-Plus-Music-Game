@@ -1,6 +1,10 @@
 <template>
   <div id="app" class="unselectable">
-    <PageBackground v-if="$store.state.audio && $route.meta.requireBg && showOnPageRequireSignin"></PageBackground>
+    <PageBackground
+      v-if="
+        $store.state.audio && $route.meta.requireBg && showOnPageRequireSignin
+      "
+    ></PageBackground>
     <ModalGlobal ref="gm"></ModalGlobal>
     <FloatingAlert ref="alert"></FloatingAlert>
     <transition name="fade" v-if="$store.state.audio">
@@ -11,7 +15,10 @@
       />
       <div v-else>
         <div class="center blink_me">
-          <img src="/assets/logo2.png" style="max-width: 350px; padding: 20px 0; width:100%;" />
+          <img
+            src="/assets/logo2.png"
+            style="max-width: 350px; padding: 20px 0; width: 100%;"
+          />
           <div>Logging you in...</div>
         </div>
       </div>
@@ -20,48 +27,49 @@
 </template>
 
 <script>
-import Audio from './javascript/audio.js';
-import ModalGlobal from './components/ModalGlobal.vue';
-import FloatingAlert from './components/FloatingAlert.vue';
-import PageBackground from './components/PageBackground.vue';
-import 'vue-awesome/icons/volume-up'
-import 'vue-awesome/icons/volume-mute'
-import 'vue-awesome/icons/expand'
-import 'vue-awesome/icons/compress'
-import 'vue-awesome/icons/plus'
+import Audio from "./javascript/audio.js";
+import ModalGlobal from "./components/ModalGlobal.vue";
+import FloatingAlert from "./components/FloatingAlert.vue";
+import PageBackground from "./components/PageBackground.vue";
+import "vue-awesome/icons/volume-up";
+import "vue-awesome/icons/volume-mute";
+import "vue-awesome/icons/expand";
+import "vue-awesome/icons/compress";
+import "vue-awesome/icons/plus";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     ModalGlobal,
     FloatingAlert,
-    PageBackground
+    PageBackground,
   },
-  mounted(){
+  mounted() {
     this.$store.commit("setAudio", new Audio());
     this.$store.commit("setGlobalModal", this.$refs.gm);
     this.$store.commit("setFloatingAlert", this.$refs.alert);
-    window.addEventListener('online', this.updateOnlineStatus);
-    window.addEventListener('offline', this.updateOnlineStatus);
+    window.addEventListener("online", this.updateOnlineStatus);
+    window.addEventListener("offline", this.updateOnlineStatus);
   },
   beforeDestroy() {
-    window.removeEventListener('online', this.updateOnlineStatus);
-    window.removeEventListener('offline', this.updateOnlineStatus);
+    window.removeEventListener("online", this.updateOnlineStatus);
+    window.removeEventListener("offline", this.updateOnlineStatus);
   },
   methods: {
     updateOnlineStatus(e) {
-      const isOnline = e.type === 'online';
-      if(isOnline)
-        this.$store.state.alert.success("You are back online!")
-      else
-        this.$store.state.alert.error("No internet connection")
-    }
+      const isOnline = e.type === "online";
+      if (isOnline) this.$store.state.alert.success("You are back online!");
+      else this.$store.state.alert.error("No internet connection");
+    },
   },
-  computed:{
-    showOnPageRequireSignin(){
-      return !this.$route.meta.requireSignin || (this.$store.state.initialized && this.$route.meta.requireSignin);
-    }
-  }
+  computed: {
+    showOnPageRequireSignin() {
+      return (
+        !this.$route.meta.requireSignin ||
+        (this.$store.state.initialized && this.$route.meta.requireSignin)
+      );
+    },
+  },
 };
 </script>
 

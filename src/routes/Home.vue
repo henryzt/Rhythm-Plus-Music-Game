@@ -22,6 +22,8 @@
         }}
       </div>
     </div>
+
+    <div class="leftBottom">{{ $store.state.appVersion }}</div>
   </div>
 </template>
 
@@ -50,4 +52,17 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.leftBottom {
+  position: fixed;
+  left: 5px;
+  bottom: 5px;
+  opacity: 0.3;
+}
+
+@media only screen and (max-width: 1000px) {
+  .leftBottom {
+    display: none;
+  }
+}
+</style>

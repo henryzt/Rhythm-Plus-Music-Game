@@ -3,6 +3,9 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const VueLoaderPlugin = require("vue-loader/lib/plugin");
 const CopyPlugin = require("copy-webpack-plugin");
+const packageJson = require("./package.json");
+const version = packageJson.version || 0;
+const versionPrefix = "alpha-";
 
 const isProduction = () => process.env.NODE_ENV === "production";
 
@@ -69,6 +72,7 @@ module.exports = {
     new webpack.DefinePlugin({
       "process.env": {
         NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+        APP_VERSION: '"' + versionPrefix + version + '"',
       },
     }),
     new HtmlWebpackPlugin({

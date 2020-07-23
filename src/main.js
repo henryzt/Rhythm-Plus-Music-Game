@@ -6,6 +6,8 @@ import router from "./helpers/router";
 import { store } from "./helpers/store";
 import * as fb from "./helpers/firebaseConfig";
 import Icon from "vue-awesome/components/Icon.vue";
+import * as Sentry from "@sentry/browser";
+import { Vue as VueIntegration } from "@sentry/integrations";
 import "animate.css";
 
 Vue.config.productionTip = false;
@@ -32,3 +34,11 @@ new Vue({
   },
   render: (h) => h(App),
 }).$mount("#app");
+
+Sentry.init({
+  dsn:
+    "https://7c0cf5f165ab4854994380c0a0d9711e@o424134.ingest.sentry.io/5355558",
+  integrations: [
+    new VueIntegration({ Vue, attachProps: true, logErrors: true }),
+  ],
+});

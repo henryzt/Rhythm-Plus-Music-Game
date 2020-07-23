@@ -17,6 +17,8 @@
     "deploy": "yarn build && firebase deploy && git push"
   },
   "dependencies": {
+    "@sentry/browser": "^5.20.0",
+    "@sentry/integrations": "^5.20.0",
     "animate.css": "^4.1.0",
     "axios": "^0.19.2",
     "countup.js": "^2.0.5",
@@ -39,10 +41,10 @@
     "vuex": "^3.5.1"
   },
   "devDependencies": {
-    "@vue/eslint-config-prettier": "^6.0.0",
     "@babel/cli": "^7.10.4",
     "@babel/core": "^7.10.4",
     "@babel/preset-env": "^7.10.4",
+    "@vue/eslint-config-prettier": "^6.0.0",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.1.0",
     "babel-polyfill": "^6.26.0",

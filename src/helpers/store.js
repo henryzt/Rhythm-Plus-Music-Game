@@ -20,6 +20,7 @@ export const store = new Vuex.Store({
     visualizerArr: null,
     theme: null,
     redirecting: false,
+    appVersion: process.env.APP_VERSION || "0",
   },
   actions: {
     async fetchUserProfile() {

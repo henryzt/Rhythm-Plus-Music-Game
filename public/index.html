@@ -25,6 +25,10 @@
       gtag("js", new Date());
 
       gtag("config", "UA-113940817-5");
+
+      function gaPageview(page) {
+        gtag("config", "UA-113940817-5", { page_path: page });
+      }
     </script>
   </head>
   <body>

@@ -1,8 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import * as fb from "./firebaseConfig";
+import { usersCollection, analytics, auth } from "./firebaseConfig";
 import md5 from "js-md5";
-import firebase from "firebase";
 
 Vue.use(Vuex);
 
@@ -54,7 +53,7 @@ export const store = new Vuex.Store({
     async updateUserProfile({ commit, state }) {
       if (state.currentUser) {
         try {
-          const res = await fb.usersCollection.doc(state.currentUser.uid).get();
+          const res = await usersCollection.doc(state.currentUser.uid).get();
           let data = res.data();
           commit("setUserProfile", data ?? {});
           commit("setTheme");
@@ -62,7 +61,7 @@ export const store = new Vuex.Store({
           console.error(err);
         }
         // update display name and photo for first time login
-        const user = firebase.auth().currentUser;
+        const user = auth.currentUser;
         const providerDisplayName =
           state.currentUser.providerData?.[0]?.displayName;
         let reloadRequired = false;
@@ -88,6 +87,12 @@ export const store = new Vuex.Store({
       state.authed = val && !val.isAnonymous && val.providerData?.length > 0;
       state.verified = state.authed && val.emailVerified;
       state.currentUser = val;
+      analytics.setUserId(val.uid);
+      analytics.setUserProperties({
+        displayName: val.displayName,
+        emailVerified: val.emailVerified,
+        isAnonymous: val.isAnonymous,
+      });
       this.dispatch("fetchUserProfile");
     },
     setUserProfile(state, val) {

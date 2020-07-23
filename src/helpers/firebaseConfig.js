@@ -19,6 +19,7 @@ const db = firebase.firestore();
 const firestore = firebase.firestore; //db instance
 const auth = firebase.auth();
 const functions = firebase.functions();
+const analytics = firebase.analytics();
 const currentUser = auth.currentUser;
 
 // Initialize Performance Monitoring and get a reference to the service
@@ -36,6 +37,7 @@ const resultsCollection = db.collection("results");
 export {
   db,
   firestore,
+  analytics,
   auth,
   currentUser,
   perf,

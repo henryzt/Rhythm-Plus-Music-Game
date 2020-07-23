@@ -7,6 +7,7 @@ import Rankings from "../routes/Rankings.vue";
 import SongSelect from "../routes/SongSelect.vue";
 import MyStudio from "../routes/MyStudio.vue";
 import SheetEditor from "../routes/SheetEditor.vue";
+import { analytics } from "./firebaseConfig";
 
 const router = new VueRouter({
   mode: "history",
@@ -51,4 +52,13 @@ const router = new VueRouter({
     { path: "*", redirect: { path: "/" } },
   ],
 });
+
+router.afterEach((to) => {
+  const path = to.path;
+  window.gaPageview(path);
+  analytics.setCurrentScreen(path);
+  analytics.logEvent("page_view");
+  analytics.logEvent("changed");
+});
+
 export default router;

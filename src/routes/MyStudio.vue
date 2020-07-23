@@ -65,15 +65,13 @@
 </template>
 
 <script>
-import Button from "../components/Button.vue";
 import SongListItem from "../components/SongListItem.vue";
 import Loading from "../components/Loading.vue";
-import { getSheetList, getSongList, getSong } from "../javascript/db";
+import { getSheetList, getSong } from "../javascript/db";
 
 export default {
   name: "MyStudio",
   components: {
-    Button,
     SongListItem,
     Loading,
   },

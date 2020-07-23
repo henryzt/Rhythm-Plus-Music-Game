@@ -117,13 +117,12 @@
 
 <script>
 import PageBackground from "../components/PageBackground.vue";
-import SongListItem from "../components/SongListItem.vue";
 import UserProfileCard from "../components/UserProfileCard.vue";
-import Modal from "../components/Modal.vue";
+import Loading from "../components/Loading.vue";
 import { getGameSheet, getResult, getBestScore } from "../javascript/db";
 import ICountUp from "vue-countup-v2";
 import VueCircle from "vue2-circle-progress/src/index.vue";
-import Loading from "../components/Loading.vue";
+import VanillaTilt from "vanilla-tilt";
 import "vue-awesome/icons/redo";
 import "vue-awesome/icons/arrow-right";
 
@@ -131,11 +130,9 @@ export default {
   name: "Result",
   components: {
     PageBackground,
-    Modal,
     ICountUp,
     VueCircle,
     Loading,
-    SongListItem,
     UserProfileCard,
   },
   data() {

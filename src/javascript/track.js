@@ -209,9 +209,9 @@ export class HitEffect {
     this.ctx = ctx;
   }
 
-  create(x, y, width, height, judge) {
-    x = x + width / 2 - 5;
-    width = 10;
+  create(mX, y, mWidth, height, judge) {
+    let x = mX + mWidth / 2 - 5;
+    let width = 10;
     let count = 0;
     const rgb = this.getRgb(judge);
     this.circle = new ExpandingCircle(x + 5, y, rgb);

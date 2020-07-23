@@ -51,6 +51,7 @@ export default {
     if (this.setBlur) this.blur = this.setBlur;
     if (!this.$store.state.visualizerArr)
       this.$store.commit("setVisualizerArr", visualizers);
+    if (this.audioData) this.audioDataLoaded = true;
     if (this.autoUpdate) this.update();
   },
   beforeDestroy() {
@@ -79,7 +80,7 @@ export default {
   },
   watch: {
     audioData: () => {
-      // required to watch vuex change
+      if (this.audioData) this.audioDataLoaded = true;
     },
     setVisualizer: () => {
       if (!this) return;
@@ -96,9 +97,7 @@ export default {
       );
     },
     audioData() {
-      let data = this.$store.state.audio.audioData;
-      if (data.analyser) this.audioDataLoaded = true;
-      return data;
+      return this.$store.state.audio.audioData;
     },
     shouldRender() {
       return this.audioDataLoaded && this.vComponent;

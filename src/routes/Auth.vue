@@ -79,7 +79,7 @@ export default {
       ],
       autoUpgradeAnonymousUsers: true,
       callbacks: {
-        signInSuccessWithAuthResult: (authResult, redirectUrl) => {
+        signInSuccessWithAuthResult: (authResult) => {
           console.log(authResult);
           this.signInRedirect();
           return true;
@@ -94,7 +94,6 @@ export default {
           // Hold a reference to the anonymous current user.
           let anonymousUser = firebase.auth().currentUser;
           let cred = error.credential;
-          let app = firebase.app();
           // Save anonymous user data first.
           try {
             if (

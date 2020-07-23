@@ -10,14 +10,11 @@
 </template>
 
 <script>
-import Button from "../components/Button.vue";
 import "vue-awesome/icons/regular/laugh";
 
 export default {
   name: "Rankings",
-  components: {
-    Button,
-  },
+  components: {},
   data() {
     return {};
   },

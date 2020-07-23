@@ -80,17 +80,17 @@ export default {
       autoUpgradeAnonymousUsers: true,
       callbacks: {
         signInSuccessWithAuthResult: (authResult) => {
-          console.log(authResult);
+          Logger.log(authResult);
           this.signInRedirect();
           return true;
         },
         // handle merge conflicts which occur when an existing credential is linked to an anonymous user.
         signInFailure: async (error) => {
           if (error.code !== "firebaseui/anonymous-upgrade-merge-conflict") {
-            console.error(error);
+            Logger.error(error);
             return Promise.resolve();
           }
-          console.warn(error);
+          Logger.warn(error);
           // Hold a reference to the anonymous current user.
           let anonymousUser = firebase.auth().currentUser;
           let cred = error.credential;
@@ -107,7 +107,7 @@ export default {
                 .set({ isAnonymousDeleted: true });
             await anonymousUser.delete();
           } catch (err) {
-            console.error(err);
+            Logger.error(err);
           }
 
           try {
@@ -115,7 +115,7 @@ export default {
             await firebase.auth().signInWithCredential(cred);
             this.signInRedirect();
           } catch (err) {
-            console.error(err);
+            Logger.error(err);
           }
         },
       },
@@ -149,7 +149,7 @@ export default {
         await firebase.auth().signOut();
         this.$router.go();
       } catch (err) {
-        console.error(err);
+        Logger.error(err);
       }
     },
     signInRedirect() {
@@ -179,7 +179,7 @@ export default {
           }, 30000);
         })
         .catch((error) => {
-          console.error(error);
+          Logger.error(error);
           if (error.code === "auth/too-many-requests") {
             this.$store.state.alert.error(
               "You have sent to many emails, please try again later.",

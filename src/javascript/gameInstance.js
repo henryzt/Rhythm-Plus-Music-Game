@@ -173,7 +173,7 @@ export default class GameInstance {
     const tapEvent = (e, start) => {
       e.preventDefault();
       for (let pointer of e.changedTouches) {
-        console.log(e);
+        Logger.log(e);
         const x = pointer.clientX;
 
         this.dropTrackArr.forEach((track) => {
@@ -316,7 +316,7 @@ export default class GameInstance {
   }
 
   createHoldNote(key, obj) {
-    console.log("hold", key, obj);
+    Logger.log("hold", key, obj);
     obj.h = obj.h ?? {}; // key.hold = {key: endTime}
     obj.h[key] = -1; // -1: not yet completed
     this.holdingNote[key] = obj;

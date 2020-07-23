@@ -187,7 +187,7 @@ export default {
         this.$router.go();
       } catch (err) {
         this.loading = false;
-        console.error(err);
+        Logger.error(err);
       }
     },
   },

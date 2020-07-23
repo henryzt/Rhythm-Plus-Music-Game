@@ -58,7 +58,7 @@ export const store = new Vuex.Store({
           commit("setUserProfile", data ?? {});
           commit("setTheme");
         } catch (err) {
-          console.error(err);
+          Logger.error(err);
         }
         // update display name and photo for first time login
         const user = auth.currentUser;
@@ -69,13 +69,13 @@ export const store = new Vuex.Store({
           state.redirecting = true;
           await user.updateProfile({ displayName: providerDisplayName });
           reloadRequired = true;
-          console.warn("Display name updated using provider data");
+          Logger.warn("Display name updated using provider data");
         }
         const providerPhoto = state.currentUser.providerData?.[0]?.photoURL;
         if (!state.currentUser.photoURL && providerPhoto) {
           state.redirecting = true;
           await user.updateProfile({ photoURL: providerPhoto });
-          console.warn("Photo URL updated using provider data");
+          Logger.warn("Photo URL updated using provider data");
           reloadRequired = true;
         }
         if (reloadRequired) window.location.reload();

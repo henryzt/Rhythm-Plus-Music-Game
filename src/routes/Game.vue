@@ -241,7 +241,7 @@ export default {
       }
     },
     songLoaded() {
-      console.log("playing");
+      Logger.log("playing");
       this.instance.loading = false;
       if (!this.started) {
         // first loaded
@@ -257,12 +257,12 @@ export default {
     },
     videoCued() {
       if (this.srcMode !== "youtube") return;
-      console.log("cued");
+      Logger.log("cued");
       this.instance.loading = false;
       this.showStartButton = true;
     },
     ytBuffering() {
-      console.log("buffering");
+      Logger.log("buffering");
       if (this.showStartButton) {
         this.startGame();
       }
@@ -312,10 +312,10 @@ export default {
           sheetId: this.currentSong.sheetId,
           isAuthed: this.$store.state.authed,
         });
-        console.log(res);
+        Logger.log(res);
         this.$router.push("/result/" + res.data.resultId);
       } catch (error) {
-        console.error(error);
+        Logger.error(error);
         this.$store.state.gModal.show({
           bodyText:
             "We are sorry, due to a connection failure, we are unable to save the result. Would you like to try again?",

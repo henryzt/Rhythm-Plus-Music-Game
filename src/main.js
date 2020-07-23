@@ -41,12 +41,12 @@ new Vue({
   store,
   created() {
     fb.auth.onAuthStateChanged(async (user) => {
-      console.log("User state changed", user);
+      Logger.log("User state changed", user);
       await this.$store.commit("setCurrentUser", user);
       if (!user && !this.$store.state.redirecting) {
-        console.warn("User not logged in, creating anonymous profile...");
+        Logger.warn("User not logged in, creating anonymous profile...");
         fb.auth.signInAnonymously().catch((error) => {
-          console.error(error.message);
+          Logger.error(error.message);
         });
       }
     });

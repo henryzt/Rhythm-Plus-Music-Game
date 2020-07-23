@@ -25,6 +25,7 @@ module.exports = {
     port: 3000,
     hotOnly: true,
     historyApiFallback: true,
+    clientLogLevel: "warn",
   },
   optimization: isProduction()
     ? {

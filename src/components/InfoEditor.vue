@@ -231,7 +231,7 @@ export default {
           "An error occurred, please try again",
           5000
         );
-        console.error(err);
+        Logger.error(err);
       }
     },
     submitExistingSong() {
@@ -276,7 +276,7 @@ export default {
           "An error occurred, please try again",
           5000
         );
-        console.error(err);
+        Logger.error(err);
       }
     },
     submitExistingSheet() {

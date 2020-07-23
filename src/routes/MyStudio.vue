@@ -89,7 +89,7 @@ export default {
     const userSheets = await getSheetList(null, true);
     const songIdsArr = userSheets.map((e) => e.songId);
     const songIds = [...new Set(songIdsArr)]; // get unique
-    console.log(userSheets, songIds);
+    Logger.log(userSheets, songIds);
     let songAndSheetList = [];
     for (const songId of songIds) {
       const song = await getSong(songId);

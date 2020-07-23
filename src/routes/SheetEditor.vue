@@ -340,7 +340,7 @@ export default {
         this.gameSheetInfo = await getGameSheet(sheetId);
         this.gameSheetInfo.sheet = this.gameSheetInfo.sheet ?? [];
         this.instance.loadSong(this.gameSheetInfo);
-        console.log(this.gameSheetInfo);
+        Logger.log(this.gameSheetInfo);
         if (this.$route.query.save) {
           // refresh sheet data
           await this.saveSheet();
@@ -355,7 +355,7 @@ export default {
           );
         }
       } catch (err) {
-        console.error(err);
+        Logger.error(err);
         this.$store.state.gModal.show({
           bodyText: "Sorry, something went wrong, maybe try refresh?",
           isError: true,
@@ -399,7 +399,7 @@ export default {
       } else {
         length = this.audio.getDuration();
       }
-      console.log(length);
+      Logger.log(length);
       return Number(length.toFixed(3));
     },
     pauseGame() {

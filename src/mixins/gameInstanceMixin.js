@@ -112,7 +112,7 @@ export default {
     },
     feverTimer() {
       if (!this.started || this.instance.paused || !this.playMode) return;
-      console.log(this.fever.percent, this.fever.time, this.fever.value);
+      Logger.log(this.fever.percent, this.fever.time, this.fever.value);
       if (this.fever.value < 1) this.fever.value = 1;
       if (this.fever.percent < 0) this.fever.percent = 0;
       if (this.fever.percent >= 1) {
@@ -130,11 +130,11 @@ export default {
       }
     },
     ytPaused() {
-      console.log("pasued");
+      Logger.log("pasued");
       if (this.started) this.pauseGame();
     },
     ytError() {
-      console.error("youtube error");
+      Logger.error("youtube error");
       this.instance.loading = false;
       this.$store.state.gModal.show({
         bodyText:

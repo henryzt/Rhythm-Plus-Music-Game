@@ -79,7 +79,7 @@ export default {
         this.songList = res;
       })
       .catch((err) => {
-        console.error(err);
+        Logger.error(err);
       });
   },
   methods: {},

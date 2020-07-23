@@ -27,7 +27,7 @@ export function createSong(songInfo) {
   let dateUpdated = dateCreated;
   let createdBy = store.state.currentUser?.uid;
   let visibility = "private";
-  console.log(songId);
+  Logger.log(songId);
   return new Promise((resolve, reject) => {
     songsCollection
       .doc(songId)
@@ -46,11 +46,11 @@ export function createSong(songInfo) {
         createdBy,
       })
       .then(function () {
-        console.log("Document successfully written!");
+        Logger.log("Document successfully written!");
         resolve(songId);
       })
       .catch(function (error) {
-        console.error("Error writing document: ", error);
+        Logger.error("Error writing document: ", error);
         reject(error);
       });
   });
@@ -69,7 +69,7 @@ export function getSongList(getPrivate, filterIdArr) {
     };
 
     const processErr = (error) => {
-      console.error("Error getting document:", error);
+      Logger.error("Error getting document:", error);
       reject(error);
     };
 
@@ -116,16 +116,16 @@ export function getSong(songId) {
       .get()
       .then((doc) => {
         if (doc.exists) {
-          console.log("Song data:", doc.data());
+          Logger.log("Song data:", doc.data());
           resolve(filterSongData(doc));
         } else {
           // doc.data() will be undefined in this case
-          console.error("No such document!");
+          Logger.error("No such document!");
           reject();
         }
       })
       .catch(function (error) {
-        console.error("Error getting document:", error);
+        Logger.error("Error getting document:", error);
         reject(error);
       });
   });
@@ -137,11 +137,11 @@ export function updateSong(info) {
     .doc(info.id)
     .update(info)
     .then(function () {
-      console.log("Document successfully updated!");
+      Logger.log("Document successfully updated!");
     })
     .catch(function (error) {
       // The document probably doesn't exist.
-      console.error("Error updating document: ", error);
+      Logger.error("Error updating document: ", error);
     });
 }
 
@@ -187,30 +187,30 @@ export function createSheet(sheetInfo) {
         createdBy,
       })
       .then((docRef) => {
-        console.log("Document successfully written!");
+        Logger.log("Document successfully written!");
         resolve(docRef.id);
       })
       .catch((error) => {
-        console.error("Error writing document: ", error);
+        Logger.error("Error writing document: ", error);
         reject();
       });
   });
 }
 
 export function updateSheet(info) {
-  console.log(info);
+  Logger.log(info);
   cleanForUpdate(info);
-  console.log(info);
+  Logger.log(info);
 
   return sheetsCollection
     .doc(info.id)
     .update(info)
     .then(function () {
-      console.log("Document successfully updated!");
+      Logger.log("Document successfully updated!");
     })
     .catch(function (error) {
       // The document probably doesn't exist.
-      console.error("Error updating document: ", error);
+      Logger.error("Error updating document: ", error);
       throw error;
     });
 }
@@ -224,13 +224,13 @@ export function getSheetList(songId, getUserOwned, getOnlyUnpublished) {
         sheet.id = doc.id;
         res.push(sheet);
         // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, " => ", doc.data());
+        Logger.log(doc.id, " => ", doc.data());
       });
       resolve(res);
     };
 
     const processErr = (error) => {
-      console.error("Error getting document:", error);
+      Logger.error("Error getting document:", error);
       reject(error);
     };
 
@@ -276,14 +276,14 @@ export async function getGameSheet(sheetId) {
       sheet.sheet = JSON.parse(sheet.sheet);
       sheet.sheetId = doc.id;
       replaceBaseUrl(sheet);
-      console.log("Sheet data:", sheet);
+      Logger.log("Sheet data:", sheet);
       return sheet;
     } else {
-      console.error("No such document");
+      Logger.error("No such document");
       throw new Error("No such document");
     }
   } catch (error) {
-    console.error(error);
+    Logger.error(error);
     throw new Error("Error reading document");
   }
 }
@@ -298,12 +298,12 @@ export function getSheet(sheetId) {
           resolve(filterSongData(doc));
         } else {
           // doc.data() will be undefined in this case
-          console.error("No such document!");
+          Logger.error("No such document!");
           reject();
         }
       })
       .catch(function (error) {
-        console.error("Error getting document:", error);
+        Logger.error("Error getting document:", error);
         reject(error);
       });
   });
@@ -325,11 +325,11 @@ export async function getResult(resultId) {
       let result = doc.data();
       return result;
     } else {
-      console.error("No such document");
+      Logger.error("No such document");
       throw new Error("No such document");
     }
   } catch (error) {
-    console.error(error);
+    Logger.error(error);
     throw new Error("Error reading document");
   }
 }
@@ -352,7 +352,7 @@ export async function getBestScore(sheetId) {
 
     return res;
   } catch (error) {
-    console.error(error);
+    Logger.error(error);
     throw new Error("Error reading document");
   }
 }
@@ -361,16 +361,16 @@ export async function updateUserProfile(data) {
   const uid = store.state.currentUser?.uid;
   if (!uid) throw new Error("User not logged in");
 
-  console.log(uid, data);
+  Logger.log(uid, data);
 
   cleanForUpdate(data);
 
   try {
     await usersCollection.doc(uid).set(data, { merge: true });
-    console.log("Document successfully updated!");
+    Logger.log("Document successfully updated!");
   } catch (error) {
     // The document probably doesn't exist.
-    console.error("Error updating document: ", error);
+    Logger.error("Error updating document: ", error);
     throw error;
   }
 }

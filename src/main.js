@@ -10,8 +10,12 @@ import * as Sentry from "@sentry/browser";
 import { Vue as VueIntegration } from "@sentry/integrations";
 import "animate.css";
 
+const isDev = process.env.NODE_ENV === "development";
+
+Logger.useDefaults({ defaultLevel: isDev ? Logger.DEBUG : Logger.ERROR });
+
 Vue.config.productionTip = false;
-Vue.config.devtools = process.env.NODE_ENV === "development";
+Vue.config.devtools = isDev;
 
 Vue.use(VueMoment);
 Vue.use(VueRouter);
@@ -21,6 +25,15 @@ Sentry.init({
   dsn:
     "https://7c0cf5f165ab4854994380c0a0d9711e@o424134.ingest.sentry.io/5355558",
   integrations: [new VueIntegration({ Vue, attachProps: true })],
+});
+
+const consoleHandler = Logger.createDefaultHandler();
+Logger.setHandler((messages, context) => {
+  consoleHandler(messages, context);
+  if (context.level.value > Logger.WARN.value) {
+    // ERROR level
+    Sentry.captureException(messages[0]);
+  }
 });
 
 new Vue({

@@ -42,7 +42,7 @@
       </router-link>
       <div class="nav">
         <v-icon
-          :name="$store.state.isFullscreen?'compress':'expand'"
+          :name="$store.state.isFullscreen ? 'compress' : 'expand'"
           scale="1.5"
           @click="$store.commit('toggleFullscreen')"
         />
@@ -57,17 +57,17 @@
 </template>
 
 <script>
-import 'vue-awesome/icons/home'
-import 'vue-awesome/icons/stream'
-import 'vue-awesome/icons/medal'
-import 'vue-awesome/icons/cog'
-import 'vue-awesome/icons/share'
-import 'vue-awesome/icons/pencil-ruler'
+import "vue-awesome/icons/home";
+import "vue-awesome/icons/stream";
+import "vue-awesome/icons/medal";
+import "vue-awesome/icons/cog";
+import "vue-awesome/icons/share";
+import "vue-awesome/icons/pencil-ruler";
 
 export default {
-    name: "Navbar",
-    props: ["gameNav"]
-}
+  name: "Navbar",
+  props: ["gameNav"],
+};
 </script>
 
 <style>

@@ -5,40 +5,66 @@
       <a
         class="pause_button"
         @click="pauseGame"
-        v-if="started && (instance && !instance.paused) && !isGameEnded"
+        v-if="started && instance && !instance.paused && !isGameEnded"
       >
         <v-icon name="regular/pause-circle" scale="1.5" />
       </a>
-      <Navbar v-else-if="!isGameEnded" style="z-index:1000" :gameNav="true"></Navbar>
+      <Navbar
+        v-else-if="!isGameEnded"
+        style="z-index: 1000;"
+        :gameNav="true"
+      ></Navbar>
     </transition>
 
     <!-- mark indicator -->
-    <div class="center_judge" ref="hitIndicator">{{markJudge}} {{result.combo>=5?result.combo:''}}</div>
+    <div class="center_judge" ref="hitIndicator">
+      {{ markJudge }} {{ result.combo >= 5 ? result.combo : "" }}
+    </div>
 
     <!-- game canvas -->
-    <div class="gameWrapper" :class="{'no-events':hideGameForYtButton}">
-      <canvas ref="mainCanvas" id="gameCanvas" :class="{perspective}"></canvas>
+    <div class="gameWrapper" :class="{ 'no-events': hideGameForYtButton }">
+      <canvas
+        ref="mainCanvas"
+        id="gameCanvas"
+        :class="{ perspective }"
+      ></canvas>
     </div>
 
     <!-- visualizer canvas -->
-    <Visualizer ref="visualizer" :setBlur="blur" v-show="!hideGameForYtButton"></Visualizer>
+    <Visualizer
+      ref="visualizer"
+      :setBlur="blur"
+      v-show="!hideGameForYtButton"
+    ></Visualizer>
 
     <!-- score panel -->
     <div class="score">
-      <div style="font-size:0.5em">
-        <ICountUp :endVal="percentage" :options="{decimalPlaces:2,duration:1}" />%
+      <div style="font-size: 0.5em;">
+        <ICountUp
+          :endVal="percentage"
+          :options="{ decimalPlaces: 2, duration: 1 }"
+        />%
       </div>
-      <ICountUp :endVal="result.score" :options="{decimalPlaces:0,duration:1}" />
+      <ICountUp
+        :endVal="result.score"
+        :options="{ decimalPlaces: 0, duration: 1 }"
+      />
     </div>
 
     <!-- youtube player -->
-    <div v-if="srcMode==='youtube' && !isGameEnded" v-show="initialized">
+    <div v-if="srcMode === 'youtube' && !isGameEnded" v-show="initialized">
       <Youtube
         class="ytPlayerMobileExtend"
         id="ytPlayer"
         ref="youtube"
         :video-id="youtubeId"
-        :player-vars="{controls: 0, rel: 0, playsinline: 1, disablekb: 1, autoplay: 0 }"
+        :player-vars="{
+          controls: 0,
+          rel: 0,
+          playsinline: 1,
+          disablekb: 1,
+          autoplay: 0,
+        }"
         @playing="songLoaded"
         @cued="videoCued"
         @buffering="ytBuffering"
@@ -50,18 +76,32 @@
 
     <!-- ready screen -->
     <transition name="modal-fade">
-      <div class="modal-backdrop" :class="{'no-events':hideGameForYtButton}" v-if="showStartButton">
+      <div
+        class="modal-backdrop"
+        :class="{ 'no-events': hideGameForYtButton }"
+        v-if="showStartButton"
+      >
         <!-- option button -->
         <div
           class="flex_hori start_page_button"
-          @click="advancedMenuOptions=true;$refs.menu.show()"
+          @click="
+            advancedMenuOptions = true;
+            $refs.menu.show();
+          "
         >
           <v-icon name="cog" scale="1.5" />
         </div>
 
         <!-- play button -->
-        <div class="modal blurBackground" :class="{'darker':hideGameForYtButton}" ref="playButton">
-          <div class="modal-body" @click="hideGameForYtButton?()=>{}:startGame()">
+        <div
+          class="modal blurBackground"
+          :class="{ darker: hideGameForYtButton }"
+          ref="playButton"
+        >
+          <div
+            class="modal-body"
+            @click="hideGameForYtButton ? () => {} : startGame()"
+          >
             <div class="flex_hori">
               <v-icon name="play" scale="1.5" />
               <div class="start_button_text">Start</div>
@@ -78,16 +118,26 @@
     </transition>
 
     <!-- center text (fever x2 etc) -->
-    <ZoomText style="z-index:1000" ref="zoom"></ZoomText>
+    <ZoomText style="z-index: 1000;" ref="zoom"></ZoomText>
 
     <!-- loading popup -->
-    <Loading style="z-index:200" :show="instance && instance.loading">Song Loading...</Loading>
-    <Loading style="z-index:500" :show="isGameEnded">Syncing Results...</Loading>
+    <Loading style="z-index: 200;" :show="instance && instance.loading"
+      >Song Loading...</Loading
+    >
+    <Loading style="z-index: 500;" :show="isGameEnded"
+      >Syncing Results...</Loading
+    >
 
     <!-- pause menu modal -->
-    <Modal ref="menu" :hideFooter="true" style="text-align:center;z-index:500">
+    <Modal
+      ref="menu"
+      :hideFooter="true"
+      style="text-align: center; z-index: 500;"
+    >
       <template v-slot:header>
-        <div style="width:100%;font-size:23px">{{advancedMenuOptions?"Options":"Pause Menu"}}</div>
+        <div style="width: 100%; font-size: 23px;">
+          {{ advancedMenuOptions ? "Options" : "Pause Menu" }}
+        </div>
       </template>
 
       <template>
@@ -95,25 +145,34 @@
           <div v-if="!advancedMenuOptions" key="1">
             <div class="btn-action btn-dark" @click="resumeGame">Resume</div>
             <div class="btn-action btn-dark" @click="restartGame">Restart</div>
-            <div class="btn-action btn-dark" @click="advancedMenuOptions=true">Advanced</div>
+            <div
+              class="btn-action btn-dark"
+              @click="advancedMenuOptions = true"
+            >
+              Advanced
+            </div>
             <div class="btn-action btn-dark" @click="exitGame">Exit Game</div>
           </div>
 
           <div v-else key="2">
             <PlayControl :playData="$data"></PlayControl>
             <br />
-            <hr style="opacity:0.2" />
+            <hr style="opacity: 0.2;" />
             <div
               class="btn-action btn-dark"
-              style="display:inline-block"
-              @click="advancedMenuOptions=false"
+              style="display: inline-block;"
+              @click="advancedMenuOptions = false"
               v-if="started"
-            >Back</div>
+            >
+              Back
+            </div>
             <div
               class="btn-action btn-dark"
-              style="display:inline-block"
-              @click="started?resumeGame():hideMenu()"
-            >Done</div>
+              style="display: inline-block;"
+              @click="started ? resumeGame() : hideMenu()"
+            >
+              Done
+            </div>
           </div>
         </transition>
       </template>
@@ -122,151 +181,162 @@
 </template>
 
 <script>
-import PlayControl from '../components/PlayControl.vue';
-import Visualizer from '../components/Visualizer.vue';
-import Loading from '../components/Loading.vue';
-import Modal from '../components/Modal.vue';
-import ZoomText from '../components/ZoomText.vue';
-import Navbar from '../components/Navbar.vue';
-import GameInstance from '../javascript/gameInstance';
-import GameInstanceMixin from '../mixins/gameInstanceMixin';
-import { Youtube } from 'vue-youtube'
-import { getGameSheet, uploadResult } from "../javascript/db"
-import ICountUp from 'vue-countup-v2';
-import 'vue-awesome/icons/regular/pause-circle'
-import 'vue-awesome/icons/play'
-import 'vue-awesome/icons/cog'
-import 'vue-awesome/icons/info-circle'
+import PlayControl from "../components/PlayControl.vue";
+import Visualizer from "../components/Visualizer.vue";
+import Loading from "../components/Loading.vue";
+import Modal from "../components/Modal.vue";
+import ZoomText from "../components/ZoomText.vue";
+import Navbar from "../components/Navbar.vue";
+import GameInstanceMixin from "../mixins/gameInstanceMixin";
+import { Youtube } from "vue-youtube";
+import { getGameSheet, uploadResult } from "../javascript/db";
+import ICountUp from "vue-countup-v2";
+import VanillaTilt from "vanilla-tilt";
+import "vue-awesome/icons/regular/pause-circle";
+import "vue-awesome/icons/play";
+import "vue-awesome/icons/cog";
+import "vue-awesome/icons/info-circle";
 
 export default {
-    name: 'Game',
-    components: {
-        PlayControl,
-        Visualizer,
-        Youtube,
-        Loading,
-        Modal,
-        ICountUp,
-        ZoomText,
-        Navbar
-    },
-    mixins: [GameInstanceMixin],
-    data(){
-        return {
-        }
-    },
-    mounted() {
-
-        if(this.$route.params.sheet){
-          this.instance.loading = true
-          this.playWithId()
-        }else{
-          this.$store.state.gModal.show({bodyText:"No song is chosen, tap 'OK' to go to song list.", 
-          isError: true, showCancel: false, okCallback: this.exitGame})
-        }
-
-    },
-    methods:{
-      async playWithId(){
-        try{
-          let song = await getGameSheet(this.$route.params.sheet);
-          this.instance.loadSong(song);
-        }catch(err){
-          this.$store.state.gModal.show({bodyText:"Sorry, this song does not exist or is unavaliable.", 
-          isError: true, showCancel: false, okCallback: this.exitGame})
-        }
-      },
-      songLoaded(){
-        console.log("playing")
-        this.instance.loading = false
-        if(!this.started){
-          // first loaded
-          this.showStartButton = true
-          if(this.srcMode !== "youtube") return
-          this.ytPlayer?.setVolume(0)
-          this.instance?.startSong()
-          this.showStartButton = false
-          this.$refs.zoom.show("Get Ready...")
-        }else{
-          this.resumeGame()
-        }
-      },
-      videoCued(){
-        if(this.srcMode !== "youtube") return
-        console.log("cued")
-        this.instance.loading = false
-        this.showStartButton = true
-      },
-      ytBuffering(){
-        console.log("buffering")
-        if(this.showStartButton){
-          this.startGame()
-        }
-      },
-      startGame(){
-        this.showStartButton = false
-        if(this.srcMode === "youtube"){
-          this.instance.loading = true
-          this.ytPlayer?.playVideo();
-          this.ytPlayer?.setVolume(0);
-        }else{
-          this.$refs.zoom.show("Get Ready...")
-          this.instance.startSong()
-        }
-      },
-      pauseGame(){
-        if(!this.started || this.isGameEnded) return;
-        this.instance.pauseGame()
-        this.$refs.menu.show()
-      },
-      hideMenu(){
-        this.advancedMenuOptions=false;
-        this.$refs.menu.close()
-      },
-      resumeGame(){
-        this.hideMenu()
-        this.instance.resumeGame()
-      },
-      restartGame(){
-        this.hideMenu()
-        this.clearResult()
-        this.instance.paused = false
-        this.instance.resetPlaying()
-        this.instance.startSong()
-      },
-      exitGame(){
-        this.hideMenu()
-        this.$router.push('/menu')
-      },
-      async gameEnded(){
-        this.instance.destroyInstance()
-        this.isGameEnded = true;
-        try{
-          const res = await uploadResult({
-            result: this.result,
-            songId: this.currentSong.songId,
-            sheetId: this.currentSong.sheetId,
-            isAuthed: this.$store.state.authed
-            });
-          console.log(res)
-          this.$router.push('/result/'+res.data.resultId)
-        }catch(error){
-          console.error(error)
-          this.$store.state.gModal.show({bodyText:"We are sorry, due to a connection failure, we are unable to save the result. Would you like to try again?", 
-        isError: true, showCancel:true, okCallback: this.gameEnded, cancelCallback: this.exitGame})
-        }
-      },
-      addTilt(){
-        if(this.$refs.playButton){
-            VanillaTilt.init(this.$refs.playButton, {
-              max: 8,
-              glare: true,
-              "max-glare": 0.5,
-              scale:1.1
-            });
-          }
-      }
+  name: "Game",
+  components: {
+    PlayControl,
+    Visualizer,
+    Youtube,
+    Loading,
+    Modal,
+    ICountUp,
+    ZoomText,
+    Navbar,
+  },
+  mixins: [GameInstanceMixin],
+  data() {
+    return {};
+  },
+  mounted() {
+    if (this.$route.params.sheet) {
+      this.instance.loading = true;
+      this.playWithId();
+    } else {
+      this.$store.state.gModal.show({
+        bodyText: "No song is chosen, tap 'OK' to go to song list.",
+        isError: true,
+        showCancel: false,
+        okCallback: this.exitGame,
+      });
     }
+  },
+  methods: {
+    async playWithId() {
+      try {
+        let song = await getGameSheet(this.$route.params.sheet);
+        this.instance.loadSong(song);
+      } catch (err) {
+        this.$store.state.gModal.show({
+          bodyText: "Sorry, this song does not exist or is unavaliable.",
+          isError: true,
+          showCancel: false,
+          okCallback: this.exitGame,
+        });
+      }
+    },
+    songLoaded() {
+      console.log("playing");
+      this.instance.loading = false;
+      if (!this.started) {
+        // first loaded
+        this.showStartButton = true;
+        if (this.srcMode !== "youtube") return;
+        this.ytPlayer?.setVolume(0);
+        this.instance?.startSong();
+        this.showStartButton = false;
+        this.$refs.zoom.show("Get Ready...");
+      } else {
+        this.resumeGame();
+      }
+    },
+    videoCued() {
+      if (this.srcMode !== "youtube") return;
+      console.log("cued");
+      this.instance.loading = false;
+      this.showStartButton = true;
+    },
+    ytBuffering() {
+      console.log("buffering");
+      if (this.showStartButton) {
+        this.startGame();
+      }
+    },
+    startGame() {
+      this.showStartButton = false;
+      if (this.srcMode === "youtube") {
+        this.instance.loading = true;
+        this.ytPlayer?.playVideo();
+        this.ytPlayer?.setVolume(0);
+      } else {
+        this.$refs.zoom.show("Get Ready...");
+        this.instance.startSong();
+      }
+    },
+    pauseGame() {
+      if (!this.started || this.isGameEnded) return;
+      this.instance.pauseGame();
+      this.$refs.menu.show();
+    },
+    hideMenu() {
+      this.advancedMenuOptions = false;
+      this.$refs.menu.close();
+    },
+    resumeGame() {
+      this.hideMenu();
+      this.instance.resumeGame();
+    },
+    restartGame() {
+      this.hideMenu();
+      this.clearResult();
+      this.instance.paused = false;
+      this.instance.resetPlaying();
+      this.instance.startSong();
+    },
+    exitGame() {
+      this.hideMenu();
+      this.$router.push("/menu");
+    },
+    async gameEnded() {
+      this.instance.destroyInstance();
+      this.isGameEnded = true;
+      try {
+        const res = await uploadResult({
+          result: this.result,
+          songId: this.currentSong.songId,
+          sheetId: this.currentSong.sheetId,
+          isAuthed: this.$store.state.authed,
+        });
+        console.log(res);
+        this.$router.push("/result/" + res.data.resultId);
+      } catch (error) {
+        console.error(error);
+        this.$store.state.gModal.show({
+          bodyText:
+            "We are sorry, due to a connection failure, we are unable to save the result. Would you like to try again?",
+          isError: true,
+          showCancel: true,
+          okCallback: this.gameEnded,
+          cancelCallback: this.exitGame,
+        });
+      }
+    },
+    addTilt() {
+      if (this.$refs.playButton) {
+        VanillaTilt.init(this.$refs.playButton, {
+          max: 8,
+          glare: true,
+          "max-glare": 0.5,
+          scale: 1.1,
+        });
+      }
+    },
+  },
 };
 </script>
 

@@ -1,13 +1,13 @@
 <template>
-  <div class="profile_card" :class="{extend}">
+  <div class="profile_card" :class="{ extend }">
     <div class="controls" v-if="!extend">
       <v-icon
-        :name="$store.state.audio.muteBg?'volume-mute':'volume-up'"
+        :name="$store.state.audio.muteBg ? 'volume-mute' : 'volume-up'"
         scale="1.3"
         @click="$store.state.audio.toggleBgMute()"
       />
       <v-icon
-        :name="$store.state.isFullscreen?'compress':'expand'"
+        :name="$store.state.isFullscreen ? 'compress' : 'expand'"
         scale="1.3"
         @click="$store.commit('toggleFullscreen')"
       />
@@ -16,32 +16,51 @@
     <div
       v-if="$store.state.authed && $store.state.userProfile"
       @click="goToAccount"
-      style="display:flex;align-items: center;"
+      style="display: flex; align-items: center;"
     >
-      <img v-if="$store.state.profilePicture" :src="$store.state.profilePicture" />
+      <img
+        v-if="$store.state.profilePicture"
+        :src="$store.state.profilePicture"
+      />
       <div class="detail">
-        <div>{{$store.state.currentUser.displayName?$store.state.currentUser.displayName:"Name not set"}}</div>
+        <div>
+          {{
+            $store.state.currentUser.displayName
+              ? $store.state.currentUser.displayName
+              : "Name not set"
+          }}
+        </div>
         <div
-          style="opacity:0.6"
+          style="opacity: 0.6;"
           v-if="$store.state.userProfile.lvd && $store.state.verified"
-        >Level.{{$store.state.userProfile.lvd}}</div>
+        >
+          Level.{{ $store.state.userProfile.lvd }}
+        </div>
         <div class="wrapper" v-if="extend && $store.state.userProfile.lvd">
           <div class="progress-bar">
-            <span class="progress-bar-fill increased" :style="{width: percentage+'%'}"></span>
-            <span class="progress-bar-fill" :style="{width: percentage+'%'}"></span>
+            <span
+              class="progress-bar-fill increased"
+              :style="{ width: percentage + '%' }"
+            ></span>
+            <span
+              class="progress-bar-fill"
+              :style="{ width: percentage + '%' }"
+            ></span>
           </div>
         </div>
-        <div v-if="!$store.state.verified" style="color:pink;">Not Verified</div>
+        <div v-if="!$store.state.verified" style="color: pink;">
+          Not Verified
+        </div>
       </div>
     </div>
 
     <div v-else @click="goToAccount">
       <div
-        style="padding:10px"
+        style="padding: 10px;"
         v-if="!extend"
         v-html="$store.state.initialized ? 'Login &<br>Register' : 'Loading...'"
       ></div>
-      <div style="opacity:0.5;padding:15px;" v-else>
+      <div style="opacity: 0.5; padding: 15px;" v-else>
         Login or Register now
         <br />to save your progress and exp
       </div>
@@ -51,29 +70,27 @@
 
 <script>
 export default {
-    name:"UserProfileCard",
-    props: ["extend"],
-    data: function(){
-      return {
-        
-      }
+  name: "UserProfileCard",
+  props: ["extend"],
+  data: function () {
+    return {};
+  },
+  mounted() {
+    this.$store.commit("checkFullscreen");
+  },
+  computed: {
+    percentage() {
+      const dec =
+        this.$store.state.userProfile.lv - this.$store.state.userProfile.lvd;
+      return dec * 100;
     },
-    mounted(){
-      this.$store.commit("checkFullscreen")
+  },
+  methods: {
+    goToAccount() {
+      if (!this.extend) this.$router.push("/account");
     },
-    computed: {
-      percentage(){
-        const dec = this.$store.state.userProfile.lv - this.$store.state.userProfile.lvd;
-        return dec*100;
-      }
-    },
-    methods:{
-      goToAccount(){
-        if(!this.extend)
-          this.$router.push('/account')
-      },
-    }
-}
+  },
+};
 </script>
 
 <style scoped>

@@ -3,9 +3,9 @@
     <div class="modal-backdrop" v-if="show && !delaying">
       <div class="modal blurBackground">
         <section class="modal-body">
-          <Loader color="white" style="display:inline;float:left" />
+          <Loader color="white" style="display: inline; float: left;" />
           <div style="margin-left: 50px;">
-            <slot>{{text}}</slot>
+            <slot>{{ text }}</slot>
           </div>
         </section>
       </div>
@@ -14,51 +14,50 @@
 </template>
 
 <script>
-import Loader from 'vue-spinner/src/FadeLoader.vue'
+import Loader from "vue-spinner/src/FadeLoader.vue";
 
-  export default {
-    name: 'Loading',
-    props: {
-        text:{
-            type: String,
-            default: "Loading..."
-        },
-        show:{
-            type: Boolean,
-            default: false
-        },
-        delay:{
-            type: Boolean,
-            default: false
-        }
+export default {
+  name: "Loading",
+  props: {
+    text: {
+      type: String,
+      default: "Loading...",
     },
-    components:{
-        Loader
+    show: {
+      type: Boolean,
+      default: false,
     },
-    data: function(){
-        return {
-          delaying: false
-        }
+    delay: {
+      type: Boolean,
+      default: false,
     },
-    methods: {
-      delayLoading(){
-        this.delaying = true
-        setTimeout(() => {
-          this.delaying = false
-        }, 1000);
-      }
+  },
+  components: {
+    Loader,
+  },
+  data: function () {
+    return {
+      delaying: false,
+    };
+  },
+  methods: {
+    delayLoading() {
+      this.delaying = true;
+      setTimeout(() => {
+        this.delaying = false;
+      }, 1000);
     },
-    mounted(){
-        if(this.delay) this.delayLoading();
+  },
+  mounted() {
+    if (this.delay) this.delayLoading();
+  },
+  watch: {
+    show() {
+      if (this.delay) this.delayLoading();
     },
-    watch:{
-      show(){
-        if(this.delay) this.delayLoading();
-      }
-    }
-  };
+  },
+};
 </script>
-
 
 <style scoped>
 .modal {

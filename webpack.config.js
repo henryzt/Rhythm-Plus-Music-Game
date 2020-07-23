@@ -7,7 +7,7 @@ const CopyPlugin = require("copy-webpack-plugin");
 const isProduction = () => process.env.NODE_ENV === "production";
 
 module.exports = {
-  entry: ["babel-polyfill", path.resolve(__dirname, "src", "index.js")],
+  entry: ["babel-polyfill", path.resolve(__dirname, "src", "main.js")],
   mode: "development",
   devtool: "source-map",
   resolve: { extensions: ["*", ".js"] },
@@ -17,7 +17,7 @@ module.exports = {
     publicPath: path.resolve("/"),
   },
   devServer: {
-    contentBase: path.resolve(__dirname, "src", "public"),
+    contentBase: path.resolve(__dirname, "public"),
     host: "0.0.0.0",
     port: 3000,
     hotOnly: true,
@@ -72,13 +72,13 @@ module.exports = {
       },
     }),
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, "src", "public", "index.html"),
+      template: path.resolve(__dirname, "public", "index.html"),
       inject: "body",
     }),
     new VueLoaderPlugin(),
     new CopyPlugin([
       {
-        from: path.resolve(__dirname, "src", "public"),
+        from: path.resolve(__dirname, "public"),
       },
     ]),
   ],

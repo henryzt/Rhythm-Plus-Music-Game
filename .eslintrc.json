@@ -1,6 +1,7 @@
 {
-  "parser": "babel-eslint",
+  "parser": "vue-eslint-parser",
   "parserOptions": {
+    "parser": "babel-eslint",
     "ecmaVersion": 2020,
     "sourceType": "module",
     "babelOptions": {
@@ -8,7 +9,7 @@
     }
   },
   "plugins": ["prettier"],
-  "extends": ["eslint:recommended", "prettier"],
+  "extends": ["plugin:vue/essential", "eslint:recommended", "@vue/prettier"],
   "settings": {
     "import/resolver": {
       "node": {

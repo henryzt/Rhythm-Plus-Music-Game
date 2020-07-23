@@ -1,24 +1,47 @@
 <template>
   <div>
-    <form @submit.prevent="$emit('submitForm')" v-if="formOption.tab==='form'">
+    <form
+      @submit.prevent="$emit('submitForm')"
+      v-if="formOption.tab === 'form'"
+    >
       <slot>
-        <input v-model="formData.title" name="songTitle" placeholder="Song title" type="text" />
+        <input
+          v-model="formData.title"
+          name="songTitle"
+          placeholder="Song title"
+          type="text"
+        />
         <input
           v-model="formData.subtitle"
           name="songTitle"
           placeholder="Subtitle (E.g. xxx opening song, Optional)"
           type="text"
         />
-        <input v-model="formData.artist" name="artist" placeholder="Artist" type="text" />
-        <input v-model="formData.tags" name="tags" placeholder="Tags (Comma Seperate)" type="text" />
+        <input
+          v-model="formData.artist"
+          name="artist"
+          placeholder="Artist"
+          type="text"
+        />
+        <input
+          v-model="formData.tags"
+          name="tags"
+          placeholder="Tags (Comma Seperate)"
+          type="text"
+        />
         <select id="songSelect" v-model="formData.srcMode">
           <option :value="null" disabled>Select music source...</option>
           <option value="youtube">Youtube Video</option>
           <option value="url">MP3 File URL</option>
         </select>
         <!-- youtube mode -->
-        <div v-if="formData.srcMode==='youtube'">
-          <input v-model="formData.youtubeId" name="youtubeId" placeholder="Youtube ID" type="text" />
+        <div v-if="formData.srcMode === 'youtube'">
+          <input
+            v-model="formData.youtubeId"
+            name="youtubeId"
+            placeholder="Youtube ID"
+            type="text"
+          />
           <input
             v-model="formData.image"
             name="image"
@@ -27,7 +50,7 @@
           />
         </div>
         <!-- url mode -->
-        <div v-if="formData.srcMode==='url'">
+        <div v-if="formData.srcMode === 'url'">
           <input
             v-model="formData.url"
             name="url"
@@ -64,50 +87,60 @@
       <input type="submit" :value="actionText + ' ' + itemType" />
       <div
         class="switch_tab"
-        @click="formOption.tab='choose'"
+        @click="formOption.tab = 'choose'"
         v-if="!formOption.isUpdate"
-      >or Select Existing {{itemType}}</div>
+      >
+        or Select Existing {{ itemType }}
+      </div>
     </form>
 
     <!-- existing song chooser -->
-    <form @submit.prevent="$emit('submitExisting')" v-if="formOption.tab==='choose'">
+    <form
+      @submit.prevent="$emit('submitExisting')"
+      v-if="formOption.tab === 'choose'"
+    >
       <select id="songSelect" v-model="formOption.selected">
-        <option :value="null" disabled hidden>Select an existing {{itemType}}...</option>
-        <option disabled>Public {{itemType}}s</option>
+        <option :value="null" disabled hidden
+          >Select an existing {{ itemType }}...</option
+        >
+        <option disabled>Public {{ itemType }}s</option>
         <option
           v-for="item in formOption.publicList"
           :value="item"
           :key="item.id"
-        >{{item.title?item.title:item.id}}</option>
-        <option disabled>Your Unpublished {{itemType}}s</option>
+          >{{ item.title ? item.title : item.id }}</option
+        >
+        <option disabled>Your Unpublished {{ itemType }}s</option>
         <option
           v-for="item in formOption.privateList"
           :value="item"
           :key="item.id"
-        >{{item.title?item.title:item.id}}</option>
+          >{{ item.title ? item.title : item.id }}</option
+        >
       </select>
       <br />
       <input type="submit" :value="'Done'" />
       <div
         class="switch_tab"
-        @click="formOption.tab='form'"
+        @click="formOption.tab = 'form'"
         v-if="!formOption.isUpdate"
-      >or {{actionText}} New {{itemType}}</div>
+      >
+        or {{ actionText }} New {{ itemType }}
+      </div>
     </form>
   </div>
 </template>
 
 <script>
-    export default {
-        name: 'InfoForm',
-        props: ['formData', 'formOption', 'isCreate', 'itemType'],
-        computed:{
-            actionText(){
-                return this.formOption.isUpdate ? "Update" : "Create"
-            }
-        }
-        
-    }
+export default {
+  name: "InfoForm",
+  props: ["formData", "formOption", "isCreate", "itemType"],
+  computed: {
+    actionText() {
+      return this.formOption.isUpdate ? "Update" : "Create";
+    },
+  },
+};
 </script>
 
 <style scoped>

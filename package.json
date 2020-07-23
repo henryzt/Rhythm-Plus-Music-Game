@@ -7,7 +7,7 @@
     "name": "henryz00"
   },
   "scripts": {
-    "format": "prettier --write \"src/**/*.js\" && eslint --fix \"src/**/*.js\"",
+    "format": "prettier --write \"src/**/*.{js,vue}\" && eslint --fix \"src/**/*.{js,vue}\"",
     "lint": "eslint --fix \"src/**/*.js\"",
     "start": "NODE_ENV=development webpack-dev-server --mode development --progress --history-api-fallback",
     "build:dev": "NODE_ENV=development webpack --mode development",
@@ -39,6 +39,7 @@
     "vuex": "^3.5.1"
   },
   "devDependencies": {
+    "@vue/eslint-config-prettier": "^6.0.0",
     "@babel/cli": "^7.10.4",
     "@babel/core": "^7.10.4",
     "@babel/preset-env": "^7.10.4",
@@ -51,6 +52,7 @@
     "eslint": "^7.3.1",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-vue": "^6.2.2",
     "html-webpack-plugin": "^4.3.0",
     "husky": "^4.2.5",
     "lint-staged": "^10.2.11",

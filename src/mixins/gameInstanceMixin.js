@@ -6,7 +6,6 @@ export default {
       audio: null,
       canvas: null,
       ctx: null,
-      checkHitLineY: null, // hit line postion (white line)
       noteSpeedInSec: 2,
       noteSpeedPxPerSec: null, // note speed
       playMode: true, // play or edit mode
@@ -25,7 +24,7 @@ export default {
       srcMode: "youtube",
       instance: null,
       visualizerInstance: null,
-      youtubeId: "jNQXAC9IVRw",
+      youtubeId: "XIMLoLxmTDw",
       perspective: false,
       vibrate: true,
       advancedMenuOptions: false,

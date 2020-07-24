@@ -34,7 +34,7 @@ export default class Note {
   getDiffPercentage() {
     if (this.gameHadBeenPaused) {
       // game had been pasued, time unuseable, use less accurate dist calculation instead
-      const dist = this.vm.checkHitLineY - this.y;
+      const dist = this.game.checkHitLineY - this.y;
       const percentage = Math.abs(dist) / this.canvas.height; // the lower the better
 
       return percentage;
@@ -117,14 +117,14 @@ export default class Note {
     const offset = nearly
       ? Math.min.apply(0, [this.holdNoteHeight / 2, 100])
       : 0;
-    return this.holdNoteY > this.vm.checkHitLineY - offset;
+    return this.holdNoteY > this.game.checkHitLineY - offset;
   }
 
   reposition() {
     // reposition y value based on current time
     const timing = this.game.getNoteTiming();
     const timeElapsed = timing - this.keyObj.t;
-    const y = (timeElapsed / this.vm.noteSpeedInSec) * this.vm.checkHitLineY;
+    const y = (timeElapsed / this.vm.noteSpeedInSec) * this.game.checkHitLineY;
     this.y = y;
     this.gameHadBeenPaused = true;
   }
@@ -155,7 +155,7 @@ export default class Note {
       this.drawHoldNote(color);
     } else {
       let color =
-        this.y > this.vm.checkHitLineY + this.singleNoteHeight
+        this.y > this.game.checkHitLineY + this.singleNoteHeight
           ? "red"
           : defaultColor;
       if (!this.vm.playMode) color = defaultColor;
@@ -187,7 +187,7 @@ export default class Note {
     let paintHeight =
       this.holdNoteY < 0 ? this.holdNoteY + noteHeight : noteHeight;
     paintHeight = this.isUserHolding
-      ? this.vm.checkHitLineY - paintY
+      ? this.game.checkHitLineY - paintY
       : paintHeight;
     this.ctx.fillStyle = color;
     this.ctx.fillRect(this.x, paintY, this.width, paintHeight);
@@ -196,7 +196,7 @@ export default class Note {
   playSoundEffect() {
     if (!this.vm.inEditor || !this.vm.options.soundEffect || !this.vm.playMode)
       return;
-    if (!this.sePlayed && this.y >= this.vm.checkHitLineY) {
+    if (!this.sePlayed && this.y >= this.game.checkHitLineY) {
       this.sePlayed = true;
       this.vm.$store.state.audio.playEffect("/audio/effects/du.mp3");
     }

@@ -22,7 +22,7 @@ export default class DropTrack {
       const createParticle = () => {
         this.particleEffect.create(
           this.x,
-          this.vm.checkHitLineY,
+          this.game.checkHitLineY,
           this.width,
           10,
           this.vm.markJudge
@@ -158,8 +158,8 @@ export default class DropTrack {
 
     // hit line
     ctx.fillStyle = "#ffffff";
-    const { playMode, checkHitLineY } = this.vm;
-    const hitLineY = playMode ? checkHitLineY : 0;
+    const { playMode } = this.vm;
+    const hitLineY = playMode ? this.game.checkHitLineY : 300;
     ctx.fillRect(this.x, hitLineY, this.width, 10);
 
     // in editor, one time update

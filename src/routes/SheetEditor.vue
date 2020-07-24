@@ -205,7 +205,7 @@
           :value="currentTime"
           :tooltip-placement="'right'"
           :interval="0.001"
-          :min="-noteSpeedInSec"
+          :min="-noteSpeedInSec.toFixed(3)"
           :max="songLength"
           :contained="true"
           :lazy="true"

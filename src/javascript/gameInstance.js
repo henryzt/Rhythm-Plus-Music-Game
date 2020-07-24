@@ -45,6 +45,9 @@ export default class GameInstance {
     // timeouts for holding note
     this.holdingNoteTimeout = {};
 
+    // white line checking note hit
+    this.checkHitLineY = 0;
+
     this.ytPlayer = new YoutubePlayer(vm);
     this.feverEff = new FeverEffect(vm, this);
 
@@ -122,9 +125,9 @@ export default class GameInstance {
     const isMobile = window.innerWidth < 1000;
     const hitLineProp = isMobile ? 8.5 : 9;
 
-    this.vm.checkHitLineY = (this.canvas.height / 10) * hitLineProp;
+    this.checkHitLineY = (this.canvas.height / 10) * hitLineProp;
     this.vm.noteSpeedPxPerSec =
-      this.vm.checkHitLineY / Number(this.vm.noteSpeedInSec);
+      this.checkHitLineY / Number(this.vm.noteSpeedInSec);
     this.repositionNotes();
   }
 

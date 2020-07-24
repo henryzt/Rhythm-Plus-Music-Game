@@ -77,7 +77,11 @@
           @selected="updateSongDetail"
           style="cursor: pointer;"
         ></SongListItem>
-        <div v-show="gameSheetInfo" style="height: 200px;" v-if="srcMode == 'youtube' && youtubeId">
+        <div
+          v-show="gameSheetInfo"
+          style="height: 200px;"
+          v-if="srcMode == 'youtube' && youtubeId"
+        >
           <div
             v-if="initialized"
             style="

@@ -233,7 +233,9 @@ export default {
         let song = await getGameSheet(this.$route.params.sheet);
         this.instance.loadSong(song);
       } catch (err) {
-        analytics().logEvent("song_load_error", {songId: this.currentSong.songId})
+        analytics().logEvent("song_load_error", {
+          songId: this.currentSong.songId,
+        });
         this.$store.state.gModal.show({
           bodyText: "Sorry, this song does not exist or is unavaliable.",
           isError: true,
@@ -270,7 +272,7 @@ export default {
       }
     },
     startGame() {
-      analytics().logEvent("start_game", {songId: this.currentSong.songId})
+      analytics().logEvent("start_game", { songId: this.currentSong.songId });
       this.showStartButton = false;
       if (this.srcMode === "youtube") {
         this.instance.loading = true;
@@ -317,7 +319,9 @@ export default {
         });
         Logger.log(res);
         this.$router.push("/result/" + res.data.resultId);
-        analytics().logEvent("result_uploaded", {resultId: res.data.resultId })
+        analytics().logEvent("result_uploaded", {
+          resultId: res.data.resultId,
+        });
       } catch (error) {
         Logger.error(error);
         this.$store.state.gModal.show({

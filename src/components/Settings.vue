@@ -107,7 +107,7 @@
 import Checkbox from "./Checkbox.vue";
 import PlayControl from "./PlayControl.vue";
 import Loading from "./Loading.vue";
-import firebase from "firebase";
+import firebase from "firebase/app";
 import { updateUserProfile } from "../javascript/db";
 
 export default {

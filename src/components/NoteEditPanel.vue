@@ -17,7 +17,7 @@
       />
       <input step="0.01" v-model="note.t" placeholder="Time" type="number" />
       <v-icon class="btn-action btn-dark" name="plus" @click="add(note, 't')" />
-      <div class="btn-action btn-dark btn-test">Test</div>
+      <div class="btn-action btn-dark btn-test" @click="testNote">Test</div>
     </div>
     <div>
       <div class="keyWrapper">
@@ -94,6 +94,27 @@ export default {
       }
       if (!this.note.h[k]) this.note.h[k] = this.note.t + 0.2;
     },
+    testNote(){
+      this.instance.vm.disabled = true;
+      const timeBefore = this.instance.currentTime;
+      const selectedNotesBefore = this.instance.vm.selectedNotes;
+      this.instance.vm.selectedNotes = [this.note];
+      let seekTime = this.note.t - 1.5 > 0 ? this.note.t - 1.5 : 0;
+      this.instance.vm.seekTo(seekTime);
+      setTimeout(()=>{
+      this.instance.resumeGame();
+        setTimeout(()=>{
+        let testInterval = setInterval(()=>{
+          if(this.instance.currentTime < seekTime || !this.instance.isWithinTime(this.note) || this.instance.paused){
+            clearInterval(testInterval);
+            this.instance.vm.seekTo(timeBefore);
+            this.instance.vm.selectedNotes = selectedNotesBefore;
+            this.instance.vm.disabled = false;
+          }
+        }, 100)
+      }, 1500)
+      }, 200)
+    }
   },
   watch: {
     "note.t"(val, oldVal) {

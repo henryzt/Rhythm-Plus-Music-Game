@@ -18,7 +18,7 @@
       </div>
       <div style="flex-grow: 1;"></div>
       <a href="#" @click.prevent="newEditor">New</a>
-      <div style="display: flex;" :class="{ disabled: !initialized }">
+      <div style="display: flex;" :class="{ disabled: isDisabled }">
         <a
           href="#"
           @click.prevent="saveSheet"
@@ -39,7 +39,7 @@
 
     <div class="main">
       <div class="column side left blurBackground">
-        <div class="tabs" :class="{ disabled: !initialized }">
+        <div class="tabs" :class="{ disabled: isDisabled }">
           <div
             class="tab"
             :class="{ active: leftTab === 1 }"
@@ -135,7 +135,7 @@
       <div
         class="column side right blurBackground"
         v-if="instance"
-        :class="{ disabled: !initialized }"
+        :class="{ disabled: isDisabled }"
       >
         <div
           v-if="!disableMappingTable"
@@ -167,7 +167,7 @@
     <div
       class="toolbar blurBackground"
       v-if="instance"
-      :class="{ disabled: !initialized }"
+      :class="{ disabled: isDisabled }"
     >
       <div style="font-size: 30px; width: 80px; text-align: center;">
         {{ currentTime }}
@@ -287,6 +287,7 @@ export default {
       playbackSpeed: 1,
       songLength: 0,
       inEditor: true,
+      disabled: false,
       songInfo: {
         id: null,
       },
@@ -326,6 +327,9 @@ export default {
     },
     sliderMaxLength() {
       return this.currentSong.endAt ?? this.songLength;
+    },
+    isDisabled() {
+      return !this.initialized || this.disabled;
     }
   },
   watch: {

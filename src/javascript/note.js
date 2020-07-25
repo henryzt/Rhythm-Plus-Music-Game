@@ -16,6 +16,7 @@ export default class Note {
 
     this.y = y ?? 0;
     this.singleNoteHeight = 10;
+    if (y) this.createdNote = true;
 
     // modulate speed, ref https://www.viget.com/articles/time-based-animation/
     this.now = Date.now();
@@ -192,7 +193,7 @@ export default class Note {
     if (!this.vm.playMode) {
       // creating hold note
       const isUserCreating =
-        this.game.keyHoldingStatus[this.key] && color == "yellow";
+        this.game.keyHoldingStatus[this.key] && this.createdNote;
       if (isUserCreating) {
         paintY = this.game.checkHitLineY;
         paintHeight = paintHeight - paintY;

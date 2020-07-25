@@ -202,11 +202,11 @@
       </div>
       <div style="flex-grow: 1;">
         <vue-slider
-          :value="currentTime"
           :tooltip-placement="'right'"
           :interval="0.001"
-          :min="-instance.noteDelay.toFixed(3)"
-          :max="songLength"
+          :min="sliderMinLength"
+          :max="sliderMaxLength"
+          :value="currentTime"
           :contained="true"
           :lazy="true"
           @dragging="seeking"
@@ -301,6 +301,7 @@ export default {
       disableMappingTable: false,
       options: {
         soundEffect: true, //eidtor hit sound effect
+        lowerHitLine: true
       },
     };
   },
@@ -320,10 +321,19 @@ export default {
         this.songInfo.createdBy === this.$store.state.currentUser.uid
       );
     },
+    sliderMinLength() {
+      return (this.currentSong.startAt ?? 0) - this.instance.noteDelay.toFixed(3) ;
+    },
+    sliderMaxLength() {
+      return this.currentSong.endAt ?? this.songLength;
+    }
   },
   watch: {
     playbackSpeed() {
       this.setPlaybackRate(this.playbackSpeed);
+    },
+    'options.lowerHitLine'() {
+      this.instance.reposition();
     },
     "$store.state.initialized"() {
       this.checkLoggedIn();
@@ -453,7 +463,7 @@ export default {
         this.restartGame();
       }
       this.clearFever();
-      this.instance.repositionNotes();
+      this.instance.reposition();
     },
     updateSongDetail() {
       this.$refs.info.openSongUpdate();

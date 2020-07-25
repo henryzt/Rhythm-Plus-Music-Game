@@ -77,12 +77,12 @@ export default class DropTrack {
 
   dropNote(key, keyObj) {
     if (key.includes(this.keyBind) && !this.vm.playMode) {
-      this.addNoteToArr(keyObj);
+      this.addNoteToArr(keyObj, null, this.game.checkHitLineY);
       this.playSoundEffect();
     }
   }
 
-  addNoteToArr(keyObj, color) {
+  addNoteToArr(keyObj, color, y) {
     this.noteArr.push(
       new Note(
         this.vm,
@@ -90,6 +90,7 @@ export default class DropTrack {
         keyObj,
         this.keyBind,
         this.x,
+        y,
         this.width,
         color
       )
@@ -158,9 +159,7 @@ export default class DropTrack {
 
     // hit line
     ctx.fillStyle = "#ffffff";
-    const { playMode } = this.vm;
-    const hitLineY = playMode ? this.game.checkHitLineY : 300;
-    ctx.fillRect(this.x, hitLineY, this.width, 10);
+    ctx.fillRect(this.x, this.game.checkHitLineY, this.width, 10);
 
     // in editor, one time update
     if (this.game.paused) return;
@@ -177,7 +176,7 @@ export default class DropTrack {
       timing >= timeArr[timeArrIdx].t &&
       timeArr[timeArrIdx].k.includes(this.keyBind);
     if (needNote) {
-      const color = playMode ? "yellow" : "grey";
+      const color = this.vm.playMode ? "yellow" : "grey";
       if (timing - timeArr[timeArrIdx].t < 1) {
         this.addNoteToArr(timeArr[timeArrIdx], color);
       }

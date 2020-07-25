@@ -96,7 +96,7 @@ export default class GameInstance {
     }
   }
 
-  reposition() {
+  async reposition() {
     if (this.vm.wrapper) {
       this.canvas.style.height = this.vm.contentHeight ?? "100%";
       this.canvas.width = this.vm.wrapper.clientWidth;
@@ -124,12 +124,15 @@ export default class GameInstance {
     this.endX = startX + (trackWidth + 1) * this.dropTrackArr.length - 1;
 
     const isMobile = window.innerWidth < 1000;
-    const hitLineProp = isMobile ? 8.5 : 9;
+    let hitLineProp = isMobile ? 8.5 : 9;
+    if (!this.vm.playMode) hitLineProp = this.vm.options.lowerHitLine ? 4 : 0;
 
     this.checkHitLineY = (this.canvas.height / 10) * hitLineProp;
     this.noteSpeedPxPerSec = 380 * Number(this.vm.noteSpeed);
     this.noteDelay = this.checkHitLineY / this.noteSpeedPxPerSec;
+    await this.getCurrentTime();
     this.repositionNotes();
+    Logger.log("Repositioned");
   }
 
   registerInput() {
@@ -357,7 +360,7 @@ export default class GameInstance {
   update() {
     if (this.destoryed) return;
     requestAnimationFrame(this.update.bind(this));
-    if (this.vm.started && this.paused && !this.vm.inEditor) return;
+    // if (this.vm.started && this.paused && !this.vm.inEditor) return;
     if (!this.vm.inEditor) this.getCurrentTime();
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.vm.visualizerInstance.renderVisualizer();
@@ -374,6 +377,7 @@ export default class GameInstance {
     const startTime = Date.now();
     window.focus();
     this.seekTo(this.startSongAt);
+    this.reposition();
 
     const intervalPrePlay = setInterval(() => {
       const elapsedTime = Date.now() - startTime;
@@ -385,7 +389,7 @@ export default class GameInstance {
         this.seeked();
       }
       if (this.playTime > this.noteDelay + this.startSongAt) {
-        if (!this.vm.started || !this.paused) this.resumeGame();
+        if (!this.vm.started || !this.paused) this.resumeGame(true);
         clearInterval(intervalPrePlay);
         clearInterval(this.intervalPlay);
         this.vm.started = true;
@@ -431,14 +435,16 @@ export default class GameInstance {
   }
 
   getNoteTiming() {
-    return this.vm.playMode ? this.playTime : this.currentTime; // in editor mode, time without note drop delay is used.
+    return this.playTime;
   }
 
   isWithinTime(note) {
     // check if a note with start time is currently on screen
     const time = note.t;
-    const sec = this.noteDelay;
     const current = this.getNoteTiming();
+    const afterHitLineSec =
+      (this.canvas.height - this.checkHitLineY) / this.noteSpeedPxPerSec;
+    const sec = this.noteDelay + afterHitLineSec;
     let isWithinStartTime = time >= current - sec;
     let isWithinEndTime = time <= current;
     if (note.h) {
@@ -497,10 +503,10 @@ export default class GameInstance {
     }
   }
 
-  resumeGame() {
+  resumeGame(firstPlay) {
+    if (!firstPlay && this.paused) this.reposition();
     this.paused = false;
     this.seekingTime = null;
-    this.reposition();
     if (this.vm.srcMode === "url") {
       this.audio.play();
     } else if (this.vm.srcMode === "youtube") {

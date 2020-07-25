@@ -1,5 +1,5 @@
 export default class Note {
-  constructor(vm, game, keyObj, key, x, width, color) {
+  constructor(vm, game, keyObj, key, x, y, width, color) {
     this.x = x;
     this.width = width;
     this.color = color;
@@ -14,7 +14,7 @@ export default class Note {
     this.isUserHolding = false;
     this.isHoldingDone = false;
 
-    this.y = 0;
+    this.y = y ?? 0;
     this.singleNoteHeight = 10;
 
     // modulate speed, ref https://www.viget.com/articles/time-based-animation/
@@ -183,12 +183,21 @@ export default class Note {
     const noteHeight = holdLengthInSec * this.game.noteSpeedPxPerSec;
     this.holdNoteHeight = noteHeight;
     this.holdNoteY = this.y - noteHeight + this.singleNoteHeight;
-    const paintY = this.holdNoteY < 0 ? 0 : this.holdNoteY;
+    let paintY = this.holdNoteY < 0 ? 0 : this.holdNoteY;
     let paintHeight =
       this.holdNoteY < 0 ? this.holdNoteY + noteHeight : noteHeight;
     paintHeight = this.isUserHolding
       ? this.game.checkHitLineY - paintY
       : paintHeight;
+    if (!this.vm.playMode) {
+      // creating hold note
+      const isUserCreating =
+        this.game.keyHoldingStatus[this.key] && color == "yellow";
+      if (isUserCreating) {
+        paintY = this.game.checkHitLineY;
+        paintHeight = paintHeight - paintY;
+      }
+    }
     this.ctx.fillStyle = color;
     this.ctx.fillRect(this.x, paintY, this.width, paintHeight);
   }

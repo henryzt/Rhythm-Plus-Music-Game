@@ -56,6 +56,15 @@
           :cbStyle="cbStyle"
         ></Checkbox>
       </p>
+      <p>
+        <label></label>
+        <Checkbox
+          label="Lower Editor Hit Line"
+          :model="$parent.options"
+          modelKey="lowerHitLine"
+          :cbStyle="cbStyle"
+        ></Checkbox>
+      </p>
       <br />
       <!-- score -->
       <div style="padding: 15px;">

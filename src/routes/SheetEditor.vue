@@ -324,11 +324,11 @@ export default {
     },
     sliderMinLength() {
       return (
-        (this.currentSong.startAt ?? 0) - this.instance.noteDelay.toFixed(3)
+        (this.currentSong?.startAt ?? 0) - this.instance.noteDelay.toFixed(3)
       );
     },
     sliderMaxLength() {
-      return this.currentSong.endAt ?? this.songLength;
+      return this.currentSong?.endAt ?? this.songLength;
     },
     isDisabled() {
       return !this.initialized || this.disabled;

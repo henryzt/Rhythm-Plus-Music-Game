@@ -370,6 +370,17 @@ export default class GameInstance {
       shouldAdvance = track.update() || shouldAdvance;
     }
     if (shouldAdvance) this.timeArrIdx++;
+    if (this.vm.perspective) this.drawFadeOut();
+  }
+
+  drawFadeOut() {
+    this.ctx.globalCompositeOperation = "destination-out";
+    let gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
+    gradient.addColorStop(0, "rgba(255, 255, 255, 1)");
+    gradient.addColorStop(0.3, "rgba(255, 255, 255, 0)");
+    this.ctx.fillStyle = gradient;
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.globalCompositeOperation = "source-over";
   }
 
   startSong() {

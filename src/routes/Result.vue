@@ -146,16 +146,15 @@ export default {
   },
   computed: {
     gradient() {
-      //this.result.rank
-      switch ("S") {
+      switch (this.result.rank) {
         case "S":
-          return ["#feac5e", "#c779d0", "#4bc0c8"];
+          return ["#ff9c5f", "yellow"];
         case "A":
           return ["#12c2e9", "#c471ed", "#f64f59"];
         case "B":
           return ["#00b09b", "#96c93d"];
         case "C":
-          return ["#00F260", "#0575E6"];
+          return ["#8360c3", "#2ebf91"];
         case "D":
           return ["darkorange", "#ffab2d"];
         case "F":

@@ -12,10 +12,10 @@
 </template>
 
 <script>
-import BarVisualizer from "../visualizers/BarVisualizer.vue";
-import SpaceVisualizer from "../visualizers/SpaceVisualizer.vue";
-import ColorPoly from "../visualizers/ColorPoly.vue";
-import Swirl from "../visualizers/swirl/Swirl.vue";
+import BarVisualizer from "../../visualizers/BarVisualizer.vue";
+import SpaceVisualizer from "../../visualizers/SpaceVisualizer.vue";
+import ColorPoly from "../../visualizers/ColorPoly.vue";
+import Swirl from "../../visualizers/swirl/Swirl.vue";
 
 const visualizers = {
   "Visualizer Off": null,

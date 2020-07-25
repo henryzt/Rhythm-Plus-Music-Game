@@ -22,8 +22,8 @@
 </template>
 
 <script>
-import Visualizer from "../components/Visualizer.vue";
-import Navbar from "../components/Navbar.vue";
+import Visualizer from "./Visualizer.vue";
+import Navbar from "../ui/Navbar.vue";
 import UserProfileCard from "./UserProfileCard.vue";
 
 export default {

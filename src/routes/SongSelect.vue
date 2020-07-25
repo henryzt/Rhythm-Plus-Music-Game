@@ -46,9 +46,9 @@
 </template>
 
 <script>
-import SongListItem from "../components/SongListItem.vue";
-import SongDetailPanel from "../components/SongDetailPanel.vue";
-import Loading from "../components/Loading.vue";
+import SongListItem from "../components/menus/SongListItem.vue";
+import SongDetailPanel from "../components/menus/SongDetailPanel.vue";
+import Loading from "../components/ui/Loading.vue";
 import { getSheetList, getSongList } from "../javascript/db";
 
 export default {

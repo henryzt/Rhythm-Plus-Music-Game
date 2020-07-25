@@ -28,9 +28,9 @@
 
 <script>
 import Audio from "./javascript/audio.js";
-import ModalGlobal from "./components/ModalGlobal.vue";
-import FloatingAlert from "./components/FloatingAlert.vue";
-import PageBackground from "./components/PageBackground.vue";
+import ModalGlobal from "./components/ui/ModalGlobal.vue";
+import FloatingAlert from "./components/ui/FloatingAlert.vue";
+import PageBackground from "./components/common/PageBackground.vue";
 import "vue-awesome/icons/volume-up";
 import "vue-awesome/icons/volume-mute";
 import "vue-awesome/icons/expand";

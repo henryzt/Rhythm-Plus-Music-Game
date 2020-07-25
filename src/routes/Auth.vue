@@ -45,10 +45,10 @@
 </template>
 
 <script>
-import Modal from "../components/Modal.vue";
-import Loading from "../components/Loading.vue";
-import UserProfileCard from "../components/UserProfileCard.vue";
-import Settings from "../components/Settings.vue";
+import Modal from "../components/ui/Modal.vue";
+import Loading from "../components/ui/Loading.vue";
+import UserProfileCard from "../components/common/UserProfileCard.vue";
+import Settings from "../components/menus/Settings.vue";
 import firebase from "firebase/app";
 import * as firebaseui from "firebaseui";
 import "firebaseui/dist/firebaseui.css";

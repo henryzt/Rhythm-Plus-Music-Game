@@ -245,16 +245,16 @@
 
 <script>
 import { getSong, getSheet, getGameSheet, updateSheet } from "../javascript/db";
-import Visualizer from "../components/Visualizer.vue";
-import InfoEditor from "../components/InfoEditor.vue";
-import SheetTable from "../components/SheetTable.vue";
-import SongListItem from "../components/SongListItem.vue";
-import PlayControl from "../components/PlayControl.vue";
-import ZoomText from "../components/ZoomText.vue";
-import Modal from "../components/Modal.vue";
-import Publish from "../components/Publish.vue";
-import Loading from "../components/Loading.vue";
-import GameInstanceMixin from "../mixins/gameInstanceMixin";
+import Visualizer from "../components/common/Visualizer.vue";
+import InfoEditor from "../components/editor/InfoEditor.vue";
+import SheetTable from "../components/editor/SheetTable.vue";
+import SongListItem from "../components/menus/SongListItem.vue";
+import PlayControl from "../components/common/PlayControl.vue";
+import ZoomText from "../components/game/ZoomText.vue";
+import Modal from "../components/ui/Modal.vue";
+import Publish from "../components/editor/Publish.vue";
+import Loading from "../components/ui/Loading.vue";
+import GameMixin from "../mixins/gameMixin";
 import VueSlider from "vue-slider-component";
 import { Youtube } from "vue-youtube";
 import "vue-slider-component/theme/antd.css";
@@ -278,7 +278,7 @@ export default {
     PlayControl,
     ZoomText,
   },
-  mixins: [GameInstanceMixin],
+  mixins: [GameMixin],
   data() {
     return {
       wrapper: null,

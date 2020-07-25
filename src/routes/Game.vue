@@ -196,15 +196,15 @@
 </template>
 
 <script>
-import PlayControl from "../components/PlayControl.vue";
-import Visualizer from "../components/Visualizer.vue";
-import Loading from "../components/Loading.vue";
-import Modal from "../components/Modal.vue";
-import ZoomText from "../components/ZoomText.vue";
-import Navbar from "../components/Navbar.vue";
-import ProgressBar from "../components/ProgressBar.vue";
-import Countdown from "../components/Countdown.vue";
-import GameInstanceMixin from "../mixins/gameInstanceMixin";
+import PlayControl from "../components/common/PlayControl.vue";
+import Visualizer from "../components/common/Visualizer.vue";
+import Loading from "../components/ui/Loading.vue";
+import Modal from "../components/ui/Modal.vue";
+import ZoomText from "../components/game/ZoomText.vue";
+import Navbar from "../components/ui/Navbar.vue";
+import ProgressBar from "../components/game/ProgressBar.vue";
+import Countdown from "../components/game/Countdown.vue";
+import GameMixin from "../mixins/gameMixin";
 import { Youtube } from "vue-youtube";
 import { getGameSheet, uploadResult } from "../javascript/db";
 import { analytics } from "../helpers/firebaseConfig";
@@ -229,7 +229,7 @@ export default {
     ProgressBar,
     Countdown,
   },
-  mixins: [GameInstanceMixin],
+  mixins: [GameMixin],
   data() {
     return {};
   },

@@ -66,9 +66,9 @@
 </template>
 
 <script>
-import Button from "./Button.vue";
+import Button from "../ui/Button.vue";
 import SheetDetailLine from "./SheetDetailLine.vue";
-import { getBestScore } from "../javascript/db";
+import { getBestScore } from "../../javascript/db";
 
 export default {
   name: "SongDetailPanel",

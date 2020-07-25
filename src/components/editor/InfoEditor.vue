@@ -149,8 +149,8 @@ import {
   getSheetList,
   updateSong,
   updateSheet,
-} from "../javascript/db";
-import InfoForm from "../components/InfoForm.vue";
+} from "../../javascript/db";
+import InfoForm from "./InfoForm.vue";
 
 export default {
   name: "InfoEditor",

@@ -116,9 +116,9 @@
 </template>
 
 <script>
-import PageBackground from "../components/PageBackground.vue";
-import UserProfileCard from "../components/UserProfileCard.vue";
-import Loading from "../components/Loading.vue";
+import PageBackground from "../components/common/PageBackground.vue";
+import UserProfileCard from "../components/common/UserProfileCard.vue";
+import Loading from "../components/ui/Loading.vue";
 import { getGameSheet, getResult, getBestScore } from "../javascript/db";
 import ICountUp from "vue-countup-v2";
 import VueCircle from "vue2-circle-progress/src/index.vue";

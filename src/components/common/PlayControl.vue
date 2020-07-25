@@ -105,7 +105,7 @@
 
 <script>
 import VueSlider from "vue-slider-component";
-import Checkbox from "./Checkbox.vue";
+import Checkbox from "../ui/Checkbox.vue";
 
 export default {
   name: "PlayControl",

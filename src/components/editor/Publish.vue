@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { updateSong, updateSheet } from "../javascript/db";
+import { updateSong, updateSheet } from "../../javascript/db";
 
 export default {
   name: "Publish",

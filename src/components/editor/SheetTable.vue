@@ -56,7 +56,7 @@
 <script>
 import NoteTableItem from "./NoteTableItem.vue";
 import NoteEditPanel from "./NoteEditPanel.vue";
-import Checkbox from "./Checkbox.vue";
+import Checkbox from "../ui/Checkbox.vue";
 import VirtualList from "vue-virtual-scroll-list";
 
 export default {

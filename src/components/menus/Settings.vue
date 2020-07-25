@@ -104,11 +104,11 @@
 </template>
 
 <script>
-import Checkbox from "./Checkbox.vue";
-import PlayControl from "./PlayControl.vue";
-import Loading from "./Loading.vue";
+import Checkbox from "../ui/Checkbox.vue";
+import PlayControl from "../common/PlayControl.vue";
+import Loading from "../ui/Loading.vue";
 import firebase from "firebase/app";
-import { updateUserProfile } from "../javascript/db";
+import { updateUserProfile } from "../../javascript/db";
 
 export default {
   name: "Settings",

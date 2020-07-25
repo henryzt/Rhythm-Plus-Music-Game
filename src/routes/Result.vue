@@ -12,7 +12,7 @@
             <VueCircle
               :progress="result.result.percentage"
               :size="windowWidth > 1000 ? 260 : 180"
-              :fill="{ gradient: ['darkorange', '#ffab2d'] }"
+              :fill="{ gradient }"
               empty-fill="rgba(100, 100, 100, .5)"
               :thickness="10"
               :start-angle="(-1 / 2) * Math.PI"
@@ -20,7 +20,7 @@
               :show-percent="false"
             >
               <div class="circleBg"></div>
-              <div class="score scoreShadow">{{ result.rank }}</div>
+              <div class="score" :style="scoreShadow">{{ result.rank }}</div>
               <div style="margin-top: -20px; transform: translateZ(20px);">
                 <ICountUp
                   :endVal="result.result.percentage"
@@ -144,7 +144,37 @@ export default {
       newRecord: false,
     };
   },
-  computed: {},
+  computed: {
+    gradient() {
+      //this.result.rank
+      switch ("S") {
+        case "S":
+          return ["#feac5e", "#c779d0", "#4bc0c8"];
+        case "A":
+          return ["#12c2e9", "#c471ed", "#f64f59"];
+        case "B":
+          return ["#00b09b", "#96c93d"];
+        case "C":
+          return ["#00F260", "#0575E6"];
+        case "D":
+          return ["darkorange", "#ffab2d"];
+        case "F":
+          return ["#EB5757", "#000000"];
+        default:
+          return ["#00b09b", "#96c93d"];
+      }
+    },
+    scoreShadow() {
+      const g = this.gradient;
+      return {
+        color: "#ffffff",
+        "text-shadow": `${g[0]} 0px 0px 20px, ${g[1]} 0px 0px 30px, ${
+          g[2] ?? g[1]
+        } 0px 0px 40px,
+    ${g[0]} 0px 0px 50px, ${g[1]} 0px 0px 75px`,
+      };
+    },
+  },
   watch: {},
   async mounted() {
     //FIXME add id and route validation
@@ -225,11 +255,6 @@ export default {
   font-size: 10em;
   margin-top: -20px;
   transform: translateZ(40px);
-}
-.scoreShadow {
-  color: #ffffff;
-  text-shadow: #ffab2d 0px 0px 20px, #ffab2d 0px 0px 30px, #ffab2d 0px 0px 40px,
-    #ffab2d 0px 0px 50px, #ffab2d 0px 0px 75px;
 }
 .rightScore {
   text-align: left;

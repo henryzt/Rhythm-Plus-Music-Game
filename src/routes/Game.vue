@@ -7,7 +7,11 @@
     ></ProgressBar>
 
     <!-- resume game countdown -->
-    <Countdown style="z-index: 1000;" ref="countdown" @finish="instance.resumeGame()"></Countdown>
+    <Countdown
+      style="z-index: 1000; pointer-events: none;"
+      ref="countdown"
+      @finish="instance.resumeGame()"
+    ></Countdown>
 
     <!-- pause button -->
     <transition name="modal-fade">
@@ -18,29 +22,46 @@
       >
         <v-icon name="regular/pause-circle" scale="1.5" />
       </a>
-      <Navbar v-else-if="!isGameEnded" style="z-index: 1000;" :gameNav="true"></Navbar>
+      <Navbar
+        v-else-if="!isGameEnded"
+        style="z-index: 1000;"
+        :gameNav="true"
+      ></Navbar>
     </transition>
 
     <!-- mark indicator -->
-    <div
-      class="center_judge"
-      ref="hitIndicator"
-    >{{ markJudge }} {{ result.combo >= 5 ? result.combo : "" }}</div>
+    <div class="center_judge" ref="hitIndicator">
+      {{ markJudge }} {{ result.combo >= 5 ? result.combo : "" }}
+    </div>
 
     <!-- game canvas -->
     <div class="gameWrapper" :class="{ 'no-events': hideGameForYtButton }">
-      <canvas ref="mainCanvas" id="gameCanvas" :class="{ perspective }"></canvas>
+      <canvas
+        ref="mainCanvas"
+        id="gameCanvas"
+        :class="{ perspective }"
+      ></canvas>
     </div>
 
     <!-- visualizer canvas -->
-    <Visualizer ref="visualizer" :setBlur="blur" v-show="!hideGameForYtButton"></Visualizer>
+    <Visualizer
+      ref="visualizer"
+      :setBlur="blur"
+      v-show="!hideGameForYtButton"
+    ></Visualizer>
 
     <!-- score panel -->
     <div class="score">
       <div style="font-size: 0.5em;">
-        <ICountUp :endVal="percentage" :options="{ decimalPlaces: 2, duration: 1 }" />%
+        <ICountUp
+          :endVal="percentage"
+          :options="{ decimalPlaces: 2, duration: 1 }"
+        />%
       </div>
-      <ICountUp :endVal="result.score" :options="{ decimalPlaces: 0, duration: 1 }" />
+      <ICountUp
+        :endVal="result.score"
+        :options="{ decimalPlaces: 0, duration: 1 }"
+      />
     </div>
 
     <!-- youtube player -->
@@ -85,8 +106,15 @@
         </div>
 
         <!-- play button -->
-        <div class="modal blurBackground" :class="{ darker: hideGameForYtButton }" ref="playButton">
-          <div class="modal-body" @click="hideGameForYtButton ? () => {} : startGame()">
+        <div
+          class="modal blurBackground"
+          :class="{ darker: hideGameForYtButton }"
+          ref="playButton"
+        >
+          <div
+            class="modal-body"
+            @click="hideGameForYtButton ? () => {} : startGame()"
+          >
             <div class="flex_hori">
               <v-icon name="play" scale="1.5" />
               <div class="start_button_text">Start</div>
@@ -106,23 +134,38 @@
     <ZoomText style="z-index: 1000;" ref="zoom"></ZoomText>
 
     <!-- loading popup -->
-    <Loading style="z-index: 200;" :show="instance && instance.loading">Song Loading...</Loading>
-    <Loading style="z-index: 500;" :show="isGameEnded">Syncing Results...</Loading>
+    <Loading style="z-index: 200;" :show="instance && instance.loading"
+      >Song Loading...</Loading
+    >
+    <Loading style="z-index: 500;" :show="isGameEnded"
+      >Syncing Results...</Loading
+    >
 
     <!-- pause menu modal -->
-    <Modal ref="menu" :hideFooter="true" style="text-align: center; z-index: 500;">
+    <Modal
+      ref="menu"
+      :hideFooter="true"
+      style="text-align: center; z-index: 500;"
+    >
       <template v-slot:header>
-        <div
-          style="width: 100%; font-size: 23px;"
-        >{{ advancedMenuOptions ? "Options" : "Pause Menu" }}</div>
+        <div style="width: 100%; font-size: 23px;">
+          {{ advancedMenuOptions ? "Options" : "Pause Menu" }}
+        </div>
       </template>
 
       <template>
         <transition name="slide-fade" mode="out-in">
           <div v-if="!advancedMenuOptions" key="1">
-            <div class="btn-action btn-dark" @click="resumeGame(true)">Resume</div>
+            <div class="btn-action btn-dark" @click="resumeGame(true)">
+              Resume
+            </div>
             <div class="btn-action btn-dark" @click="restartGame">Restart</div>
-            <div class="btn-action btn-dark" @click="advancedMenuOptions = true">Advanced</div>
+            <div
+              class="btn-action btn-dark"
+              @click="advancedMenuOptions = true"
+            >
+              Advanced
+            </div>
             <div class="btn-action btn-dark" @click="exitGame">Exit Game</div>
           </div>
 
@@ -135,12 +178,16 @@
               style="display: inline-block;"
               @click="advancedMenuOptions = false"
               v-if="started"
-            >Back</div>
+            >
+              Back
+            </div>
             <div
               class="btn-action btn-dark"
               style="display: inline-block;"
               @click="started ? resumeGame(true) : hideMenu()"
-            >Done</div>
+            >
+              Done
+            </div>
           </div>
         </transition>
       </template>

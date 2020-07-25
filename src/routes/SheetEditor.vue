@@ -302,7 +302,7 @@ export default {
       disableMappingTable: false,
       options: {
         soundEffect: true, //eidtor hit sound effect
-        lowerHitLine: true
+        lowerHitLine: true,
       },
     };
   },
@@ -323,20 +323,22 @@ export default {
       );
     },
     sliderMinLength() {
-      return (this.currentSong.startAt ?? 0) - this.instance.noteDelay.toFixed(3) ;
+      return (
+        (this.currentSong.startAt ?? 0) - this.instance.noteDelay.toFixed(3)
+      );
     },
     sliderMaxLength() {
       return this.currentSong.endAt ?? this.songLength;
     },
     isDisabled() {
       return !this.initialized || this.disabled;
-    }
+    },
   },
   watch: {
     playbackSpeed() {
       this.setPlaybackRate(this.playbackSpeed);
     },
-    'options.lowerHitLine'() {
+    "options.lowerHitLine"() {
       this.instance.reposition();
     },
     "$store.state.initialized"() {

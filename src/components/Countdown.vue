@@ -15,7 +15,7 @@
             insert-mode="append"
             :show-percent="false"
           >
-            <div class="num">{{num}}</div>
+            <div class="num">{{ num }}</div>
           </VueCircle>
         </div>
       </div>
@@ -37,7 +37,7 @@ export default {
       percentage: 100,
       show: false,
       interval: null,
-      num: 3
+      num: 3,
     };
   },
   methods: {
@@ -48,8 +48,8 @@ export default {
       this.interval = setInterval(() => {
         this.percentage -= 1;
         this.$refs.circle.updateProgress(this.percentage);
-        if(this.percentage < 66) this.num = 2;
-        if(this.percentage < 33) this.num = 1;
+        if (this.percentage < 66) this.num = 2;
+        if (this.percentage < 33) this.num = 1;
         if (this.percentage <= 0) {
           this.clear();
         }
@@ -61,17 +61,16 @@ export default {
       this.$emit("finish");
     },
   },
-  watch:{
-      num(){
-        this.$store.state.audio.playEffect("/audio/effects/du.mp3");
-      }
-  }
+  watch: {
+    num() {
+      this.$store.state.audio.playEffect("/audio/effects/du.mp3");
+    },
+  },
 };
 </script>
 
-
 <style scoped>
-.num{
-    font-size: 2em;
+.num {
+  font-size: 2em;
 }
 </style>

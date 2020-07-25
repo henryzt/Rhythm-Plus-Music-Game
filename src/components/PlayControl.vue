@@ -11,7 +11,8 @@
           v-for="visualizer in Object.keys($store.state.visualizerArr)"
           :value="visualizer"
           :key="visualizer"
-        >{{ visualizer }}</option>
+          >{{ visualizer }}</option
+        >
       </select>
     </p>
 
@@ -20,7 +21,7 @@
       <span>
         <vue-slider
           style="padding: 20px 0;"
-          :value="playData.noteSpeed?playData.noteSpeed:1"
+          :value="playData.noteSpeed ? playData.noteSpeed : 1"
           :interval="0.01"
           :min="0.3"
           :max="3"
@@ -33,15 +34,30 @@
 
     <p>
       <label></label>
-      <Checkbox label="Vibration" :model="playData" modelKey="vibrate" :cbStyle="cbStyle"></Checkbox>
+      <Checkbox
+        label="Vibration"
+        :model="playData"
+        modelKey="vibrate"
+        :cbStyle="cbStyle"
+      ></Checkbox>
     </p>
     <p>
       <label></label>
-      <Checkbox label="Blur Background" :model="playData" modelKey="blur" :cbStyle="cbStyle"></Checkbox>
+      <Checkbox
+        label="Blur Background"
+        :model="playData"
+        modelKey="blur"
+        :cbStyle="cbStyle"
+      ></Checkbox>
     </p>
     <p>
       <label></label>
-      <Checkbox label="3D Perspective" :model="playData" modelKey="perspective" :cbStyle="cbStyle"></Checkbox>
+      <Checkbox
+        label="3D Perspective"
+        :model="playData"
+        modelKey="perspective"
+        :cbStyle="cbStyle"
+      ></Checkbox>
     </p>
 
     <!-- create mode only -->

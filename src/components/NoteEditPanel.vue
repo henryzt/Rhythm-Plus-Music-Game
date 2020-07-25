@@ -94,27 +94,31 @@ export default {
       }
       if (!this.note.h[k]) this.note.h[k] = this.note.t + 0.2;
     },
-    testNote(){
+    testNote() {
       this.instance.vm.disabled = true;
       const timeBefore = this.instance.currentTime;
       const selectedNotesBefore = this.instance.vm.selectedNotes;
       this.instance.vm.selectedNotes = [this.note];
       let seekTime = this.note.t - 1.5 > 0 ? this.note.t - 1.5 : 0;
       this.instance.vm.seekTo(seekTime);
-      setTimeout(()=>{
-      this.instance.resumeGame();
-        setTimeout(()=>{
-        let testInterval = setInterval(()=>{
-          if(this.instance.currentTime < seekTime || !this.instance.isWithinTime(this.note) || this.instance.paused){
-            clearInterval(testInterval);
-            this.instance.vm.seekTo(timeBefore);
-            this.instance.vm.selectedNotes = selectedNotesBefore;
-            this.instance.vm.disabled = false;
-          }
-        }, 100)
-      }, 1500)
-      }, 200)
-    }
+      setTimeout(() => {
+        this.instance.resumeGame();
+        setTimeout(() => {
+          let testInterval = setInterval(() => {
+            if (
+              this.instance.currentTime < seekTime ||
+              !this.instance.isWithinTime(this.note) ||
+              this.instance.paused
+            ) {
+              clearInterval(testInterval);
+              this.instance.vm.seekTo(timeBefore);
+              this.instance.vm.selectedNotes = selectedNotesBefore;
+              this.instance.vm.disabled = false;
+            }
+          }, 100);
+        }, 1500);
+      }, 200);
+    },
   },
   watch: {
     "note.t"(val, oldVal) {

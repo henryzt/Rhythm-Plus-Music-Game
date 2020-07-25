@@ -19,7 +19,7 @@ export default class GameInstance {
     this.timeArr = [];
     this.timeArrIdx = 0;
 
-    // time elapsed relative to audio play time (+Number(vm.noteSpeedInSec))
+    // time elapsed relative to audio play time (+Number(noteDelay))
     this.currentTime = 0;
     this.playTime = 0; // Current time + note drop delay
     this.startSongAt = 0;
@@ -47,6 +47,7 @@ export default class GameInstance {
 
     // white line checking note hit
     this.checkHitLineY = 0;
+    this.noteSpeedPxPerSec = 0;
 
     this.ytPlayer = new YoutubePlayer(vm);
     this.feverEff = new FeverEffect(vm, this);
@@ -126,8 +127,8 @@ export default class GameInstance {
     const hitLineProp = isMobile ? 8.5 : 9;
 
     this.checkHitLineY = (this.canvas.height / 10) * hitLineProp;
-    this.vm.noteSpeedPxPerSec =
-      this.checkHitLineY / Number(this.vm.noteSpeedInSec);
+    this.noteSpeedPxPerSec = 380 * Number(this.vm.noteSpeed);
+    this.noteDelay = this.checkHitLineY / this.noteSpeedPxPerSec;
     this.repositionNotes();
   }
 
@@ -383,7 +384,7 @@ export default class GameInstance {
         this.seekTo(this.currentTime);
         this.seeked();
       }
-      if (this.playTime > this.vm.noteSpeedInSec + this.startSongAt) {
+      if (this.playTime > this.noteDelay + this.startSongAt) {
         if (!this.vm.started || !this.paused) this.resumeGame();
         clearInterval(intervalPrePlay);
         clearInterval(this.intervalPlay);
@@ -424,7 +425,7 @@ export default class GameInstance {
           : this.audio.getCurrentTime();
       if (!this.vm.started) return cTime;
     }
-    this.playTime = cTime + this.vm.noteSpeedInSec;
+    this.playTime = cTime + this.noteDelay;
     this.currentTime = cTime;
     return cTime;
   }
@@ -436,8 +437,8 @@ export default class GameInstance {
   isWithinTime(note) {
     // check if a note with start time is currently on screen
     const time = note.t;
-    const sec = Number(this.vm.noteSpeedInSec);
-    const current = Number(this.getNoteTiming());
+    const sec = this.noteDelay;
+    const current = this.getNoteTiming();
     let isWithinStartTime = time >= current - sec;
     let isWithinEndTime = time <= current;
     if (note.h) {

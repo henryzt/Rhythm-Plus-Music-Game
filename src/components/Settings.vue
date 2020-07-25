@@ -131,7 +131,7 @@ export default {
         blur: false,
       },
       gameSt: {
-        noteSpeedInSec: 2,
+        noteSpeed: 1,
         vibrate: true,
         perspective: false,
         blur: false,

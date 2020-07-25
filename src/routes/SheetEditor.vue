@@ -177,7 +177,7 @@
           class="vicon"
           name="undo"
           scale="1"
-          @click="seekTo(Number(currentTime) - noteSpeedInSec)"
+          @click="seekTo(Number(currentTime) - instance.noteDelay)"
         />
         <v-icon
           class="vicon"
@@ -197,7 +197,7 @@
           class="vicon"
           name="redo"
           scale="1"
-          @click="seekTo(Number(currentTime) + noteSpeedInSec)"
+          @click="seekTo(Number(currentTime) + instance.noteDelay)"
         />
       </div>
       <div style="flex-grow: 1;">
@@ -205,7 +205,7 @@
           :value="currentTime"
           :tooltip-placement="'right'"
           :interval="0.001"
-          :min="-noteSpeedInSec.toFixed(3)"
+          :min="-instance.noteDelay.toFixed(3)"
           :max="songLength"
           :contained="true"
           :lazy="true"
@@ -306,7 +306,7 @@ export default {
   },
   computed: {
     currentTime() {
-      return (this.instance.playTime - this.noteSpeedInSec).toFixed(2);
+      return (this.instance.playTime - this.instance.noteDelay).toFixed(2);
     },
     isSheetOwner() {
       return (

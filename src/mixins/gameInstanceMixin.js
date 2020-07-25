@@ -6,8 +6,7 @@ export default {
       audio: null,
       canvas: null,
       ctx: null,
-      noteSpeedInSec: 2,
-      noteSpeedPxPerSec: null, // note speed
+      noteSpeed: 1,
       playMode: true, // play or edit mode
       currentSong: null,
       result: {
@@ -54,7 +53,7 @@ export default {
     },
   },
   watch: {
-    noteSpeedInSec() {
+    noteSpeed() {
       this.instance.reposition();
     },
     showStartButton() {
@@ -82,7 +81,7 @@ export default {
     const gameSettings = this.$store.state?.userProfile?.gameSt;
     if (gameSettings) {
       this.blur = gameSettings.blur;
-      this.noteSpeedInSec = gameSettings.noteSpeedInSec;
+      this.noteSpeed = gameSettings.noteSpeed ?? 1;
       this.perspective = gameSettings.perspective;
       this.vibrate = gameSettings.vibrate;
     }
@@ -111,7 +110,7 @@ export default {
     },
     feverTimer() {
       if (!this.started || this.instance.paused || !this.playMode) return;
-      Logger.log(this.fever.percent, this.fever.time, this.fever.value);
+      // Logger.log(this.fever.percent, this.fever.time, this.fever.value);
       if (this.fever.value < 1) this.fever.value = 1;
       if (this.fever.percent < 0) this.fever.percent = 0;
       if (this.fever.percent >= 1) {

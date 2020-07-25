@@ -41,8 +41,8 @@ export default class Note {
     } else {
       let hitTimeSinceStartInSec =
         (parseFloat(Date.now()) - parseFloat(this.timeStarted)) / 1000;
-      const diff = Math.abs(this.vm.noteSpeedInSec - hitTimeSinceStartInSec);
-      let percentage = diff / this.vm.noteSpeedInSec; // the lower the better
+      const diff = Math.abs(this.game.noteDelay - hitTimeSinceStartInSec);
+      let percentage = diff / this.game.noteDelay; // the lower the better
 
       return percentage;
     }
@@ -124,7 +124,7 @@ export default class Note {
     // reposition y value based on current time
     const timing = this.game.getNoteTiming();
     const timeElapsed = timing - this.keyObj.t;
-    const y = (timeElapsed / this.vm.noteSpeedInSec) * this.game.checkHitLineY;
+    const y = timeElapsed * this.game.noteSpeedPxPerSec;
     this.y = y;
     this.gameHadBeenPaused = true;
   }
@@ -167,7 +167,7 @@ export default class Note {
 
     if (this.game.paused) return;
 
-    this.y += this.vm.noteSpeedPxPerSec * this.delta;
+    this.y += this.game.noteSpeedPxPerSec * this.delta;
 
     this.playSoundEffect();
   }
@@ -180,7 +180,7 @@ export default class Note {
   drawHoldNote(color) {
     const endTime = this.keyObj.h[this.key];
     const holdLengthInSec = endTime === -1 ? 100 : endTime - this.keyObj.t;
-    const noteHeight = holdLengthInSec * this.vm.noteSpeedPxPerSec;
+    const noteHeight = holdLengthInSec * this.game.noteSpeedPxPerSec;
     this.holdNoteHeight = noteHeight;
     this.holdNoteY = this.y - noteHeight + this.singleNoteHeight;
     const paintY = this.holdNoteY < 0 ? 0 : this.holdNoteY;

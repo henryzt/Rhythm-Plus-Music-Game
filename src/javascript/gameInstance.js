@@ -154,7 +154,7 @@ export default class GameInstance {
         this.onKeyDown(event.key.toLowerCase());
         if (event.keyCode === KeyCode.ESC || event.keyCode === KeyCode.P) {
           if (this.paused) {
-            this.vm.resumeGame();
+            this.vm.resumeGame(true);
           } else {
             this.vm.pauseGame();
           }

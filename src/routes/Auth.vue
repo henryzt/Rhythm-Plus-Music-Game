@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="{ cutBottom: !$store.state.authed }">
     <div class="mContainer" v-if="$store.state.verified">
       <div class="flex_hori">
         <UserProfileCard :extend="true" />
@@ -8,7 +8,7 @@
       <Settings></Settings>
     </div>
 
-    <div class="center_logo" style="z-index: 900;">
+    <div class="center_logo" style="position: absolute;">
       <div v-show="!$store.state.authed">
         <h3>Signin or Register Now for Complete Experience!</h3>
         <div id="firebaseui-auth-container"></div>
@@ -77,6 +77,7 @@ export default {
         firebase.auth.FacebookAuthProvider.PROVIDER_ID,
         firebase.auth.EmailAuthProvider.PROVIDER_ID,
       ],
+      credentialHelper: firebaseui.auth.CredentialHelper.GOOGLE_YOLO,
       autoUpgradeAnonymousUsers: true,
       callbacks: {
         signInSuccessWithAuthResult: (authResult) => {
@@ -228,5 +229,8 @@ export default {
   border-radius: 20px;
   font-size: 15px;
   cursor: pointer;
+}
+.cutBottom {
+  height: calc(100% - 70px);
 }
 </style>

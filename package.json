@@ -14,7 +14,7 @@
     "build": "NODE_ENV=production webpack --mode production",
     "clean": "rm -rf ./dist",
     "serve": "yarn run build && serve .",
-    "deploy": "yarn build && firebase deploy && git push"
+    "deploy": "npm --no-git-tag-version version patch && yarn build && firebase deploy && git push"
   },
   "dependencies": {
     "@sentry/browser": "^5.20.0",

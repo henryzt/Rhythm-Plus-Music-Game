@@ -8,7 +8,7 @@ import "firebase/performance";
 // firebase init goes here
 const config = {
   apiKey: "AIzaSyAdeWHYbSj2iErECQTncQLrz9WdfbuiCsQ",
-  authDomain: "rhythm-plus.firebaseapp.com",
+  authDomain: "auth.rhythm-plus.com",
   databaseURL: "https://rhythm-plus.firebaseio.com",
   projectId: "rhythm-plus",
   storageBucket: "rhythm-plus.appspot.com",

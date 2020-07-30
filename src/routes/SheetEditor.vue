@@ -27,9 +27,9 @@
         >
           <span v-if="sheetChanged" class="saveIndicator">●</span>Save
         </a>
-        <a href="#" @click.prevent="togglePlayMode(false)">
-          {{ playMode ? "Edit" : "Test" }}
-        </a>
+        <a href="#" @click.prevent="togglePlayMode(false)">{{
+          playMode ? "Edit" : "Test"
+        }}</a>
         <a
           href="#"
           @click.prevent="showPublishModal"
@@ -64,13 +64,14 @@
           v-show="leftTab === 1"
         ></info-editor>
         <!-- tab 2 - options -->
-        <PlayControl
-          style="flex-grow: 1; padding: 0 30px; box-sizing: border-box;"
-          ref="control"
-          v-if="leftTab === 2"
-          :playData="$data"
-          :formStyle="true"
-        ></PlayControl>
+        <div v-if="leftTab === 2" style="flex-grow: 1; overflow: scroll;">
+          <PlayControl
+            style="padding: 0 30px; box-sizing: border-box;"
+            ref="control"
+            :playData="$data"
+            :formStyle="true"
+          ></PlayControl>
+        </div>
         <!-- song control -->
         <SongListItem
           v-if="songInfo.id"
@@ -126,7 +127,11 @@
           ></canvas>
         </div>
         <!-- mark indicator -->
-        <div class="center_judge" v-show="playMode" ref="hitIndicator">
+        <div
+          class="center_judge"
+          v-show="playMode && result.combo > 0"
+          ref="hitIndicator"
+        >
           {{ markJudge }} {{ result.combo }}
         </div>
 
@@ -394,15 +399,21 @@ export default {
         this.$router.push({ query: null });
       }
     }
+
+    window.onbeforeunload = () => {
+      if (this.sheetChanged) {
+        return "If you leave this page you will lose your unsaved changes.";
+      }
+    };
   },
   methods: {
     checkLoggedIn() {
       if (this.$store.state.initialized && !this.$store.state.verified) {
-        this.$router.push({ path: "/account", query: { warn: true } });
+        this.$router.push({ path: "/account/", query: { warn: true } });
       }
     },
     goToMenu() {
-      this.$router.push("/menu");
+      this.$router.push("/menu/");
     },
     async songLoaded() {
       if (!this.initialized) {
@@ -480,12 +491,26 @@ export default {
     updateSongDetail() {
       this.$refs.info.openSongUpdate();
     },
-    newEditor() {
-      this.$router.push("/editor/");
-      this.reloadEditor();
+    async newEditor() {
+      if (await this.saveWarning()) {
+        this.$router.push("/editor/");
+        this.reloadEditor();
+      }
     },
     showPublishModal() {
       this.$refs.publishModal.show();
+    },
+    saveWarning() {
+      if (this.sheetChanged) {
+        return this.$store.state.gModal.show({
+          bodyText:
+            "You have unsaved changes, are you sure you want to continue without saving?",
+          isError: false,
+          showCancel: true,
+        });
+      } else {
+        return Promise.resolve(true);
+      }
     },
 
     reorderSheet() {
@@ -532,6 +557,13 @@ export default {
         this.$store.state.redirecting = false;
       });
     },
+  },
+  beforeRouteLeave: async function (to, from, next) {
+    const canLeave = await this.saveWarning();
+    next(canLeave);
+  },
+  beforeDestroy() {
+    window.onbeforeunload = null;
   },
 };
 </script>

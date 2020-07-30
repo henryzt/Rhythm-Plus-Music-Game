@@ -215,11 +215,13 @@ export default {
     async submitSongForm() {
       try {
         if (this.songFormOptions.isUpdate) {
+          if (!(await this.$parent.saveWarning())) return;
           this.$parent.loading = true;
           await updateSong(this.songFormData);
           this.$router.push({ query: { update: true } });
           this.$parent.reloadEditor();
         } else {
+          this.$parent.loading = true;
           let songId = await createSong(this.songFormData);
           this.$parent.songInfo = await getSong(songId);
           this.getSheets();
@@ -251,9 +253,10 @@ export default {
       );
     },
     async submitSheetForm() {
-      this.$parent.loading = true;
       try {
         if (this.sheetFormOptions.isUpdate) {
+          if (!(await this.$parent.saveWarning())) return;
+          this.$parent.loading = true;
           this.sheetFormData.startAt = this.sheetFormData.startAt
             ? Number(this.sheetFormData.startAt)
             : null;
@@ -264,6 +267,7 @@ export default {
           await updateSheet(this.sheetFormData);
           this.$router.push({ query: { save: true } });
         } else {
+          this.$parent.loading = true;
           const songId = this.$parent.songInfo.id;
           this.sheetFormData.songId = songId;
           let sheetId = await createSheet(this.sheetFormData);

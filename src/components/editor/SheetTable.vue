@@ -22,6 +22,7 @@
     </div>
     <NoteEditPanel
       v-if="noteToEdit"
+      ref="panel"
       :note="noteToEdit"
       :instance="instance"
       :vm="$parent"
@@ -117,6 +118,7 @@ export default {
       });
       this.clearSelected();
       this.instance.repositionNotes();
+      this.noteToEdit = null;
       this.$store.state.alert.success("Selected notes deleted");
     },
     scrollToCurrent() {
@@ -178,13 +180,19 @@ export default {
       if (!this.$parent.selectedNotes) return;
       let newNoteArr = [];
       for (const note of this.$parent.selectedNotes) {
-        const newNote = Object.assign({}, note);
-        newNote.t += 0.2; // avoid overlay on top of the old ones
+        const newNote = JSON.parse(JSON.stringify(note));
         newNoteArr.push(newNote);
       }
       this.instance.timeArr = this.instance.timeArr.concat(newNoteArr);
       this.$parent.selectedNotes = newNoteArr;
       this.reorder();
+      this.instance.repositionNotes();
+      // avoid overlay on top of the old ones
+      this.bulkEditNotes();
+      setTimeout(() => {
+        this.$refs.panel.bulkTiming = 0.2;
+        this.$refs.panel.bulkChange();
+      }, 20);
     },
   },
 };

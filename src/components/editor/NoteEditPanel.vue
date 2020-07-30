@@ -167,6 +167,7 @@ export default {
       }
       this.bulkTiming = 0;
       this.instance.repositionNotes();
+      this.markChanged();
     },
   },
   watch: {

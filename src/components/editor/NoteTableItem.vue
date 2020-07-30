@@ -13,7 +13,7 @@
         <span class="checkmark"></span>
       </label>
     </div>
-    <div style="width: 25%;" class="time" @dblclick="seek(note)">
+    <div style="width: 25%;" class="time" @click="seek(note)">
       {{ note.t }}
     </div>
     <div style="width: 55%;">

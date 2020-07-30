@@ -59,20 +59,26 @@ export default {
   data: function () {
     return {
       showModal: false,
+      resolve: null,
     };
   },
   methods: {
     show() {
       this.showModal = true;
       this.$nextTick(this.addTilt);
+      return new Promise((resolve) => {
+        this.resolve = resolve;
+      });
     },
     ok() {
       this.showModal = false;
       this.$emit("ok");
+      this.resolve(true);
     },
     close() {
       this.showModal = false;
       this.$emit("close");
+      this.resolve(false);
     },
     addTilt() {
       if (this.$refs.modal) {

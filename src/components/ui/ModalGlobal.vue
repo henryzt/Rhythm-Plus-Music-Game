@@ -45,7 +45,7 @@ export default {
       if (this.notNull(options.cancelCallback))
         this.cancelCallback = options.cancelCallback;
       if (options.isError) this.titleText = "Error";
-      this.$refs.globalModal.show();
+      return this.$refs.globalModal.show();
     },
     notNull(value) {
       return value !== null && value !== undefined;

@@ -5,7 +5,7 @@
         <UserProfileCard :extend="true" />
         <div class="clip" @click="confirmSignOut">Logout</div>
       </div>
-      <Settings></Settings>
+      <Settings ref="settings"></Settings>
     </div>
 
     <div class="center_logo" style="position: absolute;">
@@ -195,6 +195,15 @@ export default {
         });
     },
   },
+  // beforeRouteLeave: async function (to, from, next) {
+  //   const canLeave = await this.$store.state.gModal.show({
+  //         bodyText:
+  //           "You have unsaved changes, are you sure you want to leave without saving?",
+  //         isError: false,
+  //         showCancel: true,
+  //       });
+  //   next(canLeave);
+  // },
 };
 </script>
 

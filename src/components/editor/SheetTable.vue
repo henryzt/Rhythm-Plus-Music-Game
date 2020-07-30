@@ -27,8 +27,14 @@
       :instance="instance"
       :vm="$parent"
     ></NoteEditPanel>
-    <div class="buttons" :class="{ disabled: !instance.paused }">
-      <a class="btn-action btn-dark" @click="reorder">Reorder</a>
+    <div
+      class="buttons"
+      :class="{
+        disabled: !instance.paused,
+        disableChild: (!hasSelected || isBlinking) && instance.paused,
+      }"
+    >
+      <a class="btn-action btn-dark anti-disable" @click="reorder">Reorder</a>
       <a class="btn-action btn-dark" @click="removeSelected">Delete</a>
       <a class="btn-action btn-dark" @click="selectBetween">Between</a>
       <a class="btn-action btn-dark" @click="clearSelected">Clear</a>
@@ -69,6 +75,9 @@ export default {
     instance() {
       return this.$parent.instance;
     },
+    hasSelected() {
+      return this.$parent.selectedNotes.length !== 0;
+    },
   },
   components: {
     NoteEditPanel,
@@ -80,6 +89,7 @@ export default {
       selectedAll: false,
       follow: true,
       noteToEdit: null,
+      isBlinking: false,
       NoteTableItem,
     };
   },
@@ -157,6 +167,7 @@ export default {
     selectNoteToEdit(note) {
       this.setEditNote(note);
       let counter = 4;
+      this.isBlinking = true;
       let blinkNoteInterval = setInterval(() => {
         const selectedIdx = this.$parent.selectedNotes.indexOf(note);
         if (selectedIdx !== -1) {
@@ -165,7 +176,10 @@ export default {
           this.$parent.selectedNotes.push(note);
         }
         counter--;
-        if (counter <= 0) clearInterval(blinkNoteInterval);
+        if (counter <= 0) {
+          this.isBlinking = false;
+          clearInterval(blinkNoteInterval);
+        }
       }, 200);
     },
     bulkEditNotes() {
@@ -219,6 +233,9 @@ export default {
 
 .buttons {
   padding-top: 5px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 
 .btn-dark {
@@ -233,6 +250,7 @@ export default {
   display: inline-block;
   cursor: pointer;
   /* padding: 10px; */
+  width: 31%;
 }
 
 .cb_container .checkmark {
@@ -246,5 +264,19 @@ export default {
   flex-direction: row;
   justify-content: space-between;
   text-align: center;
+}
+
+.disableChild a {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.disabled a {
+  opacity: 0.3;
+}
+
+.anti-disable {
+  opacity: 1 !important;
+  pointer-events: all !important;
 }
 </style>

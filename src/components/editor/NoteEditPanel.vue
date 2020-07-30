@@ -107,6 +107,7 @@ export default {
       this.removeHoldNote(k);
     },
     removeHoldNote(k) {
+      if (!this.note.h) return;
       // using js delete will not be reactive
       Vue.delete(this.note.h, k);
       if (Object.keys(this.note.h).length === 0) {
@@ -161,7 +162,8 @@ export default {
     },
     bulkChange() {
       const diff = Number(this.bulkTiming);
-      for (const note of this.note) {
+      const arr = this.isArrary ? this.note : [this.note];
+      for (const note of arr) {
         this.moveHoldNote(note, diff);
         note.t += diff;
       }

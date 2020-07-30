@@ -39,7 +39,10 @@ export default {
   props: ["index", "noteToEdit", "instance", "parent", "source", "table"],
   computed: {
     isEditing() {
-      return this.noteToEdit == this.note;
+      return (
+        this.noteToEdit == this.note ||
+        (Array.isArray(this.noteToEdit) && this.noteToEdit.includes(this.note))
+      );
     },
     note() {
       return this.source;

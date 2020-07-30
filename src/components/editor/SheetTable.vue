@@ -24,12 +24,15 @@
       v-if="noteToEdit"
       :note="noteToEdit"
       :instance="instance"
+      :vm="$parent"
     ></NoteEditPanel>
     <div class="buttons" :class="{ disabled: !instance.paused }">
       <a class="btn-action btn-dark" @click="reorder">Reorder</a>
       <a class="btn-action btn-dark" @click="removeSelected">Delete</a>
       <a class="btn-action btn-dark" @click="selectBetween">Between</a>
       <a class="btn-action btn-dark" @click="clearSelected">Clear</a>
+      <a class="btn-action btn-dark" @click="bulkEditNotes">Edit</a>
+      <a class="btn-action btn-dark" @click="duplicateNote">Duplicate</a>
     </div>
     <div
       class="flex_hori"
@@ -142,12 +145,15 @@ export default {
       );
       this.$parent.selectedNotes = sheet.slice(minIdx, maxIdx + 1);
     },
-    selectNoteToEdit(note) {
+    setEditNote(note) {
       this.noteToEdit = null;
       this.$nextTick(() => {
         // re-render note edit panel
         this.noteToEdit = note;
       });
+    },
+    selectNoteToEdit(note) {
+      this.setEditNote(note);
       let counter = 4;
       let blinkNoteInterval = setInterval(() => {
         const selectedIdx = this.$parent.selectedNotes.indexOf(note);
@@ -159,6 +165,26 @@ export default {
         counter--;
         if (counter <= 0) clearInterval(blinkNoteInterval);
       }, 200);
+    },
+    bulkEditNotes() {
+      if (!this.$parent.selectedNotes) return;
+      if (this.$parent.selectedNotes.length > 1) {
+        this.setEditNote(this.$parent.selectedNotes);
+      } else {
+        this.selectNoteToEdit(this.$parent.selectedNotes[0]);
+      }
+    },
+    duplicateNote() {
+      if (!this.$parent.selectedNotes) return;
+      let newNoteArr = [];
+      for (const note of this.$parent.selectedNotes) {
+        const newNote = Object.assign({}, note);
+        newNote.t += 0.2; // avoid overlay on top of the old ones
+        newNoteArr.push(newNote);
+      }
+      this.instance.timeArr = this.instance.timeArr.concat(newNoteArr);
+      this.$parent.selectedNotes = newNoteArr;
+      this.reorder();
     },
   },
 };

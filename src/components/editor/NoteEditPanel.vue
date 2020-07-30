@@ -1,7 +1,9 @@
 <template>
   <div class="panel">
+    <!-- single note timing -->
     <div style="padding-bottom: 5px;">
-      <span>Edit Note Timing</span>
+      <span v-if="!isArrary">Edit Note Timing</span>
+      <span v-else>Bulk Note Timing Edit</span>
       <v-icon
         style="float: right; cursor: pointer;"
         name="times"
@@ -9,17 +11,21 @@
         @click="$parent.noteToEdit = null"
       />
     </div>
-    <div class="flex_hori">
-      <v-icon
-        class="btn-action btn-dark"
-        name="minus"
-        @click="minus(note, 't')"
-      />
-      <input step="0.01" v-model="note.t" placeholder="Time" type="number" />
-      <v-icon class="btn-action btn-dark" name="plus" @click="add(note, 't')" />
-      <div class="btn-action btn-dark btn-test" @click="testNote">Test</div>
-    </div>
-    <div>
+    <div v-if="!isArrary">
+      <div class="flex_hori">
+        <v-icon
+          class="btn-action btn-dark"
+          name="minus"
+          @click="minus(note, 't')"
+        />
+        <input step="0.01" v-model="note.t" placeholder="Time" type="number" />
+        <v-icon
+          class="btn-action btn-dark"
+          name="plus"
+          @click="add(note, 't')"
+        />
+        <div class="btn-action btn-dark btn-test" @click="testNote">Test</div>
+      </div>
       <div class="keyWrapper">
         <div
           v-for="k in instance.trackKeyBind"
@@ -31,21 +37,34 @@
           {{ k === " " ? "-" : k }}
         </div>
       </div>
-    </div>
-    <div v-if="note.h">
-      <div style="padding-top: 20px;">Holding Notes</div>
-      <div v-for="k in Object.keys(note.h)" :key="k" class="flex_hori">
-        <div class="note">{{ k === " " ? "-" : k }}</div>
-        <input
-          step="0.01"
-          v-model="note.h[k]"
-          placeholder="End Time"
-          type="number"
-        />
-        <div class="btn-action btn-dark btn-test" @click="removeHoldNote(k)">
-          Remove
+      <!-- hold note edit -->
+      <div v-if="note.h">
+        <div style="padding-top: 20px;">Holding Notes</div>
+        <div v-for="k in Object.keys(note.h)" :key="k" class="flex_hori">
+          <div class="note">{{ k === " " ? "-" : k }}</div>
+          <input
+            step="0.01"
+            v-model="note.h[k]"
+            placeholder="End Time"
+            type="number"
+            @change="markChanged"
+          />
+          <div class="btn-action btn-dark btn-test" @click="removeHoldNote(k)">
+            Remove
+          </div>
         </div>
       </div>
+    </div>
+    <!-- bulk note edit -->
+    <div v-else class="flex_hori">
+      <input
+        style="flex-grow: 1;"
+        step="0.01"
+        v-model="bulkTiming"
+        placeholder="Time"
+        type="number"
+      />
+      <div class="btn-action btn-dark btn-test" @click="bulkChange">Apply</div>
     </div>
   </div>
 </template>
@@ -57,7 +76,17 @@ import "vue-awesome/icons/times";
 
 export default {
   name: "NoteEditPanel",
-  props: ["note", "instance", "parent"],
+  props: ["note", "instance", "vm"],
+  data: function () {
+    return {
+      bulkTiming: 0,
+    };
+  },
+  computed: {
+    isArrary() {
+      return Array.isArray(this.note);
+    },
+  },
   methods: {
     // to remove tailing zeros
     add(target, att) {
@@ -90,17 +119,18 @@ export default {
         this.toggleKey(k);
       }
       if (!this.note.h) {
-        this.note.h = {};
+        Vue.set(this.note, "h", {});
       }
-      if (!this.note.h[k]) this.note.h[k] = this.note.t + 0.2;
+      if (!this.note.h[k]) Vue.set(this.note.h, k, this.note.t + 0.2);
+      // reactivity in depth https://vuejs.org/v2/guide/reactivity.html
     },
     testNote() {
-      this.instance.vm.disabled = true;
+      this.vm.disabled = true;
       const timeBefore = this.instance.currentTime;
-      const selectedNotesBefore = this.instance.vm.selectedNotes;
-      this.instance.vm.selectedNotes = [this.note];
+      const selectedNotesBefore = this.vm.selectedNotes;
+      this.vm.selectedNotes = [this.note];
       let seekTime = this.note.t - 1.5 > 0 ? this.note.t - 1.5 : 0;
-      this.instance.vm.seekTo(seekTime);
+      this.vm.seekTo(seekTime);
       setTimeout(() => {
         this.instance.resumeGame();
         setTimeout(() => {
@@ -111,29 +141,45 @@ export default {
               this.instance.paused
             ) {
               clearInterval(testInterval);
-              this.instance.vm.seekTo(timeBefore);
-              this.instance.vm.selectedNotes = selectedNotesBefore;
-              this.instance.vm.disabled = false;
+              this.vm.seekTo(timeBefore);
+              this.vm.selectedNotes = selectedNotesBefore;
+              this.vm.disabled = false;
             }
           }, 100);
         }, 1500);
       }, 200);
     },
+    markChanged() {
+      this.vm.sheetChanged = true;
+    },
+    moveHoldNote(note, diff) {
+      if (note.h) {
+        for (let key of Object.keys(note.h)) {
+          note.h[key] = Number(note.h[key]) + diff;
+        }
+      }
+    },
+    bulkChange() {
+      const diff = Number(this.bulkTiming);
+      for (const note of this.note) {
+        this.moveHoldNote(note, diff);
+        note.t += diff;
+      }
+      this.bulkTiming = 0;
+      this.instance.repositionNotes();
+    },
   },
   watch: {
     "note.t"(val, oldVal) {
       // TODO why TF will html number input return string??????????????????
-      if (this.note.h) {
-        for (let key of Object.keys(this.note.h)) {
-          this.note.h[key] =
-            Number(this.note.h[key]) + Number(val) - Number(oldVal);
-        }
-      }
+      this.moveHoldNote(this.note, Number(val) - Number(oldVal));
       this.note.t = Number(this.note.t);
       this.instance.repositionNotes();
+      this.markChanged();
     },
     "note.k"() {
       this.instance.repositionNotes();
+      this.markChanged();
     },
     "note.h"() {
       // TODO Again, WHY??
@@ -143,6 +189,7 @@ export default {
         }
       }
       this.instance.repositionNotes();
+      this.markChanged();
     },
   },
 };

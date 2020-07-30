@@ -14,7 +14,7 @@
           style="height: 8vh; cursor: pointer; pointer-events: all;"
           @click="goToMenu"
         />
-        Sheet Editor
+        <div>Sheet Editor</div>
       </div>
       <div style="flex-grow: 1;"></div>
       <a href="#" @click.prevent="newEditor">New</a>
@@ -23,11 +23,13 @@
           href="#"
           @click.prevent="saveSheet"
           :class="{ disabled: !isSheetOwner }"
-          >Save</a
+          style="position: relative;"
         >
-        <a href="#" @click.prevent="togglePlayMode(false)">{{
-          playMode ? "Edit" : "Test"
-        }}</a>
+          <span v-if="sheetChanged" class="saveIndicator">●</span>Save
+        </a>
+        <a href="#" @click.prevent="togglePlayMode(false)">
+          {{ playMode ? "Edit" : "Test" }}
+        </a>
         <a
           href="#"
           @click.prevent="showPublishModal"
@@ -304,6 +306,7 @@ export default {
         soundEffect: true, //eidtor hit sound effect
         lowerHitLine: true,
       },
+      sheetChanged: false,
     };
   },
   computed: {
@@ -343,6 +346,9 @@ export default {
     },
     "$store.state.initialized"() {
       this.checkLoggedIn();
+    },
+    "instance.timeArr"() {
+      if (!this.sheetChanged && this.initialized) this.sheetChanged = true;
     },
   },
   async mounted() {
@@ -507,6 +513,8 @@ export default {
       let local = JSON.parse(localStorage.getItem("localSheetBackup")) || {};
       local[this.sheetInfo.id] = sheet;
       localStorage.setItem("localSheetBackup", JSON.stringify(local));
+
+      this.sheetChanged = false;
     },
     countTotal() {
       const lastNote = this.instance.timeArr[this.instance.timeArr.length - 1];
@@ -636,6 +644,14 @@ export default {
 
 .tab:hover {
   background-color: rgba(255, 255, 255, 0.2);
+}
+
+.saveIndicator {
+  color: orange;
+  position: absolute;
+  font-size: 12px;
+  bottom: 3px;
+  left: 47%;
 }
 
 @media screen and (max-width: 600px) {

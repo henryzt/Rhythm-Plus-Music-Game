@@ -21,13 +21,15 @@ Vue.use(VueMoment);
 Vue.use(VueRouter);
 Vue.component("v-icon", Icon);
 
-Sentry.init({
-  dsn:
-    "https://7c0cf5f165ab4854994380c0a0d9711e@o424134.ingest.sentry.io/5355558",
-  integrations: [
-    new VueIntegration({ Vue, attachProps: true, logErrors: true }),
-  ],
-});
+if (!isDev) {
+  Sentry.init({
+    dsn:
+      "https://7c0cf5f165ab4854994380c0a0d9711e@o424134.ingest.sentry.io/5355558",
+    integrations: [
+      new VueIntegration({ Vue, attachProps: true, logErrors: true }),
+    ],
+  });
+}
 
 const consoleHandler = Logger.createDefaultHandler();
 Logger.setHandler((messages, context) => {

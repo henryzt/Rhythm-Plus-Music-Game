@@ -64,17 +64,17 @@ export default {
     this.vComponent = null;
   },
   methods: {
-    renderVisualizer() {
+    renderVisualizer(time) {
       if (!this.shouldRender) return;
-      this.$refs.visualizerIns?.update();
+      this.$refs.visualizerIns?.update(time);
     },
     setVisualizerByKey(name) {
       this.vComponent = visualizers[name];
     },
-    update() {
+    update(time) {
       if (!this.autoUpdate || !this.shouldRender) return;
       requestAnimationFrame(this.update.bind(this));
-      this.renderVisualizer();
+      this.renderVisualizer(time);
     },
     resizeCanvas() {
       if (!this.shouldRender) return;

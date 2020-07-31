@@ -58,8 +58,8 @@
             v-model="appearanceSt.theme"
             @change="changeVisualizer"
           >
-            <option value="flameSpace">Flame Space</option>
-            <option value="purpleSwirl">Dark Purple Swirl</option>
+            <option value="flameOrange">Flame Orange</option>
+            <option value="darkPurple">Dark Purple</option>
           </select>
         </p>
         <p v-if="$store.state.visualizerArr">
@@ -126,7 +126,7 @@ export default {
         photoURL: null,
       },
       appearanceSt: {
-        theme: "purpleSwirl",
+        theme: "darkPurple",
         visualizer: "swirl",
         blur: false,
       },
@@ -149,10 +149,10 @@ export default {
   },
   methods: {
     changeVisualizer() {
-      if (this.appearanceSt.theme === "purpleSwirl") {
+      if (this.appearanceSt.theme === "darkPurple") {
         this.appearanceSt.visualizer = "swirl";
       }
-      if (this.appearanceSt.theme === "flameSpace") {
+      if (this.appearanceSt.theme === "flameOrange") {
         this.appearanceSt.visualizer = "space";
       }
     },

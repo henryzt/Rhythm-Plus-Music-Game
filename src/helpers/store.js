@@ -107,19 +107,19 @@ export const store = new Vuex.Store({
     },
     setTheme(state) {
       // set themes
-      const purpleSwirl = {
+      const darkPurple = {
         visualizer: "swirl",
         buttonStyle: "colored",
         logoAsset: "logo2.png",
       };
-      const flameSpace = {
+      const flameOrange = {
         visualizer: "space",
         buttonStyle: "",
         logoAsset: "logo.png",
       };
       const userTheme = state.userProfile?.appearanceSt;
       state.theme =
-        userTheme?.theme === "flameSpace" ? flameSpace : purpleSwirl;
+        userTheme?.theme === "flameOrange" ? flameOrange : darkPurple;
       if (userTheme) {
         state.theme.visualizer = userTheme.visualizer;
         state.theme.blur = userTheme.blur;

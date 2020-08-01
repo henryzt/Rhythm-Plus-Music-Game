@@ -108,7 +108,7 @@ export const store = new Vuex.Store({
     setTheme(state) {
       // set themes
       const darkPurple = {
-        visualizer: "swirl",
+        visualizer: "purpleSpace",
         buttonStyle: "colored",
         logoAsset: "logo2.png",
       };

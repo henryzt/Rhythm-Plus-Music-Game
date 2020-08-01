@@ -40,35 +40,35 @@ function getVolume() {
   return sampler ? sampler.volume / 10000 : 0;
 }
 
-const colors = ["white"]
+const colors = ["white"];
 
 const makeStars = (count) => {
   const out = [];
-    for (let i=0;i<count;i++){
-      const s = {
-        x: Math.random()*1600-800,
-        y: Math.random()*900-450,
-        z: Math.random()*1000,
-        vWeight: Math.random(),
-        color: colors[Math.floor(Math.random()*colors.length)]
-      };
+  for (let i = 0; i < count; i++) {
+    const s = {
+      x: Math.random() * 1600 - 800,
+      y: Math.random() * 900 - 450,
+      z: Math.random() * 1000,
+      vWeight: Math.random(),
+      color: colors[Math.floor(Math.random() * colors.length)],
+    };
     out.push(s);
   }
   return out;
-}
+};
 
 let stars = makeStars(700);
 
 const putPixel = (x, y, brightness, v, star) => {
   // const intensity = brightness * 0.5 + v * star.vWeight;
-  const intensity = brightness * 0.4 + v * 0.6;
+  const intensity = brightness * (v + 0.2) * 1.05;
   // const rgb = `rgba(255,255,255,${intensity})`;
   // ctx.globalAlpha=intensity;
   ctx.fillStyle = `rgba(255,255,255,${intensity})`;
   // ctx.fillStyle = star.color;
   ctx.fillRect(x, y, 3, 3);
-  // ctx.strokeStyle = "white";
-  // ctx.lineWidth = v - 0.5;
+  // ctx.strokeStyle = `rgba(255,255,255,${v - 0.5})`;
+  // ctx.lineWidth = 0.1;
   // ctx.strokeRect(x, y, 3, 3);
   // ctx.globalAlpha=1;
 };
@@ -78,66 +78,70 @@ const moveStars = (distance, v) => {
   for (var i = 0; i < count; i++) {
     const s = stars[i];
     s.z -= distance + distance * v * s.vWeight;
-    while (s.z <= 1){
+    while (s.z <= 1) {
       s.z += 1000;
     }
   }
-}
+};
 
 const tick = (time, v) => {
   let elapsed = time - prevTime;
   prevTime = time;
 
-  moveStars(elapsed*0.06 + v * 0.3, v);
+  moveStars(elapsed * 0.06 + v, v);
 
-  const cx = w/2;
-  const cy = h/2;
+  const cx = w / 2;
+  const cy = h / 2;
 
   for (var i = 0; i < stars.length; i++) {
     const star = stars[i];
 
-    const x = cx + star.x/(star.z * 0.001);
-    const y = cy + star.y/(star.z * 0.001);
+    const x = cx + star.x / (star.z * 0.001);
+    const y = cy + star.y / (star.z * 0.001);
 
-    if (x < 0 || x >= w || y < 0 || y >= h){
+    if (x < 0 || x >= w || y < 0 || y >= h) {
       continue;
     }
 
-    const d = (star.z/1000.0)
-    const b = 1-d*d
+    const d = star.z / 1000.0;
+    const b = 1 - d * d;
 
     putPixel(x, y, b, v, star);
   }
-
 };
 
-
-const bgColors= [[27, 63, 171], [10, 166, 201], [169, 10, 201]]
+const bgColors = [
+  [27, 63, 171],
+  [10, 166, 201],
+  [169, 10, 201],
+];
 let nextBgIdx = 1;
-let currentBg = bgColors[0];
+let currentBg = bgColors[Math.floor(Math.random() * (bgColors.length))];
 
-function moveBgColor(){
+function moveBgColor() {
   const newVal = (from, to) => {
-    const delta = (from - to) > 0 ? -0.25 : 0.25
+    const delta = from - to > 0 ? -0.1 : 0.1;
     return from == to ? from : from + delta;
-  }
+  };
   const nextBg = bgColors[nextBgIdx];
-  currentBg[0] = newVal(currentBg[0], nextBg[0]) 
-  currentBg[1] = newVal(currentBg[1], nextBg[1]) 
-  currentBg[2] = newVal(currentBg[2], nextBg[2]) 
+  currentBg[0] = newVal(currentBg[0], nextBg[0]);
+  currentBg[1] = newVal(currentBg[1], nextBg[1]);
+  currentBg[2] = newVal(currentBg[2], nextBg[2]);
   // console.log(currentBg, nextBg)
-  if(currentBg[0] == nextBg[0] && currentBg[1] == nextBg[1] && currentBg[2] == nextBg[2]){
+  if (
+    Math.round(currentBg[0]) == nextBg[0] &&
+    Math.round(currentBg[1]) == nextBg[1] &&
+    Math.round(currentBg[2]) == nextBg[2]
+  ) {
     nextBgIdx++;
-    if(nextBgIdx>=bgColors.length) nextBgIdx = 0;
+    if (nextBgIdx >= bgColors.length) nextBgIdx = 0;
   }
 }
-
-
 
 function renderBarVisualizer(time, canvas, ctx, audioData) {
   w = canvas.width;
   h = canvas.height;
-  ctx.fillStyle="rgba(0,0,0,0.1)"
+  ctx.fillStyle = "rgba(0,0,0,0.5)";
   ctx.fillRect(0, 0, w, h);
   const x = w / 2,
     y = h / 2,
@@ -146,13 +150,17 @@ function renderBarVisualizer(time, canvas, ctx, audioData) {
   const v = getVolume();
   const v2 = v * 2 > 1 ? 1 : v * 2;
   const vmin = v - 0.35 < 0 ? 0 : v - 0.35;
+  const blackColorStop = h < w ? 0.15 : 0.2; // ? laptop : mobile
 
   let grd = ctx.createRadialGradient(x, y, innerRadius, x, y, outerRadius);
-  grd.addColorStop(0.1, "black");
-  grd.addColorStop(1, `rgba(${currentBg[0]}, ${currentBg[1]}, ${currentBg[2]}, ${v - 0.35})`);
+  grd.addColorStop(blackColorStop, "black");
+  grd.addColorStop(
+    1,
+    `rgba(${currentBg[0]}, ${currentBg[1]}, ${currentBg[2]}, ${v - 0.25})`
+  );
   ctx.fillStyle = grd;
   ctx.fillRect(0, 0, w, h);
-  if(!prevTime) prevTime = time;
+  if (!prevTime) prevTime = time;
   tick(time, v);
   moveBgColor();
 }

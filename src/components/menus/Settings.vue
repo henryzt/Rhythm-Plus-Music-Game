@@ -127,7 +127,7 @@ export default {
       },
       appearanceSt: {
         theme: "darkPurple",
-        visualizer: "swirl",
+        visualizer: "purpleSpace",
         blur: false,
       },
       gameSt: {
@@ -150,7 +150,7 @@ export default {
   methods: {
     changeVisualizer() {
       if (this.appearanceSt.theme === "darkPurple") {
-        this.appearanceSt.visualizer = "swirl";
+        this.appearanceSt.visualizer = "purpleSpace";
       }
       if (this.appearanceSt.theme === "flameOrange") {
         this.appearanceSt.visualizer = "space";

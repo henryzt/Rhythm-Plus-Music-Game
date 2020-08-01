@@ -35,7 +35,7 @@ export default {
     },
     visualizer: {
       type: String,
-      default: "swirl",
+      default: "purpleSpace",
     },
     imageSrc: {
       type: String,

@@ -16,7 +16,7 @@
       <div v-else>
         <div class="center blink_me">
           <img
-            src="/assets/logo2.png"
+            src="/assets/logo.png"
             style="max-width: 350px; padding: 20px 0; width: 100%;"
           />
           <div>Logging you in...</div>

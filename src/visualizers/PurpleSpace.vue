@@ -121,7 +121,7 @@ let currentBg = bgColors[Math.floor(Math.random() * (bgColors.length))];
 function moveBgColor() {
   const newVal = (from, to) => {
     const delta = from - to > 0 ? -0.1 : 0.1;
-    return from == to ? from : from + delta;
+    return Math.floor(from) == to ? Math.floor(from) : from + delta;
   };
   const nextBg = bgColors[nextBgIdx];
   currentBg[0] = newVal(currentBg[0], nextBg[0]);
@@ -129,9 +129,9 @@ function moveBgColor() {
   currentBg[2] = newVal(currentBg[2], nextBg[2]);
   // console.log(currentBg, nextBg)
   if (
-    Math.round(currentBg[0]) == nextBg[0] &&
-    Math.round(currentBg[1]) == nextBg[1] &&
-    Math.round(currentBg[2]) == nextBg[2]
+    currentBg[0] == nextBg[0] &&
+    currentBg[1] == nextBg[1] &&
+    currentBg[2] == nextBg[2]
   ) {
     nextBgIdx++;
     if (nextBgIdx >= bgColors.length) nextBgIdx = 0;

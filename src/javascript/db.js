@@ -116,7 +116,7 @@ export function getSong(songId) {
       .get()
       .then((doc) => {
         if (doc.exists) {
-          Logger.log("Song data:", doc.data());
+          // Logger.log("Song data:", doc.data());
           resolve(filterSongData(doc));
         } else {
           // doc.data() will be undefined in this case
@@ -224,7 +224,7 @@ export function getSheetList(songId, getUserOwned, getOnlyUnpublished) {
         sheet.id = doc.id;
         res.push(sheet);
         // doc.data() is never undefined for query doc snapshots
-        Logger.log(doc.id, " => ", doc.data());
+        // Logger.log(doc.id, " => ", doc.data());
       });
       resolve(res);
     };

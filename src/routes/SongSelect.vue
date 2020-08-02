@@ -8,14 +8,19 @@
         :class="{ list_collapsed: selectedSong }"
         v-if="songList"
       >
+        <SheetFilter
+          :songs="songList"
+          @sorted="songDisplayList = $event"
+        ></SheetFilter>
         <transition-group
+          v-if="songDisplayList"
           appear
           tag="div"
           name="slide-in"
-          :style="{ '--total': songList.length }"
+          :style="{ '--total': songDisplayList.length }"
         >
           <div
-            v-for="(song, i) in songList"
+            v-for="(song, i) in songDisplayList"
             :key="song.id"
             :style="{ '--i': i }"
           >
@@ -48,6 +53,7 @@
 <script>
 import SongListItem from "../components/menus/SongListItem.vue";
 import SongDetailPanel from "../components/menus/SongDetailPanel.vue";
+import SheetFilter from "../components/menus/SheetFilter.vue";
 import Loading from "../components/ui/Loading.vue";
 import { getSheetList, getSongList } from "../javascript/db";
 
@@ -57,10 +63,12 @@ export default {
     SongListItem,
     SongDetailPanel,
     Loading,
+    SheetFilter,
   },
   data() {
     return {
       songList: null,
+      songDisplayList: [],
       sheetList: null,
       selectedSong: null,
     };

@@ -2,17 +2,33 @@
   <div>
     <div class="flex_hori">
       <div style="flex-grow: 1;"></div>
-      <div class="clip"><v-icon name="search" />Search</div>
+      <div class="clip">
+        <span @click="showSearch = !showSearch">
+          <v-icon name="search" />
+          <span v-if="!showSearch">Search</span>
+        </span>
+        <span>
+          <input
+            class="search"
+            :class="{ collapsed: !showSearch }"
+            type="text"
+            v-model="searchTerms"
+          />
+          <v-icon v-if="showSearch" name="times" @click="showSearch = false" />
+        </span>
+      </div>
       <div class="mSection flex_hori">
         <div class="clip" @click="showSort = !showSort">
           <v-icon :name="!showSort ? 'sort-amount-down' : 'times'" />Sort
         </div>
-        <div class="flex_hori" v-if="showSort">
-          <div style="flex-grow: 1;"></div>
-          <div class="clip clip_outlined" @click="sortByTitle">Title</div>
-          <div class="clip clip_outlined" @click="sortByDate">Date</div>
-          <div class="clip clip_outlined" @click="sortByArtist">Artist</div>
-        </div>
+        <transition name="slide-fade">
+          <div class="flex_hori" v-if="showSort">
+            <div style="flex-grow: 1;"></div>
+            <div class="clip clip_outlined" @click="sortByTitle">Title</div>
+            <div class="clip clip_outlined" @click="sortByDate">Date</div>
+            <div class="clip clip_outlined" @click="sortByArtist">Artist</div>
+          </div>
+        </transition>
       </div>
     </div>
   </div>
@@ -31,10 +47,41 @@ export default {
       showSort: false,
       currentSort: null,
       reverseSort: false,
+      showSearch: false,
+      searchTerms: null,
     };
   },
   mounted() {
     this.sortByTitle();
+  },
+  watch: {
+    searchTerms() {
+      if (!this.searchTerms) {
+        this.$emit("sorted", this.songs);
+        return;
+      }
+      const term = this.searchTerms;
+      const isMatch = (s) => {
+        return (
+          s.title?.toLowerCase().includes(term) ||
+          s.subtitle?.toLowerCase().includes(term) ||
+          s.artist?.toLowerCase().includes(term)
+        );
+      };
+      this.$emit("sorted", this.songs.filter(isMatch));
+    },
+    showSearch() {
+      if (this.showSearch) {
+        this.showSort = false;
+      } else {
+        this.searchTerms = null;
+      }
+    },
+    showSort() {
+      if (this.showSort) {
+        this.showSearch = false;
+      }
+    },
   },
   methods: {
     finishSort(sortName) {
@@ -100,11 +147,36 @@ export default {
   transition: 0.5s;
 }
 
+.search {
+  width: 180px;
+  border: none !important;
+  background: transparent;
+  border-bottom: 1px solid silver !important;
+  padding: 1px 5px;
+  margin: 0 10px;
+  transition: 0.5s;
+}
+
+.collapsed {
+  width: 0;
+  margin: 0;
+  padding: 0;
+}
+
 .flex_hori {
   display: flex;
   align-items: center;
   flex-direction: row;
   justify-content: space-around;
   text-align: center;
+}
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: all 0.3s ease;
+}
+.slide-fade-enter,
+.slide-fade-leave-to {
+  transform: translateX(30px);
+  opacity: 0;
 }
 </style>

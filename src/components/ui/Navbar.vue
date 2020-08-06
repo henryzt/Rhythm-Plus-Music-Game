@@ -138,7 +138,7 @@ a {
   /* border-bottom: solid 3px rgb(255, 255, 255); */
 }
 
-@media only screen and (min-width: 800px) {
+@media only screen and (min-width: 1000px) {
   /* desktop */
 
   .nav:hover {

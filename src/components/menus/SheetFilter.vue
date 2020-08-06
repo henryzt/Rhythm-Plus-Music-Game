@@ -1,36 +1,46 @@
 <template>
   <div>
-    <div class="flex_hori">
-      <div style="flex-grow: 1;"></div>
-      <div class="clip">
-        <span @click="showSearch = !showSearch">
-          <v-icon name="search" />
-          <span v-if="!showSearch">Search</span>
-        </span>
-        <span>
-          <input
-            class="search"
-            :class="{ collapsed: !showSearch }"
-            type="text"
-            v-model="searchTerms"
-          />
-          <v-icon v-if="showSearch" name="times" @click="showSearch = false" />
-        </span>
-      </div>
-      <div class="mSection flex_hori">
-        <div class="clip" @click="showSort = !showSort">
-          <v-icon :name="!showSort ? 'sort-amount-down' : 'times'" />Sort
+    <transition name="slide-fade" mode="out-in">
+      <div class="flex_hori" key="1" v-if="!showSort">
+        <div style="flex-grow: 1;"></div>
+        <div class="clip">
+          <span @click="showSearch = !showSearch">
+            <v-icon name="search" />
+            <span v-if="!showSearch" style="overflow: hidden;">Search</span>
+          </span>
+          <span>
+            <transition name="width">
+              <input
+                class="search"
+                v-if="showSearch"
+                type="text"
+                v-model="searchTerms"
+              />
+            </transition>
+            <v-icon
+              name="times"
+              v-if="showSearch"
+              @click="showSearch = false"
+            />
+          </span>
         </div>
-        <transition name="slide-fade">
-          <div class="flex_hori" v-if="showSort">
-            <div style="flex-grow: 1;"></div>
-            <div class="clip clip_outlined" @click="sortByTitle">Title</div>
-            <div class="clip clip_outlined" @click="sortByDate">Date</div>
-            <div class="clip clip_outlined" @click="sortByArtist">Artist</div>
+        <div class="mSection flex_hori">
+          <div class="clip" @click="showSort = !showSort">
+            <v-icon name="sort-amount-down" />Sort
           </div>
-        </transition>
+        </div>
       </div>
-    </div>
+
+      <div class="flex_hori" key="2" v-if="showSort">
+        <div style="flex-grow: 1;"></div>
+        <div class="clip clip_outlined" @click="sortByTitle">Title</div>
+        <div class="clip clip_outlined" @click="sortByDate">Date</div>
+        <div class="clip clip_outlined" @click="sortByArtist">Artist</div>
+        <div class="clip" @click="showSort = false">
+          <v-icon name="times" style="margin: 0;" />
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -170,13 +180,24 @@ export default {
   justify-content: space-around;
   text-align: center;
 }
+
+.width-enter-active,
+.width-leave-active,
 .slide-fade-enter-active,
 .slide-fade-leave-active {
   transition: all 0.3s ease;
 }
 .slide-fade-enter,
 .slide-fade-leave-to {
-  transform: translateX(30px);
+  transform: translateY(30px);
+  opacity: 0;
+}
+
+.width-enter,
+.width-leave-to {
+  width: 0;
+  margin: 0;
+  padding: 0;
   opacity: 0;
 }
 </style>

@@ -13,29 +13,33 @@
         </div>
       </div>
       <div class="mContainer">
+        <SheetFilter
+          :songs="songAndSheetList"
+          @sorted="songDisplayList = $event"
+        ></SheetFilter>
         <transition-group
+          v-if="songDisplayList"
           appear
           tag="div"
           name="slide-in"
-          :style="{ '--total': songAndSheetList.length }"
+          :style="{ '--total': songDisplayList.length }"
         >
           <div
-            v-for="(song, i) in songAndSheetList"
-            :key="song.song.id"
+            v-for="(song, i) in songDisplayList"
+            :key="song.id"
             :style="{ '--i': i }"
           >
             <SongListItem
-              :song="song.song"
+              :song="song"
               :sheets="song.sheets"
-              :selected="selectedSong === song.song"
+              :selected="selectedSong === song"
               @selected="selectedSong = $event"
               @selectedSheet="goToSheet($event)"
             ></SongListItem>
           </div>
           <div
-            class="btn-action btn-dark"
+            class="btn-action btn-dark big-add"
             key="btn"
-            style="width: 100%; max-width: 780px; line-height: 80px;"
             @click="goToEditor"
           >
             <v-icon name="plus" scale="2" />
@@ -66,19 +70,22 @@
 
 <script>
 import SongListItem from "../components/menus/SongListItem.vue";
+import SheetFilter from "../components/menus/SheetFilter.vue";
 import Loading from "../components/ui/Loading.vue";
-import { getSheetList, getSong } from "../javascript/db";
+import { getSheetList, getSongsInIdArray } from "../javascript/db";
 
 export default {
   name: "MyStudio",
   components: {
     SongListItem,
     Loading,
+    SheetFilter,
   },
   data() {
     return {
       selectedSong: null,
       songAndSheetList: null,
+      songDisplayList: null,
       loading: true,
     };
   },
@@ -90,11 +97,12 @@ export default {
     const songIdsArr = userSheets.map((e) => e.songId);
     const songIds = [...new Set(songIdsArr)]; // get unique
     Logger.log(userSheets, songIds);
+    let songs = await getSongsInIdArray(true, true, songIds);
     let songAndSheetList = [];
-    for (const songId of songIds) {
-      const song = await getSong(songId);
-      const sheets = userSheets.filter((e) => e.songId === songId);
-      songAndSheetList.push({ song, sheets });
+    for (const song of songs) {
+      const sheets = userSheets.filter((e) => e.songId === song.id);
+      song.sheets = sheets;
+      songAndSheetList.push(song);
     }
     this.songAndSheetList = songAndSheetList;
     this.loading = false;
@@ -120,9 +128,18 @@ export default {
   white-space: nowrap;
   margin-top: 30px;
   margin-bottom: 300px !important;
+  max-width: 780px;
+  margin-left: auto;
+  margin-right: auto;
 }
 .fa-icon {
   vertical-align: middle;
   margin-right: 5px;
+}
+.big-add {
+  width: 100%;
+  line-height: 80px;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 </style>

@@ -56,8 +56,10 @@ export function createSong(songInfo) {
   });
 }
 
-export function getSongList(getPrivate, filterIdArr) {
+export function getSongList(getPrivate, getAll, filterIdArr) {
   return new Promise((resolve, reject) => {
+    let collection = songsCollection;
+
     const processRes = (querySnapshot) => {
       let res = [];
       querySnapshot.forEach((doc) => {
@@ -74,28 +76,43 @@ export function getSongList(getPrivate, filterIdArr) {
     };
 
     if (filterIdArr) {
-      songsCollection.where(
-        firestore.FieldPath.documentId(),
-        "in",
-        filterIdArr
-      );
-    }
-
-    if (getPrivate) {
-      songsCollection
+      collection
+        .where(firestore.FieldPath.documentId(), "in", filterIdArr)
+        .get()
+        .then(processRes)
+        .catch(processErr);
+    } else if (getPrivate) {
+      let level = getAll
+        ? ["public", "private", "unlisted"]
+        : ["private", "unlisted"];
+      collection
         .where("createdBy", "==", store.state.currentUser?.uid)
-        .where("visibility", "in", ["private", "unlisted"])
+        .where("visibility", "in", level)
         .get()
         .then(processRes)
         .catch(processErr);
     } else {
-      songsCollection
+      collection
         .where("visibility", "==", "public")
         .get()
         .then(processRes)
         .catch(processErr);
     }
   });
+}
+
+export async function getSongsInIdArray(getPrivate, getAll, idArray) {
+  const chunk = 10;
+  const len = idArray.length;
+  let songArray = [];
+  for (let i = 0; i < len; i += chunk) {
+    let idArrChunk = idArray.slice(i, i + chunk);
+    const list = await getSongList(getPrivate, getAll, idArrChunk);
+    songArray = songArray.concat(list);
+  }
+  Logger.log(songArray);
+
+  return songArray;
 }
 
 function filterSongData(doc) {

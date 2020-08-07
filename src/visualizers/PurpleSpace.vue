@@ -61,7 +61,7 @@ let stars = makeStars(700);
 
 const putPixel = (x, y, brightness, v, star) => {
   // const intensity = brightness * 0.5 + v * star.vWeight;
-  const intensity = brightness * (v + 0.2) * 1.05;
+  const intensity = brightness * (Math.max(v * 2, 0.3) + 0.2) ;
   // const rgb = `rgba(255,255,255,${intensity})`;
   // ctx.globalAlpha=intensity;
   ctx.fillStyle = `rgba(255,255,255,${intensity})`;

@@ -70,7 +70,7 @@ export default {
         this.$emit("sorted", this.songs);
         return;
       }
-      const term = this.searchTerms;
+      const term = this.searchTerms?.toLowerCase();
       const isMatch = (s) => {
         return (
           s.title?.toLowerCase().includes(term) ||

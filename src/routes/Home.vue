@@ -23,7 +23,9 @@
       </div>
     </div>
 
-    <div class="leftBottom">{{ $store.state.appVersion }}</div>
+    <div class="leftBottom">
+      {{ $store.state.appVersion + "-" + $store.state.build }}
+    </div>
   </div>
 </template>
 

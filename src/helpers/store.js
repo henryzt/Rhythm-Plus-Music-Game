@@ -20,6 +20,7 @@ export const store = new Vuex.Store({
     theme: null,
     redirecting: false,
     appVersion: process.env.APP_VERSION || "0",
+    build: process.env.COMMIT_HASH || "0",
   },
   actions: {
     async fetchUserProfile() {

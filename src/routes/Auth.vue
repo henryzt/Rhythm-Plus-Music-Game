@@ -7,8 +7,9 @@
       </div>
       <Settings ref="settings"></Settings>
     </div>
+    <div v-else style="min-height: calc(100% - 120px);"></div>
 
-    <div class="center_logo" style="position: absolute;">
+    <div class="center_logo">
       <div v-show="!$store.state.authed">
         <h3>Signin or Register Now for Complete Experience!</h3>
         <div id="firebaseui-auth-container"></div>
@@ -27,6 +28,15 @@
         </div>
         <div class="text_button" @click="confirmSignOut">Logout</div>
       </div>
+    </div>
+
+    <div class="centerCredit">
+      <div>
+        {{
+          `App version: ${$store.state.appVersion} · Build: ${$store.state.build}`
+        }}
+      </div>
+      <!-- <div><a href="https://github.com/henryz00/Rhythm-Plus-Music-Game">GitHub Repo</a></div> -->
     </div>
 
     <Modal
@@ -222,7 +232,13 @@ export default {
   max-width: 600px;
   margin: auto;
   margin-top: 100px;
-  margin-bottom: 300px;
+  margin-bottom: 100px;
+}
+
+.centerCredit {
+  text-align: center;
+  opacity: 0.5;
+  margin: 50px;
 }
 
 .flex_hori {
@@ -241,5 +257,9 @@ export default {
 }
 .cutBottom {
   height: calc(100% - 70px);
+}
+.center_logo {
+  z-index: 500;
+  position: absolute;
 }
 </style>

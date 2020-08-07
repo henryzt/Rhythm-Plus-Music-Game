@@ -73,12 +73,12 @@ export default {
     ok() {
       this.showModal = false;
       this.$emit("ok");
-      this.resolve(true);
+      if (this.resolve) this.resolve(true);
     },
     close() {
       this.showModal = false;
       this.$emit("close");
-      this.resolve(false);
+      if (this.resolve) this.resolve(false);
     },
     addTilt() {
       if (this.$refs.modal) {

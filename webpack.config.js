@@ -6,6 +6,10 @@ const CopyPlugin = require("copy-webpack-plugin");
 const packageJson = require("./package.json");
 const version = packageJson.version || 0;
 const versionPrefix = "alpha-";
+const commitHash = require("child_process")
+  .execSync("git rev-parse --short HEAD")
+  .toString()
+  .trim();
 
 const isProduction = () => process.env.NODE_ENV === "production";
 
@@ -74,6 +78,7 @@ module.exports = {
       "process.env": {
         NODE_ENV: JSON.stringify(process.env.NODE_ENV),
         APP_VERSION: '"' + versionPrefix + version + '"',
+        COMMIT_HASH: '"' + commitHash + '"',
       },
     }),
     new HtmlWebpackPlugin({

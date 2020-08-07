@@ -32,6 +32,10 @@ body {
   /* transition: opacity 2s ease-in-out; */
 }
 
+a {
+  color: white;
+}
+
 .hitAnimation {
   animation-name: hitScore;
   animation-duration: 10s;

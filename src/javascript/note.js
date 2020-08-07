@@ -13,6 +13,7 @@ export default class Note {
     this.isHoldNote = keyObj.h && keyObj.h[key];
     this.isUserHolding = false;
     this.isHoldingDone = false;
+    this.didUserHold = false;
 
     this.y = y ?? 0;
     this.singleNoteHeight = 10;
@@ -59,18 +60,27 @@ export default class Note {
     if (this.percentage < 0.05) {
       this.vm.result.marks.perfect += 1;
       this.vm.markJudge = "Perfect";
-    } else if (this.percentage < 0.25) {
+    } else if (this.percentage < 0.15) {
       this.vm.result.marks.good += 1;
       this.vm.markJudge = "Good";
-    } else if (this.percentage < 0.5) {
+    } else if (this.percentage < 0.3) {
       this.vm.result.marks.offbeat += 1;
       this.vm.markJudge = "Offbeat";
+    } else if (this.percentage < 0.5) {
+      // when note is too out of hit line, it can miss randomly
+      if (Math.random() > 0.5) {
+        this.vm.result.marks.offbeat += 1;
+        this.vm.markJudge = "Offbeat";
+      } else {
+        this.missNote();
+      }
     }
   }
 
   hitAndCountScore(isHolding) {
-    this.vibrate(25);
     this.judge();
+    if (this.noteFailed) return;
+    this.vibrate(25);
     const { percentage } = this;
     let accuracyPercent = 100 * (1 - percentage);
     if (!this.accuracyJudged) {
@@ -79,7 +89,7 @@ export default class Note {
       this.vm.result.totalHitNotes += 1;
       this.accuracyJudged = true;
     }
-    const buff = isHolding ? 1 : 2;
+    const buff = isHolding ? 0.5 : 1.2;
     this.vm.result.score += buff * accuracyPercent * this.vm.fever.value;
     this.vm.result.combo += 1;
     this.vm.result.maxCombo =
@@ -90,6 +100,17 @@ export default class Note {
     this.hitIndicator(this.vm);
   }
 
+  missNote() {
+    this.vm.result.marks.miss += 1;
+    this.vm.result.totalHitNotes += 1;
+    this.vm.result.combo = 0;
+    this.vm.markJudge = "Miss";
+    this.vm.fever.percent -= 0.1;
+    this.vibrate([20, 20, 50]);
+    this.hitIndicator(this.vm);
+    this.noteFailed = true;
+  }
+
   isOutOfCanvas() {
     const yOut = this.y > this.canvas.height;
     const isHoldNoteOut =
@@ -98,14 +119,7 @@ export default class Note {
         !this.isUserHolding &&
         !this.isHoldNoteFinished(true));
     if (this.vm.started && yOut && isHoldNoteOut && !this.noteFailed) {
-      this.vm.result.marks.miss += 1;
-      this.vm.result.totalHitNotes += 1;
-      this.vm.result.combo = 0;
-      this.vm.markJudge = "Miss";
-      this.vm.fever.percent -= 0.1;
-      this.vibrate([20, 20, 50]);
-      this.hitIndicator(this.vm);
-      this.noteFailed = true;
+      this.missNote();
     }
     const shouldClean =
       (yOut && !this.isHoldNote) ||
@@ -118,7 +132,9 @@ export default class Note {
     const offset = nearly
       ? Math.min.apply(0, [this.holdNoteHeight / 2, 100])
       : 0;
-    return this.holdNoteY > this.game.checkHitLineY - offset;
+    return (
+      this.holdNoteY > this.game.checkHitLineY - offset && this.didUserHold
+    );
   }
 
   reposition() {

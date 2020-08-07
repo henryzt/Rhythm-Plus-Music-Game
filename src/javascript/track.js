@@ -31,6 +31,7 @@ export default class DropTrack {
       if (this.vm.playMode && this.noteArr && this.noteArr[0]) {
         const noteToDismiss = this.noteArr[0];
         if (noteToDismiss.getDiffPercentage() < 0.5) {
+          noteToDismiss.didUserHold = true;
           noteToDismiss.calculatePercent();
           if (noteToDismiss.isHoldNote) {
             if (noteToDismiss.noteFailed) return;

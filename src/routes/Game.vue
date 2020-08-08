@@ -422,7 +422,7 @@ export default {
 @media only screen and (min-width: 800px) {
   /* desktop */
   .perspective {
-    transform: rotateX(30deg) scale(1.5);
+    transform: rotateX(30deg) scale(1.5) scaleX(0.8);
   }
 }
 

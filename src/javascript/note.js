@@ -66,7 +66,7 @@ export default class Note {
     } else if (this.percentage < 0.3) {
       this.vm.result.marks.offbeat += 1;
       this.vm.markJudge = "Offbeat";
-    } else if (this.percentage < 0.5) {
+    } else {
       // when note is too out of hit line, it can miss randomly
       if (Math.random() > 0.5) {
         this.vm.result.marks.offbeat += 1;

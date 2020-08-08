@@ -34,6 +34,7 @@
     "vue-countup-v2": "^4.0.0",
     "vue-moment": "^4.1.0",
     "vue-router": "^3.3.4",
+    "vue-select": "^3.10.7",
     "vue-slider-component": "^3.1.5",
     "vue-spinner": "^1.0.3",
     "vue-virtual-scroll-list": "^2.3.0",

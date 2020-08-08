@@ -4,15 +4,11 @@ import "firebase/analytics";
 import "firebase/functions";
 import "firebase/auth";
 import "firebase/performance";
-const isProduction = () => process.env.NODE_ENV === "production";
-const authDomain = isProduction
-  ? "auth.rhythm-plus.com"
-  : "rhythm-plus.firebaseapp.com";
 
 // firebase init goes here
 const config = {
   apiKey: "AIzaSyAdeWHYbSj2iErECQTncQLrz9WdfbuiCsQ",
-  authDomain,
+  authDomain: "auth.rhythm-plus.com",
   databaseURL: "https://rhythm-plus.firebaseio.com",
   projectId: "rhythm-plus",
   storageBucket: "rhythm-plus.appspot.com",

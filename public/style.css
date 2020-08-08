@@ -346,6 +346,7 @@ input[type="number"],
 input[type="submit"],
 input[type="button"],
 select,
+.songSelect .vs__dropdown-toggle,
 .input {
   background-color: rgba(109, 109, 109, 0.7);
   color: white;
@@ -362,9 +363,20 @@ input[type="text"]:hover,
 input[type="number"]:hover,
 input[type="submit"]:hover,
 input[type="button"]:hover,
+.songSelect .vs__dropdown-toggle:hover,
 select:hover,
 .input:hover {
   border: 3px solid rgb(150, 150, 150);
+}
+
+.songSelect .vs__dropdown-toggle {
+  border-radius: 0;
+  padding: 3px 6px;
+  font-size: 13px;
+}
+
+.vs__search {
+  color: white;
 }
 
 input[type="text"]:focus,

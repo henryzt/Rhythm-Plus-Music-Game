@@ -164,7 +164,7 @@ export default {
         artist: null,
         image: null,
         srcMode: null,
-        tags: null,
+        tags: [],
       },
       songFormOptions: {
         isYoutubeMode: true,

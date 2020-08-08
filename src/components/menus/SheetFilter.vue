@@ -1,8 +1,26 @@
 <template>
-  <div>
+  <div class="animate__animated animate__fadeIn">
     <transition name="slide-fade" mode="out-in">
       <div class="flex_hori" key="1" v-if="!showSort">
-        <div style="flex-grow: 1;"></div>
+        <div class="flex_hori tags">
+          <div
+            class="clip clip_outlined"
+            @click="currentTag = null"
+            :class="{ active: currentTag === null }"
+          >
+            All
+          </div>
+          <div v-for="tag in tags.slice(0, 3)" :key="tag">
+            <div
+              class="clip clip_outlined"
+              @click="currentTag = tag"
+              :class="{ active: currentTag === tag }"
+            >
+              {{ tag }}
+            </div>
+          </div>
+        </div>
+        <div class="flex_spacer"></div>
         <div class="clip">
           <span @click="showSearch = !showSearch">
             <v-icon name="search" />
@@ -32,7 +50,7 @@
       </div>
 
       <div class="flex_hori" key="2" v-if="showSort">
-        <div style="flex-grow: 1;"></div>
+        <div class="flex_spacer"></div>
         <div class="clip clip_outlined" @click="sortByTitle">Title</div>
         <div class="clip clip_outlined" @click="sortByDate">Date</div>
         <div class="clip clip_outlined" @click="sortByArtist">Artist</div>
@@ -45,13 +63,14 @@
 </template>
 
 <script>
+import { getTags } from "../../javascript/db";
 import "vue-awesome/icons/search";
 import "vue-awesome/icons/sort-amount-down";
 import "vue-awesome/icons/times";
 
 export default {
   name: "SheetFilter",
-  props: ["songs", "tags"],
+  props: ["songs"],
   data: function () {
     return {
       showSort: false,
@@ -59,15 +78,18 @@ export default {
       reverseSort: false,
       showSearch: false,
       searchTerms: null,
+      tags: [],
+      currentTag: null,
     };
   },
-  mounted() {
+  async mounted() {
     this.sortByTitle();
+    this.tags = await getTags();
   },
   watch: {
     searchTerms() {
       if (!this.searchTerms) {
-        this.$emit("sorted", this.songs);
+        this.$emit("sorted", this.filteredSongs);
         return;
       }
       const term = this.searchTerms?.toLowerCase();
@@ -78,7 +100,7 @@ export default {
           s.artist?.toLowerCase().includes(term)
         );
       };
-      this.$emit("sorted", this.songs.filter(isMatch));
+      this.$emit("sorted", this.filteredSongs.filter(isMatch));
     },
     showSearch() {
       if (this.showSearch) {
@@ -92,6 +114,16 @@ export default {
         this.showSearch = false;
       }
     },
+    currentTag() {
+      this.finishSort();
+    },
+  },
+  computed: {
+    filteredSongs() {
+      return this.currentTag
+        ? this.songs.filter((e) => e.tags.includes(this.currentTag))
+        : this.songs;
+    },
   },
   methods: {
     finishSort(sortName) {
@@ -102,7 +134,7 @@ export default {
       }
       if (this.reverseSort) this.songs.reverse();
       this.currentSort = sortName;
-      this.$emit("sorted", this.songs);
+      this.$emit("sorted", this.filteredSongs);
     },
     sortByTitle() {
       this.songs.sort((a, b) => a.title.localeCompare(b.title));
@@ -121,6 +153,14 @@ export default {
 </script>
 
 <style scoped>
+.flex_hori {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-around;
+  text-align: center;
+}
+
 .clip {
   background: rgba(184, 184, 184, 0.5);
   padding: 6px 15px;
@@ -139,6 +179,14 @@ export default {
   background: transparent;
   padding: 5px 15px;
   border: 1px solid #b8b8b8;
+}
+
+.active {
+  background: rgba(184, 184, 184, 0.3);
+}
+
+.tags {
+  overflow: scroll;
 }
 
 .fa-icon {
@@ -173,12 +221,10 @@ export default {
   padding: 0;
 }
 
-.flex_hori {
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  justify-content: space-around;
-  text-align: center;
+@media screen and (max-width: 600px) {
+  .tags {
+    display: none;
+  }
 }
 
 .width-enter-active,

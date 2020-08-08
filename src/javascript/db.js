@@ -239,6 +239,25 @@ function createTag(tag) {
   });
 }
 
+export function getTags() {
+  return new Promise((resolve, reject) => {
+    tagsCollection
+      .get()
+      .then((snapshot) => {
+        let tags = [];
+        snapshot.forEach((doc) => tags.push(doc.data()));
+        tags = tags
+          .sort((a, b) => b.updateCount - a.updateCount)
+          .map((a) => a.tag);
+        resolve(tags);
+      })
+      .catch(function (error) {
+        reportError(error, action.READ);
+        reject(error);
+      });
+  });
+}
+
 export function createSheet(sheetInfo) {
   const {
     title,

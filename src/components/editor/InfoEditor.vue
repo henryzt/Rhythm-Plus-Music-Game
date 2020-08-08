@@ -31,6 +31,7 @@
           @submitForm="submitSongForm"
           @submitExisting="submitExistingSong"
           :class="{ disabled: !$parent.isSongOwner }"
+          :tags="tags"
         ></InfoForm>
         <div v-if="!$parent.isSongOwner">
           You have no edit access to this song.
@@ -68,6 +69,7 @@
             item-type="Sheet"
             @submitForm="submitSheetForm"
             @submitExisting="submitExistingSheet"
+            :tags="tags"
             :class="{ disabled: !$parent.isSheetOwner }"
           >
             <input
@@ -149,6 +151,7 @@ import {
   getSheetList,
   updateSong,
   updateSheet,
+  getTags,
 } from "../../javascript/db";
 import InfoForm from "./InfoForm.vue";
 
@@ -189,6 +192,7 @@ export default {
         isUpdate: false,
       },
       welcomeScreen: true,
+      tags: [],
     };
   },
   computed: {},
@@ -205,6 +209,7 @@ export default {
   async mounted() {
     this.songFormOptions.publicList = await getSongList();
     this.songFormOptions.privateList = await getSongList(true);
+    this.tags = await getTags();
   },
   methods: {
     continueExisting() {

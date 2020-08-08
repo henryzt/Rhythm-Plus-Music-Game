@@ -25,7 +25,7 @@
         />
         <v-select
           class="songSelect"
-          :options="[]"
+          :options="tags"
           v-model="formData.tags"
           placeholder="Tags"
           taggable
@@ -140,7 +140,7 @@ import vSelect from "vue-select";
 
 export default {
   name: "InfoForm",
-  props: ["formData", "formOption", "isCreate", "itemType"],
+  props: ["formData", "formOption", "isCreate", "itemType", "tags"],
   components: {
     vSelect,
   },

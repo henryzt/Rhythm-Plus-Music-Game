@@ -37,6 +37,8 @@ const usersCollection = db.collection("users");
 const songsCollection = db.collection("songs");
 const sheetsCollection = db.collection("sheets");
 const resultsCollection = db.collection("results");
+const tagsCollection = db.collection("tags");
+const playsCollection = db.collection("plays");
 
 export {
   db,
@@ -50,4 +52,6 @@ export {
   songsCollection,
   sheetsCollection,
   resultsCollection,
+  tagsCollection,
+  playsCollection,
 };

@@ -5,6 +5,7 @@ import {
   usersCollection,
   functions,
   resultsCollection,
+  tagsCollection,
 } from "../helpers/firebaseConfig"; //usersCollection
 import { store } from "../helpers/store";
 
@@ -37,7 +38,7 @@ export function createSong(songInfo) {
         image: image ?? null,
         youtubeId: youtubeId ?? null,
         url: url ?? null,
-        tags: tags ?? null,
+        tags: tags ? updateTagArray(tags) : null,
         subtitle: subtitle ?? null,
         srcMode,
         visibility,
@@ -64,7 +65,6 @@ export function getSongList(getPrivate, getAll, filterIdArr) {
       let res = [];
       querySnapshot.forEach((doc) => {
         let song = filterSongData(doc);
-
         res.push(song);
       });
       resolve(res);
@@ -164,10 +164,58 @@ export function updateSong(info) {
 
 function cleanForUpdate(obj) {
   obj.dateUpdated = firestore.Timestamp.now();
+  if (obj.tags) obj.tags = updateTagArray(obj.tags);
   Object.keys(obj).forEach((key) => {
     if (obj[key] === undefined) {
       delete obj[key];
     }
+  });
+}
+
+export function updateTagArray(tags) {
+  let filteredTags = [];
+  for (const tag of tags) {
+    const filteredTag = tag.toLowerCase().trim().replace(" ", "-");
+    createTag(filteredTag);
+    filteredTags.push(filteredTag);
+  }
+  return filteredTags;
+}
+
+function createTag(tag) {
+  let dateCreated = firestore.Timestamp.now();
+  let dateUpdated = dateCreated;
+  let createdBy = store.state.currentUser?.uid;
+  let updatedBy = store.state.currentUser?.uid;
+  let data = {
+    tag,
+    dateUpdated,
+    createdBy,
+    updatedBy,
+  };
+  return new Promise((resolve, reject) => {
+    tagsCollection
+      .doc(tag)
+      .update({ ...data, updateCount: firestore.FieldValue.increment(1) })
+      .then(() => {
+        Logger.log("Document successfully updated!", tag);
+        resolve();
+      })
+      .catch((error) => {
+        Logger.warn("Update tag failed: ", error);
+        // document does not exists
+        tagsCollection
+          .doc(tag)
+          .set({ ...data, dateCreated, updateCount: 1 })
+          .then(() => {
+            Logger.log("Document successfully written!", tag);
+            resolve();
+          })
+          .catch((error) => {
+            Logger.error("Error writing document: ", error);
+            reject();
+          });
+      });
   });
 }
 

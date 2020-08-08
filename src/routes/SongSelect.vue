@@ -9,6 +9,7 @@
         v-if="songList"
       >
         <SheetFilter
+          v-if="!selectedSong"
           :songs="songList"
           @sorted="songDisplayList = $event"
         ></SheetFilter>

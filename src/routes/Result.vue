@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="height: 100%;">
     <div v-if="sheet">
       <PageBackground
         songSrc="/audio/bgm/result.mp3"
@@ -196,12 +196,15 @@ export default {
       this.windowWidth = window.innerWidth;
     };
 
-    this.$nextTick(() => {
-      VanillaTilt.init(this.$refs.resultDiv, {
-        max: 20,
-        scale: 1.1,
+    if (navigator.userAgent.indexOf("Safari") === -1) {
+      // add tilt effect on non-safari browsers
+      this.$nextTick(() => {
+        VanillaTilt.init(this.$refs.resultDiv, {
+          max: 20,
+          scale: 1.1,
+        });
       });
-    });
+    }
 
     this.$store.dispatch("updateUserProfile");
   },
@@ -364,6 +367,7 @@ export default {
 
   .blurFilter {
     position: relative;
+    min-height: calc(100vh + 50px);
   }
   .center_logo {
     position: relative;
@@ -371,7 +375,7 @@ export default {
     height: auto;
     top: 0;
     left: 0;
-    margin-top: 180px;
+    margin-top: 150px;
   }
 
   .rightScore {
@@ -428,14 +432,22 @@ export default {
     width: fit-content;
   }
   .btn_sec {
-    position: relative;
+    position: sticky;
     right: auto;
-    bottom: auto;
-    margin: 20px auto;
-    width: fit-content;
+    bottom: 0;
+    margin: 10px auto;
+    width: 100%;
+    padding: 20px;
+    z-index: 9000;
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    box-sizing: border-box;
+    justify-content: space-around;
   }
   .btn-dark {
-    width: 120px;
+    flex: 1;
   }
 }
 </style>

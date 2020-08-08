@@ -3,21 +3,27 @@
     <transition name="slide-fade" mode="out-in">
       <div class="flex_hori" key="1" v-if="!showSort">
         <div class="flex_hori tags">
-          <div
-            class="clip clip_outlined"
-            @click="currentTag = null"
-            :class="{ active: currentTag === null }"
-          >
-            All
-          </div>
-          <div v-for="tag in tags.slice(0, 3)" :key="tag">
+          <div class="flex_hori mobile_hide" v-if="!showAllTags">
             <div
               class="clip clip_outlined"
-              @click="currentTag = tag"
-              :class="{ active: currentTag === tag }"
+              @click="currentTag = null"
+              :class="{ active: currentTag === null }"
             >
-              {{ tag }}
+              All
             </div>
+            <div v-for="tag in tags.slice(0, 3)" :key="tag">
+              <div
+                class="clip clip_outlined"
+                @click="currentTag = tag"
+                :class="{ active: currentTag === tag }"
+              >
+                {{ tag }}
+              </div>
+            </div>
+          </div>
+          <div class="clip clip_outlined" @click="showAllTags = !showAllTags">
+            <v-icon name="angle-up" class="no-margin" v-if="showAllTags" />
+            <v-icon name="angle-down" class="no-margin" v-else />
           </div>
         </div>
         <div class="flex_spacer"></div>
@@ -55,10 +61,30 @@
         <div class="clip clip_outlined" @click="sortByDate">Date</div>
         <div class="clip clip_outlined" @click="sortByArtist">Artist</div>
         <div class="clip" @click="showSort = false">
-          <v-icon name="times" style="margin: 0;" />
+          <v-icon name="times" class="no-margin" />
         </div>
       </div>
     </transition>
+
+    <!-- all tags -->
+    <div class="flex_hori all_tags" v-if="showAllTags">
+      <div
+        class="clip clip_outlined"
+        @click="currentTag = null"
+        :class="{ active: currentTag === null }"
+      >
+        All
+      </div>
+      <div v-for="tag in tags.slice(0, 100)" :key="tag">
+        <div
+          class="clip clip_outlined"
+          @click="currentTag = tag"
+          :class="{ active: currentTag === tag }"
+        >
+          {{ tag }}
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -67,6 +93,8 @@ import { getTags } from "../../javascript/db";
 import "vue-awesome/icons/search";
 import "vue-awesome/icons/sort-amount-down";
 import "vue-awesome/icons/times";
+import "vue-awesome/icons/angle-down";
+import "vue-awesome/icons/angle-up";
 
 export default {
   name: "SheetFilter",
@@ -80,6 +108,7 @@ export default {
       searchTerms: null,
       tags: [],
       currentTag: null,
+      showAllTags: false,
     };
   },
   async mounted() {
@@ -115,7 +144,7 @@ export default {
       }
     },
     currentTag() {
-      this.finishSort();
+      this.$emit("sorted", this.filteredSongs);
     },
   },
   computed: {
@@ -155,9 +184,7 @@ export default {
 <style scoped>
 .flex_hori {
   display: flex;
-  align-items: center;
   flex-direction: row;
-  justify-content: space-around;
   text-align: center;
 }
 
@@ -189,10 +216,21 @@ export default {
   overflow: scroll;
 }
 
+.all_tags {
+  overflow: scroll;
+  max-width: 100%;
+  width: 100%;
+  margin-top: 10px;
+}
+
 .fa-icon {
   vertical-align: middle;
   margin-right: 5px;
   margin-bottom: 1px;
+}
+
+.no-margin {
+  margin: 0;
 }
 
 .sBlock {
@@ -222,7 +260,7 @@ export default {
 }
 
 @media screen and (max-width: 600px) {
-  .tags {
+  .mobile_hide {
     display: none;
   }
 }

@@ -239,6 +239,7 @@ export default {
   text-align: center;
   opacity: 0.5;
   margin: 50px;
+  margin-bottom: 100px;
 }
 
 .flex_hori {

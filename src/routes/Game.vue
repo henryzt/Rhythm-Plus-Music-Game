@@ -122,7 +122,7 @@
           </div>
         </div>
         <!-- info button -->
-        <div>
+        <div @click="showInfoMenu">
           <div class="flex_hori start_page_button">
             <v-icon name="info-circle" scale="1.5" />
           </div>
@@ -155,18 +155,26 @@
 
       <template>
         <transition name="slide-fade" mode="out-in">
-          <div v-if="!advancedMenuOptions" key="1">
+          <div v-if="!advancedMenuOptions" class="menu" key="1">
             <div class="btn-action btn-dark" @click="resumeGame(true)">
-              Resume
+              <v-icon name="play" />
+              <span>Resume</span>
             </div>
-            <div class="btn-action btn-dark" @click="restartGame">Restart</div>
+            <div class="btn-action btn-dark" @click="restartGame">
+              <v-icon name="redo" />
+              <span>Restart</span>
+            </div>
             <div
               class="btn-action btn-dark"
               @click="advancedMenuOptions = true"
             >
-              Advanced
+              <v-icon name="cog" />
+              <span>Advanced</span>
             </div>
-            <div class="btn-action btn-dark" @click="exitGame">Exit Game</div>
+            <div class="btn-action btn-dark" @click="exitGame">
+              <v-icon name="sign-out-alt" />
+              <span>Exit Game</span>
+            </div>
           </div>
 
           <div v-else key="2">
@@ -192,6 +200,21 @@
         </transition>
       </template>
     </Modal>
+
+    <!-- sheet info modal -->
+    <Modal
+      ref="info"
+      :showCancel="false"
+      style="text-align: center; z-index: 500;"
+    >
+      <template v-slot:header>
+        <div style="width: 100%; font-size: 23px;">Sheet Info</div>
+      </template>
+
+      <template>
+        <SheetDetailLine :sheet="currentSong"></SheetDetailLine>
+      </template>
+    </Modal>
   </div>
 </template>
 
@@ -202,6 +225,7 @@ import Loading from "../components/ui/Loading.vue";
 import Modal from "../components/ui/Modal.vue";
 import ZoomText from "../components/game/ZoomText.vue";
 import Navbar from "../components/ui/Navbar.vue";
+import SheetDetailLine from "../components/menus/SheetDetailLine.vue";
 import ProgressBar from "../components/game/ProgressBar.vue";
 import Countdown from "../components/game/Countdown.vue";
 import GameMixin from "../mixins/gameMixin";
@@ -228,6 +252,7 @@ export default {
     Navbar,
     ProgressBar,
     Countdown,
+    SheetDetailLine,
   },
   mixins: [GameMixin],
   data() {
@@ -310,6 +335,9 @@ export default {
     hideMenu() {
       this.advancedMenuOptions = false;
       this.$refs.menu.close();
+    },
+    showInfoMenu() {
+      this.$refs.info.show();
     },
     resumeGame(fromMenu) {
       this.hideMenu();
@@ -406,7 +434,7 @@ export default {
 }
 
 .start_page_button {
-  margin: 30px;
+  padding: 30px;
   opacity: 0.5;
   cursor: pointer;
   transition: 0.5s;
@@ -417,6 +445,20 @@ export default {
 .start_page_button:hover {
   opacity: 0.8;
   transform: scale(1.2);
+}
+
+.menu .btn-action {
+  position: relative;
+}
+
+.menu span {
+  padding-left: 20px;
+}
+
+.menu .fa-icon {
+  position: absolute;
+  left: 20px;
+  top: 12px;
 }
 
 @media only screen and (min-width: 800px) {

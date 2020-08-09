@@ -42,6 +42,7 @@ export default {
   },
   methods: {
     start() {
+      clearInterval(this.interval);
       this.num = 3;
       this.show = true;
       this.percentage = 100;

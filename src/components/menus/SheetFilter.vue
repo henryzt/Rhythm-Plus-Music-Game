@@ -57,9 +57,15 @@
 
       <div class="flex_hori" key="2" v-if="showSort">
         <div class="flex_spacer"></div>
-        <div class="clip clip_outlined" @click="sortByTitle">Title</div>
-        <div class="clip clip_outlined" @click="sortByDate">Date</div>
-        <div class="clip clip_outlined" @click="sortByArtist">Artist</div>
+        <div class="clip clip_outlined" @click="sortByTitle">
+          <v-icon :name="sortIcon" v-if="currentSort == 'title'" />Title
+        </div>
+        <div class="clip clip_outlined" @click="sortByDate">
+          <v-icon :name="sortIcon" v-if="currentSort == 'date'" />Date
+        </div>
+        <div class="clip clip_outlined" @click="sortByArtist">
+          <v-icon :name="sortIcon" v-if="currentSort == 'artist'" />Artist
+        </div>
         <div class="clip" @click="showSort = false">
           <v-icon name="times" class="no-margin" />
         </div>
@@ -95,6 +101,8 @@ import "vue-awesome/icons/sort-amount-down";
 import "vue-awesome/icons/times";
 import "vue-awesome/icons/angle-down";
 import "vue-awesome/icons/angle-up";
+import "vue-awesome/icons/arrow-up";
+import "vue-awesome/icons/arrow-down";
 
 export default {
   name: "SheetFilter",
@@ -152,6 +160,9 @@ export default {
       return this.currentTag
         ? this.songs.filter((e) => e.tags.includes(this.currentTag))
         : this.songs;
+    },
+    sortIcon() {
+      return this.reverseSort ? "arrow-up" : "arrow-down";
     },
   },
   methods: {

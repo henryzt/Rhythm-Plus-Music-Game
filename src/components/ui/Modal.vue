@@ -85,7 +85,7 @@ export default {
         VanillaTilt.init(this.$refs.modal, {
           max: 0,
           glare: true,
-          "max-glare": 0.3,
+          "max-glare": 0.2,
         });
       }
     },

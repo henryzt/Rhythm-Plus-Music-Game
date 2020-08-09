@@ -36,6 +36,9 @@ import "vue-awesome/icons/volume-mute";
 import "vue-awesome/icons/expand";
 import "vue-awesome/icons/compress";
 import "vue-awesome/icons/plus";
+import "vue-awesome/icons/redo";
+import "vue-awesome/icons/cog";
+import "vue-awesome/icons/sign-out-alt";
 
 export default {
   name: "App",

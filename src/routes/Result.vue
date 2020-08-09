@@ -98,16 +98,15 @@
         >
           <UserProfileCard :extend="true" />
         </div>
-
-        <div class="btn_sec">
-          <div class="btn-action btn-dark" @click="replay">
-            <v-icon name="redo" />
-            <span>Replay</span>
-          </div>
-          <div class="btn-action btn-dark" @click="toMenu">
-            <v-icon name="arrow-right" />
-            <span>Continue</span>
-          </div>
+      </div>
+      <div class="btn_sec">
+        <div class="btn-action btn-dark" @click="replay">
+          <v-icon name="redo" />
+          <span>Replay</span>
+        </div>
+        <div class="btn-action btn-dark" @click="toMenu">
+          <v-icon name="arrow-right" />
+          <span>Continue</span>
         </div>
       </div>
     </div>
@@ -432,10 +431,10 @@ export default {
     width: fit-content;
   }
   .btn_sec {
-    position: sticky;
+    position: fixed;
     right: auto;
     bottom: 0;
-    margin: 10px auto;
+    margin: 0;
     width: 100%;
     padding: 20px;
     z-index: 9000;

@@ -71,13 +71,8 @@
         id="ytPlayer"
         ref="youtube"
         :video-id="youtubeId"
-        :player-vars="{
-          controls: 0,
-          rel: 0,
-          playsinline: 1,
-          disablekb: 1,
-          autoplay: 0,
-        }"
+        :player-vars="$store.state.ytVars"
+        :nocookie="$store.state.ytVars.nocookie"
         @playing="songLoaded"
         @cued="videoCued"
         @buffering="ytBuffering"

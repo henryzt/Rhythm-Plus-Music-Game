@@ -1,31 +1,31 @@
 <template>
   <div>
     <div class="navbar mainNav" v-if="!gameNav">
-      <router-link to="/" exact>
+      <router-link to="/" exact tag="div">
         <div class="nav">
           <v-icon name="home" scale="2" />
           <div class="navtext">Home</div>
         </div>
       </router-link>
-      <router-link to="/menu/">
+      <router-link to="/menu/" tag="div">
         <div class="nav">
           <v-icon name="stream" scale="1.7" />
           <div class="navtext">Song Select</div>
         </div>
       </router-link>
-      <router-link to="/studio/">
+      <router-link to="/studio/" tag="div">
         <div class="nav">
           <v-icon name="pencil-ruler" scale="1.7" />
           <div class="navtext">My Studio</div>
         </div>
       </router-link>
-      <router-link to="/rankings/">
+      <router-link to="/rankings/" tag="div">
         <div class="nav">
           <v-icon name="medal" scale="1.7" />
           <span class="navtext">Rankings</span>
         </div>
       </router-link>
-      <router-link to="/account/">
+      <router-link to="/account/" tag="div">
         <div class="nav">
           <v-icon name="cog" scale="1.7" />
           <span class="navtext">Account & Options</span>
@@ -34,7 +34,7 @@
     </div>
 
     <div class="navbar gameNav" v-else>
-      <router-link to="/menu/" exact>
+      <router-link to="/menu/" exact tag="div">
         <div class="nav">
           <v-icon name="home" scale="1.5" />
           <div class="navtext">Back</div>

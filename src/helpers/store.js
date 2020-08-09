@@ -19,6 +19,15 @@ export const store = new Vuex.Store({
     visualizerArr: null,
     theme: null,
     redirecting: false,
+    ytVars: {
+      controls: 0,
+      rel: 0,
+      playsinline: 1,
+      disablekb: 1,
+      autoplay: 0,
+      modestbranding: 1,
+      nocookie: true,
+    },
     appVersion: process.env.APP_VERSION || "0",
     build: process.env.COMMIT_HASH || "0",
   },
@@ -104,6 +113,7 @@ export const store = new Vuex.Store({
         state.userProfile.lvBefore = state.userProfile.lv ?? level;
         state.userProfile.lv = level;
         state.userProfile.lvd = Math.floor(level);
+        if (val.appearanceSt.syncYoutube) state.ytVars.nocookie = false;
       }
     },
     setTheme(state) {

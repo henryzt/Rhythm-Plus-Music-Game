@@ -101,14 +101,8 @@
             width="100%"
             height="200px"
             :video-id="youtubeId"
-            :player-vars="{
-              rel: 0,
-              playsinline: 1,
-              disablekb: 1,
-              autoplay: 0,
-              controls: 0,
-              modestbranding: 1,
-            }"
+            :player-vars="$store.state.ytVars"
+            :nocookie="$store.state.ytVars.nocookie"
             @playing="songLoaded"
             @error="ytError"
             @paused="ytPaused"

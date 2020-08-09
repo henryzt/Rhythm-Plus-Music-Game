@@ -82,6 +82,15 @@
             modelKey="blur"
           ></Checkbox>
         </p>
+        <p>
+          <label></label>
+          <Checkbox
+            label="Sync Plays to YouTube History"
+            :model="appearanceSt"
+            cbStyle="form"
+            modelKey="syncYoutube"
+          ></Checkbox>
+        </p>
       </form>
     </div>
 
@@ -129,6 +138,7 @@ export default {
         theme: "darkPurple",
         visualizer: "purpleSpace",
         blur: false,
+        syncYoutube: false,
       },
       gameSt: {
         noteSpeed: 1,

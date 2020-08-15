@@ -110,7 +110,6 @@ export default {
     },
     feverTimer() {
       if (!this.started || this.instance.paused || !this.playMode) return;
-      // Logger.log(this.fever.percent, this.fever.time, this.fever.value);
       if (this.fever.value < 1) this.fever.value = 1;
       if (this.fever.percent < 0) this.fever.percent = 0;
       if (this.fever.percent >= 1) {

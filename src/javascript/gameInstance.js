@@ -361,7 +361,6 @@ export default class GameInstance {
   update() {
     if (this.destoryed) return;
     requestAnimationFrame(this.update.bind(this));
-    // if (this.vm.started && this.paused && !this.vm.inEditor) return;
     if (!this.vm.inEditor) this.getCurrentTime();
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.vm.visualizerInstance.renderVisualizer();

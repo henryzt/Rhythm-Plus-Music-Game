@@ -28,8 +28,8 @@ export const store = new Vuex.Store({
       modestbranding: 1,
       nocookie: true,
     },
-    appVersion: process.env.APP_VERSION || "0",
-    build: process.env.COMMIT_HASH || "0",
+    appVersion: process.env.APP_VERSION,
+    build: process.env.COMMIT_HASH,
   },
   actions: {
     async fetchUserProfile() {

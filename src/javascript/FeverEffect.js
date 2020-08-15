@@ -41,7 +41,7 @@ export default class FeverEffect {
     const alpha = feverAplahLevel / 80;
     ctx.globalAlpha = alpha;
     for (let i = 0; i < num; i++) {
-      ctx.fillStyle = "white"; //this.grd
+      ctx.fillStyle = "white";
       this.drawArrow(300 * i - this.yOffset);
     }
     ctx.globalAlpha = 1;

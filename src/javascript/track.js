@@ -170,7 +170,7 @@ export default class DropTrack {
 
     // create note
     const { timeArr, timeArrIdx } = this.game;
-    const timing = this.game.getNoteTiming();
+    const timing = this.game.playTime;
     const needNote =
       !this.game.paused &&
       timeArrIdx < timeArr.length &&

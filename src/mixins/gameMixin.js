@@ -130,8 +130,8 @@ export default {
       Logger.log("pasued");
       if (this.started) this.pauseGame();
     },
-    ytError() {
-      Logger.error("youtube error");
+    ytError(error) {
+      Logger.error("youtube error", error);
       this.instance.loading = false;
       this.$store.state.gModal.show({
         bodyText:

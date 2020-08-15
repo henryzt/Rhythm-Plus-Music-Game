@@ -204,7 +204,7 @@ export default {
       const doContinue = await this.$store.state.gModal.show({
         bodyText:
           "Warning! Reseting your password would log your account out anywhere, and clear all social login tokens. Would you like to continue?",
-        okText: "Reset Password",
+        okText: "Reset",
       });
       if (!doContinue) return;
       const auth = firebase.auth();

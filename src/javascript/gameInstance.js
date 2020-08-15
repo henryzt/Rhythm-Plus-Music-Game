@@ -128,7 +128,7 @@ export default class GameInstance {
     if (!this.vm.playMode) hitLineProp = this.vm.options.lowerHitLine ? 4 : 0;
 
     this.checkHitLineY = (this.canvas.height / 10) * hitLineProp;
-    this.noteSpeedPxPerSec = 380 * Number(this.vm.noteSpeed);
+    this.noteSpeedPxPerSec = 380 * this.vm.noteSpeed;
     this.noteDelay = this.checkHitLineY / this.noteSpeedPxPerSec;
     await this.getCurrentTime();
     this.repositionNotes();
@@ -445,14 +445,10 @@ export default class GameInstance {
     return cTime;
   }
 
-  getNoteTiming() {
-    return this.playTime;
-  }
-
   isWithinTime(note) {
     // check if a note with start time is currently on screen
     const time = note.t;
-    const current = this.getNoteTiming();
+    const current = this.playTime;
     const afterHitLineSec =
       (this.canvas.height - this.checkHitLineY) / this.noteSpeedPxPerSec;
     const sec = this.noteDelay + afterHitLineSec;

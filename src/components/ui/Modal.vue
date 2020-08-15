@@ -6,7 +6,7 @@
           <slot name="header">
             {{ titleText }}
             <div class="btn-action btn-close" @click="close" v-if="showCancel">
-              x
+              <v-icon name="times" />
             </div>
           </slot>
         </header>

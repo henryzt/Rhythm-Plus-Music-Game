@@ -139,7 +139,7 @@ export default class Note {
 
   reposition() {
     // reposition y value based on current time
-    const timing = this.game.getNoteTiming();
+    const timing = this.game.playTime;
     const timeElapsed = timing - this.keyObj.t;
     const y = timeElapsed * this.game.noteSpeedPxPerSec;
     this.y = y;

@@ -14,6 +14,19 @@
 
 <script>
 import Modal from "./Modal.vue";
+
+function initialState() {
+  return {
+    okText: undefined,
+    cancelText: undefined,
+    titleText: undefined,
+    bodyText: undefined,
+    showCancel: true,
+    okCallback: () => {},
+    cancelCallback: () => {},
+  };
+}
+
 export default {
   name: "ModalGlobal",
   props: [],
@@ -21,18 +34,11 @@ export default {
     Modal,
   },
   data: function () {
-    return {
-      okText: undefined,
-      cancelText: undefined,
-      titleText: undefined,
-      bodyText: undefined,
-      showCancel: true,
-      okCallback: () => {},
-      cancelCallback: () => {},
-    };
+    return initialState();
   },
   methods: {
     show(options) {
+      Object.assign(this.$data, initialState());
       if (this.notNull(options.okText)) this.okText = options.okText;
       if (this.notNull(options.cancelText))
         this.cancelText = options.cancelText;

@@ -195,7 +195,10 @@ export default {
       this.windowWidth = window.innerWidth;
     };
 
-    if (navigator.userAgent.indexOf("Safari") === -1) {
+    if (
+      navigator.userAgent.indexOf("Safari") === -1 ||
+      navigator.userAgent.indexOf("Chrome") !== -1
+    ) {
       // add tilt effect on non-safari browsers
       this.$nextTick(() => {
         VanillaTilt.init(this.$refs.resultDiv, {

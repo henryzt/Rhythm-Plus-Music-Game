@@ -43,7 +43,7 @@
         </p>
         <p>
           <label>Password</label>
-          <input type="button" value="Reset password" />
+          <input type="button" value="Reset password" @click="resetPassword" />
         </p>
       </form>
     </div>
@@ -199,6 +199,26 @@ export default {
         this.loading = false;
         Logger.error(err);
       }
+    },
+    async resetPassword() {
+      const doContinue = await this.$store.state.gModal.show({
+        bodyText:
+          "Warning! Reseting your password would log your account out anywhere, and clear all social login tokens. Would you like to continue?",
+        okText: "Reset Password",
+      });
+      if (!doContinue) return;
+      const auth = firebase.auth();
+      auth
+        .sendPasswordResetEmail(this.profileSt.email)
+        .then(() => {
+          this.$store.state.alert.success("Password reset email sent");
+        })
+        .catch(() => {
+          this.$store.state.alert.error(
+            "Sorry, something went wrong, please try again later.",
+            8000
+          );
+        });
     },
   },
 };

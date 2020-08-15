@@ -9,7 +9,7 @@
         v-if="songList"
       >
         <SheetFilter
-          v-if="!selectedSong"
+          :class="{ sHidden: selectedSong }"
           :songs="songList"
           @sorted="songDisplayList = $event"
         ></SheetFilter>
@@ -126,6 +126,12 @@ export default {
     margin: 0;
     padding: 0;
     transform: none;
+  }
+
+  .sHidden {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
   }
 
   /* .detail {

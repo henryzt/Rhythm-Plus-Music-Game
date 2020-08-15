@@ -1,116 +1,118 @@
 <template>
-  <div style="height: 100%;">
-    <div v-if="sheet">
-      <PageBackground
-        songSrc="/audio/bgm/result.mp3"
-        :imageSrc="sheet.image"
-        :showNav="false"
-      ></PageBackground>
-      <div class="blurFilter">
-        <div class="center_logo darker flex_hori">
-          <div class="scoreCircle" ref="resultDiv">
-            <VueCircle
-              :progress="result.result.percentage"
-              :size="windowWidth > 1000 ? 260 : 180"
-              :fill="{ gradient }"
-              empty-fill="rgba(100, 100, 100, .5)"
-              :thickness="10"
-              :start-angle="(-1 / 2) * Math.PI"
-              insert-mode="append"
-              :show-percent="false"
-            >
-              <div class="circleBg"></div>
-              <div class="score" :style="scoreShadow">{{ result.rank }}</div>
-              <div style="margin-top: -20px; transform: translateZ(20px);">
+  <div>
+    <v-bar class="fullPage">
+      <div v-if="sheet">
+        <PageBackground
+          songSrc="/audio/bgm/result.mp3"
+          :imageSrc="sheet.image"
+          :showNav="false"
+        ></PageBackground>
+        <div class="blurFilter">
+          <div class="center_logo darker flex_hori">
+            <div class="scoreCircle" ref="resultDiv">
+              <VueCircle
+                :progress="result.result.percentage"
+                :size="windowWidth > 1000 ? 260 : 180"
+                :fill="{ gradient }"
+                empty-fill="rgba(100, 100, 100, .5)"
+                :thickness="10"
+                :start-angle="(-1 / 2) * Math.PI"
+                insert-mode="append"
+                :show-percent="false"
+              >
+                <div class="circleBg"></div>
+                <div class="score" :style="scoreShadow">{{ result.rank }}</div>
+                <div style="margin-top: -20px; transform: translateZ(20px);">
+                  <ICountUp
+                    :endVal="result.result.percentage"
+                    :options="{ decimalPlaces: 2 }"
+                  />%
+                </div>
+              </VueCircle>
+            </div>
+
+            <div class="rightScore">
+              <div>
+                Score
+                <div
+                  class="markChip acheivementChip highScoreChip"
+                  v-if="newRecord"
+                >
+                  New Record
+                </div>
                 <ICountUp
-                  :endVal="result.result.percentage"
-                  :options="{ decimalPlaces: 2 }"
-                />%
+                  style="font-size: 2.7em; display: block;"
+                  :endVal="result.result.score"
+                  :options="{ decimalPlaces: 0 }"
+                />
               </div>
-            </VueCircle>
+              <div>
+                Max Combo -
+                <ICountUp
+                  :endVal="result.result.maxCombo"
+                  :options="{ decimalPlaces: 0 }"
+                />
+                <div
+                  class="markChip acheivementChip comboChip"
+                  v-if="result.isFullCombo"
+                >
+                  Full Combo
+                </div>
+              </div>
+            </div>
+
+            <div class="rightScore" style="text-align: left;">
+              <div>
+                <div class="markChip perfect">Perfect</div>
+                <ICountUp :endVal="result.result.marks.perfect" />
+              </div>
+              <div>
+                <div class="markChip good">Good</div>
+                <ICountUp :endVal="result.result.marks.good" />
+              </div>
+              <div>
+                <div class="markChip offbeat">Offbeat</div>
+                <ICountUp :endVal="result.result.marks.offbeat" />
+              </div>
+              <div>
+                <div class="markChip miss">Miss</div>
+                <ICountUp :endVal="result.result.marks.miss" />
+              </div>
+            </div>
           </div>
 
-          <div class="rightScore">
-            <div>
-              Score
-              <div
-                class="markChip acheivementChip highScoreChip"
-                v-if="newRecord"
-              >
-                New Record
-              </div>
-              <ICountUp
-                style="font-size: 2.7em; display: block;"
-                :endVal="result.result.score"
-                :options="{ decimalPlaces: 0 }"
-              />
-            </div>
-            <div>
-              Max Combo -
-              <ICountUp
-                :endVal="result.result.maxCombo"
-                :options="{ decimalPlaces: 0 }"
-              />
-              <div
-                class="markChip acheivementChip comboChip"
-                v-if="result.isFullCombo"
-              >
-                Full Combo
-              </div>
+          <!-- song section -->
+          <div class="song_item_sec">
+            <div class="detail">
+              <div class="title">{{ sheet.song.title }}</div>
+              <div>{{ sheet.song.artist }}</div>
             </div>
           </div>
 
-          <div class="rightScore" style="text-align: left;">
-            <div>
-              <div class="markChip perfect">Perfect</div>
-              <ICountUp :endVal="result.result.marks.perfect" />
-            </div>
-            <div>
-              <div class="markChip good">Good</div>
-              <ICountUp :endVal="result.result.marks.good" />
-            </div>
-            <div>
-              <div class="markChip offbeat">Offbeat</div>
-              <ICountUp :endVal="result.result.marks.offbeat" />
-            </div>
-            <div>
-              <div class="markChip miss">Miss</div>
-              <ICountUp :endVal="result.result.marks.miss" />
-            </div>
+          <!-- profile section -->
+          <div
+            class="user_sec"
+            v-if="
+              $store.state.currentUser &&
+              result.uid === $store.state.currentUser.uid
+            "
+          >
+            <UserProfileCard :extend="true" />
           </div>
         </div>
-
-        <!-- song section -->
-        <div class="song_item_sec">
-          <div class="detail">
-            <div class="title">{{ sheet.song.title }}</div>
-            <div>{{ sheet.song.artist }}</div>
+        <div class="btn_sec">
+          <div class="btn-action btn-dark" @click="replay">
+            <v-icon name="redo" />
+            <span>Replay</span>
           </div>
-        </div>
-
-        <!-- profile section -->
-        <div
-          class="user_sec"
-          v-if="
-            $store.state.currentUser &&
-            result.uid === $store.state.currentUser.uid
-          "
-        >
-          <UserProfileCard :extend="true" />
+          <div class="btn-action btn-dark" @click="toMenu">
+            <v-icon name="arrow-right" />
+            <span>Continue</span>
+          </div>
         </div>
       </div>
-      <div class="btn_sec">
-        <div class="btn-action btn-dark" @click="replay">
-          <v-icon name="redo" />
-          <span>Replay</span>
-        </div>
-        <div class="btn-action btn-dark" @click="toMenu">
-          <v-icon name="arrow-right" />
-          <span>Continue</span>
-        </div>
-      </div>
-    </div>
-    <Loading :show="!sheet || !result">Syncing Results...</Loading>
+      <Loading :show="!sheet || !result">Syncing Results...</Loading>
+    </v-bar>
   </div>
 </template>
 

@@ -12,7 +12,7 @@
     </div>
     <div class="sheetTable">
       <virtual-list
-        style="height: calc(100% - 0px); overflow-y: auto;"
+        style="height: calc(100%); overflow-y: auto;"
         ref="table"
         :data-key="'t'"
         :data-sources="instance.timeArr"

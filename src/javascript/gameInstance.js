@@ -185,7 +185,6 @@ export default class GameInstance {
     const tapEvent = (e, start) => {
       e.preventDefault();
       for (let pointer of e.changedTouches) {
-        Logger.log(e);
         const x = pointer.clientX;
 
         this.dropTrackArr.forEach((track) => {

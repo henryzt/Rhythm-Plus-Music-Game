@@ -1,57 +1,59 @@
 <template>
-  <div :class="{ cutBottom: !$store.state.authed }">
-    <div class="mContainer" v-if="$store.state.verified">
-      <div class="flex_hori">
-        <UserProfileCard :extend="true" />
-        <div class="clip" @click="confirmSignOut">Logout</div>
-      </div>
-      <Settings ref="settings"></Settings>
-    </div>
-    <div v-else style="min-height: calc(100% - 120px);"></div>
-
-    <div class="center_logo">
-      <div v-show="!$store.state.authed">
-        <h3>Signin or Register Now for Complete Experience!</h3>
-        <div id="firebaseui-auth-container"></div>
-      </div>
-      <div v-if="$store.state.authed && !$store.state.verified">
-        <div style="font-size: 20px; padding-bottom: 30px;">
-          Please check your email to verify your account!
+  <v-bar class="fullPage">
+    <div :class="{ cutBottom: !$store.state.authed }">
+      <div class="mContainer" v-if="$store.state.verified">
+        <div class="flex_hori">
+          <UserProfileCard :extend="true" />
+          <div class="clip" @click="confirmSignOut">Logout</div>
         </div>
-        <div class="text_button" @click="$router.go()">Refresh</div>
-        <div
-          class="text_button"
-          :class="{ disabled: emailSentTimeout }"
-          @click="sendVerificationEmail"
-        >
-          Resend Email
+        <Settings ref="settings"></Settings>
+      </div>
+      <div v-else style="min-height: calc(100% - 120px);"></div>
+
+      <div class="center_logo">
+        <div v-show="!$store.state.authed">
+          <h3>Signin or Register Now for Complete Experience!</h3>
+          <div id="firebaseui-auth-container"></div>
         </div>
-        <div class="text_button" @click="confirmSignOut">Logout</div>
+        <div v-if="$store.state.authed && !$store.state.verified">
+          <div style="font-size: 20px; padding-bottom: 30px;">
+            Please check your email to verify your account!
+          </div>
+          <div class="text_button" @click="$router.go()">Refresh</div>
+          <div
+            class="text_button"
+            :class="{ disabled: emailSentTimeout }"
+            @click="sendVerificationEmail"
+          >
+            Resend Email
+          </div>
+          <div class="text_button" @click="confirmSignOut">Logout</div>
+        </div>
       </div>
-    </div>
 
-    <div class="centerCredit">
-      <div>
-        {{
-          `App version: ${$store.state.appVersion} · Build: ${$store.state.build}`
-        }}
+      <div class="centerCredit">
+        <div>
+          {{
+            `App version: ${$store.state.appVersion} · Build: ${$store.state.build}`
+          }}
+        </div>
+        <!-- <div><a href="https://github.com/henryz00/Rhythm-Plus-Music-Game">GitHub Repo</a></div> -->
       </div>
-      <!-- <div><a href="https://github.com/henryz00/Rhythm-Plus-Music-Game">GitHub Repo</a></div> -->
+
+      <Modal
+        ref="modal"
+        :show="showModal"
+        style="z-index: 1000;"
+        bodyText="Are you sure you want to log out?"
+        okText="Logout"
+        @ok="signOut"
+      ></Modal>
+
+      <Loading style="z-index: 999;" :show="!$store.state.initialized"
+        >Communicating...</Loading
+      >
     </div>
-
-    <Modal
-      ref="modal"
-      :show="showModal"
-      style="z-index: 1000;"
-      bodyText="Are you sure you want to log out?"
-      okText="Logout"
-      @ok="signOut"
-    ></Modal>
-
-    <Loading style="z-index: 999;" :show="!$store.state.initialized"
-      >Communicating...</Loading
-    >
-  </div>
+  </v-bar>
 </template>
 
 <script>

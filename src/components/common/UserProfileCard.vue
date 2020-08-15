@@ -1,6 +1,6 @@
 <template>
-  <div class="profile_card shadow" :class="{ extend }">
-    <div class="controls" v-if="!extend">
+  <div class="profile_card" :class="{ extend }">
+    <div class="controls shadow" v-if="!extend">
       <v-icon
         :name="$store.state.audio.muteBg ? 'volume-mute' : 'volume-up'"
         scale="1.3"
@@ -14,6 +14,7 @@
     </div>
 
     <div
+      class="shadow"
       v-if="$store.state.authed && $store.state.userProfile"
       @click="goToAccount"
       style="display: flex; align-items: center;"
@@ -146,6 +147,9 @@ img {
   opacity: 1;
   font-size: 1.2em;
   cursor: auto;
+}
+
+.extend .shadow {
   filter: none;
   -webkit-filter: none;
 }

@@ -1,70 +1,74 @@
 <template>
   <div>
-    <div v-if="songAndSheetList && songAndSheetList.length > 0">
-      <div class="pageTitle">
-        My Studio
-        <div
-          class="btn-action btn-dark"
-          style="font-size: 18px; width: 160px;"
-          @click="goToEditor"
-        >
-          <v-icon name="arrow-right" />
-          <span>Go to Editor</span>
-        </div>
-      </div>
-      <div class="mContainer">
-        <SheetFilter
-          :songs="songAndSheetList"
-          @sorted="songDisplayList = $event"
-        ></SheetFilter>
-        <transition-group
-          v-if="songDisplayList"
-          appear
-          tag="div"
-          name="slide-in"
-          :style="{ '--total': songDisplayList.length }"
-        >
-          <div
-            v-for="(song, i) in songDisplayList"
-            :key="song.id"
-            :style="{ '--i': i }"
-          >
-            <SongListItem
-              :song="song"
-              :sheets="song.sheets"
-              :selected="selectedSong === song"
-              @selected="selectedSong = $event"
-              @selectedSheet="goToSheet($event)"
-            ></SongListItem>
-          </div>
-          <div
-            class="btn-action btn-dark big-add"
-            key="btn"
-            @click="goToEditor"
-          >
-            <v-icon name="plus" scale="2" />
-          </div>
-        </transition-group>
-      </div>
-    </div>
-    <div class="center_logo" v-else-if="!loading">
-      <div class="pageTitle">My Studio</div>
-      <div style="width: 100%; max-width: 600px; margin: auto;">
-        <div>Create or import your favorite songs to play and share!</div>
-        <div style="margin-top: 50px;">
+    <v-bar class="fullPage">
+      <div v-if="songAndSheetList && songAndSheetList.length > 0">
+        <div class="pageTitle">
+          My Studio
           <div
             class="btn-action btn-dark"
-            @click="
-              $store.state.authed ? goToEditor() : $router.push('/account/')
-            "
+            style="font-size: 18px; width: 160px;"
+            @click="goToEditor"
           >
             <v-icon name="arrow-right" />
-            <span>Get Started</span>
+            <span>Go to Editor</span>
+          </div>
+        </div>
+        <div class="mContainer">
+          <SheetFilter
+            :songs="songAndSheetList"
+            @sorted="songDisplayList = $event"
+          ></SheetFilter>
+          <transition-group
+            v-if="songDisplayList"
+            appear
+            tag="div"
+            name="slide-in"
+            :style="{ '--total': songDisplayList.length }"
+          >
+            <div
+              v-for="(song, i) in songDisplayList"
+              :key="song.id"
+              :style="{ '--i': i }"
+            >
+              <SongListItem
+                :song="song"
+                :sheets="song.sheets"
+                :selected="selectedSong === song"
+                @selected="selectedSong = $event"
+                @selectedSheet="goToSheet($event)"
+              ></SongListItem>
+            </div>
+            <div
+              class="btn-action btn-dark big-add"
+              key="btn"
+              @click="goToEditor"
+            >
+              <v-icon name="plus" scale="2" />
+            </div>
+          </transition-group>
+        </div>
+      </div>
+      <div class="center_logo" v-else-if="!loading">
+        <div class="pageTitle">My Studio</div>
+        <div style="width: 100%; max-width: 600px; margin: auto;">
+          <div>Create or import your favorite songs to play and share!</div>
+          <div style="margin-top: 50px;">
+            <div
+              class="btn-action btn-dark"
+              @click="
+                $store.state.authed ? goToEditor() : $router.push('/account/')
+              "
+            >
+              <v-icon name="arrow-right" />
+              <span>Get Started</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <Loading :show="loading" :delay="false">Fetching Your Creations...</Loading>
+      <Loading :show="loading" :delay="false"
+        >Fetching Your Creations...</Loading
+      >
+    </v-bar>
   </div>
 </template>
 

@@ -39,127 +39,129 @@
       </div>
     </div>
 
-    <div class="main">
-      <div class="column side left blurBackground">
-        <div class="tabs" :class="{ disabled: isDisabled }">
-          <div
-            class="tab"
-            :class="{ active: leftTab === 1 }"
-            @click="leftTab = 1"
-          >
-            Info
+    <div class="scrollBar">
+      <div class="main hideOverflow">
+        <div class="column side left blurBackground">
+          <div class="tabs" :class="{ disabled: isDisabled }">
+            <div
+              class="tab"
+              :class="{ active: leftTab === 1 }"
+              @click="leftTab = 1"
+            >
+              Info
+            </div>
+            <div
+              class="tab"
+              :class="{ active: leftTab === 2 }"
+              @click="leftTab = 2"
+            >
+              Options
+            </div>
           </div>
+          <!-- tab 1 - info editor -->
+          <info-editor
+            style="flex-grow: 1;"
+            ref="info"
+            v-show="leftTab === 1"
+          ></info-editor>
+          <!-- tab 2 - options -->
+          <div v-if="leftTab === 2" style="flex-grow: 1; overflow: scroll;">
+            <PlayControl
+              style="padding: 0 30px; box-sizing: border-box;"
+              ref="control"
+              :playData="$data"
+              :formStyle="true"
+            ></PlayControl>
+          </div>
+          <!-- song control -->
+          <SongListItem
+            v-if="songInfo.id"
+            :song="songInfo"
+            :hideBg="true"
+            @selected="updateSongDetail"
+            style="cursor: pointer;"
+          ></SongListItem>
           <div
-            class="tab"
-            :class="{ active: leftTab === 2 }"
-            @click="leftTab = 2"
+            v-show="gameSheetInfo"
+            style="height: 200px;"
+            v-if="srcMode == 'youtube' && youtubeId"
           >
-            Options
+            <div
+              v-if="initialized"
+              style="
+                position: absolute;
+                width: 100%;
+                height: 200px;
+                cursor: pointer;
+              "
+              @click="instance.paused ? songLoaded() : pauseGame()"
+            ></div>
+            <Youtube
+              id="ytPlayer_editor"
+              ref="youtube"
+              width="100%"
+              height="200px"
+              :video-id="youtubeId"
+              :player-vars="$store.state.ytVars"
+              :nocookie="$store.state.ytVars.nocookie"
+              @playing="songLoaded"
+              @error="ytError"
+              @paused="ytPaused"
+              @ended="ytPaused"
+            ></Youtube>
           </div>
         </div>
-        <!-- tab 1 - info editor -->
-        <info-editor
-          style="flex-grow: 1;"
-          ref="info"
-          v-show="leftTab === 1"
-        ></info-editor>
-        <!-- tab 2 - options -->
-        <div v-if="leftTab === 2" style="flex-grow: 1; overflow: scroll;">
-          <PlayControl
-            style="padding: 0 30px; box-sizing: border-box;"
-            ref="control"
-            :playData="$data"
-            :formStyle="true"
-          ></PlayControl>
+
+        <div class="column middle" :class="{ disabled: !initialized }">
+          <!-- game wrapper -->
+          <div class="gameWrapper" ref="wrapper">
+            <canvas
+              ref="mainCanvas"
+              id="gameCanvas"
+              :class="{ perspective }"
+            ></canvas>
+          </div>
+          <!-- mark indicator -->
+          <div
+            class="center_judge"
+            v-show="playMode && result.combo > 0"
+            ref="hitIndicator"
+          >
+            {{ markJudge }} {{ result.combo }}
+          </div>
+
+          <!-- center text -->
+          <ZoomText style="z-index: 1000;" ref="zoom"></ZoomText>
         </div>
-        <!-- song control -->
-        <SongListItem
-          v-if="songInfo.id"
-          :song="songInfo"
-          :hideBg="true"
-          @selected="updateSongDetail"
-          style="cursor: pointer;"
-        ></SongListItem>
+
         <div
-          v-show="gameSheetInfo"
-          style="height: 200px;"
-          v-if="srcMode == 'youtube' && youtubeId"
+          class="column side right blurBackground"
+          v-if="instance"
+          :class="{ disabled: isDisabled }"
         >
           <div
-            v-if="initialized"
+            v-if="!disableMappingTable"
+            @click="disableMappingTable = true"
             style="
-              position: absolute;
-              width: 100%;
-              height: 200px;
+              float: right;
+              padding-top: 30px;
+              opacity: 0.5;
               cursor: pointer;
             "
-            @click="instance.paused ? songLoaded() : pauseGame()"
-          ></div>
-          <Youtube
-            id="ytPlayer_editor"
-            ref="youtube"
-            width="100%"
-            height="200px"
-            :video-id="youtubeId"
-            :player-vars="$store.state.ytVars"
-            :nocookie="$store.state.ytVars.nocookie"
-            @playing="songLoaded"
-            @error="ytError"
-            @paused="ytPaused"
-            @ended="ytPaused"
-          ></Youtube>
-        </div>
-      </div>
-
-      <div class="column middle" :class="{ disabled: !initialized }">
-        <!-- game wrapper -->
-        <div class="gameWrapper" ref="wrapper">
-          <canvas
-            ref="mainCanvas"
-            id="gameCanvas"
-            :class="{ perspective }"
-          ></canvas>
-        </div>
-        <!-- mark indicator -->
-        <div
-          class="center_judge"
-          v-show="playMode && result.combo > 0"
-          ref="hitIndicator"
-        >
-          {{ markJudge }} {{ result.combo }}
-        </div>
-
-        <!-- center text -->
-        <ZoomText style="z-index: 1000;" ref="zoom"></ZoomText>
-      </div>
-
-      <div
-        class="column side right blurBackground"
-        v-if="instance"
-        :class="{ disabled: isDisabled }"
-      >
-        <div
-          v-if="!disableMappingTable"
-          @click="disableMappingTable = true"
-          style="
-            float: right;
-            padding-top: 30px;
-            opacity: 0.5;
-            cursor: pointer;
-          "
-        >
-          Disable
-        </div>
-        <h2>Mappings</h2>
-        <SheetTable v-if="!disableMappingTable"></SheetTable>
-        <div v-else>
-          To improve editor performance, mapping table is disabled.
-          <div
-            class="btn-action btn-dark"
-            style="margin: 10px 0; width: 100px;"
-            @click="disableMappingTable = false"
           >
-            Enable
+            Disable
+          </div>
+          <h2>Mappings</h2>
+          <SheetTable v-if="!disableMappingTable"></SheetTable>
+          <div v-else>
+            To improve editor performance, mapping table is disabled.
+            <div
+              class="btn-action btn-dark"
+              style="margin: 10px 0; width: 100px;"
+              @click="disableMappingTable = false"
+            >
+              Enable
+            </div>
           </div>
         </div>
       </div>
@@ -572,6 +574,7 @@ export default {
   align-items: center;
   padding: 0 30px;
   z-index: 200;
+  overflow-x: scroll;
 }
 
 .logo {
@@ -680,10 +683,18 @@ export default {
   left: 47%;
 }
 
+.hideOverflow {
+  overflow-y: hidden;
+}
+
 @media screen and (max-width: 600px) {
   .main {
     flex-wrap: nowrap;
     overflow-x: auto;
+  }
+  .column {
+    flex-grow: 1;
+    /* 5px scroll bar */
   }
   .column,
   .column.side,

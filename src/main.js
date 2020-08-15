@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import VueMoment from "vue-moment";
+import VuePerfectScrollbar from "vue-perfect-scrollbar";
 import App from "./App.vue";
 import router from "./helpers/router";
 import { store } from "./helpers/store";
@@ -19,6 +20,7 @@ Vue.config.devtools = isDev;
 
 Vue.use(VueMoment);
 Vue.use(VueRouter);
+Vue.component("v-bar", VuePerfectScrollbar);
 Vue.component("v-icon", Icon);
 
 if (!isDev) {

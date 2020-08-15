@@ -426,6 +426,28 @@ input::placeholder {
   background: rgba(145, 145, 145, 1);
 }
 
+.fullPage {
+  height: 100%;
+  width: 100%;
+}
+
+.scrollBar ::-webkit-scrollbar {
+  width: 3px;
+  min-height: 5px;
+  background: transparent;
+}
+
+.scrollBar ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 1px;
+  width: 3px;
+  min-height: 5px;
+}
+
+.scrollBar ::-webkit-scrollbar-thumb:hover {
+  background: white;
+}
+
 #firebaseui-auth-container {
   z-index: 1000;
 }

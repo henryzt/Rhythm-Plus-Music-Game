@@ -37,11 +37,11 @@ export default class FeverEffect {
     const cHeight = this.game.canvas.height;
     const num = cHeight / height + 2;
     const speed = fever.time - 10;
-    const feverAplahLevel = fever.time - 25 < 0 ? 0 : fever.time - 25;
-    const alpha = feverAplahLevel / 80;
+    const feverAlphaLevel = fever.time - 25 < 0 ? 0 : fever.time - 25;
+    const alpha = feverAlphaLevel / 80;
     ctx.globalAlpha = alpha;
+    ctx.fillStyle = "white";
     for (let i = 0; i < num; i++) {
-      ctx.fillStyle = "white";
       this.drawArrow(300 * i - this.yOffset);
     }
     ctx.globalAlpha = 1;

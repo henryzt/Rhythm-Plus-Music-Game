@@ -99,12 +99,9 @@ export const store = new Vuex.Store({
       state.currentUser = val;
       this.dispatch("fetchUserProfile");
       if (!val) return;
-      analytics().setUserId(val.uid);
-      analytics().setUserProperties({
-        displayName: val.displayName,
-        emailVerified: val.emailVerified,
-        isAnonymous: val.isAnonymous,
-      });
+      const { uid, displayName, emailVerified, isAnonymous } = val;
+      analytics().setUserId(uid);
+      analytics().setUserProperties({ displayName, emailVerified, isAnonymous });
     },
     setUserProfile(state, val) {
       state.userProfile = val;

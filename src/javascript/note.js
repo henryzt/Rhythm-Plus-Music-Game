@@ -10,7 +10,7 @@ export default class Note {
     this.ctx = vm.ctx;
     this.canvas = vm.canvas;
     this.percentage = 0;
-    this.isHoldNote = keyObj.h && keyObj.h[key];
+    this.isHoldNote = keyObj.h?.[key];
     this.isUserHolding = false;
     this.isHoldingDone = false;
     this.didUserHold = false;

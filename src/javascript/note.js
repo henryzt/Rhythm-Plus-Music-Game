@@ -141,7 +141,8 @@ export default class Note {
     // reposition y value based on current time
     const timing = this.game.playTime;
     const timeElapsed = timing - this.keyObj.t;
-    const y = timeElapsed * this.game.noteSpeedPxPerSec;
+    const y =
+      (timeElapsed * this.game.noteSpeedPxPerSec) / this.vm.playbackSpeed;
     this.y = y;
     this.gameHadBeenPaused = true;
   }

@@ -217,7 +217,7 @@
         ></vue-slider>
       </div>
       <div style="width: 90px; margin-left: 30px;">
-        <select id="songSelect" v-model="playbackSpeed" :disabled="playMode">
+        <select id="songSelect" v-model="playbackSpeed">
           <option disabled>Playback Speed</option>
           <option value="0.25">0.25X</option>
           <option value="0.5">0.5X</option>
@@ -473,10 +473,10 @@ export default {
       } else {
         this.audio.setRate(Number(rate));
       }
+      this.instance.reposition();
     },
     togglePlayMode(clean) {
       this.playMode = !this.playMode;
-      this.playbackSpeed = 1;
       if (clean) {
         this.instance.clearNotes();
         this.restartGame();

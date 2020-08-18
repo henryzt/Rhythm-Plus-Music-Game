@@ -128,8 +128,9 @@ export default class GameInstance {
     if (!this.vm.playMode) hitLineProp = this.vm.options.lowerHitLine ? 4 : 0;
 
     this.checkHitLineY = (this.canvas.height / 10) * hitLineProp;
-    this.noteSpeedPxPerSec = 380 * this.vm.noteSpeed;
-    this.noteDelay = this.checkHitLineY / this.noteSpeedPxPerSec;
+    this.noteSpeedPxPerSec = 380 * this.vm.noteSpeed * this.vm.playbackSpeed;
+    this.noteDelay =
+      (this.checkHitLineY / this.noteSpeedPxPerSec) * this.vm.playbackSpeed;
     await this.getCurrentTime();
     this.repositionNotes();
     Logger.log("Repositioned");
@@ -388,17 +389,19 @@ export default class GameInstance {
     window.focus();
     this.seekTo(this.startSongAt);
     this.reposition();
+    const prePlayTime = this.noteDelay + this.startSongAt;
 
     const intervalPrePlay = setInterval(() => {
       const elapsedTime = Date.now() - startTime;
-      this.playTime = elapsedTime / 1000 + this.startSongAt;
+      this.playTime =
+        (elapsedTime * this.vm.playbackSpeed) / 1000 + this.startSongAt;
       this.paused = false;
       if (this.seekingTime && this.seekingTime > this.startSongAt) {
         this.gameTimingLoop();
         this.seekTo(this.currentTime);
         this.seeked();
       }
-      if (this.playTime > this.noteDelay + this.startSongAt) {
+      if (this.playTime > prePlayTime) {
         if (!this.vm.started || !this.paused) this.resumeGame(true);
         clearInterval(intervalPrePlay);
         clearInterval(this.intervalPlay);

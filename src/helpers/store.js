@@ -113,7 +113,7 @@ export const store = new Vuex.Store({
         state.userProfile.lvBefore = state.userProfile.lv ?? level;
         state.userProfile.lv = level;
         state.userProfile.lvd = Math.floor(level);
-        if (val.appearanceSt.syncYoutube) state.ytVars.nocookie = false;
+        if (val.appearanceSt?.syncYoutube) state.ytVars.nocookie = false;
       }
     },
     setTheme(state) {

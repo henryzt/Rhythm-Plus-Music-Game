@@ -351,6 +351,11 @@ export default {
     "instance.timeArr"() {
       if (!this.sheetChanged && this.initialized) this.sheetChanged = true;
     },
+    "$route.query.song"() {
+      if (!this.$route.params.sheet) {
+        this.checkSongQuery();
+      }
+    },
   },
   async mounted() {
     this.wrapper = this.$refs.wrapper;
@@ -394,6 +399,8 @@ export default {
         this.$store.state.alert.success("Successfully updated!");
         this.$router.push({ query: null });
       }
+    } else {
+      this.checkSongQuery();
     }
 
     window.onbeforeunload = () => {
@@ -408,8 +415,15 @@ export default {
         this.$router.push({ path: "/account/", query: { warn: true } });
       }
     },
+    async checkSongQuery() {
+      const songId = this.$route.query.song;
+      if (songId) {
+        this.songInfo = await getSong(songId);
+        this.$refs.info.getSheets();
+      }
+    },
     goToMenu() {
-      this.$router.push("/menu/");
+      this.$router.push("/studio/");
     },
     async songLoaded() {
       if (!this.initialized) {

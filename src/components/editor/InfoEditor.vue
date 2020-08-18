@@ -48,11 +48,7 @@
       <div v-if="$parent.songInfo.id">
         <div>
           <div
-            v-if="!sheetFormOptions.isUpdate"
-            @click="
-              $router.push('/editor/');
-              $parent.reloadEditor();
-            "
+            @click="changeSong"
             style="
               float: right;
               line-height: 30px;
@@ -229,7 +225,7 @@ export default {
           this.$parent.loading = true;
           let songId = await createSong(this.songFormData);
           this.$parent.songInfo = await getSong(songId);
-          this.getSheets();
+          this.getSheets(true);
           this.$store.state.alert.success("Song created");
         }
       } catch (err) {
@@ -245,11 +241,13 @@ export default {
       let selectedSong = this.songFormOptions.selected;
       if (selectedSong) {
         this.$parent.songInfo = selectedSong;
-        this.getSheets();
+        this.getSheets(true);
       }
     },
-    async getSheets() {
+    async getSheets(addQuery) {
       const songId = this.$parent.songInfo.id;
+      if (addQuery)
+        this.$router.replace({ path: "/editor", query: { song: songId } });
       this.sheetFormOptions.publicList = await getSheetList(songId);
       this.sheetFormOptions.privateList = await getSheetList(
         songId,
@@ -305,6 +303,12 @@ export default {
         this.songFormData.image.includes("img.youtube.com")
       ) {
         this.songFormData.image = null;
+      }
+    },
+    async changeSong() {
+      if (await this.$parent.saveWarning()) {
+        this.$router.push("/editor/");
+        this.$parent.reloadEditor();
       }
     },
   },

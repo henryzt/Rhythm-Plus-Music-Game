@@ -33,6 +33,13 @@
             ></SheetDetailLine>
           </div>
         </div>
+        <div
+          class="sheet"
+          @click="goToEditorWithSong"
+          style="padding: 3px; text-align: center;"
+        >
+          Create new
+        </div>
       </div>
       <div v-else>Loading...</div>
     </div>
@@ -52,6 +59,11 @@ export default {
     return {
       selectedSheet: null,
     };
+  },
+  methods: {
+    goToEditorWithSong() {
+      this.$router.push({ path: "/editor", query: { song: this.song.id } });
+    },
   },
   mounted() {},
   computed: {},

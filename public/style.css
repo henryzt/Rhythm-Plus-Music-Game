@@ -426,6 +426,10 @@ input::placeholder {
   background: rgba(145, 145, 145, 1);
 }
 
+::-webkit-scrollbar-corner {
+  display: none;
+}
+
 .fullPage {
   height: 100%;
   width: 100%;

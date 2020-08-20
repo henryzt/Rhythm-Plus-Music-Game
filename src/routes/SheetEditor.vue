@@ -287,7 +287,6 @@ export default {
       wrapper: null,
       contentHeight: "86vh",
       playMode: false,
-      playbackSpeed: 1,
       songLength: 0,
       inEditor: true,
       disabled: false,

@@ -414,9 +414,8 @@ export default class GameInstance {
   async gameTimingLoop() {
     await this.getCurrentTime();
 
-    const gameEndAt = this.vm.currentSong.length;
-
     // check game end
+    const gameEndAt = this.vm.currentSong.length;
     if (this.currentTime >= gameEndAt) {
       if (!this.vm.inEditor) {
         this.vm.gameEnded();

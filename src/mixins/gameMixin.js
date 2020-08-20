@@ -7,6 +7,7 @@ export default {
       canvas: null,
       ctx: null,
       noteSpeed: 1,
+      playbackSpeed: 1,
       playMode: true, // play or edit mode
       currentSong: null,
       result: {

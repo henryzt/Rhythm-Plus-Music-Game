@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const VueLoaderPlugin = require("vue-loader/lib/plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 const packageJson = require("./package.json");
-const version = packageJson.version ?? 0;
+const version = packageJson.version || 0; //TODO change to ?? once netlify resolves their issue
 const versionPrefix = "alpha";
 const commitHash = require("child_process")
   .execSync("git rev-parse --short HEAD")

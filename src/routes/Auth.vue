@@ -85,7 +85,11 @@ export default {
     const uiConfig = {
       signInFlow: "popup",
       signInOptions: [
-        firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+        {
+          provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+          clientId:
+            "327500964227-6edgs809uubptud6scj8vt3m5pphnb5i.apps.googleusercontent.com",
+        },
         firebase.auth.FacebookAuthProvider.PROVIDER_ID,
         firebase.auth.EmailAuthProvider.PROVIDER_ID,
       ],
@@ -134,10 +138,12 @@ export default {
       },
     };
 
-    let ui =
-      firebaseui.auth.AuthUI.getInstance() ??
-      new firebaseui.auth.AuthUI(firebase.auth());
-    ui.start("#firebaseui-auth-container", uiConfig);
+    if (!this.$store.state.authed) {
+      let ui =
+        firebaseui.auth.AuthUI.getInstance() ??
+        new firebaseui.auth.AuthUI(firebase.auth());
+      ui.start("#firebaseui-auth-container", uiConfig);
+    }
 
     if (this.$route.query.warn) {
       this.$router.push({ query: null });

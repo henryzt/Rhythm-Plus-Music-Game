@@ -48,7 +48,11 @@ const router = new VueRouter({
         },
       ],
     },
-    { path: "/account", component: Auth, meta: { requireBg: true } },
+    {
+      path: "/account",
+      component: Auth,
+      meta: { requireBg: true, requireSignin: true },
+    },
     { path: "*", redirect: { path: "/" } },
   ],
 });

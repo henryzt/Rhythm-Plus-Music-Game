@@ -1,9 +1,13 @@
 <template>
-  <canvas ref="visualizerCanvas"></canvas>
+  <div>
+  <div class="spaceBackground">
+  </div>
+    <canvas ref="visualizerCanvas"></canvas>
+  </div>
 </template>
 
 <script>
-import VolumeSampler from "./VolumeSampler";
+import VolumeSampler from "../VolumeSampler";
 
 let sampler, ctx, w, h, prevTime;
 
@@ -27,7 +31,7 @@ export default {
     update(time) {
       this.ctx.fillStyle = "rgba(10,10,44,0.2)";
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-      renderBarVisualizer(time, this.canvas, this.ctx, this.audioData);
+      renderSpaceVisualizer(time, this.canvas, this.ctx, this.audioData);
     },
     resizeCanvas() {
       this.canvas.width = window.innerWidth;
@@ -138,10 +142,11 @@ function moveBgColor() {
   }
 }
 
-function renderBarVisualizer(time, canvas, ctx, audioData) {
+function renderSpaceVisualizer(time, canvas, ctx, audioData) {
   w = canvas.width;
   h = canvas.height;
   ctx.fillStyle = "rgba(0,0,0,0.5)";
+  ctx.clearRect(0,0,w,h)
   ctx.fillRect(0, 0, w, h);
   const x = w / 2,
     y = h / 2,
@@ -153,7 +158,7 @@ function renderBarVisualizer(time, canvas, ctx, audioData) {
   const blackColorStop = h < w ? 0.15 : 0.2; // ? laptop : mobile
 
   let grd = ctx.createRadialGradient(x, y, innerRadius, x, y, outerRadius);
-  grd.addColorStop(blackColorStop, "black");
+  grd.addColorStop(blackColorStop, "rgba(0,0,0,0.5)");
   grd.addColorStop(
     1,
     `rgba(${currentBg[0]}, ${currentBg[1]}, ${currentBg[2]}, ${v - 0.25})`
@@ -167,3 +172,27 @@ function renderBarVisualizer(time, canvas, ctx, audioData) {
 
 // ref https://medium.com/better-programming/fun-with-html-canvas-lets-create-a-star-field-a46b0fed5002
 </script>
+
+<style scoped>
+.spaceBackground{
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top:0;
+  left: 0;
+  z-index: -1;
+  background: url('space1.jpg');
+  background-size: cover;
+  animation: zoom 20s ease-in-out infinite alternate;
+}
+
+@keyframes zoom {
+  from {
+    transform: scale(1);
+  }
+
+  to {
+    transform: scale(1.5);
+  }
+}
+</style>

@@ -71,24 +71,12 @@ module.exports = {
         ],
       },
       {
-        test: /\.pug$/,
-        loader: "pug-plain-loader",
-      },
-      {
-        test: /\.scss$/,
-        use: ["vue-style-loader", "css-loader", "sass-loader"],
-      },
-      {
-        test: /\.sass$/,
+        test: /\.(png|jpg|gif)$/i,
         use: [
-          "vue-style-loader",
-          "css-loader",
           {
-            loader: "sass-loader",
+            loader: "url-loader",
             options: {
-              sassOptions: {
-                indentedSyntax: true,
-              },
+              limit: 8192,
             },
           },
         ],

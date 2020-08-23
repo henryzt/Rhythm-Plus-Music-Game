@@ -2,7 +2,7 @@
   <div class="visualizer">
     <div class="blurFilter" v-if="blur"></div>
     <component
-      ref="visualizerIns"
+      ref="ins"
       v-if="shouldRender"
       :is="vComponent"
       :name="vComponent"
@@ -66,7 +66,7 @@ export default {
   methods: {
     renderVisualizer(time) {
       if (!this.shouldRender) return;
-      this.$refs.visualizerIns?.update(time);
+      this.$refs.ins?.update(time);
     },
     setVisualizerByKey(name) {
       this.vComponent = visualizers[name];
@@ -78,7 +78,7 @@ export default {
     },
     resizeCanvas() {
       if (!this.shouldRender) return;
-      this.$refs.visualizerIns.resizeCanvas();
+      this.$refs.ins.resizeCanvas();
     },
   },
   watch: {

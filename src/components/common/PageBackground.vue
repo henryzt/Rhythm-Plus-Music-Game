@@ -62,6 +62,7 @@ export default {
     } else {
       this.$store.state.audio.playBgm();
     }
+    this.$store.commit("setBackground", this);
   },
   destroyed() {},
 };

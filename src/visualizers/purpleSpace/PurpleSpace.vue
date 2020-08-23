@@ -1,7 +1,6 @@
 <template>
   <div>
-  <div class="spaceBackground">
-  </div>
+    <div v-if="themeStyle==='bg1' || themeStyle==='bg1Only'" class="spaceBackground"></div>
     <canvas ref="visualizerCanvas"></canvas>
   </div>
 </template>
@@ -18,6 +17,17 @@ export default {
     return {
       canvas: null,
       ctx: null,
+      options: {
+        themeStyle: {
+          type: "dropdown",
+          data: {
+            "Show Background Image & Gradient": "bg1",
+            "Background Image Only": "bg1Only",
+            "Hide Background Image": "bgOff",
+          },
+        },
+      },
+      themeStyle: "bg1",
     };
   },
   mounted() {
@@ -31,7 +41,7 @@ export default {
     update(time) {
       this.ctx.fillStyle = "rgba(10,10,44,0.2)";
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-      renderSpaceVisualizer(time, this.canvas, this.ctx, this.audioData);
+      renderSpaceVisualizer(time, this.canvas, this.ctx, this.audioData, this);
     },
     resizeCanvas() {
       this.canvas.width = window.innerWidth;
@@ -65,7 +75,7 @@ let stars = makeStars(700);
 
 const putPixel = (x, y, brightness, v, star) => {
   // const intensity = brightness * 0.5 + v * star.vWeight;
-  const intensity = brightness * (Math.max(v * 2, 0.3) + 0.2) ;
+  const intensity = brightness * (Math.max(v * 2, 0.3) + 0.2);
   // const rgb = `rgba(255,255,255,${intensity})`;
   // ctx.globalAlpha=intensity;
   ctx.fillStyle = `rgba(255,255,255,${intensity})`;
@@ -120,7 +130,7 @@ const bgColors = [
   [169, 10, 201],
 ];
 let nextBgIdx = 1;
-let currentBg = bgColors[Math.floor(Math.random() * (bgColors.length))];
+let currentBg = bgColors[Math.floor(Math.random() * bgColors.length)];
 
 function moveBgColor() {
   const newVal = (from, to) => {
@@ -142,12 +152,10 @@ function moveBgColor() {
   }
 }
 
-function renderSpaceVisualizer(time, canvas, ctx, audioData) {
+function renderSpaceVisualizer(time, canvas, ctx, audioData, vm) {
   w = canvas.width;
   h = canvas.height;
-  ctx.fillStyle = "rgba(0,0,0,0.5)";
-  ctx.clearRect(0,0,w,h)
-  ctx.fillRect(0, 0, w, h);
+
   const x = w / 2,
     y = h / 2,
     innerRadius = 1,
@@ -157,14 +165,21 @@ function renderSpaceVisualizer(time, canvas, ctx, audioData) {
   const vmin = v - 0.35 < 0 ? 0 : v - 0.35;
   const blackColorStop = h < w ? 0.15 : 0.2; // ? laptop : mobile
 
-  let grd = ctx.createRadialGradient(x, y, innerRadius, x, y, outerRadius);
-  grd.addColorStop(blackColorStop, "rgba(0,0,0,0.5)");
-  grd.addColorStop(
-    1,
-    `rgba(${currentBg[0]}, ${currentBg[1]}, ${currentBg[2]}, ${v - 0.25})`
-  );
-  ctx.fillStyle = grd;
+  ctx.fillStyle = `rgba(0,0,0,0.4)`;
+  ctx.clearRect(0, 0, w, h);
   ctx.fillRect(0, 0, w, h);
+
+  if (vm.themeStyle !== "bg1Only") {
+    let grd = ctx.createRadialGradient(x, y, innerRadius, x, y, outerRadius);
+    grd.addColorStop(blackColorStop, "rgba(0,0,0,0.5)");
+    grd.addColorStop(
+      1,
+      `rgba(${currentBg[0]}, ${currentBg[1]}, ${currentBg[2]}, ${v - 0.25})`
+    );
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, w, h);
+  }
+
   if (!prevTime) prevTime = time;
   tick(time, v);
   moveBgColor();
@@ -174,14 +189,14 @@ function renderSpaceVisualizer(time, canvas, ctx, audioData) {
 </script>
 
 <style scoped>
-.spaceBackground{
+.spaceBackground {
   width: 100%;
   height: 100%;
   position: fixed;
-  top:0;
+  top: 0;
   left: 0;
   z-index: -1;
-  background: url('space1.jpg');
+  background: url("space1.jpg");
   background-size: cover;
   animation: zoom 20s ease-in-out infinite alternate;
 }

@@ -9,6 +9,7 @@ export const store = new Vuex.Store({
   state: {
     audio: null,
     gModal: null,
+    bg: null,
     currentUser: null,
     userProfile: {},
     profilePicture: null,
@@ -101,7 +102,11 @@ export const store = new Vuex.Store({
       if (!val) return;
       const { uid, displayName, emailVerified, isAnonymous } = val;
       analytics().setUserId(uid);
-      analytics().setUserProperties({ displayName, emailVerified, isAnonymous });
+      analytics().setUserProperties({
+        displayName,
+        emailVerified,
+        isAnonymous,
+      });
     },
     setUserProfile(state, val) {
       state.userProfile = val;
@@ -146,6 +151,9 @@ export const store = new Vuex.Store({
     },
     setFloatingAlert(state, val) {
       state.alert = val;
+    },
+    setBackground(state, val) {
+      state.bg = val;
     },
     setVisualizerArr(state, val) {
       state.visualizerArr = val;

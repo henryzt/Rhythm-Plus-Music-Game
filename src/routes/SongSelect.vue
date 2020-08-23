@@ -45,7 +45,6 @@
           </transition>
         </div>
       </div>
-
       <Loading :show="(!songList || songList.length===0)" :delay="true"
         >Fetching Latest Songs...</Loading
       >

@@ -73,6 +73,19 @@
             >
           </select>
         </p>
+        <p v-if="visualizerIns">
+          <label>Theme Style</label>
+          <select id="themeStyle" v-model="visualizerIns.themeStyle">
+            <option
+              v-for="[key, value] in Object.entries(
+                visualizerIns.options.themeStyle.data
+              )"
+              :value="value"
+              :key="key"
+              >{{ key }}</option
+            >
+          </select>
+        </p>
         <p>
           <label></label>
           <Checkbox
@@ -151,6 +164,11 @@ export default {
   },
   mounted() {
     this.getUserSettings();
+  },
+  computed: {
+    visualizerIns() {
+      return this.$store.state.bg?.$refs.visualizer?.$refs.ins;
+    },
   },
   watch: {
     "$store.state.userProfile"() {

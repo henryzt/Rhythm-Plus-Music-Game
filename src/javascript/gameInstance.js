@@ -131,7 +131,7 @@ export default class GameInstance {
     this.noteSpeedPxPerSec = 380 * this.vm.noteSpeed * this.vm.playbackSpeed;
     this.noteDelay =
       (this.checkHitLineY / this.noteSpeedPxPerSec) * this.vm.playbackSpeed;
-    await this.getCurrentTime();
+    await this.updateCurrentTime();
     this.repositionNotes();
     Logger.log("Repositioned");
   }
@@ -238,8 +238,8 @@ export default class GameInstance {
     if (!this.trackKeyBind.includes(key)) return;
     // if in create mode, create note
     if (!this.vm.playMode && !this.paused) {
-      const cTime = await this.getCurrentTime();
-      this.createSingleNote(key, cTime);
+      await this.updateCurrentTime();
+      this.createSingleNote(key, this.currentTime);
       const singleNoteObj = this.timeArr[this.lastAddedIdx];
       // convert to hold note
       this.holdingNoteTimeout[key] = setTimeout(() => {
@@ -259,8 +259,8 @@ export default class GameInstance {
     this.keyHoldingStatus[key] = false;
     clearTimeout(this.holdingNoteTimeout[key]);
     if (this.holdingNote[key]) {
-      const cTime = await this.getCurrentTime();
-      this.holdingNote[key].h[key] = cTime; // Hold note creation complete, set the end time
+      await this.updateCurrentTime();
+      this.holdingNote[key].h[key] = this.currentTime; // Hold note creation complete, set the end time
       this.holdingNote[key] = null; // set current holding key store to null
     }
     for (const track of this.dropTrackArr) {
@@ -361,7 +361,7 @@ export default class GameInstance {
   update() {
     if (this.destoryed) return;
     requestAnimationFrame(this.update.bind(this));
-    if (!this.vm.inEditor) this.getCurrentTime();
+    if (!this.vm.inEditor) this.updateCurrentTime();
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.vm.visualizerInstance.renderVisualizer();
     this.feverEff.update();
@@ -412,7 +412,7 @@ export default class GameInstance {
   }
 
   async gameTimingLoop() {
-    await this.getCurrentTime();
+    await this.updateCurrentTime();
 
     // check game end
     const gameEndAt = this.vm.currentSong.length;
@@ -430,7 +430,7 @@ export default class GameInstance {
     }
   }
 
-  async getCurrentTime() {
+  async updateCurrentTime() {
     let cTime;
     if (this.seekingTime) {
       cTime = this.seekingTime;
@@ -443,7 +443,6 @@ export default class GameInstance {
     }
     this.playTime = cTime + this.noteDelay;
     this.currentTime = cTime;
-    return cTime;
   }
 
   isWithinTime(note) {

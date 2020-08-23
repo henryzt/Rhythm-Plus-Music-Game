@@ -83,6 +83,7 @@ export default class DropTrack {
     }
   }
 
+  // TODO fix the color and y logic here
   addNoteToArr(keyObj, color, y) {
     this.noteArr.push(
       new Note(

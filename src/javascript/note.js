@@ -1,6 +1,7 @@
 export default class Note {
-  constructor(vm, game, keyObj, key, x, y, width, color) {
+  constructor(vm, game, keyObj, key, x, y = 0, width, color) {
     this.x = x;
+    this.y = y; // drop from top (0) by default
     this.width = width;
     this.color = color;
     this.vm = vm;
@@ -15,9 +16,8 @@ export default class Note {
     this.isHoldingDone = false;
     this.didUserHold = false;
 
-    this.y = y ?? 0;
     this.singleNoteHeight = 10;
-    if (y) this.createdNote = true;
+    if (y !== 0) this.createdNote = true;
 
     // modulate speed, ref https://www.viget.com/articles/time-based-animation/
     this.now = Date.now();

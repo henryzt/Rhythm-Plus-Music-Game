@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="themeStyle==='bg1' || themeStyle==='bg1Only'" class="spaceBackground"></div>
+    <div v-if="themeStyle!=='bgOff'" class="spaceBackground"></div>
     <canvas ref="visualizerCanvas"></canvas>
   </div>
 </template>
@@ -23,6 +23,7 @@ export default {
           data: {
             "Show Background Image & Gradient": "bg1",
             "Background Image Only": "bg1Only",
+            "Mask Background Image": "bg1Mask",
             "Hide Background Image": "bgOff",
           },
         },
@@ -170,8 +171,9 @@ function renderSpaceVisualizer(time, canvas, ctx, audioData, vm) {
   ctx.fillRect(0, 0, w, h);
 
   if (vm.themeStyle !== "bg1Only") {
+    const innerColour = vm.themeStyle === "bgOff" || vm.themeStyle === "bg1Mask" ? "black" : "rgba(0,0,0,0.5)";
     let grd = ctx.createRadialGradient(x, y, innerRadius, x, y, outerRadius);
-    grd.addColorStop(blackColorStop, "rgba(0,0,0,0.5)");
+    grd.addColorStop(blackColorStop, innerColour);
     grd.addColorStop(
       1,
       `rgba(${currentBg[0]}, ${currentBg[1]}, ${currentBg[2]}, ${v - 0.25})`

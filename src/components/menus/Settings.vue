@@ -73,7 +73,7 @@
             >
           </select>
         </p>
-        <p v-if="visualizerIns">
+        <p v-if="visualizerIns && visualizerIns.options">
           <label>Theme Style</label>
           <select id="themeStyle" v-model="visualizerIns.themeStyle">
             <option
@@ -152,6 +152,7 @@ export default {
         visualizer: "purpleSpace",
         blur: false,
         syncYoutube: false,
+        options: null,
       },
       gameSt: {
         noteSpeed: 1,
@@ -167,13 +168,24 @@ export default {
   },
   computed: {
     visualizerIns() {
-      return this.$store.state.bg?.$refs.visualizer?.$refs.ins;
+      return this.$store.state.visualizerIns;
     },
   },
   watch: {
     "$store.state.userProfile"() {
       this.getUserSettings();
     },
+    "appearanceSt.visualizer"() {
+      this.$store.commit("setThemePreview", this.appearanceSt);
+      this.$store.state.bg.rerender();
+    },
+  },
+  beforeDestroy() {
+    this.$store.commit(
+      "setThemePreview",
+      this.$store.state.userProfile.appearanceSt
+    );
+    this.$store.state.bg.rerender();
   },
   methods: {
     changeVisualizer() {
@@ -205,6 +217,14 @@ export default {
       try {
         const user = firebase.auth().currentUser;
         await user.updateProfile({ displayName, photoURL });
+
+        if (this.visualizerIns.options) {
+          this.appearanceSt.options = {
+            themeStyle: this.visualizerIns.themeStyle,
+          };
+        } else {
+          this.appearanceSt.options = null;
+        }
 
         await updateUserProfile({
           appearanceSt: this.appearanceSt,

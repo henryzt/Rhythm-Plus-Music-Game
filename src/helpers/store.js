@@ -18,6 +18,7 @@ export const store = new Vuex.Store({
     initialized: false,
     isFullscreen: false,
     visualizerArr: null,
+    visualizerIns: null,
     theme: null,
     redirecting: false,
     ytVars: {
@@ -68,6 +69,8 @@ export const store = new Vuex.Store({
           let data = res.data();
           commit("setUserProfile", data ?? {});
           commit("setTheme");
+          state.initialized = true;
+          analytics().logEvent("app_initialized");
         } catch (err) {
           Logger.error(err);
         }
@@ -136,9 +139,12 @@ export const store = new Vuex.Store({
       if (userTheme) {
         state.theme.visualizer = userTheme.visualizer;
         state.theme.blur = userTheme.blur;
+        state.theme.themeStyle = userTheme.options?.themeStyle;
       }
-      state.initialized = true;
-      analytics().logEvent("app_initialized");
+    },
+    setThemePreview(state, val) {
+      console.log(val);
+      Object.assign(state.theme, val);
     },
     setProfilePciture(state, val) {
       state.profilePicture = val;
@@ -157,6 +163,9 @@ export const store = new Vuex.Store({
     },
     setVisualizerArr(state, val) {
       state.visualizerArr = val;
+    },
+    setVisualizerIns(state, val) {
+      state.visualizerIns = val;
     },
     async toggleFullscreen(state) {
       state.isFullscreen = document.fullscreen;

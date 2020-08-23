@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="render">
     <Navbar v-if="showNav"></Navbar>
     <UserProfileCard></UserProfileCard>
     <div
@@ -54,6 +54,7 @@ export default {
   data() {
     return {
       audio: null,
+      render: true,
     };
   },
   mounted() {
@@ -63,6 +64,14 @@ export default {
       this.$store.state.audio.playBgm();
     }
     this.$store.commit("setBackground", this);
+  },
+  methods: {
+    rerender() {
+      this.render = false;
+      this.$nextTick(() => {
+        this.render = true;
+      });
+    },
   },
   destroyed() {},
 };

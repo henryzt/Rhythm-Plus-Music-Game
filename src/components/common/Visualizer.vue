@@ -56,6 +56,11 @@ export default {
       this.$store.commit("setVisualizerArr", visualizers);
     if (this.audioData) this.audioDataLoaded = true;
     if (this.autoUpdate) this.update();
+    this.$nextTick(() => {
+      this.$store.commit("setVisualizerIns", this.$refs.ins);
+      if (this.$store.state.theme.themeStyle && this.$refs.ins)
+        this.$refs.ins.themeStyle = this.$store.state.theme.themeStyle;
+    });
   },
   beforeDestroy() {
     window.removeEventListener("resize", this.resizeCanvas);

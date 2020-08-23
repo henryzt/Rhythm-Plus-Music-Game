@@ -2,7 +2,7 @@
   <div class="visualizer">
     <div class="blurFilter" v-if="blur"></div>
     <component
-      ref="visualizerIns"
+      ref="ins"
       v-if="shouldRender"
       :is="vComponent"
       :name="vComponent"
@@ -12,10 +12,11 @@
 </template>
 
 <script>
-import BarVisualizer from "../visualizers/BarVisualizer.vue";
-import SpaceVisualizer from "../visualizers/SpaceVisualizer.vue";
-import ColorPoly from "../visualizers/ColorPoly.vue";
-import Swirl from "../visualizers/swirl/Swirl.vue";
+import BarVisualizer from "../../visualizers/BarVisualizer.vue";
+import SpaceVisualizer from "../../visualizers/SpaceVisualizer.vue";
+import ColorPoly from "../../visualizers/ColorPoly.vue";
+import Swirl from "../../visualizers/swirl/Swirl.vue";
+import PurpleSpace from "../../visualizers/purpleSpace/PurpleSpace.vue";
 
 const visualizers = {
   "Visualizer Off": null,
@@ -24,6 +25,7 @@ const visualizers = {
   "Space with Polygon": "spacePoly",
   "Colored Polygon": "colorPoly",
   Swirl: "swirl",
+  "Purple Space": "purpleSpace",
 };
 
 export default {
@@ -35,6 +37,7 @@ export default {
     spacePoly: SpaceVisualizer,
     colorPoly: ColorPoly,
     swirl: Swirl,
+    purpleSpace: PurpleSpace,
   },
   data: function () {
     return {
@@ -53,6 +56,11 @@ export default {
       this.$store.commit("setVisualizerArr", visualizers);
     if (this.audioData) this.audioDataLoaded = true;
     if (this.autoUpdate) this.update();
+    this.$nextTick(() => {
+      this.$store.commit("setVisualizerIns", this.$refs.ins);
+      if (this.$store.state.theme.themeStyle && this.$refs.ins)
+        this.$refs.ins.themeStyle = this.$store.state.theme.themeStyle;
+    });
   },
   beforeDestroy() {
     window.removeEventListener("resize", this.resizeCanvas);
@@ -61,21 +69,21 @@ export default {
     this.vComponent = null;
   },
   methods: {
-    renderVisualizer() {
+    renderVisualizer(time) {
       if (!this.shouldRender) return;
-      this.$refs.visualizerIns?.update();
+      this.$refs.ins?.update(time);
     },
     setVisualizerByKey(name) {
       this.vComponent = visualizers[name];
     },
-    update() {
+    update(time) {
       if (!this.autoUpdate || !this.shouldRender) return;
       requestAnimationFrame(this.update.bind(this));
-      this.renderVisualizer();
+      this.renderVisualizer(time);
     },
     resizeCanvas() {
       if (!this.shouldRender) return;
-      this.$refs.visualizerIns.resizeCanvas();
+      this.$refs.ins.resizeCanvas();
     },
   },
   watch: {

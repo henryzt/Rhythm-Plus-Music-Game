@@ -1,5 +1,18 @@
 <template>
   <div class="game">
+    <!-- progress bar -->
+    <ProgressBar
+      v-if="currentSong && currentSong.length"
+      :progress="instance.playTime / currentSong.length"
+    ></ProgressBar>
+
+    <!-- resume game countdown -->
+    <Countdown
+      style="z-index: 1000; pointer-events: none;"
+      ref="countdown"
+      @finish="instance.resumeGame()"
+    ></Countdown>
+
     <!-- pause button -->
     <transition name="modal-fade">
       <a
@@ -58,13 +71,8 @@
         id="ytPlayer"
         ref="youtube"
         :video-id="youtubeId"
-        :player-vars="{
-          controls: 0,
-          rel: 0,
-          playsinline: 1,
-          disablekb: 1,
-          autoplay: 0,
-        }"
+        :player-vars="$store.state.ytVars"
+        :nocookie="$store.state.ytVars.nocookie"
         @playing="songLoaded"
         @cued="videoCued"
         @buffering="ytBuffering"
@@ -109,7 +117,7 @@
           </div>
         </div>
         <!-- info button -->
-        <div>
+        <div @click="showInfoMenu">
           <div class="flex_hori start_page_button">
             <v-icon name="info-circle" scale="1.5" />
           </div>
@@ -142,16 +150,26 @@
 
       <template>
         <transition name="slide-fade" mode="out-in">
-          <div v-if="!advancedMenuOptions" key="1">
-            <div class="btn-action btn-dark" @click="resumeGame">Resume</div>
-            <div class="btn-action btn-dark" @click="restartGame">Restart</div>
+          <div v-if="!advancedMenuOptions" class="menu" key="1">
+            <div class="btn-action btn-dark" @click="resumeGame(true)">
+              <v-icon name="play" />
+              <span>Resume</span>
+            </div>
+            <div class="btn-action btn-dark" @click="restartGame">
+              <v-icon name="redo" />
+              <span>Restart</span>
+            </div>
             <div
               class="btn-action btn-dark"
               @click="advancedMenuOptions = true"
             >
-              Advanced
+              <v-icon name="cog" />
+              <span>Advanced</span>
             </div>
-            <div class="btn-action btn-dark" @click="exitGame">Exit Game</div>
+            <div class="btn-action btn-dark" @click="exitGame">
+              <v-icon name="sign-out-alt" />
+              <span>Exit Game</span>
+            </div>
           </div>
 
           <div v-else key="2">
@@ -169,7 +187,7 @@
             <div
               class="btn-action btn-dark"
               style="display: inline-block;"
-              @click="started ? resumeGame() : hideMenu()"
+              @click="started ? resumeGame(true) : hideMenu()"
             >
               Done
             </div>
@@ -177,19 +195,38 @@
         </transition>
       </template>
     </Modal>
+
+    <!-- sheet info modal -->
+    <Modal
+      ref="info"
+      :showCancel="false"
+      style="text-align: center; z-index: 500;"
+    >
+      <template v-slot:header>
+        <div style="width: 100%; font-size: 23px;">Sheet Info</div>
+      </template>
+
+      <template>
+        <SheetDetailLine :sheet="currentSong"></SheetDetailLine>
+      </template>
+    </Modal>
   </div>
 </template>
 
 <script>
-import PlayControl from "../components/PlayControl.vue";
-import Visualizer from "../components/Visualizer.vue";
-import Loading from "../components/Loading.vue";
-import Modal from "../components/Modal.vue";
-import ZoomText from "../components/ZoomText.vue";
-import Navbar from "../components/Navbar.vue";
-import GameInstanceMixin from "../mixins/gameInstanceMixin";
+import PlayControl from "../components/common/PlayControl.vue";
+import Visualizer from "../components/common/Visualizer.vue";
+import Loading from "../components/ui/Loading.vue";
+import Modal from "../components/ui/Modal.vue";
+import ZoomText from "../components/game/ZoomText.vue";
+import Navbar from "../components/ui/Navbar.vue";
+import SheetDetailLine from "../components/menus/SheetDetailLine.vue";
+import ProgressBar from "../components/game/ProgressBar.vue";
+import Countdown from "../components/game/Countdown.vue";
+import GameMixin from "../mixins/gameMixin";
 import { Youtube } from "vue-youtube";
 import { getGameSheet, uploadResult } from "../javascript/db";
+import { analytics } from "../helpers/firebaseConfig";
 import ICountUp from "vue-countup-v2";
 import VanillaTilt from "vanilla-tilt";
 import "vue-awesome/icons/regular/pause-circle";
@@ -208,8 +245,11 @@ export default {
     ICountUp,
     ZoomText,
     Navbar,
+    ProgressBar,
+    Countdown,
+    SheetDetailLine,
   },
-  mixins: [GameInstanceMixin],
+  mixins: [GameMixin],
   data() {
     return {};
   },
@@ -232,6 +272,9 @@ export default {
         let song = await getGameSheet(this.$route.params.sheet);
         this.instance.loadSong(song);
       } catch (err) {
+        analytics().logEvent("song_load_error", {
+          songId: this.currentSong.songId,
+        });
         this.$store.state.gModal.show({
           bodyText: "Sorry, this song does not exist or is unavaliable.",
           isError: true,
@@ -241,7 +284,7 @@ export default {
       }
     },
     songLoaded() {
-      console.log("playing");
+      Logger.log("playing");
       this.instance.loading = false;
       if (!this.started) {
         // first loaded
@@ -257,17 +300,18 @@ export default {
     },
     videoCued() {
       if (this.srcMode !== "youtube") return;
-      console.log("cued");
+      Logger.log("cued");
       this.instance.loading = false;
       this.showStartButton = true;
     },
     ytBuffering() {
-      console.log("buffering");
+      Logger.log("buffering");
       if (this.showStartButton) {
         this.startGame();
       }
     },
     startGame() {
+      analytics().logEvent("start_game", { songId: this.currentSong.songId });
       this.showStartButton = false;
       if (this.srcMode === "youtube") {
         this.instance.loading = true;
@@ -287,9 +331,17 @@ export default {
       this.advancedMenuOptions = false;
       this.$refs.menu.close();
     },
-    resumeGame() {
+    showInfoMenu() {
+      this.$refs.info.show();
+    },
+    resumeGame(fromMenu) {
       this.hideMenu();
-      this.instance.resumeGame();
+      if (!fromMenu) {
+        this.$refs.countdown.clear();
+        this.instance.resumeGame();
+      } else {
+        this.$refs.countdown.start();
+      }
     },
     restartGame() {
       this.hideMenu();
@@ -312,10 +364,13 @@ export default {
           sheetId: this.currentSong.sheetId,
           isAuthed: this.$store.state.authed,
         });
-        console.log(res);
+        Logger.log(res);
         this.$router.push("/result/" + res.data.resultId);
+        analytics().logEvent("result_uploaded", {
+          resultId: res.data.resultId,
+        });
       } catch (error) {
-        console.error(error);
+        Logger.error(error);
         this.$store.state.gModal.show({
           bodyText:
             "We are sorry, due to a connection failure, we are unable to save the result. Would you like to try again?",
@@ -374,7 +429,7 @@ export default {
 }
 
 .start_page_button {
-  margin: 30px;
+  padding: 30px;
   opacity: 0.5;
   cursor: pointer;
   transition: 0.5s;
@@ -387,10 +442,24 @@ export default {
   transform: scale(1.2);
 }
 
+.menu .btn-action {
+  position: relative;
+}
+
+.menu span {
+  padding-left: 20px;
+}
+
+.menu .fa-icon {
+  position: absolute;
+  left: 20px;
+  top: 12px;
+}
+
 @media only screen and (min-width: 800px) {
   /* desktop */
   .perspective {
-    transform: rotateX(30deg) scale(1.5);
+    transform: rotateX(30deg) scale(1.5) scaleX(0.8);
   }
 }
 

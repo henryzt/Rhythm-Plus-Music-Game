@@ -21,9 +21,9 @@
       <span>
         <vue-slider
           style="padding: 20px 0;"
-          :value="3.01 - playData.noteSpeedInSec"
+          :value="playData.noteSpeed ? playData.noteSpeed : 1"
           :interval="0.01"
-          :min="0.01"
+          :min="0.3"
           :max="3"
           :contained="true"
           :tooltip-formatter="(val) => val.toFixed(1) + 'x'"
@@ -72,6 +72,15 @@
           :cbStyle="cbStyle"
         ></Checkbox>
       </p>
+      <p>
+        <label></label>
+        <Checkbox
+          label="Lower Editor Hit Line"
+          :model="$parent.options"
+          modelKey="lowerHitLine"
+          :cbStyle="cbStyle"
+        ></Checkbox>
+      </p>
       <br />
       <!-- score -->
       <div style="padding: 15px;">
@@ -96,7 +105,7 @@
 
 <script>
 import VueSlider from "vue-slider-component";
-import Checkbox from "./Checkbox.vue";
+import Checkbox from "../ui/Checkbox.vue";
 
 export default {
   name: "PlayControl",
@@ -115,7 +124,7 @@ export default {
       this.playData.visualizerInstance.setVisualizerByKey(name);
     },
     changeSpeed(speed) {
-      this.playData.noteSpeedInSec = 3.01 - speed;
+      this.playData.noteSpeed = speed;
     },
   },
   computed: {

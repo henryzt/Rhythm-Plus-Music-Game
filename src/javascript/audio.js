@@ -57,7 +57,7 @@ export default class Audio {
 
     this.player.on("load", () => {
       if (loadedCallback) loadedCallback();
-      console.log("Audio loaded");
+      Logger.log("Audio loaded");
     });
     this.player.on("end", () => {
       if (finishedCallback) finishedCallback();
@@ -75,7 +75,7 @@ export default class Audio {
     shuffle(bgmUrlArr);
     bgmUrlArr.filter((e) => e !== songToExclude);
     this.stop();
-    console.log(bgmUrlArr);
+    Logger.log(bgmUrlArr);
     this.loadSong(bgmUrlArr[0], true);
   }
 
@@ -90,7 +90,7 @@ export default class Audio {
 
   stop(stopBackground) {
     if (!stopBackground && this.asBackground) return;
-    console.warn("stop", this.player, this.asBackground);
+    Logger.warn("stop", this.player, this.asBackground);
     this.player?.stop();
     if (this.asBackground) {
       this.player?.unload();

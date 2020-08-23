@@ -1,6 +1,7 @@
 export default class Note {
-  constructor(vm, game, keyObj, key, x, width, color) {
+  constructor(vm, game, keyObj, key, x, y = 0, width, color) {
     this.x = x;
+    this.y = y; // drop from top (0) by default
     this.width = width;
     this.color = color;
     this.vm = vm;
@@ -10,12 +11,13 @@ export default class Note {
     this.ctx = vm.ctx;
     this.canvas = vm.canvas;
     this.percentage = 0;
-    this.isHoldNote = keyObj.h && keyObj.h[key];
+    this.isHoldNote = keyObj.h?.[key];
     this.isUserHolding = false;
     this.isHoldingDone = false;
+    this.didUserHold = false;
 
-    this.y = 0;
     this.singleNoteHeight = 10;
+    if (y !== 0) this.createdNote = true;
 
     // modulate speed, ref https://www.viget.com/articles/time-based-animation/
     this.now = Date.now();
@@ -34,15 +36,15 @@ export default class Note {
   getDiffPercentage() {
     if (this.gameHadBeenPaused) {
       // game had been pasued, time unuseable, use less accurate dist calculation instead
-      const dist = this.vm.checkHitLineY - this.y;
+      const dist = this.game.checkHitLineY - this.y;
       const percentage = Math.abs(dist) / this.canvas.height; // the lower the better
 
       return percentage;
     } else {
       let hitTimeSinceStartInSec =
         (parseFloat(Date.now()) - parseFloat(this.timeStarted)) / 1000;
-      const diff = Math.abs(this.vm.noteSpeedInSec - hitTimeSinceStartInSec);
-      let percentage = diff / this.vm.noteSpeedInSec; // the lower the better
+      const diff = Math.abs(this.game.noteDelay - hitTimeSinceStartInSec);
+      let percentage = diff / this.game.noteDelay; // the lower the better
 
       return percentage;
     }
@@ -58,18 +60,27 @@ export default class Note {
     if (this.percentage < 0.05) {
       this.vm.result.marks.perfect += 1;
       this.vm.markJudge = "Perfect";
-    } else if (this.percentage < 0.25) {
+    } else if (this.percentage < 0.15) {
       this.vm.result.marks.good += 1;
       this.vm.markJudge = "Good";
-    } else if (this.percentage < 0.5) {
+    } else if (this.percentage < 0.3) {
       this.vm.result.marks.offbeat += 1;
       this.vm.markJudge = "Offbeat";
+    } else {
+      // when note is too out of hit line, it can miss randomly
+      if (Math.random() > 0.5) {
+        this.vm.result.marks.offbeat += 1;
+        this.vm.markJudge = "Offbeat";
+      } else {
+        this.missNote();
+      }
     }
   }
 
   hitAndCountScore(isHolding) {
-    this.vibrate(25);
     this.judge();
+    if (this.noteFailed) return;
+    this.vibrate(25);
     const { percentage } = this;
     let accuracyPercent = 100 * (1 - percentage);
     if (!this.accuracyJudged) {
@@ -78,7 +89,7 @@ export default class Note {
       this.vm.result.totalHitNotes += 1;
       this.accuracyJudged = true;
     }
-    const buff = isHolding ? 1 : 2;
+    const buff = isHolding ? 0.5 : 1.2;
     this.vm.result.score += buff * accuracyPercent * this.vm.fever.value;
     this.vm.result.combo += 1;
     this.vm.result.maxCombo =
@@ -89,6 +100,17 @@ export default class Note {
     this.hitIndicator(this.vm);
   }
 
+  missNote() {
+    this.vm.result.marks.miss += 1;
+    this.vm.result.totalHitNotes += 1;
+    this.vm.result.combo = 0;
+    this.vm.markJudge = "Miss";
+    this.vm.fever.percent -= 0.1;
+    this.vibrate([20, 20, 50]);
+    this.hitIndicator(this.vm);
+    this.noteFailed = true;
+  }
+
   isOutOfCanvas() {
     const yOut = this.y > this.canvas.height;
     const isHoldNoteOut =
@@ -97,14 +119,7 @@ export default class Note {
         !this.isUserHolding &&
         !this.isHoldNoteFinished(true));
     if (this.vm.started && yOut && isHoldNoteOut && !this.noteFailed) {
-      this.vm.result.marks.miss += 1;
-      this.vm.result.totalHitNotes += 1;
-      this.vm.result.combo = 0;
-      this.vm.markJudge = "Miss";
-      this.vm.fever.percent -= 0.1;
-      this.vibrate([20, 20, 50]);
-      this.hitIndicator(this.vm);
-      this.noteFailed = true;
+      this.missNote();
     }
     const shouldClean =
       (yOut && !this.isHoldNote) ||
@@ -117,14 +132,17 @@ export default class Note {
     const offset = nearly
       ? Math.min.apply(0, [this.holdNoteHeight / 2, 100])
       : 0;
-    return this.holdNoteY > this.vm.checkHitLineY - offset;
+    return (
+      this.holdNoteY > this.game.checkHitLineY - offset && this.didUserHold
+    );
   }
 
   reposition() {
     // reposition y value based on current time
-    const timing = this.game.getNoteTiming();
+    const timing = this.game.playTime;
     const timeElapsed = timing - this.keyObj.t;
-    const y = (timeElapsed / this.vm.noteSpeedInSec) * this.vm.checkHitLineY;
+    const y =
+      (timeElapsed * this.game.noteSpeedPxPerSec) / this.vm.playbackSpeed;
     this.y = y;
     this.gameHadBeenPaused = true;
   }
@@ -155,7 +173,7 @@ export default class Note {
       this.drawHoldNote(color);
     } else {
       let color =
-        this.y > this.vm.checkHitLineY + this.singleNoteHeight
+        this.y > this.game.checkHitLineY + this.singleNoteHeight
           ? "red"
           : defaultColor;
       if (!this.vm.playMode) color = defaultColor;
@@ -167,7 +185,7 @@ export default class Note {
 
     if (this.game.paused) return;
 
-    this.y += this.vm.noteSpeedPxPerSec * this.delta;
+    this.y += this.game.noteSpeedPxPerSec * this.delta;
 
     this.playSoundEffect();
   }
@@ -180,15 +198,24 @@ export default class Note {
   drawHoldNote(color) {
     const endTime = this.keyObj.h[this.key];
     const holdLengthInSec = endTime === -1 ? 100 : endTime - this.keyObj.t;
-    const noteHeight = holdLengthInSec * this.vm.noteSpeedPxPerSec;
+    const noteHeight = holdLengthInSec * this.game.noteSpeedPxPerSec;
     this.holdNoteHeight = noteHeight;
     this.holdNoteY = this.y - noteHeight + this.singleNoteHeight;
-    const paintY = this.holdNoteY < 0 ? 0 : this.holdNoteY;
+    let paintY = this.holdNoteY < 0 ? 0 : this.holdNoteY;
     let paintHeight =
       this.holdNoteY < 0 ? this.holdNoteY + noteHeight : noteHeight;
     paintHeight = this.isUserHolding
-      ? this.vm.checkHitLineY - paintY
+      ? this.game.checkHitLineY - paintY
       : paintHeight;
+    if (!this.vm.playMode) {
+      // creating hold note
+      const isUserCreating =
+        this.game.keyHoldingStatus[this.key] && this.createdNote;
+      if (isUserCreating) {
+        paintY = this.game.checkHitLineY;
+        paintHeight = paintHeight - paintY;
+      }
+    }
     this.ctx.fillStyle = color;
     this.ctx.fillRect(this.x, paintY, this.width, paintHeight);
   }
@@ -196,7 +223,7 @@ export default class Note {
   playSoundEffect() {
     if (!this.vm.inEditor || !this.vm.options.soundEffect || !this.vm.playMode)
       return;
-    if (!this.sePlayed && this.y >= this.vm.checkHitLineY) {
+    if (!this.sePlayed && this.y >= this.game.checkHitLineY) {
       this.sePlayed = true;
       this.vm.$store.state.audio.playEffect("/audio/effects/du.mp3");
     }

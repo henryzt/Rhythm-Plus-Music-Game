@@ -14,17 +14,19 @@
           style="height: 8vh; cursor: pointer; pointer-events: all;"
           @click="goToMenu"
         />
-        Sheet Editor
+        <div>Sheet Editor</div>
       </div>
       <div style="flex-grow: 1;"></div>
       <a href="#" @click.prevent="newEditor">New</a>
-      <div style="display: flex;" :class="{ disabled: !initialized }">
+      <div style="display: flex;" :class="{ disabled: isDisabled }">
         <a
           href="#"
           @click.prevent="saveSheet"
           :class="{ disabled: !isSheetOwner }"
-          >Save</a
+          style="position: relative;"
         >
+          <span v-if="sheetChanged" class="saveIndicator">●</span>Save
+        </a>
         <a href="#" @click.prevent="togglePlayMode(false)">{{
           playMode ? "Edit" : "Test"
         }}</a>
@@ -37,125 +39,129 @@
       </div>
     </div>
 
-    <div class="main">
-      <div class="column side left blurBackground">
-        <div class="tabs" :class="{ disabled: !initialized }">
-          <div
-            class="tab"
-            :class="{ active: leftTab === 1 }"
-            @click="leftTab = 1"
-          >
-            Info
+    <div class="scrollBar">
+      <div class="main hideOverflow">
+        <div class="column side left blurBackground">
+          <div class="tabs" :class="{ disabled: isDisabled }">
+            <div
+              class="tab"
+              :class="{ active: leftTab === 1 }"
+              @click="leftTab = 1"
+            >
+              Info
+            </div>
+            <div
+              class="tab"
+              :class="{ active: leftTab === 2 }"
+              @click="leftTab = 2"
+            >
+              Options
+            </div>
           </div>
+          <!-- tab 1 - info editor -->
+          <info-editor
+            style="flex-grow: 1;"
+            ref="info"
+            v-show="leftTab === 1"
+          ></info-editor>
+          <!-- tab 2 - options -->
+          <div v-if="leftTab === 2" style="flex-grow: 1; overflow: scroll;">
+            <PlayControl
+              style="padding: 0 30px; box-sizing: border-box;"
+              ref="control"
+              :playData="$data"
+              :formStyle="true"
+            ></PlayControl>
+          </div>
+          <!-- song control -->
+          <SongListItem
+            v-if="songInfo.id"
+            :song="songInfo"
+            :hideBg="true"
+            @selected="updateSongDetail"
+            style="cursor: pointer;"
+          ></SongListItem>
           <div
-            class="tab"
-            :class="{ active: leftTab === 2 }"
-            @click="leftTab = 2"
+            v-show="gameSheetInfo"
+            style="height: 200px;"
+            v-if="srcMode == 'youtube' && youtubeId"
           >
-            Options
+            <div
+              v-if="initialized"
+              style="
+                position: absolute;
+                width: 100%;
+                height: 200px;
+                cursor: pointer;
+              "
+              @click="instance.paused ? songLoaded() : pauseGame()"
+            ></div>
+            <Youtube
+              id="ytPlayer_editor"
+              ref="youtube"
+              width="100%"
+              height="200px"
+              :video-id="youtubeId"
+              :player-vars="$store.state.ytVars"
+              :nocookie="$store.state.ytVars.nocookie"
+              @playing="songLoaded"
+              @error="ytError"
+              @paused="ytPaused"
+              @ended="ytPaused"
+            ></Youtube>
           </div>
         </div>
-        <!-- tab 1 - info editor -->
-        <info-editor
-          style="flex-grow: 1;"
-          ref="info"
-          v-show="leftTab === 1"
-        ></info-editor>
-        <!-- tab 2 - options -->
-        <PlayControl
-          style="flex-grow: 1; padding: 0 30px; box-sizing: border-box;"
-          ref="control"
-          v-if="leftTab === 2"
-          :playData="$data"
-          :formStyle="true"
-        ></PlayControl>
-        <!-- song control -->
-        <SongListItem
-          v-if="songInfo.id"
-          :song="songInfo"
-          :hideBg="true"
-          @selected="updateSongDetail"
-          style="cursor: pointer;"
-        ></SongListItem>
-        <div v-show="gameSheetInfo" v-if="srcMode == 'youtube' && youtubeId">
+
+        <div class="column middle" :class="{ disabled: !initialized }">
+          <!-- game wrapper -->
+          <div class="gameWrapper" ref="wrapper">
+            <canvas
+              ref="mainCanvas"
+              id="gameCanvas"
+              :class="{ perspective }"
+            ></canvas>
+          </div>
+          <!-- mark indicator -->
           <div
-            v-if="initialized"
+            class="center_judge"
+            v-show="playMode && result.combo > 0"
+            ref="hitIndicator"
+          >
+            {{ markJudge }} {{ result.combo }}
+          </div>
+
+          <!-- center text -->
+          <ZoomText style="z-index: 1000;" ref="zoom"></ZoomText>
+        </div>
+
+        <div
+          class="column side right blurBackground"
+          v-if="instance"
+          :class="{ disabled: isDisabled }"
+        >
+          <div
+            v-if="!disableMappingTable"
+            @click="disableMappingTable = true"
             style="
-              position: absolute;
-              width: 100%;
-              height: 100%;
+              float: right;
+              padding-top: 30px;
+              opacity: 0.5;
               cursor: pointer;
             "
-            @click="instance.paused ? songLoaded() : pauseGame()"
-          ></div>
-          <Youtube
-            id="ytPlayer_editor"
-            style="min-height: 240px;"
-            ref="youtube"
-            width="100%"
-            height="100%"
-            :video-id="youtubeId"
-            :player-vars="{
-              rel: 0,
-              playsinline: 1,
-              disablekb: 1,
-              autoplay: 0,
-              controls: 0,
-              modestbranding: 1,
-            }"
-            @playing="songLoaded"
-            @error="ytError"
-            @paused="ytPaused"
-            @ended="ytPaused"
-          ></Youtube>
-        </div>
-      </div>
-
-      <div class="column middle" :class="{ disabled: !initialized }">
-        <!-- game wrapper -->
-        <div class="gameWrapper" ref="wrapper">
-          <canvas
-            ref="mainCanvas"
-            id="gameCanvas"
-            :class="{ perspective }"
-          ></canvas>
-        </div>
-        <!-- mark indicator -->
-        <div class="center_judge" v-show="playMode" ref="hitIndicator">
-          {{ markJudge }} {{ result.combo }}
-        </div>
-
-        <!-- center text -->
-        <ZoomText style="z-index: 1000;" ref="zoom"></ZoomText>
-      </div>
-
-      <div
-        class="column side right blurBackground"
-        v-if="instance"
-        :class="{ disabled: !initialized }"
-      >
-        <div
-          v-if="!disableMappingTable"
-          @click="disableMappingTable = true"
-          style="
-            float: right;
-            padding-top: 30px;
-            opacity: 0.5;
-            cursor: pointer;
-          "
-        >
-          Disable
-        </div>
-        <h2>Mappings</h2>
-        <SheetTable v-if="!disableMappingTable"></SheetTable>
-        <div v-else>
-          To improve editor performance, mapping table is disabled.
-          <div
-            class="btn-action btn-dark"
-            style="margin: 10px 0; width: 100px;"
-            @click="disableMappingTable = false"
           >
-            Enable
+            Disable
+          </div>
+          <h2>Mappings</h2>
+          <SheetTable v-if="!disableMappingTable"></SheetTable>
+          <div v-else>
+            To improve editor performance, mapping table is disabled.
+            <div
+              class="btn-action btn-dark"
+              style="margin: 10px 0; width: 100px;"
+              @click="disableMappingTable = false"
+            >
+              Enable
+            </div>
           </div>
         </div>
       </div>
@@ -164,7 +170,7 @@
     <div
       class="toolbar blurBackground"
       v-if="instance"
-      :class="{ disabled: !initialized }"
+      :class="{ disabled: isDisabled }"
     >
       <div style="font-size: 30px; width: 80px; text-align: center;">
         {{ currentTime }}
@@ -174,7 +180,7 @@
           class="vicon"
           name="undo"
           scale="1"
-          @click="seekTo(Number(currentTime) - noteSpeedInSec)"
+          @click="seekTo(Number(currentTime) - instance.noteDelay)"
         />
         <v-icon
           class="vicon"
@@ -194,16 +200,16 @@
           class="vicon"
           name="redo"
           scale="1"
-          @click="seekTo(Number(currentTime) + noteSpeedInSec)"
+          @click="seekTo(Number(currentTime) + instance.noteDelay)"
         />
       </div>
       <div style="flex-grow: 1;">
         <vue-slider
-          :value="currentTime"
           :tooltip-placement="'right'"
           :interval="0.001"
-          :min="-noteSpeedInSec"
-          :max="songLength"
+          :min="sliderMinLength"
+          :max="sliderMaxLength"
+          :value="currentTime"
           :contained="true"
           :lazy="true"
           @dragging="seeking"
@@ -211,7 +217,7 @@
         ></vue-slider>
       </div>
       <div style="width: 90px; margin-left: 30px;">
-        <select id="songSelect" v-model="playbackSpeed" :disabled="playMode">
+        <select id="songSelect" v-model="playbackSpeed">
           <option disabled>Playback Speed</option>
           <option value="0.25">0.25X</option>
           <option value="0.5">0.5X</option>
@@ -242,16 +248,16 @@
 
 <script>
 import { getSong, getSheet, getGameSheet, updateSheet } from "../javascript/db";
-import Visualizer from "../components/Visualizer.vue";
-import InfoEditor from "../components/InfoEditor.vue";
-import SheetTable from "../components/SheetTable.vue";
-import SongListItem from "../components/SongListItem.vue";
-import PlayControl from "../components/PlayControl.vue";
-import ZoomText from "../components/ZoomText.vue";
-import Modal from "../components/Modal.vue";
-import Publish from "../components/Publish.vue";
-import Loading from "../components/Loading.vue";
-import GameInstanceMixin from "../mixins/gameInstanceMixin";
+import Visualizer from "../components/common/Visualizer.vue";
+import InfoEditor from "../components/editor/InfoEditor.vue";
+import SheetTable from "../components/editor/SheetTable.vue";
+import SongListItem from "../components/menus/SongListItem.vue";
+import PlayControl from "../components/common/PlayControl.vue";
+import ZoomText from "../components/game/ZoomText.vue";
+import Modal from "../components/ui/Modal.vue";
+import Publish from "../components/editor/Publish.vue";
+import Loading from "../components/ui/Loading.vue";
+import GameMixin from "../mixins/gameMixin";
 import VueSlider from "vue-slider-component";
 import { Youtube } from "vue-youtube";
 import "vue-slider-component/theme/antd.css";
@@ -275,15 +281,15 @@ export default {
     PlayControl,
     ZoomText,
   },
-  mixins: [GameInstanceMixin],
+  mixins: [GameMixin],
   data() {
     return {
       wrapper: null,
       contentHeight: "86vh",
       playMode: false,
-      playbackSpeed: 1,
       songLength: 0,
       inEditor: true,
+      disabled: false,
       songInfo: {
         id: null,
       },
@@ -298,12 +304,14 @@ export default {
       disableMappingTable: false,
       options: {
         soundEffect: true, //eidtor hit sound effect
+        lowerHitLine: true,
       },
+      sheetChanged: false,
     };
   },
   computed: {
     currentTime() {
-      return (this.instance.playTime - this.noteSpeedInSec).toFixed(2);
+      return (this.instance.playTime - this.instance.noteDelay).toFixed(2);
     },
     isSheetOwner() {
       return (
@@ -317,13 +325,35 @@ export default {
         this.songInfo.createdBy === this.$store.state.currentUser.uid
       );
     },
+    sliderMinLength() {
+      return (
+        (this.currentSong?.startAt ?? 0) - this.instance.noteDelay.toFixed(3)
+      );
+    },
+    sliderMaxLength() {
+      return this.currentSong?.endAt ?? this.songLength;
+    },
+    isDisabled() {
+      return !this.initialized || this.disabled;
+    },
   },
   watch: {
     playbackSpeed() {
       this.setPlaybackRate(this.playbackSpeed);
     },
+    "options.lowerHitLine"() {
+      this.instance.reposition();
+    },
     "$store.state.initialized"() {
       this.checkLoggedIn();
+    },
+    "instance.timeArr"() {
+      if (!this.sheetChanged && this.initialized) this.sheetChanged = true;
+    },
+    "$route.query.song"() {
+      if (!this.$route.params.sheet) {
+        this.checkSongQuery();
+      }
     },
   },
   async mounted() {
@@ -340,7 +370,7 @@ export default {
         this.gameSheetInfo = await getGameSheet(sheetId);
         this.gameSheetInfo.sheet = this.gameSheetInfo.sheet ?? [];
         this.instance.loadSong(this.gameSheetInfo);
-        console.log(this.gameSheetInfo);
+        Logger.log(this.gameSheetInfo);
         if (this.$route.query.save) {
           // refresh sheet data
           await this.saveSheet();
@@ -355,7 +385,7 @@ export default {
           );
         }
       } catch (err) {
-        console.error(err);
+        Logger.error(err);
         this.$store.state.gModal.show({
           bodyText: "Sorry, something went wrong, maybe try refresh?",
           isError: true,
@@ -368,16 +398,31 @@ export default {
         this.$store.state.alert.success("Successfully updated!");
         this.$router.push({ query: null });
       }
+    } else {
+      this.checkSongQuery();
     }
+
+    window.onbeforeunload = () => {
+      if (this.sheetChanged) {
+        return "If you leave this page you will lose your unsaved changes.";
+      }
+    };
   },
   methods: {
     checkLoggedIn() {
       if (this.$store.state.initialized && !this.$store.state.verified) {
-        this.$router.push({ path: "/account", query: { warn: true } });
+        this.$router.push({ path: "/account/", query: { warn: true } });
+      }
+    },
+    async checkSongQuery() {
+      const songId = this.$route.query.song;
+      if (songId) {
+        this.songInfo = await getSong(songId);
+        this.$refs.info.getSheets();
       }
     },
     goToMenu() {
-      this.$router.push("/menu");
+      this.$router.push("/studio/");
     },
     async songLoaded() {
       if (!this.initialized) {
@@ -389,7 +434,7 @@ export default {
         this.instance.paused = false;
         this.instance.startSong();
       } else {
-        this.instance.resumeGame();
+        this.resumeGame();
       }
     },
     async getLength() {
@@ -399,7 +444,7 @@ export default {
       } else {
         length = this.audio.getDuration();
       }
-      console.log(length);
+      Logger.log(length);
       return Number(length.toFixed(3));
     },
     pauseGame() {
@@ -408,6 +453,9 @@ export default {
       this.clearFever();
       this.instance.pauseGame();
       this.disableMappingTable = false;
+    },
+    resumeGame() {
+      this.instance.resumeGame();
     },
     async restartGame() {
       if (!this.started) return;
@@ -438,26 +486,40 @@ export default {
       } else {
         this.audio.setRate(Number(rate));
       }
+      this.instance.reposition();
     },
     togglePlayMode(clean) {
       this.playMode = !this.playMode;
-      this.playbackSpeed = 1;
       if (clean) {
         this.instance.clearNotes();
         this.restartGame();
       }
       this.clearFever();
-      this.instance.repositionNotes();
+      this.instance.reposition();
     },
     updateSongDetail() {
       this.$refs.info.openSongUpdate();
     },
-    newEditor() {
-      this.$router.push("/editor/");
-      this.reloadEditor();
+    async newEditor() {
+      if (await this.saveWarning()) {
+        this.$router.push("/editor/");
+        this.reloadEditor();
+      }
     },
     showPublishModal() {
       this.$refs.publishModal.show();
+    },
+    saveWarning() {
+      if (this.sheetChanged) {
+        return this.$store.state.gModal.show({
+          bodyText:
+            "You have unsaved changes, are you sure you want to continue without saving?",
+          isError: false,
+          showCancel: true,
+        });
+      } else {
+        return Promise.resolve(true);
+      }
     },
 
     reorderSheet() {
@@ -485,6 +547,8 @@ export default {
       let local = JSON.parse(localStorage.getItem("localSheetBackup")) || {};
       local[this.sheetInfo.id] = sheet;
       localStorage.setItem("localSheetBackup", JSON.stringify(local));
+
+      this.sheetChanged = false;
     },
     countTotal() {
       const lastNote = this.instance.timeArr[this.instance.timeArr.length - 1];
@@ -503,6 +567,13 @@ export default {
       });
     },
   },
+  beforeRouteLeave: async function (to, from, next) {
+    const canLeave = await this.saveWarning();
+    next(canLeave);
+  },
+  beforeDestroy() {
+    window.onbeforeunload = null;
+  },
 };
 </script>
 
@@ -516,6 +587,7 @@ export default {
   align-items: center;
   padding: 0 30px;
   z-index: 200;
+  overflow-x: scroll;
 }
 
 .logo {
@@ -616,10 +688,26 @@ export default {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
+.saveIndicator {
+  color: orange;
+  position: absolute;
+  font-size: 12px;
+  bottom: 3px;
+  left: 47%;
+}
+
+.hideOverflow {
+  overflow-y: hidden;
+}
+
 @media screen and (max-width: 600px) {
   .main {
     flex-wrap: nowrap;
     overflow-x: auto;
+  }
+  .column {
+    flex-grow: 1;
+    /* 5px scroll bar */
   }
   .column,
   .column.side,

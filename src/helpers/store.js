@@ -1,8 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import * as fb from "./firebaseConfig";
+import { usersCollection, analytics, auth } from "./firebaseConfig";
 import md5 from "js-md5";
-import firebase from "firebase";
 
 Vue.use(Vuex);
 
@@ -10,6 +9,7 @@ export const store = new Vuex.Store({
   state: {
     audio: null,
     gModal: null,
+    bg: null,
     currentUser: null,
     userProfile: {},
     profilePicture: null,
@@ -18,8 +18,20 @@ export const store = new Vuex.Store({
     initialized: false,
     isFullscreen: false,
     visualizerArr: null,
+    visualizerIns: null,
     theme: null,
     redirecting: false,
+    ytVars: {
+      controls: 0,
+      rel: 0,
+      playsinline: 1,
+      disablekb: 1,
+      autoplay: 0,
+      modestbranding: 1,
+      nocookie: true,
+    },
+    appVersion: process.env.APP_VERSION,
+    build: process.env.COMMIT_HASH,
   },
   actions: {
     async fetchUserProfile() {
@@ -53,15 +65,17 @@ export const store = new Vuex.Store({
     async updateUserProfile({ commit, state }) {
       if (state.currentUser) {
         try {
-          const res = await fb.usersCollection.doc(state.currentUser.uid).get();
+          const res = await usersCollection.doc(state.currentUser.uid).get();
           let data = res.data();
           commit("setUserProfile", data ?? {});
           commit("setTheme");
+          state.initialized = true;
+          analytics().logEvent("app_initialized");
         } catch (err) {
-          console.error(err);
+          Logger.error(err);
         }
         // update display name and photo for first time login
-        const user = firebase.auth().currentUser;
+        const user = auth.currentUser;
         const providerDisplayName =
           state.currentUser.providerData?.[0]?.displayName;
         let reloadRequired = false;
@@ -69,13 +83,13 @@ export const store = new Vuex.Store({
           state.redirecting = true;
           await user.updateProfile({ displayName: providerDisplayName });
           reloadRequired = true;
-          console.warn("Display name updated using provider data");
+          Logger.warn("Display name updated using provider data");
         }
         const providerPhoto = state.currentUser.providerData?.[0]?.photoURL;
         if (!state.currentUser.photoURL && providerPhoto) {
           state.redirecting = true;
           await user.updateProfile({ photoURL: providerPhoto });
-          console.warn("Photo URL updated using provider data");
+          Logger.warn("Photo URL updated using provider data");
           reloadRequired = true;
         }
         if (reloadRequired) window.location.reload();
@@ -88,6 +102,14 @@ export const store = new Vuex.Store({
       state.verified = state.authed && val.emailVerified;
       state.currentUser = val;
       this.dispatch("fetchUserProfile");
+      if (!val) return;
+      const { uid, displayName, emailVerified, isAnonymous } = val;
+      analytics().setUserId(uid);
+      analytics().setUserProperties({
+        displayName,
+        emailVerified,
+        isAnonymous,
+      });
     },
     setUserProfile(state, val) {
       state.userProfile = val;
@@ -96,28 +118,29 @@ export const store = new Vuex.Store({
         state.userProfile.lvBefore = state.userProfile.lv ?? level;
         state.userProfile.lv = level;
         state.userProfile.lvd = Math.floor(level);
+        if (val.appearanceSt?.syncYoutube) state.ytVars.nocookie = false;
       }
     },
     setTheme(state) {
       // set themes
-      const purpleSwirl = {
-        visualizer: "swirl",
+      const darkPurple = {
+        visualizer: "purpleSpace",
         buttonStyle: "colored",
         logoAsset: "logo2.png",
       };
-      const flameSpace = {
+      const flameOrange = {
         visualizer: "space",
         buttonStyle: "",
         logoAsset: "logo.png",
       };
       const userTheme = state.userProfile?.appearanceSt;
       state.theme =
-        userTheme?.theme === "flameSpace" ? flameSpace : purpleSwirl;
+        userTheme?.theme === "flameOrange" ? flameOrange : darkPurple;
       if (userTheme) {
         state.theme.visualizer = userTheme.visualizer;
         state.theme.blur = userTheme.blur;
+        state.theme.themeStyle = userTheme.options?.themeStyle;
       }
-      state.initialized = true;
     },
     setProfilePciture(state, val) {
       state.profilePicture = val;
@@ -131,8 +154,14 @@ export const store = new Vuex.Store({
     setFloatingAlert(state, val) {
       state.alert = val;
     },
+    setBackground(state, val) {
+      state.bg = val;
+    },
     setVisualizerArr(state, val) {
       state.visualizerArr = val;
+    },
+    setVisualizerIns(state, val) {
+      state.visualizerIns = val;
     },
     async toggleFullscreen(state) {
       state.isFullscreen = document.fullscreen;

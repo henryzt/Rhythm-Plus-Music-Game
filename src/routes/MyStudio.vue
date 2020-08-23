@@ -1,84 +1,95 @@
 <template>
   <div>
-    <div v-if="songAndSheetList && songAndSheetList.length > 0">
-      <div class="pageTitle">
-        My Studio
-        <div
-          class="btn-action btn-dark"
-          style="font-size: 18px; width: 160px;"
-          @click="goToEditor"
-        >
-          <v-icon name="arrow-right" />
-          <span>Go to Editor</span>
-        </div>
-      </div>
-      <div class="mContainer">
-        <transition-group
-          appear
-          tag="div"
-          name="slide-in"
-          :style="{ '--total': songAndSheetList.length }"
-        >
-          <div
-            v-for="(song, i) in songAndSheetList"
-            :key="song.song.id"
-            :style="{ '--i': i }"
-          >
-            <SongListItem
-              :song="song.song"
-              :sheets="song.sheets"
-              :selected="selectedSong === song.song"
-              @selected="selectedSong = $event"
-              @selectedSheet="goToSheet($event)"
-            ></SongListItem>
-          </div>
+    <v-bar class="fullPage">
+      <div v-if="songAndSheetList && songAndSheetList.length > 0">
+        <div class="pageTitle">
+          My Studio
           <div
             class="btn-action btn-dark"
-            key="btn"
-            style="width: 100%; max-width: 780px; line-height: 80px;"
+            style="font-size: 18px; width: 160px;"
             @click="goToEditor"
           >
-            <v-icon name="plus" scale="2" />
-          </div>
-        </transition-group>
-      </div>
-    </div>
-    <div class="center_logo" v-else-if="!loading">
-      <div class="pageTitle">My Studio</div>
-      <div style="width: 100%; max-width: 600px; margin: auto;">
-        <div>Create or import your favorite songs to play and share!</div>
-        <div style="margin-top: 50px;">
-          <div
-            class="btn-action btn-dark"
-            @click="
-              $store.state.authed ? goToEditor() : $router.push('/account/')
-            "
-          >
             <v-icon name="arrow-right" />
-            <span>Get Started</span>
+            <span>Go to Editor</span>
+          </div>
+        </div>
+        <div class="mContainer">
+          <SheetFilter
+            :songs="songAndSheetList"
+            @sorted="songDisplayList = $event"
+          ></SheetFilter>
+          <transition-group
+            v-if="songDisplayList"
+            appear
+            tag="div"
+            name="slide-in"
+            :style="{ '--total': songDisplayList.length }"
+          >
+            <div
+              v-for="(song, i) in songDisplayList"
+              :key="song.id"
+              :style="{ '--i': i }"
+            >
+              <SongListItem
+                :song="song"
+                :sheets="song.sheets"
+                :selected="selectedSong === song"
+                @selected="selectedSong = $event"
+                @selectedSheet="goToSheet($event)"
+              ></SongListItem>
+            </div>
+            <div
+              class="btn-action btn-dark big-add"
+              key="btn"
+              @click="goToEditor"
+            >
+              <v-icon name="plus" scale="2" />
+            </div>
+          </transition-group>
+        </div>
+      </div>
+      <div class="center_logo" v-else-if="!loading">
+        <div class="pageTitle">My Studio</div>
+        <div style="width: 100%; max-width: 600px; margin: auto;">
+          <div>Create or import your favorite songs to play and share!</div>
+          <div style="margin-top: 50px;">
+            <div
+              class="btn-action btn-dark"
+              @click="
+                $store.state.authed ? goToEditor() : $router.push('/account/')
+              "
+            >
+              <v-icon name="arrow-right" />
+              <span>Get Started</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <Loading :show="loading" :delay="false">Fetching Your Creations...</Loading>
+      <Loading :show="loading" :delay="false"
+        >Fetching Your Creations...</Loading
+      >
+    </v-bar>
   </div>
 </template>
 
 <script>
-import SongListItem from "../components/SongListItem.vue";
-import Loading from "../components/Loading.vue";
-import { getSheetList, getSong } from "../javascript/db";
+import SongListItem from "../components/menus/SongListItem.vue";
+import SheetFilter from "../components/menus/SheetFilter.vue";
+import Loading from "../components/ui/Loading.vue";
+import { getSheetList, getSongsInIdArray } from "../javascript/db";
 
 export default {
   name: "MyStudio",
   components: {
     SongListItem,
     Loading,
+    SheetFilter,
   },
   data() {
     return {
       selectedSong: null,
       songAndSheetList: null,
+      songDisplayList: null,
       loading: true,
     };
   },
@@ -89,12 +100,13 @@ export default {
     const userSheets = await getSheetList(null, true);
     const songIdsArr = userSheets.map((e) => e.songId);
     const songIds = [...new Set(songIdsArr)]; // get unique
-    console.log(userSheets, songIds);
+    Logger.log(userSheets, songIds);
+    let songs = await getSongsInIdArray(true, true, songIds);
     let songAndSheetList = [];
-    for (const songId of songIds) {
-      const song = await getSong(songId);
-      const sheets = userSheets.filter((e) => e.songId === songId);
-      songAndSheetList.push({ song, sheets });
+    for (const song of songs) {
+      const sheets = userSheets.filter((e) => e.songId === song.id);
+      song.sheets = sheets;
+      songAndSheetList.push(song);
     }
     this.songAndSheetList = songAndSheetList;
     this.loading = false;
@@ -120,9 +132,18 @@ export default {
   white-space: nowrap;
   margin-top: 30px;
   margin-bottom: 300px !important;
+  max-width: 780px;
+  margin-left: auto;
+  margin-right: auto;
 }
 .fa-icon {
   vertical-align: middle;
   margin-right: 5px;
+}
+.big-add {
+  width: 100%;
+  line-height: 80px;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 </style>

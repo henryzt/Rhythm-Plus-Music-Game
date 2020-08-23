@@ -11,7 +11,6 @@ export default class VolumeSampler {
         total += audioData.dataArray[i];
       }
       this.volume = total;
-      // console.log(total)
     };
     this.interval = setInterval(sampleAudioStream, 20);
     // public properties and methods

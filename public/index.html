@@ -12,6 +12,7 @@
       href="https://fonts.googleapis.com/css2?family=Dosis&family=Montserrat&family=Nova+Mono&family=Raleway&display=swap"
       rel="stylesheet"
     />
+    <script src="/js/logger.min.js"></script>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script
       async
@@ -23,8 +24,11 @@
         dataLayer.push(arguments);
       }
       gtag("js", new Date());
-
       gtag("config", "UA-113940817-5");
+
+      function gaPageview(page) {
+        gtag("config", "UA-113940817-5", { page_path: page });
+      }
     </script>
   </head>
   <body>

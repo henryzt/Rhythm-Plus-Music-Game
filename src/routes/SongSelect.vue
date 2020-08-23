@@ -1,54 +1,62 @@
 <template>
-  <div style="overflow-y: scroll;">
-    <div class="pageTitle">Song Select</div>
+  <div>
+    <v-bar class="fullPage">
+      <div class="pageTitle">Song Select</div>
 
-    <div class="mContainer">
-      <div
-        class="song_list"
-        :class="{ list_collapsed: selectedSong }"
-        v-if="songList"
-      >
-        <transition-group
-          appear
-          tag="div"
-          name="slide-in"
-          :style="{ '--total': songList.length }"
+      <div class="mContainer">
+        <div
+          class="song_list"
+          :class="{ list_collapsed: selectedSong }"
+          v-if="songList"
         >
-          <div
-            v-for="(song, i) in songList"
-            :key="song.id"
-            :style="{ '--i': i }"
+          <SheetFilter
+            :class="{ sHidden: selectedSong }"
+            :songs="songList"
+            @sorted="songDisplayList = $event"
+          ></SheetFilter>
+          <transition-group
+            v-if="songDisplayList"
+            appear
+            tag="div"
+            name="slide-in"
+            :style="{ '--total': songDisplayList.length }"
           >
-            <SongListItem
-              :song="song"
-              @selected="selectedSong = $event"
-            ></SongListItem>
-          </div>
-        </transition-group>
-      </div>
+            <div
+              v-for="(song, i) in songDisplayList"
+              :key="song.id"
+              :style="{ '--i': i }"
+            >
+              <SongListItem
+                :song="song"
+                @selected="selectedSong = $event"
+              ></SongListItem>
+            </div>
+          </transition-group>
+        </div>
 
-      <div :class="{ detail: true, detail_collapsed: !selectedSong }">
-        <transition name="slide-fade">
-          <SongDetailPanel
-            v-if="selectedSong"
-            :song="selectedSong"
-            :sheets="sheetList"
-            @cancel="selectedSong = null"
-          ></SongDetailPanel>
-        </transition>
+        <div :class="{ detail: true, detail_collapsed: !selectedSong }">
+          <transition name="slide-fade">
+            <SongDetailPanel
+              v-if="selectedSong"
+              :song="selectedSong"
+              :sheets="sheetList"
+              @cancel="selectedSong = null"
+            ></SongDetailPanel>
+          </transition>
+        </div>
       </div>
-    </div>
-
-    <Loading :show="(!songList || songList.length===0)" :delay="true"
-      >Fetching Latest Songs...</Loading
-    >
+      <Loading :show="(!songList || songList.length===0)" :delay="true"
+        >Fetching Latest Songs...</Loading
+      >
+    </v-bar>
   </div>
 </template>
 
 <script>
-import SongListItem from "../components/SongListItem.vue";
-import SongDetailPanel from "../components/SongDetailPanel.vue";
-import Loading from "../components/Loading.vue";
+import SongListItem from "../components/menus/SongListItem.vue";
+import SongDetailPanel from "../components/menus/SongDetailPanel.vue";
+import SheetFilter from "../components/menus/SheetFilter.vue";
+import Loading from "../components/ui/Loading.vue";
 import { getSheetList, getSongList } from "../javascript/db";
 
 export default {
@@ -57,10 +65,12 @@ export default {
     SongListItem,
     SongDetailPanel,
     Loading,
+    SheetFilter,
   },
   data() {
     return {
       songList: null,
+      songDisplayList: [],
       sheetList: null,
       selectedSong: null,
     };
@@ -79,7 +89,7 @@ export default {
         this.songList = res;
       })
       .catch((err) => {
-        console.error(err);
+        Logger.error(err);
       });
   },
   methods: {},
@@ -117,6 +127,12 @@ export default {
     margin: 0;
     padding: 0;
     transform: none;
+  }
+
+  .sHidden {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
   }
 
   /* .detail {

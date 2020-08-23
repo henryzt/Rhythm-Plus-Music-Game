@@ -1,0 +1,30 @@
+message Sheet {
+    required string songId = 1;
+    required string title = 2;
+    optional string visualizerName = 3;
+    required int32  difficulty = 4;
+    required string srcMode = 5;
+    optional string youtubeId = 6;
+    optional string url = 7;
+    optional string sheet = 8;
+    required string visibility = 9;
+    required string dateCreated = 10;
+    required string dateUpdated = 11;
+    required int32  keys = 12;
+    required string createdBy = 13;
+}
+
+message Song {
+    required string title = 1;
+    optional string subtitle = 2;
+    required string artist = 3;
+    optional string image = 4;
+    optional string youtubeId = 5;
+    optional string url = 6;
+    required string srcMode = 7;
+    optional string tags = 8;
+    required string dateUpdated = 9;
+    required string visibility = 10;
+    required string createdBy = 11;
+    required string dateCreated = 12;
+}

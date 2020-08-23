@@ -1,6 +1,6 @@
 <template>
   <div class="profile_card" :class="{ extend }">
-    <div class="controls" v-if="!extend">
+    <div class="controls shadow" v-if="!extend">
       <v-icon
         :name="$store.state.audio.muteBg ? 'volume-mute' : 'volume-up'"
         scale="1.3"
@@ -14,6 +14,7 @@
     </div>
 
     <div
+      class="shadow"
       v-if="$store.state.authed && $store.state.userProfile"
       @click="goToAccount"
       style="display: flex; align-items: center;"
@@ -54,7 +55,7 @@
       </div>
     </div>
 
-    <div v-else @click="goToAccount">
+    <div class="shadow" v-else @click="goToAccount">
       <div
         style="padding: 10px;"
         v-if="!extend"
@@ -119,12 +120,6 @@ export default {
   align-items: center;
   opacity: 0.5;
   padding: 5px;
-  background: rgba(0, 0, 0, 0.5);
-  background: linear-gradient(
-    -90deg,
-    rgba(0, 0, 0, 0.7) 0%,
-    rgba(0, 0, 0, 0) 100%
-  );
   cursor: pointer;
   z-index: 500;
   -webkit-tap-highlight-color: transparent;
@@ -139,6 +134,11 @@ img {
   max-height: 50px;
 }
 
+.shadow {
+  -webkit-filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 1));
+  filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 1));
+}
+
 .extend {
   background: none;
   position: relative;
@@ -147,6 +147,11 @@ img {
   opacity: 1;
   font-size: 1.2em;
   cursor: auto;
+}
+
+.extend .shadow {
+  filter: none;
+  -webkit-filter: none;
 }
 
 .extend img {
@@ -197,11 +202,6 @@ img {
     left: 0;
     opacity: 1;
     padding: 10px;
-    background: linear-gradient(
-      90deg,
-      rgba(0, 0, 0, 0.7) 0%,
-      rgba(0, 0, 0, 0) 100%
-    );
   }
   .fa-icon {
     padding: 10px;

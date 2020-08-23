@@ -43,7 +43,7 @@
         </p>
         <p>
           <label>Password</label>
-          <input type="button" value="Reset password" />
+          <input type="button" value="Reset password" @click="resetPassword" />
         </p>
       </form>
     </div>
@@ -58,8 +58,8 @@
             v-model="appearanceSt.theme"
             @change="changeVisualizer"
           >
-            <option value="flameSpace">Flame Space</option>
-            <option value="purpleSwirl">Dark Purple Swirl</option>
+            <option value="flameOrange">Flame Orange</option>
+            <option value="darkPurple">Dark Purple</option>
           </select>
         </p>
         <p v-if="$store.state.visualizerArr">
@@ -73,6 +73,19 @@
             >
           </select>
         </p>
+        <p v-if="visualizerIns && visualizerIns.options">
+          <label>Theme Style</label>
+          <select id="themeStyle" v-model="visualizerIns.themeStyle">
+            <option
+              v-for="[key, value] in Object.entries(
+                visualizerIns.options.themeStyle.data
+              )"
+              :value="value"
+              :key="key"
+              >{{ key }}</option
+            >
+          </select>
+        </p>
         <p>
           <label></label>
           <Checkbox
@@ -80,6 +93,15 @@
             :model="appearanceSt"
             cbStyle="form"
             modelKey="blur"
+          ></Checkbox>
+        </p>
+        <p>
+          <label></label>
+          <Checkbox
+            label="Sync Plays to YouTube History"
+            :model="appearanceSt"
+            cbStyle="form"
+            modelKey="syncYoutube"
           ></Checkbox>
         </p>
       </form>
@@ -104,11 +126,11 @@
 </template>
 
 <script>
-import Checkbox from "./Checkbox.vue";
-import PlayControl from "./PlayControl.vue";
-import Loading from "./Loading.vue";
-import firebase from "firebase";
-import { updateUserProfile } from "../javascript/db";
+import Checkbox from "../ui/Checkbox.vue";
+import PlayControl from "../common/PlayControl.vue";
+import Loading from "../ui/Loading.vue";
+import firebase from "firebase/app";
+import { updateUserProfile } from "../../javascript/db";
 
 export default {
   name: "Settings",
@@ -126,12 +148,14 @@ export default {
         photoURL: null,
       },
       appearanceSt: {
-        theme: "purpleSwirl",
-        visualizer: "swirl",
+        theme: "darkPurple",
+        visualizer: "purpleSpace",
         blur: false,
+        syncYoutube: false,
+        options: null,
       },
       gameSt: {
-        noteSpeedInSec: 2,
+        noteSpeed: 1,
         vibrate: true,
         perspective: false,
         blur: false,
@@ -142,17 +166,30 @@ export default {
   mounted() {
     this.getUserSettings();
   },
+  computed: {
+    visualizerIns() {
+      return this.$store.state.visualizerIns;
+    },
+  },
   watch: {
     "$store.state.userProfile"() {
       this.getUserSettings();
     },
+    "appearanceSt.visualizer"() {
+      this.$store.state.bg.overrideOptions = this.appearanceSt;
+      this.$store.state.bg.rerender();
+    },
+  },
+  beforeDestroy() {
+    this.$store.state.bg.overrideOptions = null;
+    this.$store.state.bg.rerender();
   },
   methods: {
     changeVisualizer() {
-      if (this.appearanceSt.theme === "purpleSwirl") {
-        this.appearanceSt.visualizer = "swirl";
+      if (this.appearanceSt.theme === "darkPurple") {
+        this.appearanceSt.visualizer = "purpleSpace";
       }
-      if (this.appearanceSt.theme === "flameSpace") {
+      if (this.appearanceSt.theme === "flameOrange") {
         this.appearanceSt.visualizer = "space";
       }
     },
@@ -178,6 +215,14 @@ export default {
         const user = firebase.auth().currentUser;
         await user.updateProfile({ displayName, photoURL });
 
+        if (this.visualizerIns.options) {
+          this.appearanceSt.options = {
+            themeStyle: this.visualizerIns.themeStyle,
+          };
+        } else {
+          this.appearanceSt.options = null;
+        }
+
         await updateUserProfile({
           appearanceSt: this.appearanceSt,
           gameSt: this.gameSt,
@@ -187,8 +232,28 @@ export default {
         this.$router.go();
       } catch (err) {
         this.loading = false;
-        console.error(err);
+        Logger.error(err);
       }
+    },
+    async resetPassword() {
+      const doContinue = await this.$store.state.gModal.show({
+        bodyText:
+          "Warning! Reseting your password would log your account out anywhere, and clear all social login tokens. Would you like to continue?",
+        okText: "Reset",
+      });
+      if (!doContinue) return;
+      const auth = firebase.auth();
+      auth
+        .sendPasswordResetEmail(this.profileSt.email)
+        .then(() => {
+          this.$store.state.alert.success("Password reset email sent");
+        })
+        .catch(() => {
+          this.$store.state.alert.error(
+            "Sorry, something went wrong, please try again later.",
+            8000
+          );
+        });
     },
   },
 };

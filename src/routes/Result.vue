@@ -1,104 +1,105 @@
 <template>
   <div>
-    <div v-if="sheet">
-      <PageBackground
-        songSrc="/audio/bgm/result.mp3"
-        :imageSrc="sheet.image"
-        :showNav="false"
-      ></PageBackground>
-      <div class="blurFilter">
-        <div class="center_logo darker flex_hori">
-          <div class="scoreCircle" ref="resultDiv">
-            <VueCircle
-              :progress="result.result.percentage"
-              :size="windowWidth > 1000 ? 260 : 180"
-              :fill="{ gradient: ['darkorange', '#ffab2d'] }"
-              empty-fill="rgba(100, 100, 100, .5)"
-              :thickness="10"
-              :start-angle="(-1 / 2) * Math.PI"
-              insert-mode="append"
-              :show-percent="false"
-            >
-              <div class="circleBg"></div>
-              <div class="score scoreShadow">{{ result.rank }}</div>
-              <div style="margin-top: -20px; transform: translateZ(20px);">
+    <v-bar class="fullPage">
+      <div v-if="sheet">
+        <PageBackground
+          songSrc="/audio/bgm/result.mp3"
+          :imageSrc="sheet.image"
+          :showNav="false"
+        ></PageBackground>
+        <div class="blurFilter">
+          <div class="center_logo darker flex_hori">
+            <div class="scoreCircle" ref="resultDiv">
+              <VueCircle
+                :progress="result.result.percentage"
+                :size="windowWidth > 1000 ? 260 : 180"
+                :fill="{ gradient }"
+                empty-fill="rgba(100, 100, 100, .5)"
+                :thickness="10"
+                :start-angle="(-1 / 2) * Math.PI"
+                insert-mode="append"
+                :show-percent="false"
+              >
+                <div class="circleBg"></div>
+                <div class="score" :style="scoreShadow">{{ result.rank }}</div>
+                <div style="margin-top: -20px; transform: translateZ(20px);">
+                  <ICountUp
+                    :endVal="result.result.percentage"
+                    :options="{ decimalPlaces: 2 }"
+                  />%
+                </div>
+              </VueCircle>
+            </div>
+
+            <div class="rightScore">
+              <div>
+                Score
+                <div
+                  class="markChip acheivementChip highScoreChip"
+                  v-if="newRecord"
+                >
+                  New Record
+                </div>
                 <ICountUp
-                  :endVal="result.result.percentage"
-                  :options="{ decimalPlaces: 2 }"
-                />%
+                  style="font-size: 2.7em; display: block;"
+                  :endVal="result.result.score"
+                  :options="{ decimalPlaces: 0 }"
+                />
               </div>
-            </VueCircle>
-          </div>
-
-          <div class="rightScore">
-            <div>
-              Score
-              <div
-                class="markChip acheivementChip highScoreChip"
-                v-if="newRecord"
-              >
-                New Record
-              </div>
-              <ICountUp
-                style="font-size: 2.7em; display: block;"
-                :endVal="result.result.score"
-                :options="{ decimalPlaces: 0 }"
-              />
-            </div>
-            <div>
-              Max Combo -
-              <ICountUp
-                :endVal="result.result.maxCombo"
-                :options="{ decimalPlaces: 0 }"
-              />
-              <div
-                class="markChip acheivementChip comboChip"
-                v-if="result.isFullCombo"
-              >
-                Full Combo
+              <div>
+                Max Combo -
+                <ICountUp
+                  :endVal="result.result.maxCombo"
+                  :options="{ decimalPlaces: 0 }"
+                />
+                <div
+                  class="markChip acheivementChip comboChip"
+                  v-if="result.isFullCombo"
+                >
+                  Full Combo
+                </div>
               </div>
             </div>
+
+            <div class="rightScore" style="text-align: left;">
+              <div>
+                <div class="markChip perfect">Perfect</div>
+                <ICountUp :endVal="result.result.marks.perfect" />
+              </div>
+              <div>
+                <div class="markChip good">Good</div>
+                <ICountUp :endVal="result.result.marks.good" />
+              </div>
+              <div>
+                <div class="markChip offbeat">Offbeat</div>
+                <ICountUp :endVal="result.result.marks.offbeat" />
+              </div>
+              <div>
+                <div class="markChip miss">Miss</div>
+                <ICountUp :endVal="result.result.marks.miss" />
+              </div>
+            </div>
           </div>
 
-          <div class="rightScore" style="text-align: left;">
-            <div>
-              <div class="markChip perfect">Perfect</div>
-              <ICountUp :endVal="result.result.marks.perfect" />
-            </div>
-            <div>
-              <div class="markChip good">Good</div>
-              <ICountUp :endVal="result.result.marks.good" />
-            </div>
-            <div>
-              <div class="markChip offbeat">Offbeat</div>
-              <ICountUp :endVal="result.result.marks.offbeat" />
-            </div>
-            <div>
-              <div class="markChip miss">Miss</div>
-              <ICountUp :endVal="result.result.marks.miss" />
+          <!-- song section -->
+          <div class="song_item_sec">
+            <div class="detail">
+              <div class="title">{{ sheet.song.title }}</div>
+              <div>{{ sheet.song.artist }}</div>
             </div>
           </div>
-        </div>
 
-        <!-- song section -->
-        <div class="song_item_sec">
-          <div class="detail">
-            <div class="title">{{ sheet.song.title }}</div>
-            <div>{{ sheet.song.artist }}</div>
+          <!-- profile section -->
+          <div
+            class="user_sec"
+            v-if="
+              $store.state.currentUser &&
+              result.uid === $store.state.currentUser.uid
+            "
+          >
+            <UserProfileCard :extend="true" />
           </div>
         </div>
-
-        <!-- profile section -->
-        <div
-          class="user_sec"
-          v-if="
-            $store.state.currentUser &&
-            result.uid === $store.state.currentUser.uid
-          "
-        >
-          <UserProfileCard :extend="true" />
-        </div>
-
         <div class="btn_sec">
           <div class="btn-action btn-dark" @click="replay">
             <v-icon name="redo" />
@@ -110,15 +111,15 @@
           </div>
         </div>
       </div>
-    </div>
-    <Loading :show="!sheet || !result">Syncing Results...</Loading>
+      <Loading :show="!sheet || !result">Syncing Results...</Loading>
+    </v-bar>
   </div>
 </template>
 
 <script>
-import PageBackground from "../components/PageBackground.vue";
-import UserProfileCard from "../components/UserProfileCard.vue";
-import Loading from "../components/Loading.vue";
+import PageBackground from "../components/common/PageBackground.vue";
+import UserProfileCard from "../components/common/UserProfileCard.vue";
+import Loading from "../components/ui/Loading.vue";
 import { getGameSheet, getResult, getBestScore } from "../javascript/db";
 import ICountUp from "vue-countup-v2";
 import VueCircle from "vue2-circle-progress/src/index.vue";
@@ -144,7 +145,36 @@ export default {
       newRecord: false,
     };
   },
-  computed: {},
+  computed: {
+    gradient() {
+      switch (this.result.rank) {
+        case "S":
+          return ["#ff9c5f", "yellow"];
+        case "A":
+          return ["#12c2e9", "#c471ed", "#f64f59"];
+        case "B":
+          return ["#00b09b", "#96c93d"];
+        case "C":
+          return ["#8360c3", "#2ebf91"];
+        case "D":
+          return ["darkorange", "#ffab2d"];
+        case "F":
+          return ["#EB5757", "#000000"];
+        default:
+          return ["#00b09b", "#96c93d"];
+      }
+    },
+    scoreShadow() {
+      const g = this.gradient;
+      return {
+        color: "#ffffff",
+        "text-shadow": `${g[0]} 0px 0px 20px, ${g[1]} 0px 0px 30px, ${
+          g[2] ?? g[1]
+        } 0px 0px 40px,
+    ${g[0]} 0px 0px 50px, ${g[1]} 0px 0px 75px`,
+      };
+    },
+  },
   watch: {},
   async mounted() {
     //FIXME add id and route validation
@@ -167,12 +197,18 @@ export default {
       this.windowWidth = window.innerWidth;
     };
 
-    this.$nextTick(() => {
-      VanillaTilt.init(this.$refs.resultDiv, {
-        max: 20,
-        scale: 1.1,
+    if (
+      navigator.userAgent.indexOf("Safari") === -1 ||
+      navigator.userAgent.indexOf("Chrome") !== -1
+    ) {
+      // add tilt effect on non-safari browsers
+      this.$nextTick(() => {
+        VanillaTilt.init(this.$refs.resultDiv, {
+          max: 20,
+          scale: 1.1,
+        });
       });
-    });
+    }
 
     this.$store.dispatch("updateUserProfile");
   },
@@ -225,11 +261,6 @@ export default {
   font-size: 10em;
   margin-top: -20px;
   transform: translateZ(40px);
-}
-.scoreShadow {
-  color: #ffffff;
-  text-shadow: #ffab2d 0px 0px 20px, #ffab2d 0px 0px 30px, #ffab2d 0px 0px 40px,
-    #ffab2d 0px 0px 50px, #ffab2d 0px 0px 75px;
 }
 .rightScore {
   text-align: left;
@@ -340,6 +371,7 @@ export default {
 
   .blurFilter {
     position: relative;
+    min-height: calc(100vh + 50px);
   }
   .center_logo {
     position: relative;
@@ -347,7 +379,7 @@ export default {
     height: auto;
     top: 0;
     left: 0;
-    margin-top: 180px;
+    margin-top: 150px;
   }
 
   .rightScore {
@@ -404,14 +436,22 @@ export default {
     width: fit-content;
   }
   .btn_sec {
-    position: relative;
+    position: fixed;
     right: auto;
-    bottom: auto;
-    margin: 20px auto;
-    width: fit-content;
+    bottom: 0;
+    margin: 0;
+    width: 100%;
+    padding: 20px;
+    z-index: 9000;
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    box-sizing: border-box;
+    justify-content: space-around;
   }
   .btn-dark {
-    width: 120px;
+    flex: 1;
   }
 }
 </style>

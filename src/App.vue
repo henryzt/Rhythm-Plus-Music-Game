@@ -28,14 +28,17 @@
 
 <script>
 import Audio from "./javascript/audio.js";
-import ModalGlobal from "./components/ModalGlobal.vue";
-import FloatingAlert from "./components/FloatingAlert.vue";
-import PageBackground from "./components/PageBackground.vue";
+import ModalGlobal from "./components/ui/ModalGlobal.vue";
+import FloatingAlert from "./components/ui/FloatingAlert.vue";
+import PageBackground from "./components/common/PageBackground.vue";
 import "vue-awesome/icons/volume-up";
 import "vue-awesome/icons/volume-mute";
 import "vue-awesome/icons/expand";
 import "vue-awesome/icons/compress";
 import "vue-awesome/icons/plus";
+import "vue-awesome/icons/redo";
+import "vue-awesome/icons/cog";
+import "vue-awesome/icons/sign-out-alt";
 
 export default {
   name: "App",

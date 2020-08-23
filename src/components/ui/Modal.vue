@@ -6,7 +6,7 @@
           <slot name="header">
             {{ titleText }}
             <div class="btn-action btn-close" @click="close" v-if="showCancel">
-              x
+              <v-icon name="times" />
             </div>
           </slot>
         </header>
@@ -59,27 +59,33 @@ export default {
   data: function () {
     return {
       showModal: false,
+      resolve: null,
     };
   },
   methods: {
     show() {
       this.showModal = true;
       this.$nextTick(this.addTilt);
+      return new Promise((resolve) => {
+        this.resolve = resolve;
+      });
     },
     ok() {
       this.showModal = false;
       this.$emit("ok");
+      if (this.resolve) this.resolve(true);
     },
     close() {
       this.showModal = false;
       this.$emit("close");
+      if (this.resolve) this.resolve(false);
     },
     addTilt() {
       if (this.$refs.modal) {
         VanillaTilt.init(this.$refs.modal, {
           max: 0,
           glare: true,
-          "max-glare": 0.3,
+          "max-glare": 0.2,
         });
       }
     },

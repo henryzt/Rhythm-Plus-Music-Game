@@ -1,10 +1,14 @@
-import firebase from "firebase";
+import firebase from "firebase/app";
 import "firebase/firestore";
+import "firebase/analytics";
+import "firebase/functions";
+import "firebase/auth";
+import "firebase/performance";
 
 // firebase init goes here
 const config = {
   apiKey: "AIzaSyAdeWHYbSj2iErECQTncQLrz9WdfbuiCsQ",
-  authDomain: "rhythm-plus.firebaseapp.com",
+  authDomain: "auth.rhythm-plus.com",
   databaseURL: "https://rhythm-plus.firebaseio.com",
   projectId: "rhythm-plus",
   storageBucket: "rhythm-plus.appspot.com",
@@ -14,28 +18,32 @@ const config = {
 };
 firebase.initializeApp(config);
 
+// Init analytics
+firebase.analytics();
+
 // firebase utils
 const db = firebase.firestore();
 const firestore = firebase.firestore; //db instance
 const auth = firebase.auth();
 const functions = firebase.functions();
+const analytics = firebase.analytics;
 const currentUser = auth.currentUser;
 
 // Initialize Performance Monitoring and get a reference to the service
 const perf = firebase.performance();
-
-// Init analytics
-firebase.analytics();
 
 // firebase collections
 const usersCollection = db.collection("users");
 const songsCollection = db.collection("songs");
 const sheetsCollection = db.collection("sheets");
 const resultsCollection = db.collection("results");
+const tagsCollection = db.collection("tags");
+const playsCollection = db.collection("plays");
 
 export {
   db,
   firestore,
+  analytics,
   auth,
   currentUser,
   perf,
@@ -44,4 +52,6 @@ export {
   songsCollection,
   sheetsCollection,
   resultsCollection,
+  tagsCollection,
+  playsCollection,
 };

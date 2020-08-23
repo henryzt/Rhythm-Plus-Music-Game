@@ -13,7 +13,7 @@
         <span class="checkmark"></span>
       </label>
     </div>
-    <div style="width: 25%;" class="time" @dblclick="seek(note)">
+    <div style="width: 25%;" class="time" @click="seek(note)">
       {{ note.t }}
     </div>
     <div style="width: 55%;">
@@ -39,7 +39,10 @@ export default {
   props: ["index", "noteToEdit", "instance", "parent", "source", "table"],
   computed: {
     isEditing() {
-      return this.noteToEdit == this.note;
+      return (
+        this.noteToEdit == this.note ||
+        (Array.isArray(this.noteToEdit) && this.noteToEdit.includes(this.note))
+      );
     },
     note() {
       return this.source;

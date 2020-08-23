@@ -22,7 +22,7 @@ export default class DropTrack {
       const createParticle = () => {
         this.particleEffect.create(
           this.x,
-          this.vm.checkHitLineY,
+          this.game.checkHitLineY,
           this.width,
           10,
           this.vm.markJudge
@@ -31,6 +31,7 @@ export default class DropTrack {
       if (this.vm.playMode && this.noteArr && this.noteArr[0]) {
         const noteToDismiss = this.noteArr[0];
         if (noteToDismiss.getDiffPercentage() < 0.5) {
+          noteToDismiss.didUserHold = true;
           noteToDismiss.calculatePercent();
           if (noteToDismiss.isHoldNote) {
             if (noteToDismiss.noteFailed) return;
@@ -77,12 +78,13 @@ export default class DropTrack {
 
   dropNote(key, keyObj) {
     if (key.includes(this.keyBind) && !this.vm.playMode) {
-      this.addNoteToArr(keyObj);
+      this.addNoteToArr(keyObj, null, this.game.checkHitLineY);
       this.playSoundEffect();
     }
   }
 
-  addNoteToArr(keyObj, color) {
+  // TODO fix the color and y logic here
+  addNoteToArr(keyObj, color, y) {
     this.noteArr.push(
       new Note(
         this.vm,
@@ -90,6 +92,7 @@ export default class DropTrack {
         keyObj,
         this.keyBind,
         this.x,
+        y,
         this.width,
         color
       )
@@ -158,9 +161,7 @@ export default class DropTrack {
 
     // hit line
     ctx.fillStyle = "#ffffff";
-    const { playMode, checkHitLineY } = this.vm;
-    const hitLineY = playMode ? checkHitLineY : 0;
-    ctx.fillRect(this.x, hitLineY, this.width, 10);
+    ctx.fillRect(this.x, this.game.checkHitLineY, this.width, 10);
 
     // in editor, one time update
     if (this.game.paused) return;
@@ -170,14 +171,14 @@ export default class DropTrack {
 
     // create note
     const { timeArr, timeArrIdx } = this.game;
-    const timing = this.game.getNoteTiming();
+    const timing = this.game.playTime;
     const needNote =
       !this.game.paused &&
       timeArrIdx < timeArr.length &&
       timing >= timeArr[timeArrIdx].t &&
       timeArr[timeArrIdx].k.includes(this.keyBind);
     if (needNote) {
-      const color = playMode ? "yellow" : "grey";
+      const color = this.vm.playMode ? "yellow" : "grey";
       if (timing - timeArr[timeArrIdx].t < 1) {
         this.addNoteToArr(timeArr[timeArrIdx], color);
       }

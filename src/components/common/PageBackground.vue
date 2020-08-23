@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="render">
     <Navbar v-if="showNav"></Navbar>
     <UserProfileCard></UserProfileCard>
     <div
@@ -11,19 +11,19 @@
       }"
     ></div>
     <Visualizer
-      v-else-if="$store.state.theme"
+      v-else-if="themeOptions"
       ref="visualizer"
       style="opacity: 1;"
-      :setVisualizer="$store.state.theme.visualizer"
-      :setBlur="$store.state.theme.blur"
+      :setVisualizer="themeOptions.visualizer"
+      :setBlur="themeOptions.blur"
       :autoUpdate="true"
     ></Visualizer>
   </div>
 </template>
 
 <script>
-import Visualizer from "../components/Visualizer.vue";
-import Navbar from "../components/Navbar.vue";
+import Visualizer from "./Visualizer.vue";
+import Navbar from "../ui/Navbar.vue";
 import UserProfileCard from "./UserProfileCard.vue";
 
 export default {
@@ -35,7 +35,7 @@ export default {
     },
     visualizer: {
       type: String,
-      default: "swirl",
+      default: "purpleSpace",
     },
     imageSrc: {
       type: String,
@@ -54,7 +54,14 @@ export default {
   data() {
     return {
       audio: null,
+      render: true,
+      overrideOptions: null,
     };
+  },
+  computed: {
+    themeOptions() {
+      return this.overrideOptions ?? this.$store.state.theme;
+    },
   },
   mounted() {
     if (this.songSrc) {
@@ -62,6 +69,15 @@ export default {
     } else {
       this.$store.state.audio.playBgm();
     }
+    this.$store.commit("setBackground", this);
+  },
+  methods: {
+    rerender() {
+      this.render = false;
+      this.$nextTick(() => {
+        this.render = true;
+      });
+    },
   },
   destroyed() {},
 };

@@ -1,8 +1,8 @@
 {
   "name": "rhythm-plus-game",
-  "version": "1.0.0",
+  "version": "1.0.6",
   "private": true,
-  "description": "",
+  "description": "Online Vertical Scrolling Rhythm Game",
   "author": {
     "name": "henryz00"
   },
@@ -14,9 +14,12 @@
     "build": "NODE_ENV=production webpack --mode production",
     "clean": "rm -rf ./dist",
     "serve": "yarn run build && serve .",
+    "update": "npm version patch -m 'Upgrade to %s' && git push && git push --tags",
     "deploy": "yarn build && firebase deploy && git push"
   },
   "dependencies": {
+    "@sentry/browser": "^5.20.0",
+    "@sentry/integrations": "^5.20.0",
     "animate.css": "^4.1.0",
     "axios": "^0.19.2",
     "countup.js": "^2.0.5",
@@ -30,7 +33,9 @@
     "vue-awesome": "^4.0.2",
     "vue-countup-v2": "^4.0.0",
     "vue-moment": "^4.1.0",
+    "vue-perfect-scrollbar": "^0.2.1",
     "vue-router": "^3.3.4",
+    "vue-select": "^3.10.7",
     "vue-slider-component": "^3.1.5",
     "vue-spinner": "^1.0.3",
     "vue-virtual-scroll-list": "^2.3.0",
@@ -39,10 +44,10 @@
     "vuex": "^3.5.1"
   },
   "devDependencies": {
-    "@vue/eslint-config-prettier": "^6.0.0",
     "@babel/cli": "^7.10.4",
     "@babel/core": "^7.10.4",
     "@babel/preset-env": "^7.10.4",
+    "@vue/eslint-config-prettier": "^6.0.0",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.1.0",
     "babel-polyfill": "^6.26.0",
@@ -53,10 +58,17 @@
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-vue": "^6.2.2",
+    "file-loader": "^6.0.0",
     "html-webpack-plugin": "^4.3.0",
     "husky": "^4.2.5",
+    "less": "^3.12.2",
+    "less-loader": "^6.2.0",
     "lint-staged": "^10.2.11",
+    "node-sass": "^4.14.1",
     "prettier": "^2.0.5",
+    "pug-plain-loader": "^1.0.0",
+    "sass-loader": "^9.0.3",
+    "url-loader": "^4.1.0",
     "vue-loader": "^15.9.3",
     "vue-template-compiler": "^2.6.11",
     "webpack": "^4.43.0",
@@ -69,7 +81,7 @@
     }
   },
   "lint-staged": {
-    "*.js": [
+    "*.{js,vue}": [
       "prettier --write",
       "eslint --fix"
     ],

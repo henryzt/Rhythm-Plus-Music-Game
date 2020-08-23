@@ -103,6 +103,10 @@ export default {
   padding: 5px 0;
 }
 
+.detailed .sBlock {
+  margin: 10px;
+}
+
 .compactDetailed .sBlock {
   min-width: 50px;
   text-align: center;

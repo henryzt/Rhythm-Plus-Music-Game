@@ -3,6 +3,13 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const VueLoaderPlugin = require("vue-loader/lib/plugin");
 const CopyPlugin = require("copy-webpack-plugin");
+const packageJson = require("./package.json");
+const version = packageJson.version || 0; //TODO change to ?? once netlify resolves their issue
+const versionPrefix = "alpha";
+const commitHash = require("child_process")
+  .execSync("git rev-parse --short HEAD")
+  .toString()
+  .trim();
 
 const isProduction = () => process.env.NODE_ENV === "production";
 
@@ -22,6 +29,7 @@ module.exports = {
     port: 3000,
     hotOnly: true,
     historyApiFallback: true,
+    clientLogLevel: "warn",
   },
   optimization: isProduction()
     ? {
@@ -62,6 +70,21 @@ module.exports = {
           },
         ],
       },
+      {
+        test: /\.(png|jpg|gif)$/i,
+        use: [
+          {
+            loader: "url-loader",
+            options: {
+              limit: 8192,
+            },
+          },
+        ],
+      },
+      {
+        test: /\.less$/,
+        use: ["vue-style-loader", "css-loader", "less-loader"],
+      },
     ],
   },
   plugins: [
@@ -69,6 +92,8 @@ module.exports = {
     new webpack.DefinePlugin({
       "process.env": {
         NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+        APP_VERSION: `"${versionPrefix}-${version}"`,
+        COMMIT_HASH: `"${commitHash}"`,
       },
     }),
     new HtmlWebpackPlugin({

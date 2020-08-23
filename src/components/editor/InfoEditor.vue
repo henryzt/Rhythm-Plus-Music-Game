@@ -31,6 +31,7 @@
           @submitForm="submitSongForm"
           @submitExisting="submitExistingSong"
           :class="{ disabled: !$parent.isSongOwner }"
+          :tags="tags"
         ></InfoForm>
         <div v-if="!$parent.isSongOwner">
           You have no edit access to this song.
@@ -47,11 +48,7 @@
       <div v-if="$parent.songInfo.id">
         <div>
           <div
-            v-if="!sheetFormOptions.isUpdate"
-            @click="
-              $router.push('/editor/');
-              $parent.reloadEditor();
-            "
+            @click="changeSong"
             style="
               float: right;
               line-height: 30px;
@@ -68,6 +65,7 @@
             item-type="Sheet"
             @submitForm="submitSheetForm"
             @submitExisting="submitExistingSheet"
+            :tags="tags"
             :class="{ disabled: !$parent.isSheetOwner }"
           >
             <input
@@ -149,8 +147,9 @@ import {
   getSheetList,
   updateSong,
   updateSheet,
-} from "../javascript/db";
-import InfoForm from "../components/InfoForm.vue";
+  getTags,
+} from "../../javascript/db";
+import InfoForm from "./InfoForm.vue";
 
 export default {
   name: "InfoEditor",
@@ -164,7 +163,7 @@ export default {
         artist: null,
         image: null,
         srcMode: null,
-        tags: null,
+        tags: [],
       },
       songFormOptions: {
         isYoutubeMode: true,
@@ -189,6 +188,7 @@ export default {
         isUpdate: false,
       },
       welcomeScreen: true,
+      tags: [],
     };
   },
   computed: {},
@@ -205,6 +205,7 @@ export default {
   async mounted() {
     this.songFormOptions.publicList = await getSongList();
     this.songFormOptions.privateList = await getSongList(true);
+    this.tags = await getTags();
   },
   methods: {
     continueExisting() {
@@ -215,14 +216,16 @@ export default {
     async submitSongForm() {
       try {
         if (this.songFormOptions.isUpdate) {
+          if (!(await this.$parent.saveWarning())) return;
           this.$parent.loading = true;
           await updateSong(this.songFormData);
           this.$router.push({ query: { update: true } });
           this.$parent.reloadEditor();
         } else {
+          this.$parent.loading = true;
           let songId = await createSong(this.songFormData);
           this.$parent.songInfo = await getSong(songId);
-          this.getSheets();
+          this.getSheets(true);
           this.$store.state.alert.success("Song created");
         }
       } catch (err) {
@@ -231,18 +234,20 @@ export default {
           "An error occurred, please try again",
           5000
         );
-        console.error(err);
+        Logger.error(err);
       }
     },
     submitExistingSong() {
       let selectedSong = this.songFormOptions.selected;
       if (selectedSong) {
         this.$parent.songInfo = selectedSong;
-        this.getSheets();
+        this.getSheets(true);
       }
     },
-    async getSheets() {
+    async getSheets(addQuery) {
       const songId = this.$parent.songInfo.id;
+      if (addQuery)
+        this.$router.replace({ path: "/editor", query: { song: songId } });
       this.sheetFormOptions.publicList = await getSheetList(songId);
       this.sheetFormOptions.privateList = await getSheetList(
         songId,
@@ -251,9 +256,10 @@ export default {
       );
     },
     async submitSheetForm() {
-      this.$parent.loading = true;
       try {
         if (this.sheetFormOptions.isUpdate) {
+          if (!(await this.$parent.saveWarning())) return;
+          this.$parent.loading = true;
           this.sheetFormData.startAt = this.sheetFormData.startAt
             ? Number(this.sheetFormData.startAt)
             : null;
@@ -264,6 +270,7 @@ export default {
           await updateSheet(this.sheetFormData);
           this.$router.push({ query: { save: true } });
         } else {
+          this.$parent.loading = true;
           const songId = this.$parent.songInfo.id;
           this.sheetFormData.songId = songId;
           let sheetId = await createSheet(this.sheetFormData);
@@ -276,7 +283,7 @@ export default {
           "An error occurred, please try again",
           5000
         );
-        console.error(err);
+        Logger.error(err);
       }
     },
     submitExistingSheet() {
@@ -296,6 +303,12 @@ export default {
         this.songFormData.image.includes("img.youtube.com")
       ) {
         this.songFormData.image = null;
+      }
+    },
+    async changeSong() {
+      if (await this.$parent.saveWarning()) {
+        this.$router.push("/editor/");
+        this.$parent.reloadEditor();
       }
     },
   },

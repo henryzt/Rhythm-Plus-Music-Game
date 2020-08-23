@@ -26,6 +26,7 @@
       "
     >
       <div style="opacity: 0.4;">Select Sheet or Press Play</div>
+
       <div v-if="sheets" key="1">
         <div v-for="sheet in sheets" :value="sheet.id" :key="sheet.id">
           <div
@@ -39,24 +40,26 @@
       <div style="padding: 20px;" v-else key="2">Sheets loading...</div>
     </div>
 
-    <div class="bestRes" v-if="bestResult">
-      <div class="brBlock">
-        <div class="brTxt">Rank</div>
-        {{ bestResult.rank }}
+    <transition name="height">
+      <div class="bestRes" v-if="bestResult">
+        <div class="brBlock">
+          <div class="brTxt">Rank</div>
+          {{ bestResult.rank }}
+        </div>
+        <div class="brBlock">
+          <div class="brTxt">Combo</div>
+          {{ bestResult.result.maxCombo }}
+        </div>
+        <div class="brBlock">
+          <div class="brTxt">Accuracy</div>
+          {{ bestResult.result.percentage.toFixed(2) }}%
+        </div>
+        <div class="brBlock">
+          <div class="brTxt">Score</div>
+          {{ bestResult.result.score.toFixed(0) }}
+        </div>
       </div>
-      <div class="brBlock">
-        <div class="brTxt">Combo</div>
-        {{ bestResult.result.maxCombo }}
-      </div>
-      <div class="brBlock">
-        <div class="brTxt">Accuracy</div>
-        {{ bestResult.result.percentage.toFixed(2) }}%
-      </div>
-      <div class="brBlock">
-        <div class="brTxt">Score</div>
-        {{ bestResult.result.score.toFixed(0) }}
-      </div>
-    </div>
+    </transition>
 
     <div style="padding: 20px 0;">
       <Button text="Play!" @click="startSelected"></Button>
@@ -66,9 +69,9 @@
 </template>
 
 <script>
-import Button from "./Button.vue";
+import Button from "../ui/Button.vue";
 import SheetDetailLine from "./SheetDetailLine.vue";
-import { getBestScore } from "../javascript/db";
+import { getBestScore } from "../../javascript/db";
 
 export default {
   name: "SongDetailPanel",
@@ -92,16 +95,22 @@ export default {
   },
   watch: {
     song() {
-      if (this.song) this.selectedSheet = null;
+      if (this.song) {
+        this.selectedSheet = null;
+        this.bestResult = null;
+      }
     },
-    sheets() {
-      if (this.song) this.selectedSheet = null;
+    async sheets() {
+      if (this.song) {
+        this.selectedSheet = null;
+        if (this.sheets?.[0])
+          this.bestResult = await getBestScore(this.sheets[0].id);
+      }
     },
     async selectedSheet() {
+      this.bestResult = null;
       if (this.selectedSheet) {
         this.bestResult = await getBestScore(this.selectedSheet.id);
-      } else {
-        this.bestResult = null;
       }
     },
   },
@@ -161,16 +170,29 @@ export default {
   justify-content: space-evenly;
   width: 100%;
   margin-top: 10px;
+  overflow: hidden;
 }
 .brBlock {
   width: 30%;
   padding: 10px;
 }
 .brBlock + .brBlock {
-  border-left: 1px solid grey;
+  border-left: 1px solid rgba(128, 128, 128, 0.37);
 }
 .brTxt {
   font-size: 14px;
-  color: grey;
+  color: rgb(165, 165, 165);
+}
+
+.height-enter-active,
+.height-leave-active {
+  transition: all 0.3s ease;
+}
+.height-enter,
+.height-leave-to {
+  height: 0;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
 }
 </style>

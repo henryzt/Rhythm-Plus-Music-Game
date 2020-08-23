@@ -19,7 +19,7 @@ export default class GameInstance {
     this.timeArr = [];
     this.timeArrIdx = 0;
 
-    // time elapsed relative to audio play time (+Number(vm.noteSpeedInSec))
+    // time elapsed relative to audio play time (+Number(noteDelay))
     this.currentTime = 0;
     this.playTime = 0; // Current time + note drop delay
     this.startSongAt = 0;
@@ -44,6 +44,10 @@ export default class GameInstance {
 
     // timeouts for holding note
     this.holdingNoteTimeout = {};
+
+    // white line checking note hit
+    this.checkHitLineY = 0;
+    this.noteSpeedPxPerSec = 0;
 
     this.ytPlayer = new YoutubePlayer(vm);
     this.feverEff = new FeverEffect(vm, this);
@@ -92,7 +96,7 @@ export default class GameInstance {
     }
   }
 
-  reposition() {
+  async reposition() {
     if (this.vm.wrapper) {
       this.canvas.style.height = this.vm.contentHeight ?? "100%";
       this.canvas.width = this.vm.wrapper.clientWidth;
@@ -120,12 +124,16 @@ export default class GameInstance {
     this.endX = startX + (trackWidth + 1) * this.dropTrackArr.length - 1;
 
     const isMobile = window.innerWidth < 1000;
-    const hitLineProp = isMobile ? 8.5 : 9;
+    let hitLineProp = isMobile ? 8.5 : 9;
+    if (!this.vm.playMode) hitLineProp = this.vm.options.lowerHitLine ? 4 : 0;
 
-    this.vm.checkHitLineY = (this.canvas.height / 10) * hitLineProp;
-    this.vm.noteSpeedPxPerSec =
-      this.vm.checkHitLineY / Number(this.vm.noteSpeedInSec);
+    this.checkHitLineY = (this.canvas.height / 10) * hitLineProp;
+    this.noteSpeedPxPerSec = 380 * this.vm.noteSpeed * this.vm.playbackSpeed;
+    this.noteDelay =
+      (this.checkHitLineY / this.noteSpeedPxPerSec) * this.vm.playbackSpeed;
+    await this.updateCurrentTime();
     this.repositionNotes();
+    Logger.log("Repositioned");
   }
 
   registerInput() {
@@ -146,7 +154,12 @@ export default class GameInstance {
       (event) => {
         this.onKeyDown(event.key.toLowerCase());
         if (event.keyCode === KeyCode.ESC || event.keyCode === KeyCode.P) {
-          this.vm.pauseGame();
+          if (!this.vm.started) return;
+          if (this.paused) {
+            this.vm.resumeGame(true);
+          } else {
+            this.vm.pauseGame();
+          }
         }
         if (this.vm.inEditor) {
           // editor time minor adjust by arrow keys
@@ -173,7 +186,6 @@ export default class GameInstance {
     const tapEvent = (e, start) => {
       e.preventDefault();
       for (let pointer of e.changedTouches) {
-        console.log(e);
         const x = pointer.clientX;
 
         this.dropTrackArr.forEach((track) => {
@@ -226,8 +238,8 @@ export default class GameInstance {
     if (!this.trackKeyBind.includes(key)) return;
     // if in create mode, create note
     if (!this.vm.playMode && !this.paused) {
-      const cTime = await this.getCurrentTime();
-      this.createSingleNote(key, cTime);
+      await this.updateCurrentTime();
+      this.createSingleNote(key, this.currentTime);
       const singleNoteObj = this.timeArr[this.lastAddedIdx];
       // convert to hold note
       this.holdingNoteTimeout[key] = setTimeout(() => {
@@ -247,8 +259,8 @@ export default class GameInstance {
     this.keyHoldingStatus[key] = false;
     clearTimeout(this.holdingNoteTimeout[key]);
     if (this.holdingNote[key]) {
-      const cTime = await this.getCurrentTime();
-      this.holdingNote[key].h[key] = cTime; // Hold note creation complete, set the end time
+      await this.updateCurrentTime();
+      this.holdingNote[key].h[key] = this.currentTime; // Hold note creation complete, set the end time
       this.holdingNote[key] = null; // set current holding key store to null
     }
     for (const track of this.dropTrackArr) {
@@ -316,7 +328,7 @@ export default class GameInstance {
   }
 
   createHoldNote(key, obj) {
-    console.log("hold", key, obj);
+    Logger.log("hold", key, obj);
     obj.h = obj.h ?? {}; // key.hold = {key: endTime}
     obj.h[key] = -1; // -1: not yet completed
     this.holdingNote[key] = obj;
@@ -349,8 +361,7 @@ export default class GameInstance {
   update() {
     if (this.destoryed) return;
     requestAnimationFrame(this.update.bind(this));
-    if (this.vm.started && this.paused && !this.vm.inEditor) return;
-    if (!this.vm.inEditor) this.getCurrentTime();
+    if (!this.vm.inEditor) this.updateCurrentTime();
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.vm.visualizerInstance.renderVisualizer();
     this.feverEff.update();
@@ -359,6 +370,17 @@ export default class GameInstance {
       shouldAdvance = track.update() || shouldAdvance;
     }
     if (shouldAdvance) this.timeArrIdx++;
+    if (this.vm.perspective) this.drawFadeOut();
+  }
+
+  drawFadeOut() {
+    this.ctx.globalCompositeOperation = "destination-out";
+    let gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
+    gradient.addColorStop(0, "rgba(255, 255, 255, 1)");
+    gradient.addColorStop(0.3, "rgba(255, 255, 255, 0)");
+    this.ctx.fillStyle = gradient;
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.globalCompositeOperation = "source-over";
   }
 
   startSong() {
@@ -366,18 +388,21 @@ export default class GameInstance {
     const startTime = Date.now();
     window.focus();
     this.seekTo(this.startSongAt);
+    this.reposition();
+    const prePlayTime = this.noteDelay + this.startSongAt;
 
     const intervalPrePlay = setInterval(() => {
       const elapsedTime = Date.now() - startTime;
-      this.playTime = elapsedTime / 1000 + this.startSongAt;
+      this.playTime =
+        (elapsedTime * this.vm.playbackSpeed) / 1000 + this.startSongAt;
       this.paused = false;
       if (this.seekingTime && this.seekingTime > this.startSongAt) {
         this.gameTimingLoop();
         this.seekTo(this.currentTime);
         this.seeked();
       }
-      if (this.playTime > this.vm.noteSpeedInSec + this.startSongAt) {
-        if (!this.vm.started || !this.paused) this.resumeGame();
+      if (this.playTime > prePlayTime) {
+        if (!this.vm.started || !this.paused) this.resumeGame(true);
         clearInterval(intervalPrePlay);
         clearInterval(this.intervalPlay);
         this.vm.started = true;
@@ -387,11 +412,10 @@ export default class GameInstance {
   }
 
   async gameTimingLoop() {
-    await this.getCurrentTime();
-
-    const gameEndAt = this.vm.currentSong.length;
+    await this.updateCurrentTime();
 
     // check game end
+    const gameEndAt = this.vm.currentSong.length;
     if (this.currentTime >= gameEndAt) {
       if (!this.vm.inEditor) {
         this.vm.gameEnded();
@@ -406,7 +430,7 @@ export default class GameInstance {
     }
   }
 
-  async getCurrentTime() {
+  async updateCurrentTime() {
     let cTime;
     if (this.seekingTime) {
       cTime = this.seekingTime;
@@ -417,20 +441,17 @@ export default class GameInstance {
           : this.audio.getCurrentTime();
       if (!this.vm.started) return cTime;
     }
-    this.playTime = cTime + this.vm.noteSpeedInSec;
+    this.playTime = cTime + this.noteDelay;
     this.currentTime = cTime;
-    return cTime;
-  }
-
-  getNoteTiming() {
-    return this.vm.playMode ? this.playTime : this.currentTime; // in editor mode, time without note drop delay is used.
   }
 
   isWithinTime(note) {
     // check if a note with start time is currently on screen
     const time = note.t;
-    const sec = Number(this.vm.noteSpeedInSec);
-    const current = Number(this.getNoteTiming());
+    const current = this.playTime;
+    const afterHitLineSec =
+      (this.canvas.height - this.checkHitLineY) / this.noteSpeedPxPerSec;
+    const sec = this.noteDelay + afterHitLineSec;
     let isWithinStartTime = time >= current - sec;
     let isWithinEndTime = time <= current;
     if (note.h) {
@@ -489,10 +510,10 @@ export default class GameInstance {
     }
   }
 
-  resumeGame() {
+  resumeGame(firstPlay) {
+    if (!firstPlay && this.paused) this.reposition();
     this.paused = false;
     this.seekingTime = null;
-    this.reposition();
     if (this.vm.srcMode === "url") {
       this.audio.play();
     } else if (this.vm.srcMode === "youtube") {

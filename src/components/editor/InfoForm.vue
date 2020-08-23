@@ -23,12 +23,15 @@
           placeholder="Artist"
           type="text"
         />
-        <input
+        <v-select
+          class="songSelect"
+          :options="tags"
           v-model="formData.tags"
-          name="tags"
-          placeholder="Tags (Comma Seperate)"
-          type="text"
-        />
+          placeholder="Tags"
+          taggable
+          multiple
+          push-tags
+        ></v-select>
         <select id="songSelect" v-model="formData.srcMode">
           <option :value="null" disabled>Select music source...</option>
           <option value="youtube">Youtube Video</option>
@@ -132,9 +135,15 @@
 </template>
 
 <script>
+import "vue-select/dist/vue-select.css";
+import vSelect from "vue-select";
+
 export default {
   name: "InfoForm",
-  props: ["formData", "formOption", "isCreate", "itemType"],
+  props: ["formData", "formOption", "isCreate", "itemType", "tags"],
+  components: {
+    vSelect,
+  },
   computed: {
     actionText() {
       return this.formOption.isUpdate ? "Update" : "Create";

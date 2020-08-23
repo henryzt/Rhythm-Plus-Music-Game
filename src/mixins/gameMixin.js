@@ -6,9 +6,8 @@ export default {
       audio: null,
       canvas: null,
       ctx: null,
-      checkHitLineY: null, // hit line postion (white line)
-      noteSpeedInSec: 2,
-      noteSpeedPxPerSec: null, // note speed
+      noteSpeed: 1,
+      playbackSpeed: 1,
       playMode: true, // play or edit mode
       currentSong: null,
       result: {
@@ -25,7 +24,7 @@ export default {
       srcMode: "youtube",
       instance: null,
       visualizerInstance: null,
-      youtubeId: "jNQXAC9IVRw",
+      youtubeId: "XIMLoLxmTDw",
       perspective: false,
       vibrate: true,
       advancedMenuOptions: false,
@@ -55,7 +54,7 @@ export default {
     },
   },
   watch: {
-    noteSpeedInSec() {
+    noteSpeed() {
       this.instance.reposition();
     },
     showStartButton() {
@@ -83,7 +82,7 @@ export default {
     const gameSettings = this.$store.state?.userProfile?.gameSt;
     if (gameSettings) {
       this.blur = gameSettings.blur;
-      this.noteSpeedInSec = gameSettings.noteSpeedInSec;
+      this.noteSpeed = gameSettings.noteSpeed ?? 1;
       this.perspective = gameSettings.perspective;
       this.vibrate = gameSettings.vibrate;
     }
@@ -112,7 +111,6 @@ export default {
     },
     feverTimer() {
       if (!this.started || this.instance.paused || !this.playMode) return;
-      console.log(this.fever.percent, this.fever.time, this.fever.value);
       if (this.fever.value < 1) this.fever.value = 1;
       if (this.fever.percent < 0) this.fever.percent = 0;
       if (this.fever.percent >= 1) {
@@ -130,11 +128,11 @@ export default {
       }
     },
     ytPaused() {
-      console.log("pasued");
+      Logger.log("pasued");
       if (this.started) this.pauseGame();
     },
     ytError() {
-      console.error("youtube error");
+      Logger.error("youtube error");
       this.instance.loading = false;
       this.$store.state.gModal.show({
         bodyText:

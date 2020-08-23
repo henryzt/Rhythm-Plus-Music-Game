@@ -142,10 +142,6 @@ export const store = new Vuex.Store({
         state.theme.themeStyle = userTheme.options?.themeStyle;
       }
     },
-    setThemePreview(state, val) {
-      console.log(val);
-      Object.assign(state.theme, val);
-    },
     setProfilePciture(state, val) {
       state.profilePicture = val;
     },

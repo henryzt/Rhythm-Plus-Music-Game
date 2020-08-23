@@ -176,15 +176,12 @@ export default {
       this.getUserSettings();
     },
     "appearanceSt.visualizer"() {
-      this.$store.commit("setThemePreview", this.appearanceSt);
+      this.$store.state.bg.overrideOptions = this.appearanceSt;
       this.$store.state.bg.rerender();
     },
   },
   beforeDestroy() {
-    this.$store.commit(
-      "setThemePreview",
-      this.$store.state.userProfile.appearanceSt
-    );
+    this.$store.state.bg.overrideOptions = null;
     this.$store.state.bg.rerender();
   },
   methods: {

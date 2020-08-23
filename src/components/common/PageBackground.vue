@@ -11,11 +11,11 @@
       }"
     ></div>
     <Visualizer
-      v-else-if="$store.state.theme"
+      v-else-if="themeOptions"
       ref="visualizer"
       style="opacity: 1;"
-      :setVisualizer="$store.state.theme.visualizer"
-      :setBlur="$store.state.theme.blur"
+      :setVisualizer="themeOptions.visualizer"
+      :setBlur="themeOptions.blur"
       :autoUpdate="true"
     ></Visualizer>
   </div>
@@ -55,7 +55,13 @@ export default {
     return {
       audio: null,
       render: true,
+      overrideOptions: null,
     };
+  },
+  computed: {
+    themeOptions() {
+      return this.overrideOptions ?? this.$store.state.theme;
+    },
   },
   mounted() {
     if (this.songSrc) {

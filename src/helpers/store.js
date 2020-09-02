@@ -43,6 +43,7 @@ export const store = new Vuex.Store({
         this.commit("setProfilePciture", null);
         this.commit("setTheme");
       }
+      this.state.initialized = true;
     },
     async fetchProfilePicture({ commit, state }) {
       if (state.currentUser) {
@@ -69,7 +70,6 @@ export const store = new Vuex.Store({
           let data = res.data();
           commit("setUserProfile", data ?? {});
           commit("setTheme");
-          state.initialized = true;
           analytics().logEvent("app_initialized");
         } catch (err) {
           Logger.error(err);

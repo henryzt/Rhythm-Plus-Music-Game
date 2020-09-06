@@ -8,6 +8,10 @@ import {
   tagsCollection,
 } from "../helpers/firebaseConfig"; //usersCollection
 import { store } from "../helpers/store";
+import { Validator } from "jsonschema";
+
+const v = new Validator();
+const songSchema = require("../../public/schema/song.schema.json");
 
 const action = {
   READ: "reading",
@@ -30,6 +34,14 @@ function reportSuccess(action, msg) {
   Logger.info(`Document ${action ?? "handling"} succeed.`, msg);
 }
 
+function validate(instance, schema) {
+  const res = v.validate(instance, schema);
+  if (res.errors.length > 0) {
+    reportError(res.errors);
+    throw new Error("Validator error");
+  }
+}
+
 export function createSong(songInfo) {
   const {
     title,
@@ -50,23 +62,28 @@ export function createSong(songInfo) {
   let createdBy = store.state.currentUser?.uid;
   let visibility = "private";
   Logger.log(songId);
+
+  const song = {
+    title,
+    artist,
+    image: image ?? null,
+    youtubeId: youtubeId ?? null,
+    url: url ?? null,
+    tags: tags ? updateTagArray(tags) : null,
+    subtitle: subtitle ?? null,
+    srcMode,
+    visibility,
+    dateCreated,
+    dateUpdated,
+    createdBy,
+  };
+
+  validate(song, songSchema);
+
   return new Promise((resolve, reject) => {
     songsCollection
       .doc(songId)
-      .set({
-        title,
-        artist,
-        image: image ?? null,
-        youtubeId: youtubeId ?? null,
-        url: url ?? null,
-        tags: tags ? updateTagArray(tags) : null,
-        subtitle: subtitle ?? null,
-        srcMode,
-        visibility,
-        dateCreated,
-        dateUpdated,
-        createdBy,
-      })
+      .set(song)
       .then(function () {
         reportSuccess(action.WRITE);
         resolve(songId);

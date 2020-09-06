@@ -231,7 +231,7 @@ export default {
       } catch (err) {
         this.$parent.loading = false;
         this.$store.state.alert.error(
-          "An error occurred, please try again",
+          "Something went wrong, please check your inputs",
           5000
         );
         Logger.error(err);
@@ -280,7 +280,7 @@ export default {
       } catch (err) {
         this.$parent.loading = false;
         this.$store.state.alert.error(
-          "An error occurred, please try again",
+          "Something went wrong, please check your inputs",
           5000
         );
         Logger.error(err);

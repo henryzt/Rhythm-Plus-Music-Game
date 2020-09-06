@@ -198,6 +198,7 @@ export default {
   top: 80px;
   max-height: calc(100vh - 220px);
   height: 100%;
+  min-width: 350px;
 }
 .song_item {
   display: flex;
@@ -213,7 +214,6 @@ export default {
   padding: 0;
   transition: 0.5s;
   text-align: center;
-  min-width: 350px;
   white-space: normal;
 }
 .song_item:hover {

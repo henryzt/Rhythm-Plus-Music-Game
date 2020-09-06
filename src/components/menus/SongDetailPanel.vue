@@ -1,102 +1,109 @@
 <template>
-  <div
-    class="song_item"
-    @click="$emit('selected', song)"
-    :key="song.id"
-    v-if="song"
-  >
-    <div class="image">
-      <img :src="song.image" />
-      <v-icon
-        v-if="!inPreivew"
-        class="previewIcon"
-        name="play"
-        scale="1.5"
-        @click="playPreview"
-      />
-      <v-icon
-        v-else-if="song.srcMode === 'url'"
-        class="previewIcon"
-        name="pause"
-        scale="1.5"
-        @click="endPreivew"
-      />
-      <div v-else class="youtube">
-        <Youtube
-          ref="youtube"
-          width="100%"
-          height="200px"
-          :video-id="previewYtId"
-          :player-vars="{ ...$store.state.ytVars, autoplay: 1 }"
-          :nocookie="true"
-          @error="endPreivew"
-          @paused="endPreivew"
-          @ended="endPreivew"
-        ></Youtube>
-      </div>
-    </div>
-    <div class="detail">
-      <div style="font-size: 1.3em; font-weight: bold;">
-        {{ song.title }}
-        <span v-if="song.subtitle" style="opacity: 0.6;"
-          >({{ song.subtitle }})</span
+  <div class="sticky">
+    <v-bar style="height: 100%;" :settings="{ wheelPropagation: false }">
+      <div
+        class="song_item"
+        @click="$emit('selected', song)"
+        :key="song.id"
+        v-if="song"
+      >
+        <div class="image">
+          <img :src="song.image" />
+          <v-icon
+            v-if="!inPreivew"
+            class="previewIcon"
+            name="play"
+            scale="1.5"
+            @click="playPreview"
+          />
+          <v-icon
+            v-else-if="song.srcMode === 'url'"
+            class="previewIcon"
+            name="pause"
+            scale="1.5"
+            @click="endPreivew"
+          />
+          <div v-else class="youtube">
+            <Youtube
+              ref="youtube"
+              width="100%"
+              height="200px"
+              :video-id="previewYtId"
+              :player-vars="{ ...$store.state.ytVars, autoplay: 1 }"
+              :nocookie="true"
+              @error="endPreivew"
+              @paused="endPreivew"
+              @ended="endPreivew"
+            ></Youtube>
+          </div>
+        </div>
+        <div class="detail">
+          <div style="font-size: 1.3em; font-weight: bold;">
+            {{ song.title }}
+            <span v-if="song.subtitle" style="opacity: 0.6;"
+              >({{ song.subtitle }})</span
+            >
+          </div>
+          <div>{{ song.artist }}</div>
+        </div>
+        <div
+          style="
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px 0;
+            box-sizing: border-box;
+            width: 100%;
+          "
         >
-      </div>
-      <div>{{ song.artist }}</div>
-    </div>
-    <div
-      style="
-        background: rgba(0, 0, 0, 0.2);
-        padding: 20px 0;
-        box-sizing: border-box;
-        width: 100%;
-      "
-    >
-      <div style="opacity: 0.4;">Select Sheet or Press Play</div>
+          <div style="opacity: 0.4;">Select Sheet or Press Play</div>
 
-      <div v-if="sheets" key="1">
-        <div v-for="sheet in sheets" :value="sheet.id" :key="sheet.id">
-          <div
-            @click="selectedSheet = sheet"
-            :class="{ sheet: true, active: selectedSheet == sheet }"
-          >
-            <SheetDetailLine :sheet="sheet" :compact="true"></SheetDetailLine>
+          <div v-if="sheets" key="1">
+            <div v-for="sheet in sheets" :value="sheet.id" :key="sheet.id">
+              <div
+                @click="selectedSheet = sheet"
+                :class="{ sheet: true, active: selectedSheet == sheet }"
+              >
+                <SheetDetailLine
+                  :sheet="sheet"
+                  :compact="true"
+                ></SheetDetailLine>
+              </div>
+            </div>
+          </div>
+          <div style="padding: 20px;" v-else key="2">Sheets loading...</div>
+        </div>
+
+        <transition name="height">
+          <div class="bestRes" v-if="bestResult">
+            <div class="brBlock">
+              <div class="brTxt">Rank</div>
+              {{ bestResult.rank }}
+            </div>
+            <div class="brBlock">
+              <div class="brTxt">Combo</div>
+              {{ bestResult.result.maxCombo }}
+            </div>
+            <div class="brBlock">
+              <div class="brTxt">Accuracy</div>
+              {{ bestResult.result.percentage.toFixed(2) }}%
+            </div>
+            <div class="brBlock">
+              <div class="brTxt">Score</div>
+              {{ bestResult.result.score.toFixed(0) }}
+            </div>
+          </div>
+        </transition>
+
+        <div style="padding: 20px 0;">
+          <Button text="Play!" @click="startSelected"></Button>
+          <div class="flex_hori">
+            <div class="text_button" v-if="isOwner" @click="goToEdit">
+              Edit Song
+            </div>
+            <div class="text_button" @click="$emit('cancel')">Cancel</div>
           </div>
         </div>
       </div>
-      <div style="padding: 20px;" v-else key="2">Sheets loading...</div>
-    </div>
-
-    <transition name="height">
-      <div class="bestRes" v-if="bestResult">
-        <div class="brBlock">
-          <div class="brTxt">Rank</div>
-          {{ bestResult.rank }}
-        </div>
-        <div class="brBlock">
-          <div class="brTxt">Combo</div>
-          {{ bestResult.result.maxCombo }}
-        </div>
-        <div class="brBlock">
-          <div class="brTxt">Accuracy</div>
-          {{ bestResult.result.percentage.toFixed(2) }}%
-        </div>
-        <div class="brBlock">
-          <div class="brTxt">Score</div>
-          {{ bestResult.result.score.toFixed(0) }}
-        </div>
-      </div>
-    </transition>
-
-    <div style="padding: 20px 0;">
-      <Button text="Play!" @click="startSelected"></Button>
-      <div class="flex_hori">
-        <div class="text_button" v-if="isOwner" @click="goToEdit">
-          Edit Song
-        </div>
-        <div class="text_button" @click="$emit('cancel')">Cancel</div>
-      </div>
-    </div>
+    </v-bar>
   </div>
 </template>
 
@@ -186,9 +193,13 @@ export default {
 </script>
 
 <style scoped>
-.song_item {
+.sticky {
   position: sticky;
   top: 80px;
+  max-height: calc(100vh - 220px);
+  height: 100%;
+}
+.song_item {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -198,7 +209,7 @@ export default {
   -webkit-backdrop-filter: blur(20px);
   width: 100%;
   max-width: 800px;
-  margin: 10px auto;
+  margin: auto;
   padding: 0;
   transition: 0.5s;
   text-align: center;
@@ -211,13 +222,14 @@ export default {
 .detail {
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: 20px 0;
   width: 100%;
 }
 .image {
   width: 100%;
   overflow: hidden;
   position: relative;
+  min-height: 200px;
 }
 .image img {
   width: 100%;

@@ -8,11 +8,32 @@
     <div class="image">
       <img :src="song.image" />
       <v-icon
+        v-if="!inPreivew"
         class="previewIcon"
         name="play"
         scale="1.5"
         @click="playPreview"
       />
+      <v-icon
+        v-else-if="song.srcMode === 'url'"
+        class="previewIcon"
+        name="pause"
+        scale="1.5"
+        @click="endPreivew"
+      />
+      <div v-else class="youtube">
+        <Youtube
+          ref="youtube"
+          width="100%"
+          height="200px"
+          :video-id="previewYtId"
+          :player-vars="{ ...$store.state.ytVars, autoplay: 1 }"
+          :nocookie="true"
+          @error="endPreivew"
+          @paused="endPreivew"
+          @ended="endPreivew"
+        ></Youtube>
+      </div>
     </div>
     <div class="detail">
       <div style="font-size: 1.3em; font-weight: bold;">
@@ -83,6 +104,8 @@
 import Button from "../ui/Button.vue";
 import SheetDetailLine from "./SheetDetailLine.vue";
 import { getBestScore } from "../../javascript/db";
+import { Youtube } from "vue-youtube";
+import { Howl } from "howler";
 
 export default {
   name: "SongDetailPanel",
@@ -91,11 +114,15 @@ export default {
     return {
       selectedSheet: null,
       bestResult: null,
+      previewYtId: "XIMLoLxmTDw",
+      previewPlayer: null,
+      inPreivew: false,
     };
   },
   components: {
     Button,
     SheetDetailLine,
+    Youtube,
   },
   computed: {
     isOwner() {
@@ -114,7 +141,24 @@ export default {
     goToEdit() {
       this.$router.push({ path: "/editor", query: { song: this.song.id } });
     },
-    playPreview() {},
+    playPreview() {
+      this.inPreivew = true;
+      if (this.song.srcMode === "youtube") {
+        this.previewYtId = this.song.youtubeId;
+      } else {
+        this.previewPlayer = new Howl({ src: [this.song.url] });
+        this.previewPlayer.play();
+      }
+      this.$store.state.audio.pause();
+    },
+    endPreivew() {
+      this.inPreivew = false;
+      this.$store.state.audio.play();
+      this.previewPlayer?.stop();
+    },
+  },
+  beforeDestroy() {
+    this.endPreivew();
   },
   watch: {
     song() {
@@ -122,6 +166,7 @@ export default {
         this.selectedSheet = null;
         this.bestResult = null;
       }
+      this.endPreivew();
     },
     async sheets() {
       if (this.song) {
@@ -215,6 +260,15 @@ export default {
   bottom: 30px;
   opacity: 0.5;
   cursor: pointer;
+  webkit-filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 1));
+  filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 1));
+}
+
+.youtube {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
 }
 
 .height-enter-active,

@@ -138,7 +138,7 @@ export async function getSongsInIdArray(getPrivate, getAll, idArray) {
 
 function filterSongData(doc) {
   let song = doc.data();
-
+  replaceBaseUrl(song);
   song.id = doc.id;
   song.image =
     !song.image && song.youtubeId

@@ -39,6 +39,8 @@ import "vue-awesome/icons/plus";
 import "vue-awesome/icons/redo";
 import "vue-awesome/icons/cog";
 import "vue-awesome/icons/sign-out-alt";
+import "vue-awesome/icons/play";
+import "vue-awesome/icons/pause";
 
 export default {
   name: "App",

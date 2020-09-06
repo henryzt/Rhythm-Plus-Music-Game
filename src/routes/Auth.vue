@@ -1,6 +1,6 @@
 <template>
-  <v-bar class="fullPage">
-    <div :class="{ cutBottom: !$store.state.authed }">
+  <v-bar class="fullPage" :class="{ cutBottom: !$store.state.authed }">
+    <div>
       <div class="mContainer" v-if="$store.state.verified">
         <div class="flex_hori">
           <UserProfileCard :extend="true" />
@@ -248,6 +248,12 @@ export default {
   opacity: 0.5;
   margin: 50px;
   margin-bottom: 100px;
+}
+
+.cutBottom .centerCredit {
+  position: fixed;
+  bottom: 0px;
+  width: calc(100% - 100px);
 }
 
 .flex_hori {

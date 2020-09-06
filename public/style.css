@@ -95,6 +95,14 @@ a {
   pointer-events: none;
 }
 
+.flex_hori {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-around;
+  text-align: center;
+}
+
 .center_logo {
   text-align: center;
   position: fixed;

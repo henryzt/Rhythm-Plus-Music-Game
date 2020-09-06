@@ -261,8 +261,6 @@ import GameMixin from "../mixins/gameMixin";
 import VueSlider from "vue-slider-component";
 import { Youtube } from "vue-youtube";
 import "vue-slider-component/theme/antd.css";
-import "vue-awesome/icons/play";
-import "vue-awesome/icons/pause";
 import "vue-awesome/icons/redo";
 import "vue-awesome/icons/undo";
 

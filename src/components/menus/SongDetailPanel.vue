@@ -7,6 +7,12 @@
   >
     <div class="image">
       <img :src="song.image" />
+      <v-icon
+        class="previewIcon"
+        name="play"
+        scale="1.5"
+        @click="playPreview"
+      />
     </div>
     <div class="detail">
       <div style="font-size: 1.3em; font-weight: bold;">
@@ -63,7 +69,12 @@
 
     <div style="padding: 20px 0;">
       <Button text="Play!" @click="startSelected"></Button>
-      <div class="text_button" @click="$emit('cancel')">Cancel</div>
+      <div class="flex_hori">
+        <div class="text_button" v-if="isOwner" @click="goToEdit">
+          Edit Song
+        </div>
+        <div class="text_button" @click="$emit('cancel')">Cancel</div>
+      </div>
     </div>
   </div>
 </template>
@@ -86,12 +97,24 @@ export default {
     Button,
     SheetDetailLine,
   },
-  computed: {},
+  computed: {
+    isOwner() {
+      const uid = this.$store.state.currentUser.uid;
+      return (
+        this.song?.createdBy === uid ||
+        this.sheets?.reduce((sum, next) => sum && next.createdBy === uid, true)
+      );
+    },
+  },
   methods: {
     startSelected() {
       this.selectedSheet = this.selectedSheet ?? this.sheets[0];
       this.$router.push("/game/" + this.selectedSheet.id);
     },
+    goToEdit() {
+      this.$router.push({ path: "/editor", query: { song: this.song.id } });
+    },
+    playPreview() {},
   },
   watch: {
     song() {
@@ -149,6 +172,7 @@ export default {
 .image {
   width: 100%;
   overflow: hidden;
+  position: relative;
 }
 .image img {
   width: 100%;
@@ -182,6 +206,15 @@ export default {
 .brTxt {
   font-size: 14px;
   color: rgb(165, 165, 165);
+}
+
+.previewIcon {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 30px;
+  opacity: 0.5;
+  cursor: pointer;
 }
 
 .height-enter-active,

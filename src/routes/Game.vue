@@ -505,12 +505,6 @@ export default {
   flex-direction: row;
 }
 
-.flex_hori {
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-}
-
 .darker {
   backdrop-filter: blur(50px);
   -webkit-backdrop-filter: blur(50px);

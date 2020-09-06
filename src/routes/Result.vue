@@ -236,9 +236,6 @@ export default {
 
 <style scoped>
 .flex_hori {
-  display: flex;
-  align-items: center;
-  flex-direction: row;
   justify-content: space-evenly;
 }
 .center_logo {

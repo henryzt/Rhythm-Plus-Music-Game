@@ -1,6 +1,6 @@
 {
   "name": "rhythm-plus-game",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "private": true,
   "description": "Online Vertical Scrolling Rhythm Game",
   "author": {
@@ -15,7 +15,7 @@
     "clean": "rm -rf ./dist",
     "serve": "yarn run build && serve .",
     "update": "npm version patch -m 'Upgrade to %s' && git push && git push --tags",
-    "deploy": "yarn build && firebase deploy && git push"
+    "deploy": "git push && yarn build && firebase deploy"
   },
   "dependencies": {
     "@sentry/browser": "^5.20.0",

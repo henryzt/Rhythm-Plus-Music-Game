@@ -73,23 +73,25 @@
     </transition>
 
     <!-- all tags -->
-    <div class="flex_hori all_tags" v-if="showAllTags">
-      <div
-        class="clip clip_outlined"
-        @click="currentTag = null"
-        :class="{ active: currentTag === null }"
-      >
-        All
-      </div>
-      <div v-for="tag in tags.slice(0, 100)" :key="tag">
+    <div v-if="showAllTags">
+      <v-bar class="flex_hori all_tags">
         <div
           class="clip clip_outlined"
-          @click="currentTag = tag"
-          :class="{ active: currentTag === tag }"
+          @click="currentTag = null"
+          :class="{ active: currentTag === null }"
         >
-          {{ tag }}
+          All
         </div>
-      </div>
+        <div v-for="tag in tags.slice(0, 100)" :key="tag">
+          <div
+            class="clip clip_outlined"
+            @click="currentTag = tag"
+            :class="{ active: currentTag === tag }"
+          >
+            {{ tag }}
+          </div>
+        </div>
+      </v-bar>
     </div>
   </div>
 </template>
@@ -194,9 +196,8 @@ export default {
 
 <style scoped>
 .flex_hori {
-  display: flex;
-  flex-direction: row;
-  text-align: center;
+  align-items: flex-start;
+  justify-content: start;
 }
 
 .clip {
@@ -232,6 +233,7 @@ export default {
   max-width: 100%;
   width: 100%;
   margin-top: 10px;
+  padding-bottom: 10px;
 }
 
 .fa-icon {

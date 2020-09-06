@@ -259,11 +259,7 @@ export default {
 }
 
 .flex_hori {
-  display: flex;
-  align-items: center;
-  flex-direction: row;
   justify-content: space-between;
-  text-align: center;
 }
 
 .disableChild a {

@@ -12,7 +12,8 @@
 
       <div class="center_logo">
         <div v-show="!$store.state.authed">
-          <h3>Signin or Register Now for Complete Experience!</h3>
+          <h2>Signin or Register Now</h2>
+          <h4 style="padding-bottom: 30px;">for the Complete Experience!</h4>
           <div id="firebaseui-auth-container"></div>
         </div>
         <div v-if="$store.state.authed && !$store.state.verified">

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="themeStyle!=='bgOff'" class="spaceBackground"></div>
+    <progressive-background v-if="themeStyle!=='bgOff'" class="spaceBackground" src="/assets/purpleSpace.jpg" />
     <canvas ref="visualizerCanvas"></canvas>
   </div>
 </template>
@@ -198,7 +198,6 @@ function renderSpaceVisualizer(time, canvas, ctx, audioData, vm) {
   top: 0;
   left: 0;
   z-index: -1;
-  background: url("space1.jpg");
   background-size: cover;
   animation: zoom 20s ease-in-out infinite alternate;
 }

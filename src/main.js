@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import VueMoment from "vue-moment";
 import VuePerfectScrollbar from "vue-perfect-scrollbar";
+import VueProgressiveImage from "vue-progressive-image";
 import App from "./App.vue";
 import router from "./helpers/router";
 import { store } from "./helpers/store";
@@ -9,6 +10,7 @@ import * as fb from "./helpers/firebaseConfig";
 import Icon from "vue-awesome/components/Icon.vue";
 import * as Sentry from "@sentry/browser";
 import { Vue as VueIntegration } from "@sentry/integrations";
+
 import "animate.css";
 import "./registerServiceWorker";
 
@@ -21,6 +23,7 @@ Vue.config.devtools = isDev;
 
 Vue.use(VueMoment);
 Vue.use(VueRouter);
+Vue.use(VueProgressiveImage);
 Vue.component("v-bar", VuePerfectScrollbar);
 Vue.component("v-icon", Icon);
 

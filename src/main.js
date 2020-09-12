@@ -10,6 +10,7 @@ import Icon from "vue-awesome/components/Icon.vue";
 import * as Sentry from "@sentry/browser";
 import { Vue as VueIntegration } from "@sentry/integrations";
 import "animate.css";
+import "./registerServiceWorker";
 
 const isDev = process.env.NODE_ENV === "development";
 

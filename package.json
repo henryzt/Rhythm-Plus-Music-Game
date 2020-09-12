@@ -29,6 +29,7 @@
     "howler": "^2.2.0",
     "js-md5": "^0.7.3",
     "jsonschema": "^1.2.6",
+    "register-service-worker": "^1.7.1",
     "vanilla-tilt": "^1.7.0",
     "vue": "^2.6.11",
     "vue-awesome": "^4.0.2",

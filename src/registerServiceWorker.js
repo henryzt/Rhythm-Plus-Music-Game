@@ -26,3 +26,14 @@ register(`/service-worker.js`, {
     Logger.error("Error during service worker registration:", error);
   },
 });
+
+window.addEventListener("beforeinstallprompt", () => {
+  Logger.log("Install Prompt");
+});
+
+window.addEventListener("appinstalled", () => {
+  // TODO Log install to analytics
+  Logger.log("INSTALL: Success");
+});
+
+// https://web.dev/customize-install/

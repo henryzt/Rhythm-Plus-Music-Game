@@ -221,7 +221,7 @@ img {
 .btn-dark {
   max-width: 200px;
   margin: 10px auto;
-  background: rgba(78, 78, 78, 0.5);
+  background: rgba(122, 122, 122, 0.2);
 }
 
 .btn-dark:hover {

@@ -55,6 +55,7 @@ export default {
     this.$store.commit("setFloatingAlert", this.$refs.alert);
     window.addEventListener("online", this.updateOnlineStatus);
     window.addEventListener("offline", this.updateOnlineStatus);
+    this.updateOnlineStatus();
   },
   beforeDestroy() {
     window.removeEventListener("online", this.updateOnlineStatus);
@@ -62,7 +63,8 @@ export default {
   },
   methods: {
     updateOnlineStatus(e) {
-      const isOnline = e.type === "online";
+      const isOnline = e ? e.type === "online" : window.navigator.onLine;
+      if (!e && isOnline) return;
       if (isOnline) this.$store.state.alert.success("You are back online!");
       else this.$store.state.alert.error("No internet connection");
     },
@@ -73,6 +75,12 @@ export default {
         !this.$route.meta.requireSignin ||
         (this.$store.state.initialized && this.$route.meta.requireSignin)
       );
+    },
+  },
+  watch: {
+    $route(to) {
+      const pageTitle = to.meta.title ? to.meta.title + " - " : "";
+      document.title = pageTitle + "Rhythm+ Music Game";
     },
   },
 };

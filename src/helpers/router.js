@@ -17,25 +17,39 @@ const router = new VueRouter({
       component: Home,
       meta: { requireBg: true, requireSignin: true },
     },
-    { path: "/menu", component: SongSelect, meta: { requireBg: true } },
+    {
+      path: "/menu",
+      component: SongSelect,
+      meta: { requireBg: true, title: "Song Select" },
+    },
     {
       path: "/studio",
       component: MyStudio,
-      meta: { requireBg: true, requireSignin: true },
+      meta: { requireBg: true, requireSignin: true, title: "My Studio" },
     },
-    { path: "/rankings", component: Rankings, meta: { requireBg: true } },
+    {
+      path: "/rankings",
+      component: Rankings,
+      meta: { requireBg: true, title: "Rankings" },
+    },
     {
       path: "/game",
       component: Game,
       children: [
-        { path: ":sheet", component: Game, meta: { requireSignin: true } },
+        {
+          path: ":sheet",
+          component: Game,
+          meta: { requireSignin: true, title: "Game" },
+        },
       ],
     },
     {
       path: "/result",
       component: Result,
       props: true,
-      children: [{ path: ":resultId", component: Result }],
+      children: [
+        { path: ":resultId", component: Result, meta: { title: "Result" } },
+      ],
     },
     {
       path: "/editor",
@@ -44,14 +58,18 @@ const router = new VueRouter({
         {
           path: ":sheet",
           component: SheetEditor,
-          meta: { requireSignin: true },
+          meta: { requireSignin: true, title: "Editor" },
         },
       ],
     },
     {
       path: "/account",
       component: Auth,
-      meta: { requireBg: true, requireSignin: true },
+      meta: {
+        requireBg: true,
+        requireSignin: true,
+        title: "Account and Settings",
+      },
     },
     { path: "*", redirect: { path: "/" } },
   ],

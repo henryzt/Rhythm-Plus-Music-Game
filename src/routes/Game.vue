@@ -271,6 +271,7 @@ export default {
       try {
         let song = await getGameSheet(this.$route.params.sheet);
         this.instance.loadSong(song);
+        document.title = song.title + " - Rhythm+ Music Game";
       } catch (err) {
         analytics().logEvent("song_load_error", {
           songId: this.currentSong.songId,

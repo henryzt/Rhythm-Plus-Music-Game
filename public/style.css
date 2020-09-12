@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Dosis&family=Montserrat&family=Nova+Mono&family=Raleway&display=swap");
+
 body {
   padding: 0;
   margin: 0;
@@ -30,6 +32,13 @@ body {
 
   opacity: 0;
   /* transition: opacity 2s ease-in-out; */
+}
+
+.logo {
+  max-width: 550px;
+  padding: 50px 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 a {
@@ -212,7 +221,7 @@ img {
 .btn-dark {
   max-width: 200px;
   margin: 10px auto;
-  background: rgba(78, 78, 78, 0.192);
+  background: rgba(78, 78, 78, 0.5);
 }
 
 .btn-dark:hover {

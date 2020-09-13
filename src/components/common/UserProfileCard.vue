@@ -147,6 +147,7 @@ img {
   opacity: 1;
   font-size: 1.2em;
   cursor: auto;
+  text-align: left;
 }
 
 .extend .shadow {

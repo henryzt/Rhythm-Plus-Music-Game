@@ -19,13 +19,13 @@ export default class DropTrack {
     if (key.includes(this.keyBind) && !this.isKeyDown) {
       this.isKeyDown = true;
       this.hitIndicatorOpacity = 1;
-      const createParticle = () => {
+      const createParticle = (markJudge) => {
         this.particleEffect.create(
           this.x,
           this.game.checkHitLineY,
           this.width,
           10,
-          this.vm.markJudge
+          markJudge
         );
       };
       if (this.vm.playMode && this.noteArr && this.noteArr[0]) {
@@ -36,6 +36,7 @@ export default class DropTrack {
           if (noteToDismiss.isHoldNote) {
             if (noteToDismiss.noteFailed) return;
             this.isUserHoldingNote = true;
+            noteToDismiss.hitAndCountScore(true);
             let countInterval = setInterval(() => {
               // if hold note is finished or is nearly finished but player released key, count as success
               if (
@@ -45,7 +46,7 @@ export default class DropTrack {
               ) {
                 this.isUserHoldingNote = false;
                 noteToDismiss.isHoldingDone = true;
-                createParticle();
+                createParticle(noteToDismiss.markJudge);
                 clearInterval(countInterval);
                 return;
               }
@@ -63,7 +64,7 @@ export default class DropTrack {
             this.noteArr.shift();
             this.playSoundEffect();
           }
-          createParticle();
+          createParticle(noteToDismiss.markJudge);
         }
       }
     }
@@ -213,9 +214,7 @@ export class HitEffect {
 
   create(mX, y, mWidth, height, judge) {
     let x = mX + mWidth / 2 - 5;
-    if (this.vm.perspective) {
-      y -= 35;
-    }
+    if (this.vm.perspective) y -= 35;
     let width = 10;
     let count = 0;
     const rgb = this.getRgb(judge);

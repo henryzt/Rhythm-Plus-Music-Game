@@ -123,13 +123,11 @@
             ></canvas>
           </div>
           <!-- mark indicator -->
-          <div
-            class="center_judge"
+          <MarkComboJudge
+            style="z-index: 500;"
+            ref="judgeDisplay"
             v-show="playMode && result.combo > 0"
-            ref="hitIndicator"
-          >
-            {{ markJudge }} {{ result.combo }}
-          </div>
+          ></MarkComboJudge>
 
           <!-- center text -->
           <ZoomText style="z-index: 1000;" ref="zoom"></ZoomText>
@@ -255,6 +253,7 @@ import SheetTable from "../components/editor/SheetTable.vue";
 import SongListItem from "../components/menus/SongListItem.vue";
 import PlayControl from "../components/common/PlayControl.vue";
 import ZoomText from "../components/game/ZoomText.vue";
+import MarkComboJudge from "../components/game/MarkComboJudge.vue";
 import Modal from "../components/ui/Modal.vue";
 import Publish from "../components/editor/Publish.vue";
 import Loading from "../components/ui/Loading.vue";
@@ -279,6 +278,7 @@ export default {
     Publish,
     PlayControl,
     ZoomText,
+    MarkComboJudge,
   },
   mixins: [GameMixin],
   data() {

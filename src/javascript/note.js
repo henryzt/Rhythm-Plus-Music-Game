@@ -59,18 +59,18 @@ export default class Note {
   judge() {
     if (this.percentage < 0.05) {
       this.vm.result.marks.perfect += 1;
-      this.vm.markJudge = "Perfect";
+      this.markJudge = "Perfect";
     } else if (this.percentage < 0.15) {
       this.vm.result.marks.good += 1;
-      this.vm.markJudge = "Good";
+      this.markJudge = "Good";
     } else if (this.percentage < 0.3) {
       this.vm.result.marks.offbeat += 1;
-      this.vm.markJudge = "Offbeat";
+      this.markJudge = "Offbeat";
     } else {
       // when note is too out of hit line, it can miss randomly
       if (Math.random() > 0.5) {
         this.vm.result.marks.offbeat += 1;
-        this.vm.markJudge = "Offbeat";
+        this.markJudge = "Offbeat";
       } else {
         this.missNote();
       }
@@ -97,17 +97,17 @@ export default class Note {
         ? this.vm.result.combo
         : this.vm.result.maxCombo;
     this.vm.fever.percent += (1 - percentage) / 100;
-    this.hitIndicator(this.vm);
+    this.judgeDisplay();
   }
 
   missNote() {
     this.vm.result.marks.miss += 1;
     this.vm.result.totalHitNotes += 1;
     this.vm.result.combo = 0;
-    this.vm.markJudge = "Miss";
+    this.markJudge = "Miss";
     this.vm.fever.percent -= 0.1;
     this.vibrate([20, 20, 50]);
-    this.hitIndicator(this.vm);
+    this.judgeDisplay();
     this.noteFailed = true;
   }
 
@@ -234,11 +234,8 @@ export default class Note {
       window.navigator.vibrate(pattern);
   }
 
-  hitIndicator() {
-    if (!this.vm.$refs.hitIndicator || !this.vm.playMode) return;
-    this.vm.$refs.hitIndicator.classList.remove("hitAnimation");
-    setTimeout(() => {
-      this.vm.$refs.hitIndicator.classList.add("hitAnimation");
-    }, 2);
+  judgeDisplay() {
+    if (!this.vm.$refs.judgeDisplay || !this.vm.playMode) return;
+    this.vm.$refs.judgeDisplay.judge(this.markJudge, this.vm.result.combo);
   }
 }

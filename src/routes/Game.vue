@@ -3,7 +3,7 @@
     <!-- progress bar -->
     <ProgressBar
       v-if="currentSong && currentSong.length"
-      :progress="instance.playTime / currentSong.length"
+      :progress="progress"
     ></ProgressBar>
 
     <!-- resume game countdown -->
@@ -30,9 +30,10 @@
     </transition>
 
     <!-- mark indicator -->
-    <div class="center_judge" ref="hitIndicator">
-      {{ markJudge }} {{ result.combo >= 5 ? result.combo : "" }}
-    </div>
+    <MarkComboJudge style="z-index: 500;" ref="judgeDisplay"></MarkComboJudge>
+
+    <!-- center text (fever x2 etc) -->
+    <ZoomText style="z-index: 1000;" ref="zoom"></ZoomText>
 
     <!-- game canvas -->
     <div class="gameWrapper" :class="{ 'no-events': hideGameForYtButton }">
@@ -125,9 +126,6 @@
         </div>
       </div>
     </transition>
-
-    <!-- center text (fever x2 etc) -->
-    <ZoomText style="z-index: 1000;" ref="zoom"></ZoomText>
 
     <!-- loading popup -->
     <Loading style="z-index: 200;" :show="instance && instance.loading"
@@ -224,6 +222,7 @@ import Navbar from "../components/ui/Navbar.vue";
 import SheetDetailLine from "../components/menus/SheetDetailLine.vue";
 import ProgressBar from "../components/game/ProgressBar.vue";
 import Countdown from "../components/game/Countdown.vue";
+import MarkComboJudge from "../components/game/MarkComboJudge.vue";
 import GameMixin from "../mixins/gameMixin";
 import { Youtube } from "vue-youtube";
 import { getGameSheet, uploadResult } from "../javascript/db";
@@ -249,10 +248,18 @@ export default {
     ProgressBar,
     Countdown,
     SheetDetailLine,
+    MarkComboJudge,
   },
   mixins: [GameMixin],
   data() {
     return {};
+  },
+  computed: {
+    progress() {
+      const startAt = this.currentSong.startAt ?? 0;
+      let time = (this.instance.playTime - startAt) / this.currentSong.length;
+      return time > 0 ? time : 0;
+    },
   },
   mounted() {
     if (this.$route.params.sheet) {

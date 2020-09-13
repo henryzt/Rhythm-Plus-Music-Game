@@ -21,7 +21,6 @@ export default {
         marks: { perfect: 0, good: 0, offbeat: 0, miss: 0 },
       },
       fever: { value: 1, time: 0, percent: 0 },
-      markJudge: "",
       feverInterval: null,
       srcMode: "youtube",
       instance: null,

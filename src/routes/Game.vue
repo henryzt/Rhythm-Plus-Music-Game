@@ -131,7 +131,7 @@
     <Loading style="z-index: 200;" :show="instance && instance.loading"
       >Song Loading...</Loading
     >
-    <Loading style="z-index: 500;" :show="isGameEnded"
+    <Loading style="z-index: 600;" :show="isGameEnded"
       >Syncing Results...</Loading
     >
 

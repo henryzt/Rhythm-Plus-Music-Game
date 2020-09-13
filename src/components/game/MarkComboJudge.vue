@@ -4,12 +4,12 @@
       <div class="combo" v-if="combo >= 5">
         <div>Combo</div>
         <div class="comboNum comboAnimation" v-if="display">
-          <div :class="judgeType">{{ combo }}</div>
+          {{ combo }}
         </div>
       </div>
     </transition>
     <div class="center_judge judgeAnimation" v-if="display">
-      {{ markJudge }}
+      <div class="judgeTypeAnimation" :class="judgeType">{{ markJudge }}</div>
     </div>
   </div>
 </template>
@@ -45,13 +45,14 @@ export default {
   user-select: none;
   pointer-events: none;
   text-align: center;
+  text-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
 }
 
 .combo {
   position: absolute;
   width: 400px;
   height: 80px;
-  top: 20%;
+  top: 15%;
   left: 50%;
   margin-left: -200px;
   z-index: 100;
@@ -59,15 +60,15 @@ export default {
 }
 
 .comboNum {
-  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-family: "Anton", Impact, "Raleway", "Arial Narrow Bold", sans-serif;
   margin-top: -10px;
   font-size: 3.5em;
 }
 
 .center_judge {
+  font-family: "Raleway";
   position: absolute;
   font-size: 3em;
-  font-family: "Raleway";
   line-height: 80px;
   width: 400px;
   height: 80px;
@@ -75,7 +76,20 @@ export default {
   left: 50%;
   margin-left: -200px;
   z-index: 100;
+  --judge-text-color: #ffffff;
+  --judge-shadow-color: #000000;
   /* transition: opacity 2s ease-in-out; */
+}
+
+@media only screen and (max-width: 1000px) {
+  /* mobile */
+  .center_judge {
+    margin-top: -45px;
+  }
+
+  .combo {
+    margin-top: -35px;
+  }
 }
 
 .animationNone {
@@ -93,10 +107,32 @@ export default {
   animation-duration: 0.1s;
 }
 
+.judgeTypeAnimation {
+  animation-name: perfectAni;
+  animation-duration: 0.5s;
+}
+
+.judgePerfect {
+  --judge-shadow-color: #15ff00;
+}
+
+.judgeGood {
+  --judge-shadow-color: #00ffea;
+}
+
+.judgeOffbeat {
+  --judge-shadow-color: rgb(255, 115, 0);
+}
+
+.judgeMiss {
+  --judge-text-color: rgb(202, 0, 0);
+  --judge-shadow-color: rgb(122, 0, 0);
+}
+
 @keyframes comboAni {
   from {
     padding-top: 0;
-    opacity: 1;
+    opacity: 0.5;
   }
 
   30% {
@@ -115,12 +151,30 @@ export default {
     transform: scale(1);
   }
 
-  50% {
-    transform: scale(1.5);
+  30% {
+    transform: scale(1.25);
   }
 
   100% {
     transform: scale(1);
+  }
+}
+
+@keyframes perfectAni {
+  from {
+    text-shadow: none;
+    opacity: 0.8;
+  }
+
+  30% {
+    color: var(--judge-text-color);
+    text-shadow: 0 0 30px var(--judge-shadow-color);
+    opacity: 1;
+  }
+
+  100% {
+    color: white;
+    text-shadow: none;
   }
 }
 </style>

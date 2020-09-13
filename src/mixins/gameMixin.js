@@ -6,6 +6,8 @@ export default {
       audio: null,
       canvas: null,
       ctx: null,
+      effectCanvas: null,
+      effectCtx: null,
       noteSpeed: 1,
       playbackSpeed: 1,
       playMode: true, // play or edit mode
@@ -63,10 +65,15 @@ export default {
         this.initialized = true;
       }
     },
+    perspective() {
+      this.instance.reposition();
+    },
   },
   mounted() {
     this.canvas = this.$refs.mainCanvas;
     this.ctx = this.canvas.getContext("2d");
+    this.effectCanvas = this.$refs.effectCanvas ?? this.canvas;
+    this.effectCtx = this.effectCanvas.getContext("2d");
     this.visualizerInstance = this.$refs.visualizer;
     // get audio element
     this.audio = this.$store.state.audio;

@@ -7,7 +7,7 @@ export default class DropTrack {
     this.x = x;
     this.width = width;
     this.keyBind = keyBind;
-    this.particleEffect = new HitEffect(vm.ctx);
+    this.particleEffect = new HitEffect(vm);
     this.noteArr = [];
     this.hitIndicatorOpacity = 0;
     this.isKeyDown = false;
@@ -203,15 +203,19 @@ export default class DropTrack {
 
 // ref https://css-tricks.com/adding-particle-effects-to-dom-elements-with-canvas/
 export class HitEffect {
-  constructor(ctx) {
+  constructor(vm) {
     this.colorData = ["yellow", "#DED51F", "#EBA400", "#FCC138"];
     this.reductionFactor = 5;
     this.particles = [];
-    this.ctx = ctx;
+    this.ctx = vm.effectCtx;
+    this.vm = vm;
   }
 
   create(mX, y, mWidth, height, judge) {
     let x = mX + mWidth / 2 - 5;
+    if (this.vm.perspective) {
+      y -= 35;
+    }
     let width = 10;
     let count = 0;
     const rgb = this.getRgb(judge);

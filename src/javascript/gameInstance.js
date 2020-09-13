@@ -13,6 +13,8 @@ export default class GameInstance {
   constructor(vm) {
     this.canvas = vm.canvas;
     this.ctx = vm.ctx;
+    this.effectCanvas = vm.effectCanvas;
+    this.effectCtx = vm.effectCtx;
     this.audio = vm.audio;
     this.vm = vm;
 
@@ -105,6 +107,10 @@ export default class GameInstance {
       this.canvas.width = window.innerWidth;
       this.canvas.height = window.innerHeight;
     }
+    this.effectCanvas.style.height = this.canvas.style.height;
+    this.effectCanvas.width = this.canvas.width;
+    this.effectCanvas.height = this.canvas.height;
+
     const trackWidth =
       this.canvas.width / this.trackNum > this.trackMaxWidth
         ? this.trackMaxWidth
@@ -126,6 +132,7 @@ export default class GameInstance {
     const isMobile = window.innerWidth < 1000;
     let hitLineProp = isMobile ? 8.5 : 9;
     if (!this.vm.playMode) hitLineProp = this.vm.options.lowerHitLine ? 4 : 0;
+    if (this.vm.perspective) hitLineProp += 0.3;
 
     this.checkHitLineY = (this.canvas.height / 10) * hitLineProp;
     this.noteSpeedPxPerSec = 380 * this.vm.noteSpeed * this.vm.playbackSpeed;
@@ -363,6 +370,12 @@ export default class GameInstance {
     requestAnimationFrame(this.update.bind(this));
     if (!this.vm.inEditor) this.updateCurrentTime();
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.effectCtx.clearRect(
+      0,
+      0,
+      this.effectCanvas.width,
+      this.effectCanvas.height
+    );
     this.vm.visualizerInstance.renderVisualizer();
     this.feverEff.update();
     let shouldAdvance = false;

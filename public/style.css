@@ -90,6 +90,14 @@ a {
   transform-origin: 50% 100%;
 }
 
+#effectCanvas {
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+}
+
 #visualizerBarBG {
   position: absolute;
   width: 100vw;
@@ -222,6 +230,10 @@ img {
   max-width: 200px;
   margin: 10px auto;
   background: rgba(122, 122, 122, 0.2);
+}
+
+.modal .btn-dark {
+  background: rgba(78, 78, 78, 0.2);
 }
 
 .btn-dark:hover {

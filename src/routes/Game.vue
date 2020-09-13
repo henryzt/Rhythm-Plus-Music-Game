@@ -36,6 +36,7 @@
 
     <!-- game canvas -->
     <div class="gameWrapper" :class="{ 'no-events': hideGameForYtButton }">
+      <canvas ref="effectCanvas" id="effectCanvas"></canvas>
       <canvas
         ref="mainCanvas"
         id="gameCanvas"
@@ -460,7 +461,7 @@ export default {
 @media only screen and (min-width: 800px) {
   /* desktop */
   .perspective {
-    transform: rotateX(30deg) scale(1.5) scaleX(0.8);
+    transform: rotateX(30deg) scale(1.5) scaleX(0.72);
   }
 }
 

@@ -27,9 +27,9 @@
         >
           <span v-if="sheetChanged" class="saveIndicator">●</span>Save
         </a>
-        <a href="#" @click.prevent="togglePlayMode(false)">{{
-          playMode ? "Edit" : "Test"
-        }}</a>
+        <a href="#" @click.prevent="togglePlayMode(false)">
+          {{ playMode ? "Edit" : "Test" }}
+        </a>
         <a
           href="#"
           @click.prevent="showPublishModal"
@@ -115,6 +115,7 @@
         <div class="column middle" :class="{ disabled: !initialized }">
           <!-- game wrapper -->
           <div class="gameWrapper" ref="wrapper">
+            <canvas ref="effectCanvas" id="effectCanvas"></canvas>
             <canvas
               ref="mainCanvas"
               id="gameCanvas"

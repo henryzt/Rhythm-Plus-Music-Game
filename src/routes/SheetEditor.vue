@@ -260,6 +260,7 @@ import Loading from "../components/ui/Loading.vue";
 import GameMixin from "../mixins/gameMixin";
 import VueSlider from "vue-slider-component";
 import { Youtube } from "vue-youtube";
+import { tween } from "shifty";
 import "vue-slider-component/theme/antd.css";
 import "vue-awesome/icons/redo";
 import "vue-awesome/icons/undo";
@@ -478,6 +479,18 @@ export default {
         this.seeking(time);
         this.instance.seekTo(time);
       }
+    },
+    async smoothSeekTo(seekTime) {
+      await tween({
+        render: ({ x }) => {
+          this.seeking(x);
+        },
+        easing: "easeInOutQuad",
+        duration: 500,
+        from: { x: Number(this.instance.currentTime) },
+        to: { x: seekTime },
+      });
+      this.seekTo(seekTime);
     },
     setPlaybackRate(rate) {
       if (this.srcMode === "youtube") {

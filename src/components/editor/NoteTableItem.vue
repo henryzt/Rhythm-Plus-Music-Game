@@ -3,7 +3,7 @@
     class="row"
     :class="{
       onScreen: instance.isWithinTime(note),
-      current: index === instance.timeArrIdx,
+      current: index === instance.timeArr.length - instance.timeArrIdx - 1,
       editing: isEditing,
     }"
   >

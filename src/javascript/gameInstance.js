@@ -254,7 +254,7 @@ export default class GameInstance {
     // if in create mode, create note
     if (!this.vm.playMode && !this.paused) {
       await this.updateCurrentTime();
-      this.createSingleNote(key, this.currentTime);
+      this.createSingleNote(key, this.currentTime, parseFloat(Date.now()));
       const singleNoteObj = this.timeArr[this.lastAddedIdx];
       // convert to hold note
       this.holdingNoteTimeout[key] = setTimeout(() => {
@@ -308,15 +308,15 @@ export default class GameInstance {
     this.timeArrIdx = idx + 1;
   }
 
-  createSingleNote(key, cTime) {
-    const waitTimeForMultiNote = 0.05;
+  createSingleNote(key, cTime, dateNow) {
+    const waitTimeForMultiNote = 50; // ms
     // this.timeArr.push({ t: cTime.toFixed(3), k: key });
     // this.timeArrIdx = this.timeArr.length - 1;
     if (
       this.lastAddedTime &&
       this.timeArr[this.lastAddedIdx] &&
       this.lastAddedKey !== key &&
-      cTime - this.lastAddedTime < waitTimeForMultiNote
+      dateNow - this.lastAddedTime < waitTimeForMultiNote
     ) {
       this.timeArr[this.lastAddedIdx].k += key;
     } else {
@@ -324,7 +324,7 @@ export default class GameInstance {
         t: Number(cTime.toFixed(3)),
         k: key,
       });
-      this.lastAddedTime = cTime;
+      this.lastAddedTime = dateNow;
       this.lastAddedIdx = this.timeArr.length - 1;
       this.lastAddedKey = key;
       if (this.lastAddedIdx === this.timeArrIdx) this.timeArrIdx++;
@@ -332,7 +332,7 @@ export default class GameInstance {
         if (!this.timeArr[this.lastAddedIdx]) return;
         const k = this.timeArr[this.lastAddedIdx].k;
         this.dropNote(k, this.timeArr[this.lastAddedIdx]);
-      }, waitTimeForMultiNote * 1000 + 5);
+      }, waitTimeForMultiNote + 5);
     }
   }
 

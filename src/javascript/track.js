@@ -57,7 +57,7 @@ export default class DropTrack {
                 this.isUserHoldingNote = false;
                 clearInterval(countInterval);
               }
-            }, 100);
+            }, 100 / this.vm.playbackSpeed);
           } else {
             this.isUserHoldingNote = false;
             noteToDismiss.hitAndCountScore(false);

@@ -125,7 +125,7 @@ export default {
         this.fever.time = 30;
         this.fever.value =
           this.fever.value < 5 ? this.fever.value + 1 : this.fever.value;
-        this.$refs?.zoom?.show("X" + this.fever.value, "50%", "fever");
+        this.$refs?.zoom?.show("X" + this.fever.value, "45%", "fever");
       }
       if (this.fever.time > 0) {
         this.fever.time -= 0.5;

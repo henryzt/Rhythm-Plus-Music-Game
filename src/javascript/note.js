@@ -198,19 +198,20 @@ export default class Note {
   drawHoldNote(color) {
     const endTime = this.keyObj.h[this.key];
     const holdLengthInSec = endTime === -1 ? 100 : endTime - this.keyObj.t;
-    const noteHeight = holdLengthInSec * this.game.noteSpeedPxPerSec;
+    const noteHeight =
+      (holdLengthInSec * this.game.noteSpeedPxPerSec) / this.vm.playbackSpeed;
     this.holdNoteHeight = noteHeight;
     this.holdNoteY = this.y - noteHeight + this.singleNoteHeight;
     let paintY = this.holdNoteY < 0 ? 0 : this.holdNoteY;
     let paintHeight =
       this.holdNoteY < 0 ? this.holdNoteY + noteHeight : noteHeight;
-    paintHeight = this.isUserHolding
-      ? this.game.checkHitLineY - paintY
-      : paintHeight;
+    if (this.isUserHolding) paintHeight = this.game.checkHitLineY - paintY;
     if (!this.vm.playMode) {
       // creating hold note
       const isUserCreating =
-        this.game.keyHoldingStatus[this.key] && this.createdNote;
+        this.game.keyHoldingStatus[this.key] &&
+        this.createdNote &&
+        this.keyObj.h?.[this.key] === -1;
       if (isUserCreating) {
         paintY = this.game.checkHitLineY;
         paintHeight = paintHeight - paintY;

@@ -237,12 +237,20 @@ export default class GameInstance {
     };
   }
 
+  clearHoldingStatus() {
+    this.keyHoldingStatus = {};
+    this.holdingNote = {};
+    this.holdingNoteTimeout = {};
+    this.lastAddedTime = null;
+    this.lastAddedIdx = null;
+  }
+
   // log key and touch events
   async onKeyDown(key) {
+    if (!this.trackKeyBind.includes(key)) return;
     // avoid repeated triggering when key is held
     if (this.keyHoldingStatus[key]) return;
     this.keyHoldingStatus[key] = true;
-    if (!this.trackKeyBind.includes(key)) return;
     // if in create mode, create note
     if (!this.vm.playMode && !this.paused) {
       await this.updateCurrentTime();
@@ -316,12 +324,6 @@ export default class GameInstance {
         t: Number(cTime.toFixed(3)),
         k: key,
       });
-      // this.timeArrIdx = this.timeArr.length - 1;
-      // add at idx
-      // this.timeArr.splice(this.timeArrIdx, 0, {
-      //   t: Number(cTime.toFixed(3)),
-      //   k: key,
-      // });
       this.lastAddedTime = cTime;
       this.lastAddedIdx = this.timeArr.length - 1;
       this.lastAddedKey = key;
@@ -361,6 +363,7 @@ export default class GameInstance {
       }
       this.clearNotes();
       this.timeArrIdx = idx;
+      this.clearHoldingStatus();
     }
   }
 

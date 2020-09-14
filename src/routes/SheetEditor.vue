@@ -495,6 +495,7 @@ export default {
       }
       this.clearFever();
       this.instance.reposition();
+      this.instance.clearHoldingStatus();
     },
     updateSongDetail() {
       this.$refs.info.openSongUpdate();

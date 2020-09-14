@@ -30,7 +30,11 @@
     </transition>
 
     <!-- mark indicator -->
-    <MarkComboJudge style="z-index: 500;" ref="judgeDisplay"></MarkComboJudge>
+    <MarkComboJudge
+      style="z-index: 400;"
+      ref="judgeDisplay"
+      v-show="!isGameEnded"
+    ></MarkComboJudge>
 
     <!-- center text (fever x2 etc) -->
     <ZoomText style="z-index: 1000;" ref="zoom"></ZoomText>

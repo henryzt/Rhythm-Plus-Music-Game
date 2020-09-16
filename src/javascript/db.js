@@ -10,6 +10,8 @@ import {
 import { store } from "../helpers/store";
 import { Validator } from "jsonschema";
 
+const assetsBaseUrl = "https://storage.googleapis.com/rhythm-plus-assets/songs";
+
 const v = new Validator();
 const songSchema = require("../../public/schema/song.schema.json");
 
@@ -428,7 +430,7 @@ export function getSheet(sheetId) {
 }
 
 function replaceBaseUrl(sheet) {
-  sheet.url = sheet.url ? sheet.url.replace("{base}", "/audio/songs") : null; // replace local songs
+  sheet.url = sheet.url ? sheet.url.replace("{base}", assetsBaseUrl) : null; // replace local songs
 }
 
 export function uploadResult(data) {

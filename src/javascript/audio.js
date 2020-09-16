@@ -1,4 +1,5 @@
 import { Howl, Howler } from "howler";
+const assetsBaseUrl = "https://storage.googleapis.com/rhythm-plus-assets/bgm/";
 
 export default class Audio {
   constructor() {
@@ -70,7 +71,10 @@ export default class Audio {
 
   playBgm(songToExclude) {
     // randomly play background music
-    let bgmUrlArr = ["/audio/bgm/aurora.mp3", "/audio/bgm/kontekst.mp3"];
+    let bgmUrlArr = [
+      assetsBaseUrl + "aurora.mp3",
+      assetsBaseUrl + "kontekst.mp3",
+    ];
     if (songToExclude && !bgmUrlArr.includes(songToExclude)) return; // is playing result bgm
     shuffle(bgmUrlArr);
     bgmUrlArr.filter((e) => e !== songToExclude);

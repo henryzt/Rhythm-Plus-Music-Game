@@ -381,6 +381,7 @@ export default class GameInstance {
     );
     this.vm.visualizerInstance.renderVisualizer();
     this.feverEff.update();
+    // this.drawDecoration();
     let shouldAdvance = false;
     for (const track of this.dropTrackArr) {
       shouldAdvance = track.update() || shouldAdvance;
@@ -397,6 +398,12 @@ export default class GameInstance {
     this.ctx.fillStyle = gradient;
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.globalCompositeOperation = "source-over";
+  }
+
+  drawDecoration() {
+    this.ctx.fillStyle = "white";
+    this.ctx.fillRect(this.startX - 10, 0, 10, this.canvas.height);
+    this.ctx.fillRect(this.endX, 0, 10, this.canvas.height);
   }
 
   startSong() {

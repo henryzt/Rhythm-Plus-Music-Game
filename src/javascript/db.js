@@ -6,6 +6,7 @@ import {
   functions,
   resultsCollection,
   tagsCollection,
+  playsCollection,
 } from "../helpers/firebaseConfig"; //usersCollection
 import { store } from "../helpers/store";
 import { Validator } from "jsonschema";
@@ -273,6 +274,56 @@ export function getTags() {
       .catch(function (error) {
         reportError(error, action.READ);
         reject(error);
+      });
+  });
+}
+
+export function createPlay(sheetId, songId) {
+  let dateCreated = firestore.Timestamp.now();
+  let dateUpdated = dateCreated;
+  let createdBy = store.state.currentUser?.uid;
+  const status = "started";
+  const isAuthed = store.state.authed;
+  let data = {
+    sheetId,
+    songId,
+    dateCreated,
+    dateUpdated,
+    createdBy,
+    status,
+    isAuthed,
+  };
+  return new Promise((resolve, reject) => {
+    playsCollection
+      .add(data)
+      .then((docRef) => {
+        reportSuccess(action.WRITE);
+        resolve(docRef.id);
+      })
+      .catch((error) => {
+        reportError(error, action.WRITE);
+        reject();
+      });
+  });
+}
+
+export function updatePlay(playId, updateData) {
+  let dateUpdated = firestore.Timestamp.now();
+  let data = {
+    ...updateData,
+    dateUpdated,
+  };
+  return new Promise((resolve, reject) => {
+    playsCollection
+      .doc(playId)
+      .update(data)
+      .then(() => {
+        reportSuccess(action.UPDATE);
+        resolve();
+      })
+      .catch((error) => {
+        reportError(error, action.UPDATE);
+        reject();
       });
   });
 }

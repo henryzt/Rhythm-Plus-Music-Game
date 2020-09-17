@@ -229,7 +229,12 @@ import Countdown from "../components/game/Countdown.vue";
 import MarkComboJudge from "../components/game/MarkComboJudge.vue";
 import GameMixin from "../mixins/gameMixin";
 import { Youtube } from "vue-youtube";
-import { getGameSheet, uploadResult } from "../javascript/db";
+import {
+  getGameSheet,
+  uploadResult,
+  createPlay,
+  updatePlay,
+} from "../javascript/db";
 import { analytics } from "../helpers/firebaseConfig";
 import ICountUp from "vue-countup-v2";
 import VanillaTilt from "vanilla-tilt";
@@ -256,7 +261,9 @@ export default {
   },
   mixins: [GameMixin],
   data() {
-    return {};
+    return {
+      playId: null,
+    };
   },
   computed: {
     progress() {
@@ -277,6 +284,10 @@ export default {
         okCallback: this.exitGame,
       });
     }
+  },
+  beforeDestroy() {
+    if (this.isGameEnded) return;
+    this.updatePlay({ status: "closed", playTime: this.instance.playTime });
   },
   methods: {
     async playWithId() {
@@ -323,7 +334,7 @@ export default {
         this.startGame();
       }
     },
-    startGame() {
+    async startGame() {
       analytics().logEvent("start_game", { songId: this.currentSong.songId });
       this.showStartButton = false;
       if (this.srcMode === "youtube") {
@@ -334,6 +345,10 @@ export default {
         this.$refs.zoom.show("Get Ready...");
         this.instance.startSong();
       }
+      this.playId = await createPlay(
+        this.currentSong.sheetId,
+        this.currentSong.songId
+      );
     },
     pauseGame() {
       if (!this.started || this.isGameEnded) return;
@@ -364,8 +379,14 @@ export default {
       this.instance.startSong();
     },
     exitGame() {
+      this.updatePlay({ status: "exited", playTime: this.instance.playTime });
+      this.playId = null;
       this.hideMenu();
       this.$router.push("/menu");
+    },
+    updatePlay(data) {
+      if (!this.playId) return;
+      return updatePlay(this.playId, data);
     },
     async gameEnded() {
       this.instance.destroyInstance();
@@ -375,10 +396,12 @@ export default {
           result: this.result,
           songId: this.currentSong.songId,
           sheetId: this.currentSong.sheetId,
+          playId: this.playId,
           isAuthed: this.$store.state.authed,
         });
         Logger.log(res);
         this.$router.push("/result/" + res.data.resultId);
+        this.updatePlay({ status: "finished", resultId: res.data.resultId });
         analytics().logEvent("result_uploaded", {
           resultId: res.data.resultId,
         });

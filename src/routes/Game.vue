@@ -144,7 +144,7 @@
     <Loading style="z-index: 200;" :show="instance && instance.loading"
       >Song Loading...</Loading
     >
-    <Loading style="z-index: 600;" :show="isGameEnded"
+    <Loading style="z-index: 600;" :show="isGameEnded && !showingAchievement"
       >Syncing Results...</Loading
     >
 
@@ -273,6 +273,7 @@ export default {
   data() {
     return {
       playId: null,
+      showingAchievement: false,
     };
   },
   computed: {
@@ -402,16 +403,31 @@ export default {
     async gameEnded() {
       this.instance.destroyInstance();
       this.isGameEnded = true;
+      let achievementPromise = Promise.resolve();
+      if (this.result.marks.miss == 0) {
+        this.showingAchievement = true;
+        this.$refs.zoom.show("Full Combo");
+        this.$confetti.start();
+        achievementPromise = new Promise((resolve) => {
+          setTimeout(() => {
+            this.showingAchievement = false;
+            resolve();
+          }, 2000);
+        });
+      }
       try {
-        const res = await uploadResult({
+        const uploadPromise = uploadResult({
           result: this.result,
           songId: this.currentSong.songId,
           sheetId: this.currentSong.sheetId,
           playId: this.playId,
           isAuthed: this.$store.state.authed,
         });
+        const result = await Promise.all([uploadPromise, achievementPromise]);
+        const res = result[0];
         Logger.log(res);
         this.$router.push("/result/" + res.data.resultId);
+        this.$confetti.stop();
         this.updatePlay({ status: "finished", resultId: res.data.resultId });
         analytics().logEvent("result_uploaded", {
           resultId: res.data.resultId,

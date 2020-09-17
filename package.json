@@ -34,6 +34,7 @@
     "vanilla-tilt": "^1.7.0",
     "vue": "^2.6.11",
     "vue-awesome": "^4.0.2",
+    "vue-confetti": "^2.2.1",
     "vue-countup-v2": "^4.0.0",
     "vue-moment": "^4.1.0",
     "vue-perfect-scrollbar": "^0.2.1",

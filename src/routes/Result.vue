@@ -119,6 +119,7 @@
       ref="levelModal"
       :showCancel="false"
       style="text-align: center; z-index: 500;"
+      @ok="$confetti.stop()"
     >
       <template v-slot:header>
         <div style="width: 100%; font-size: 23px;">Level Up!</div>
@@ -248,6 +249,7 @@ export default {
     if (userProfile.lvd > lvd) {
       Logger.warn("level up", lvd, userProfile.lvd);
       this.$refs.levelModal.show();
+      this.$confetti.start();
     }
   },
   beforeDestroy() {

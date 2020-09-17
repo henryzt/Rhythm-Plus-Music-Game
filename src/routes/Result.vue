@@ -97,7 +97,7 @@
               result.uid === $store.state.currentUser.uid
             "
           >
-            <UserProfileCard :extend="true" />
+            <UserProfileCard :extend="true" :oldProfile="oldProfileInfo" />
           </div>
         </div>
         <div class="btn_sec">
@@ -113,6 +113,30 @@
       </div>
       <Loading :show="!sheet || !result">Syncing Results...</Loading>
     </v-bar>
+
+    <!-- level up modal -->
+    <Modal
+      ref="levelModal"
+      :showCancel="false"
+      style="text-align: center; z-index: 500;"
+    >
+      <template v-slot:header>
+        <div style="width: 100%; font-size: 23px;">Level Up!</div>
+      </template>
+
+      <template>
+        <div style="opacity: 0.5;">
+          Congratulations, you have now leveled up.
+        </div>
+        <div class="flex_hori flex_row">
+          <div class="level" v-if="oldProfileInfo">
+            {{ oldProfileInfo.lvd }}
+          </div>
+          <v-icon name="arrow-right" scale="2" />
+          <div class="level">{{ $store.state.userProfile.lvd }}</div>
+        </div>
+      </template>
+    </Modal>
   </div>
 </template>
 
@@ -120,6 +144,7 @@
 import PageBackground from "../components/common/PageBackground.vue";
 import UserProfileCard from "../components/common/UserProfileCard.vue";
 import Loading from "../components/ui/Loading.vue";
+import Modal from "../components/ui/Modal.vue";
 import { getGameSheet, getResult, getBestScore } from "../javascript/db";
 import ICountUp from "vue-countup-v2";
 import VueCircle from "vue2-circle-progress/src/index.vue";
@@ -135,6 +160,7 @@ export default {
     VueCircle,
     Loading,
     UserProfileCard,
+    Modal,
   },
   data() {
     return {
@@ -143,6 +169,7 @@ export default {
       sheet: null,
       windowWidth: window.innerWidth,
       newRecord: false,
+      oldProfileInfo: null,
     };
   },
   computed: {
@@ -210,7 +237,18 @@ export default {
       });
     }
 
+    const userProfile = this.$store.state.userProfile;
+    const { lvd, exp, lv } = userProfile;
+    this.oldProfileInfo = { lvd, exp, lv };
+
     this.$store.dispatch("updateUserProfile");
+
+    Logger.log(userProfile);
+
+    if (userProfile.lvd > lvd) {
+      Logger.warn("level up", lvd, userProfile.lvd);
+      this.$refs.levelModal.show();
+    }
   },
   beforeDestroy() {
     this.$store.state.audio.stop();
@@ -360,6 +398,10 @@ export default {
   margin-right: 5px;
 }
 
+.level {
+  font-size: 5em;
+}
+
 @media only screen and (max-width: 1000px) {
   /* mobile */
   .flex_hori {
@@ -450,5 +492,10 @@ export default {
   .btn-dark {
     flex: 1;
   }
+}
+
+.flex_row {
+  flex-direction: row;
+  padding: 30px 0;
 }
 </style>

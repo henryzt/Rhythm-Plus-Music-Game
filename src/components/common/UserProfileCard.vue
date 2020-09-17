@@ -41,11 +41,11 @@
           <div class="progress-bar">
             <span
               class="progress-bar-fill increased"
-              :style="{ width: percentage + '%' }"
+              :style="{ width: percentage(true) + '%' }"
             ></span>
             <span
               class="progress-bar-fill"
-              :style="{ width: percentage + '%' }"
+              :style="{ width: percentage(false) + '%' }"
             ></span>
           </div>
         </div>
@@ -72,7 +72,7 @@
 <script>
 export default {
   name: "UserProfileCard",
-  props: ["extend"],
+  props: ["extend", "oldProfile"],
   data: function () {
     return {};
   },
@@ -81,9 +81,16 @@ export default {
   },
   computed: {
     percentage() {
-      const dec =
-        this.$store.state.userProfile.lv - this.$store.state.userProfile.lvd;
-      return dec * 100;
+      return (isDiff) => {
+        let base = this.$store.state.userProfile;
+        if (this.oldProfile?.lv) {
+          // if old profile provided, diff bar shows new info, normal bar shows old
+          if (!isDiff && base.lvd > this.oldProfile.lvd) return 0;
+          base = isDiff ? base : this.oldProfile;
+        }
+        const dec = base.lv - base.lvd;
+        return dec * 100;
+      };
     },
   },
   methods: {
@@ -185,7 +192,7 @@ img {
 }
 
 .increased {
-  background-color: #ffd900;
+  background-color: #7bff00;
 }
 
 @media only screen and (max-width: 1000px) {

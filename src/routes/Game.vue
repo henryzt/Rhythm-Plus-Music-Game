@@ -60,7 +60,7 @@
     <div class="score" v-if="instance">
       <div
         class="performanceWarning"
-        v-if="started && !instance.paused && instance.fps < 35"
+        v-if="fps && started && !instance.paused && instance.fps < 35"
       >
         Game Performance Degraded
       </div>

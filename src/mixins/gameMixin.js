@@ -28,6 +28,7 @@ export default {
       youtubeId: "XIMLoLxmTDw",
       perspective: false,
       vibrate: true,
+      fps: false,
       advancedMenuOptions: false,
       started: false,
       showStartButton: false,
@@ -91,6 +92,7 @@ export default {
       this.noteSpeed = gameSettings.noteSpeed ?? 1;
       this.perspective = gameSettings.perspective;
       this.vibrate = gameSettings.vibrate;
+      this.fps = gameSettings.fps;
     }
 
     window.addEventListener("blur", this.pauseGame);

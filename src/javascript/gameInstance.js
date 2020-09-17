@@ -7,7 +7,10 @@ const KeyCode = {
   KEY_RIGHT: 39,
   ESC: 27,
   P: 80,
+  SPACE: 32,
 };
+
+let fpsTime = [];
 
 export default class GameInstance {
   constructor(vm) {
@@ -160,7 +163,11 @@ export default class GameInstance {
       "keydown",
       (event) => {
         this.onKeyDown(event.key.toLowerCase());
-        if (event.keyCode === KeyCode.ESC || event.keyCode === KeyCode.P) {
+        if (
+          event.keyCode === KeyCode.ESC ||
+          event.keyCode === KeyCode.P ||
+          (!this.trackKeyBind.includes(" ") && event.keyCode === KeyCode.SPACE)
+        ) {
           if (!this.vm.started) return;
           if (this.paused) {
             this.vm.resumeGame(true);
@@ -388,6 +395,16 @@ export default class GameInstance {
     }
     if (shouldAdvance) this.timeArrIdx++;
     if (this.vm.perspective) this.drawFadeOut();
+    this.countFps();
+  }
+
+  countFps() {
+    const now = performance.now();
+    while (fpsTime.length > 0 && fpsTime[0] <= now - 1000) {
+      fpsTime.shift();
+    }
+    fpsTime.push(now);
+    this.fps = fpsTime.length;
   }
 
   drawFadeOut() {

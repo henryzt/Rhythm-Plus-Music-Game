@@ -57,7 +57,16 @@
     ></Visualizer>
 
     <!-- score panel -->
-    <div class="score">
+    <div class="score" v-if="instance">
+      <div
+        class="performanceWarning"
+        v-if="started && !instance.paused && instance.fps < 35"
+      >
+        Game Performance Degraded
+      </div>
+      <div style="font-size: 0.5em;" v-if="fps && instance.fps">
+        {{ instance.fps }} FPS
+      </div>
       <div style="font-size: 0.5em;">
         <ICountUp
           :endVal="percentage"
@@ -242,6 +251,7 @@ import "vue-awesome/icons/regular/pause-circle";
 import "vue-awesome/icons/play";
 import "vue-awesome/icons/cog";
 import "vue-awesome/icons/info-circle";
+const isDev = process.env.NODE_ENV === "development";
 
 export default {
   name: "Game",
@@ -345,6 +355,7 @@ export default {
         this.$refs.zoom.show("Get Ready...");
         this.instance.startSong();
       }
+      if (isDev) return;
       this.playId = await createPlay(
         this.currentSong.sheetId,
         this.currentSong.songId
@@ -544,6 +555,13 @@ export default {
 .darker {
   backdrop-filter: blur(50px);
   -webkit-backdrop-filter: blur(50px);
+}
+
+.performanceWarning {
+  font-size: 0.5em;
+  background: orange;
+  color: white;
+  padding: 5px;
 }
 
 .no-events {

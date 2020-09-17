@@ -159,6 +159,7 @@ export default {
         vibrate: true,
         perspective: false,
         blur: false,
+        fps: false,
       },
       loading: false,
     };

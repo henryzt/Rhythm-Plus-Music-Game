@@ -242,11 +242,11 @@ export default {
     const { lvd, exp, lv } = userProfile;
     this.oldProfileInfo = { lvd, exp, lv };
 
-    this.$store.dispatch("updateUserProfile");
+    await this.$store.dispatch("updateUserProfile");
 
-    Logger.log(userProfile);
+    Logger.log(userProfile, this.oldProfileInfo);
 
-    if (userProfile.lvd > lvd) {
+    if (this.$store.state.userProfile.lvd > lvd) {
       Logger.warn("level up", lvd, userProfile.lvd);
       this.$refs.levelModal.show();
       this.$confetti.start();

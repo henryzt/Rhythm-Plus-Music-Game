@@ -121,6 +121,10 @@
       </div>
     </div>
 
+    <transition name="modal-fade">
+      <div class="banner" v-if="changed">Unsaved changes</div>
+    </transition>
+
     <Loading style="z-index: 999;" :show="loading">Saving...</Loading>
   </div>
 </template>
@@ -162,6 +166,8 @@ export default {
         fps: false,
       },
       loading: false,
+      changed: false,
+      firstChanged: false,
     };
   },
   mounted() {
@@ -171,8 +177,22 @@ export default {
     visualizerIns() {
       return this.$store.state.visualizerIns;
     },
+    settings() {
+      return { pf: this.profileSt, gm: this.gameSt, ap: this.appearanceSt };
+    },
   },
   watch: {
+    settings: {
+      handler() {
+        if (this.loading) return;
+        if (this.firstChanged) {
+          this.changed = true;
+        } else {
+          this.firstChanged = true;
+        }
+      },
+      deep: true,
+    },
     "$store.state.userProfile"() {
       this.getUserSettings();
     },
@@ -195,6 +215,7 @@ export default {
       }
     },
     getUserSettings() {
+      this.loading = true;
       const user = this.$store.state.currentUser;
       const profile = this.$store.state.userProfile;
       if (user) {
@@ -207,6 +228,7 @@ export default {
       if (profile?.gameSt) {
         this.gameSt = profile.gameSt;
       }
+      this.loading = false;
     },
     async saveSettings() {
       this.loading = true;
@@ -299,6 +321,17 @@ input {
 
 .settings {
   --animate-delay: 0.1s;
+}
+
+.banner {
+  background: rgb(255, 115, 0);
+  text-align: center;
+  padding: 10px 0;
+  bottom: 70px;
+  position: fixed;
+  left: calc(50% - 150px);
+  width: 300px;
+  z-index: 900;
 }
 
 @media only screen and (max-width: 1000px) {

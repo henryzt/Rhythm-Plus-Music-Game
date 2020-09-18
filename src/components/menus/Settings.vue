@@ -263,6 +263,7 @@ export default {
         bodyText:
           "Warning! Reseting your password would log your account out anywhere, and clear all social login tokens. Would you like to continue?",
         okText: "Reset",
+        type: "warning",
       });
       if (!doContinue) return;
       const auth = firebase.auth();

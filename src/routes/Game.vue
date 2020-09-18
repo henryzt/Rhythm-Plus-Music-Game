@@ -302,13 +302,14 @@ export default {
   },
   methods: {
     async playWithId() {
+      const sheetId = this.$route.params.sheet;
       try {
-        let song = await getGameSheet(this.$route.params.sheet);
+        let song = await getGameSheet(sheetId);
         this.instance.loadSong(song);
         document.title = song.title + " - Rhythm+ Music Game";
       } catch (err) {
         analytics().logEvent("song_load_error", {
-          songId: this.currentSong.songId,
+          sheetId: sheetId,
         });
         this.$store.state.gModal.show({
           bodyText: "Sorry, this song does not exist or is unavaliable.",

@@ -46,6 +46,7 @@
         :show="showModal"
         style="z-index: 1000;"
         bodyText="Are you sure you want to log out?"
+        type="question"
         okText="Logout"
         @ok="signOut"
       ></Modal>

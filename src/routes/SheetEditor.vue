@@ -18,6 +18,15 @@
       </div>
       <div style="flex-grow: 1;"></div>
       <a href="#" @click.prevent="newEditor">New</a>
+      <a
+        href="#"
+        :class="{ disabled: isDisabled }"
+        @click.prevent="
+          restartGame();
+          songLoaded();
+        "
+        >Restart</a
+      >
       <div style="display: flex;" :class="{ disabled: isDisabled }">
         <a
           href="#"

@@ -28,6 +28,8 @@
         <div>Note Count - {{ sheetInfo.noteCount }}</div>
       </div>
 
+      <div class="text_button" @click="openPreview">Preview Game</div>
+
       <div
         class="btn-action btn-dark"
         style="display: inline-block;"
@@ -65,6 +67,7 @@ export default {
   },
   methods: {
     async publish() {
+      if (!this.beforePublishCheck()) return;
       this.vm.loading = true;
       try {
         this.$parent.close();
@@ -86,6 +89,27 @@ export default {
         );
       }
       this.vm.loading = false;
+    },
+    beforePublishCheck() {
+      if (this.sheetInfo.visibility !== "public") return true;
+      if (this.vm.instance.timeArr?.length < 5) {
+        this.$store.state.alert.error(
+          "You have to have at least 5 notes in the sheet",
+          5000
+        );
+        return false;
+      }
+      if (!this.vm.initialized) {
+        this.$store.state.alert.error("The source media is broken", 5000);
+        return false;
+      }
+      return true;
+    },
+    openPreview() {
+      const routeData = this.$router.resolve({
+        path: "/game/" + this.vm.gameSheetInfo.sheetId,
+      });
+      window.open(routeData.href, "_blank");
     },
   },
 };

@@ -168,7 +168,10 @@ export default class GameInstance {
           event.keyCode === KeyCode.P ||
           (!this.trackKeyBind.includes(" ") && event.keyCode === KeyCode.SPACE)
         ) {
-          if (!this.vm.started) return;
+          if (!this.vm.started) {
+            if (this.vm.inEditor) this.vm.songLoaded();
+            else this.vm.startGame();
+          }
           if (this.paused) {
             this.vm.resumeGame(true);
           } else {

@@ -31,6 +31,24 @@
                 @selected="selectedSong = $event"
               ></SongListItem>
             </div>
+            <!-- create song button -->
+            <div
+              class="btn-action btn-dark big-add"
+              key="btn1"
+              @click="$router.push('/studio/')"
+            >
+              <v-icon class="add-icon" name="plus" scale="2" />
+              <div>Create or Import a Song</div>
+            </div>
+            <!-- suggest song button -->
+            <div
+              class="btn-action btn-dark big-add"
+              key="btn2"
+              @click="$refs.suggest.show()"
+            >
+              <v-icon class="add-icon" name="lightbulb" scale="2" />
+              <div>Suggest a Song</div>
+            </div>
           </transition-group>
         </div>
 
@@ -49,6 +67,26 @@
         >Fetching Latest Songs...</Loading
       >
     </v-bar>
+
+    <!-- song suggestion modal -->
+    <Modal
+      ref="suggest"
+      :showOk="false"
+      cancelText="Done"
+      titleText="Suggest a Song"
+    >
+      <template>
+        <iframe
+          src="https://docs.google.com/forms/d/e/1FAIpQLSf4nNnTn0vmYjWYbq3TeC6epuN8xkEhxlWONrtIMMZbgLJ38w/viewform?embedded=true"
+          style="width: 100%;"
+          height="500"
+          frameborder="0"
+          marginheight="0"
+          marginwidth="0"
+          >Loading…</iframe
+        >
+      </template>
+    </Modal>
   </div>
 </template>
 
@@ -57,7 +95,9 @@ import SongListItem from "../components/menus/SongListItem.vue";
 import SongDetailPanel from "../components/menus/SongDetailPanel.vue";
 import SheetFilter from "../components/menus/SheetFilter.vue";
 import Loading from "../components/ui/Loading.vue";
+import Modal from "../components/ui/Modal.vue";
 import { getSheetList, getSongList } from "../javascript/db";
+import "vue-awesome/icons/lightbulb";
 
 export default {
   name: "SongSelect",
@@ -66,6 +106,7 @@ export default {
     SongDetailPanel,
     Loading,
     SheetFilter,
+    Modal,
   },
   data() {
     return {
@@ -117,6 +158,21 @@ export default {
 .detail {
   transition: 1s;
   width: 350px;
+}
+
+.big-add {
+  width: 100%;
+  line-height: 80px;
+  max-width: 100%;
+  box-sizing: border-box;
+  position: relative;
+  padding-left: 10%;
+}
+
+.add-icon {
+  position: absolute;
+  left: 10%;
+  top: 30px;
 }
 
 @media only screen and (max-width: 800px) {

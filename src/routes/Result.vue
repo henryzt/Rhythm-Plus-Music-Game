@@ -141,7 +141,9 @@
             {{ oldProfileInfo.lvd }}
           </div>
           <v-icon name="arrow-right" scale="2" />
-          <div class="level">{{ $store.state.userProfile.lvd }}</div>
+          <div class="level">
+            {{ $store.state.userProfile && $store.state.userProfile.lvd }}
+          </div>
         </div>
       </template>
     </Modal>

@@ -38,7 +38,12 @@
             `App version: ${$store.state.appVersion} · Build: ${$store.state.build}`
           }}
         </div>
-        <!-- <div><a href="https://github.com/henryz00/Rhythm-Plus-Music-Game">GitHub Repo</a></div> -->
+        <br />
+        <div>
+          <a href="https://github.com/henryz00/Rhythm-Plus-Music-Game"
+            >GitHub Repo</a
+          >
+        </div>
       </div>
 
       <Modal

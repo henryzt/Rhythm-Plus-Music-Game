@@ -20,7 +20,7 @@
         </section>
         <footer class="modal-footer" v-if="!hideFooter">
           <slot name="footer">
-            <div class="btn-action" @click="ok">{{ okText }}</div>
+            <div class="btn-action" @click="ok" v-if="showOk">{{ okText }}</div>
             <div class="btn-action" @click="close" v-if="showCancel">
               {{ cancelText }}
             </div>
@@ -62,6 +62,10 @@ export default {
       default: false,
     },
     showCancel: {
+      type: Boolean,
+      default: true,
+    },
+    showOk: {
       type: Boolean,
       default: true,
     },

@@ -15,8 +15,8 @@ export default {
     return {
       display: false,
       text: "Get Ready",
-      position: "50%",
-      duration: "1s",
+      position: null,
+      duration: null,
       classObj: {},
     };
   },
@@ -26,9 +26,13 @@ export default {
     },
     show(text, position, classObj, duration) {
       this.text = text;
-      this.position = position ?? this.position;
-      this.duration = duration ?? this.duration;
-      if (classObj) this.classObj = { [classObj]: true };
+      this.position = position ?? "50%";
+      this.duration = duration ?? "1s";
+      if (classObj) {
+        this.classObj = { [classObj]: true };
+      } else {
+        this.classObj = {};
+      }
       this.display = true;
     },
   },

@@ -92,6 +92,21 @@ export const store = new Vuex.Store({
           Logger.warn("Photo URL updated using provider data");
           reloadRequired = true;
         }
+        Logger.log(user, state.userProfile);
+        if (
+          user.photoURL !== state.userProfile.photoURL ||
+          user.displayName !== state.userProfile.displayName
+        ) {
+          await usersCollection
+            .doc(user.uid)
+            .set(
+              { photoURL: user.photoURL, displayName: user.displayName },
+              { merge: true }
+            );
+          state.userProfile.displayName = user.displayName;
+          state.userProfile.photoURL = user.photoURL;
+          Logger.warn("user profile updated");
+        }
         if (reloadRequired) window.location.reload();
       }
     },

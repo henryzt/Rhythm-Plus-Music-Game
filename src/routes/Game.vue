@@ -139,8 +139,7 @@
         </div>
 
         <div class="youtube_notice">
-          Powered by YouTube, all copyright and revenue goes to the original
-          uploader.
+          Powered by YouTube. All copyright and revenue goes to the video owner.
         </div>
       </div>
     </transition>

@@ -545,3 +545,15 @@ export async function updateUserProfile(data) {
     throw error;
   }
 }
+
+export async function getUserProfile(uid) {
+  try {
+    const res = await usersCollection.doc(uid).get();
+    reportSuccess(action.READ);
+    return res.data();
+  } catch (error) {
+    // The document probably doesn't exist.
+    reportError(error, action.READ);
+    throw error;
+  }
+}

@@ -91,14 +91,20 @@
           </div>
 
           <!-- profile section -->
-          <div
-            class="user_sec"
-            v-if="
-              $store.state.currentUser &&
-              result.uid === $store.state.currentUser.uid
-            "
-          >
-            <UserProfileCard :extend="true" :oldProfile="oldProfileInfo" />
+          <div class="user_sec">
+            <UserProfileCard
+              v-if="
+                $store.state.currentUser &&
+                result.uid === $store.state.currentUser.uid
+              "
+              :extend="true"
+              :oldProfile="oldProfileInfo"
+            />
+            <UserProfileCard
+              v-else-if="overrideProfile"
+              :extend="true"
+              :overrideProfile="overrideProfile"
+            />
           </div>
         </div>
         <div class="btn_sec">
@@ -148,7 +154,12 @@ import UserProfileCard from "../components/common/UserProfileCard.vue";
 import SheetDetailLine from "../components/menus/SheetDetailLine.vue";
 import Loading from "../components/ui/Loading.vue";
 import Modal from "../components/ui/Modal.vue";
-import { getGameSheet, getResult, getBestScore } from "../javascript/db";
+import {
+  getGameSheet,
+  getResult,
+  getBestScore,
+  getUserProfile,
+} from "../javascript/db";
 import ICountUp from "vue-countup-v2";
 import VueCircle from "vue2-circle-progress/src/index.vue";
 import VanillaTilt from "vanilla-tilt";
@@ -174,6 +185,7 @@ export default {
       windowWidth: window.innerWidth,
       newRecord: false,
       oldProfileInfo: null,
+      overrideProfile: null,
     };
   },
   computed: {
@@ -241,18 +253,24 @@ export default {
       });
     }
 
-    const userProfile = this.$store.state.userProfile;
-    const { lvd, exp, lv } = userProfile;
-    this.oldProfileInfo = { lvd, exp, lv };
+    if (this.result.uid !== this.$store.state.currentUser.uid) {
+      this.overrideProfile = await getUserProfile(this.result.uid);
+      if (this.overrideProfile.isAnonymous) this.overrideProfile = null;
+    } else {
+      // update local user level info
+      const userProfile = this.$store.state.userProfile;
+      const { lvd, exp, lv } = userProfile;
+      this.oldProfileInfo = { lvd, exp, lv };
 
-    await this.$store.dispatch("updateUserProfile");
+      await this.$store.dispatch("updateUserProfile");
 
-    Logger.log(userProfile, this.oldProfileInfo);
+      Logger.log(userProfile, this.oldProfileInfo);
 
-    if (this.$store.state.userProfile.lvd > lvd) {
-      Logger.warn("level up", lvd, userProfile.lvd);
-      this.$refs.levelModal.show();
-      this.$confetti.start();
+      if (this.$store.state.userProfile.lvd > lvd) {
+        Logger.warn("level up", lvd, userProfile.lvd);
+        this.$refs.levelModal.show();
+        this.$confetti.start();
+      }
     }
   },
   beforeDestroy() {

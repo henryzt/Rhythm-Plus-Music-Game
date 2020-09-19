@@ -171,8 +171,7 @@ export default class GameInstance {
           if (!this.vm.started) {
             if (this.vm.inEditor) this.vm.songLoaded();
             else this.vm.startGame();
-          }
-          if (this.paused) {
+          } else if (this.paused) {
             this.vm.resumeGame(true);
           } else {
             this.vm.pauseGame();

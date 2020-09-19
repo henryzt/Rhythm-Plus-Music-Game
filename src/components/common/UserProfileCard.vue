@@ -15,29 +15,24 @@
 
     <div
       class="shadow"
-      v-if="$store.state.authed && $store.state.userProfile"
+      v-if="($store.state.authed && userProfile) || overrideProfile"
       @click="goToAccount"
       style="display: flex; align-items: center;"
     >
-      <img
-        v-if="$store.state.profilePicture"
-        :src="$store.state.profilePicture"
-      />
+      <img v-if="userProfile.photoURL" :src="userProfile.photoURL" />
       <div class="detail">
         <div>
           {{
-            $store.state.currentUser.displayName
-              ? $store.state.currentUser.displayName
-              : "Name not set"
+            userProfile.displayName ? userProfile.displayName : "Name not set"
           }}
         </div>
         <div
           style="opacity: 0.6;"
-          v-if="$store.state.userProfile.lvd && $store.state.verified"
+          v-if="userProfile.lvd && $store.state.verified"
         >
-          Level.{{ $store.state.userProfile.lvd }}
+          Level.{{ userProfile.lvd }}
         </div>
-        <div class="wrapper" v-if="extend && $store.state.userProfile.lvd">
+        <div class="wrapper" v-if="extend && userProfile.lvd">
           <div class="progress-bar">
             <span
               class="progress-bar-fill increased"
@@ -72,7 +67,7 @@
 <script>
 export default {
   name: "UserProfileCard",
-  props: ["extend", "oldProfile"],
+  props: ["extend", "overrideProfile", "oldProfile"],
   data: function () {
     return {};
   },
@@ -91,6 +86,9 @@ export default {
         const dec = base.lv - base.lvd;
         return dec * 100;
       };
+    },
+    userProfile() {
+      return this.overrideProfile ?? this.$store.state.userProfile;
     },
   },
   methods: {

@@ -137,6 +137,11 @@
             <v-icon name="info-circle" scale="1.5" />
           </div>
         </div>
+
+        <div class="youtube_notice">
+          Powered by YouTube, all copyright and revenue goes to the original
+          uploader.
+        </div>
       </div>
     </transition>
 
@@ -572,6 +577,15 @@ export default {
 .darker {
   backdrop-filter: blur(50px);
   -webkit-backdrop-filter: blur(50px);
+}
+
+.youtube_notice {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0.3;
+  font-size: 0.8em;
 }
 
 .performanceWarning {

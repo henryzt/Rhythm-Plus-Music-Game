@@ -507,7 +507,7 @@ export default class GameInstance {
   resetPlaying(resetTimeArr) {
     clearInterval(this.intervalPlay);
     this.vm.started = false;
-    this.ytPlayer.resetVideo();
+    this.ytPlayer.resetVideo(this.startSongAt);
     this.clearNotes();
     if (resetTimeArr) this.timeArr = [];
     this.timeArrIdx = 0;

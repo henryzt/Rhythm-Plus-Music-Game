@@ -95,7 +95,6 @@ export default {
   max-width: 100%;
   overflow: scroll;
   white-space: nowrap;
-  margin: 0 10px;
 }
 .detailed {
   text-align: left;

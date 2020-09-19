@@ -87,6 +87,7 @@
               <div class="title">{{ sheet.song.title }}</div>
               <div>{{ sheet.song.artist }}</div>
             </div>
+            <SheetDetailLine :sheet="sheet" :compact="true"></SheetDetailLine>
           </div>
 
           <!-- profile section -->
@@ -144,6 +145,7 @@
 <script>
 import PageBackground from "../components/common/PageBackground.vue";
 import UserProfileCard from "../components/common/UserProfileCard.vue";
+import SheetDetailLine from "../components/menus/SheetDetailLine.vue";
 import Loading from "../components/ui/Loading.vue";
 import Modal from "../components/ui/Modal.vue";
 import { getGameSheet, getResult, getBestScore } from "../javascript/db";
@@ -162,6 +164,7 @@ export default {
     Loading,
     UserProfileCard,
     Modal,
+    SheetDetailLine,
   },
   data() {
     return {
@@ -359,7 +362,10 @@ export default {
   position: fixed;
   top: 10vh;
   left: 8%;
-  opacity: 0.2;
+  opacity: 0.3;
+}
+
+.song_item_sec .detail {
   line-height: 1.8em;
   font-size: 1.8em;
 }
@@ -461,6 +467,13 @@ export default {
     padding: 20px;
     opacity: 1;
   }
+  .song_item_sec .detail {
+    font-size: 1em;
+    border-bottom: 1px solid rgba(121, 121, 121, 0.5);
+    padding-bottom: 5px;
+    margin-bottom: 8px;
+  }
+
   .song_item_sec .title {
     font-size: 1.4em;
     font-weight: bold;

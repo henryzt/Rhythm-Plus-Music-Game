@@ -302,7 +302,7 @@ export default {
   },
   beforeDestroy() {
     if (this.isGameEnded) return;
-    this.updatePlay({ status: "closed", playTime: this.instance.playTime });
+    this.reportExit("closed");
   },
   methods: {
     async playWithId() {
@@ -396,7 +396,7 @@ export default {
       this.instance.startSong();
     },
     exitGame() {
-      this.updatePlay({ status: "exited", playTime: this.instance.playTime });
+      this.reportExit("exited");
       this.playId = null;
       this.hideMenu();
       this.$router.push("/menu");
@@ -404,6 +404,13 @@ export default {
     updatePlay(data) {
       if (!this.playId) return;
       return updatePlay(this.playId, data);
+    },
+    reportExit(status) {
+      this.updatePlay({
+        status,
+        playTime: this.instance.playTime,
+        result: this.result,
+      });
     },
     async gameEnded() {
       this.instance.destroyInstance();

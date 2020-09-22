@@ -48,15 +48,14 @@
       <div v-if="$parent.songInfo.id">
         <div>
           <div
-            @click="changeSong"
-            style="
-              float: right;
-              line-height: 30px;
-              opacity: 0.5;
-              cursor: pointer;
-            "
+            v-if="!sheetFormOptions.isUpdate"
+            @click="change(false)"
+            class="changeBtn"
           >
             Change Song
+          </div>
+          <div v-else @click="change(true)" class="changeBtn">
+            Change Sheet
           </div>
           <h2>Sheet Detail</h2>
           <InfoForm
@@ -206,6 +205,9 @@ export default {
     this.songFormOptions.publicList = await getSongList();
     this.songFormOptions.privateList = await getSongList(true);
     this.tags = await getTags();
+    if (this.$route.query.song) {
+      this.sheetFormOptions.tab = "choose";
+    }
   },
   methods: {
     continueExisting() {
@@ -219,7 +221,8 @@ export default {
           if (!(await this.$parent.saveWarning())) return;
           this.$parent.loading = true;
           await updateSong(this.songFormData);
-          this.$router.push({ query: { update: true } });
+          if (!this.$route.query.song)
+            this.$router.push({ query: { update: true } });
           this.$parent.reloadEditor();
         } else {
           this.$parent.loading = true;
@@ -305,9 +308,10 @@ export default {
         this.songFormData.image = null;
       }
     },
-    async changeSong() {
+    async change(isChangeSheet) {
       if (await this.$parent.saveWarning()) {
-        this.$router.push("/editor/");
+        const songId = isChangeSheet ? "?song=" + this.$parent.songInfo.id : "";
+        this.$router.push("/editor/" + songId);
         this.$parent.reloadEditor();
       }
     },
@@ -324,6 +328,12 @@ export default {
   opacity: 0.5;
   font-size: 14px;
   margin: 10px;
+  cursor: pointer;
+}
+.changeBtn {
+  float: right;
+  line-height: 30px;
+  opacity: 0.5;
   cursor: pointer;
 }
 </style>

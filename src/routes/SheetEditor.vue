@@ -574,11 +574,12 @@ export default {
     },
     countTotal() {
       const lastNote = this.instance.timeArr[this.instance.timeArr.length - 1];
-      this.sheetInfo.length =
+      const endAt =
         this.sheetInfo.endAt ??
         (lastNote
           ? Math.min.apply(Math, [this.songLength, lastNote.t + 5])
           : this.songLength);
+      this.sheetInfo.length = endAt - (this.sheetInfo.startAt ?? 0);
       this.sheetInfo.noteCount = this.instance.timeArr.length;
     },
 

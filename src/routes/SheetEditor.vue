@@ -380,13 +380,6 @@ export default {
         this.gameSheetInfo.sheet = this.gameSheetInfo.sheet ?? [];
         this.instance.loadSong(this.gameSheetInfo);
         Logger.log(this.gameSheetInfo);
-        if (this.$route.query.save) {
-          // refresh sheet data
-          await this.saveSheet();
-          this.$router.push({ query: { update: true } });
-          this.reloadEditor();
-          return;
-        }
         if (!this.isSheetOwner) {
           this.$store.state.alert.warn(
             "Warning, you do not have edit access to this sheet, any changes will not be saved!",
@@ -439,6 +432,13 @@ export default {
         this.songLength = await this.getLength();
         this.instance.pauseGame();
         this.initialized = true;
+        if (this.$route.query.save) {
+          // refresh sheet data
+          await this.saveSheet();
+          this.$router.push({ query: null });
+          this.gameSheetInfo = await getGameSheet(this.$route.params.sheet);
+          this.instance.loadSong(this.gameSheetInfo);
+        }
       } else if (!this.started) {
         this.instance.paused = false;
         this.instance.startSong();
@@ -584,6 +584,7 @@ export default {
     },
 
     reloadEditor() {
+      this.instance.destroyInstance();
       this.$store.state.redirecting = true;
       this.$nextTick(() => {
         this.$store.state.redirecting = false;
@@ -596,6 +597,7 @@ export default {
   },
   beforeDestroy() {
     window.onbeforeunload = null;
+    this.instance.destroyInstance();
   },
 };
 </script>

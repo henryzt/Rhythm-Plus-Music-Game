@@ -29,6 +29,7 @@ export const store = new Vuex.Store({
       autoplay: 0,
       modestbranding: 1,
       nocookie: true,
+      fs: 0,
     },
     appVersion: process.env.APP_VERSION,
     build: process.env.COMMIT_HASH,

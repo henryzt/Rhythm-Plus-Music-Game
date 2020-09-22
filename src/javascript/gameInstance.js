@@ -147,55 +147,45 @@ export default class GameInstance {
   }
 
   registerInput() {
-    window.addEventListener("resize", (_) => {
+    this.repositionEvent = (_) => {
       this.reposition();
-    });
+    };
 
-    window.addEventListener(
-      "orientationchange",
-      (_) => {
-        this.reposition();
-      },
-      false
-    );
-
-    document.addEventListener(
-      "keydown",
-      (event) => {
-        this.onKeyDown(event.key.toLowerCase());
-        if (
-          event.keyCode === KeyCode.ESC ||
-          event.keyCode === KeyCode.P ||
-          (!this.trackKeyBind.includes(" ") && event.keyCode === KeyCode.SPACE)
-        ) {
-          if (!this.vm.started) {
-            if (this.vm.inEditor) this.vm.songLoaded();
-            else this.vm.startGame();
-          } else if (this.paused) {
-            this.vm.resumeGame(true);
-          } else {
-            this.vm.pauseGame();
-          }
+    this.keydownEvent = (event) => {
+      this.onKeyDown(event.key.toLowerCase());
+      if (
+        event.keyCode === KeyCode.ESC ||
+        event.keyCode === KeyCode.P ||
+        (!this.trackKeyBind.includes(" ") && event.keyCode === KeyCode.SPACE)
+      ) {
+        if (!this.vm.initialized) return;
+        if (!this.vm.started) {
+          if (this.vm.inEditor) this.vm.songLoaded();
+          else this.vm.startGame();
+        } else if (this.paused) {
+          this.vm.resumeGame(true);
+        } else {
+          this.vm.pauseGame();
         }
-        if (this.vm.inEditor) {
-          // editor time minor adjust by arrow keys
-          if (event.keyCode === KeyCode.KEY_LEFT) {
-            this.vm.seekTo(this.currentTime - 0.03);
-          } else if (event.keyCode === KeyCode.KEY_RIGHT) {
-            this.vm.seekTo(this.currentTime + 0.03);
-          }
+      }
+      if (this.vm.inEditor) {
+        // editor time minor adjust by arrow keys
+        if (event.keyCode === KeyCode.KEY_LEFT) {
+          this.vm.seekTo(this.currentTime - 0.03);
+        } else if (event.keyCode === KeyCode.KEY_RIGHT) {
+          this.vm.seekTo(this.currentTime + 0.03);
         }
-      },
-      false
-    );
+      }
+    };
 
-    document.addEventListener(
-      "keyup",
-      (event) => {
-        this.onKeyUp(event.key.toLowerCase());
-      },
-      false
-    );
+    this.keyupEvent = (event) => {
+      this.onKeyUp(event.key.toLowerCase());
+    };
+
+    window.addEventListener("resize", this.repositionEvent);
+    window.addEventListener("orientationchange", this.repositionEvent, false);
+    document.addEventListener("keydown", this.keydownEvent, false);
+    document.addEventListener("keyup", this.keyupEvent, false);
 
     let touches = {};
 
@@ -457,7 +447,9 @@ export default class GameInstance {
     await this.updateCurrentTime();
 
     // check game end
-    const gameEndAt = this.vm.currentSong.endAt ?? this.vm.currentSong.length;
+    const gameStartAt = this.vm.currentSong.startAt ?? 0;
+    const gameEndAt =
+      this.vm.currentSong.endAt ?? this.vm.currentSong.length + gameStartAt;
     if (this.currentTime >= gameEndAt) {
       if (!this.vm.inEditor) {
         this.vm.gameEnded();
@@ -540,6 +532,14 @@ export default class GameInstance {
 
   destroyInstance() {
     this.destoryed = true;
+    window.removeEventListener("resize", this.repositionEvent);
+    window.removeEventListener(
+      "orientationchange",
+      this.repositionEvent,
+      false
+    );
+    document.removeEventListener("keydown", this.keydownEvent, false);
+    document.removeEventListener("keyup", this.keyupEvent, false);
     this.resetPlaying();
   }
 

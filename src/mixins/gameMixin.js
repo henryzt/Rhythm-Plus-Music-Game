@@ -25,7 +25,7 @@ export default {
       srcMode: "youtube",
       instance: null,
       visualizerInstance: null,
-      youtubeId: "XIMLoLxmTDw",
+      youtubeId: "caCqu-p_wZc",
       perspective: false,
       vibrate: true,
       fps: false,

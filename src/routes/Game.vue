@@ -139,7 +139,9 @@
         </div>
 
         <div class="youtube_notice">
-          Powered by YouTube. All copyright and revenue goes to the video owner.
+          Powered by YouTube.
+          <br />
+          All copyright and revenue goes to the video owner.
         </div>
       </div>
     </transition>
@@ -536,6 +538,10 @@ export default {
   .perspective {
     transform: rotateX(30deg) scale(1.5) scaleX(0.72);
   }
+
+  .youtube_notice br {
+    display: none;
+  }
 }
 
 @media only screen and (max-width: 1000px) {
@@ -592,6 +598,8 @@ export default {
   transform: translateX(-50%);
   opacity: 0.3;
   font-size: 0.8em;
+  width: 90%;
+  text-align: center;
 }
 
 .performanceWarning {

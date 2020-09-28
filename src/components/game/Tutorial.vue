@@ -1,7 +1,12 @@
 <template>
   <div class="warpper">
     <transition name="slide-fade" mode="out-in">
-      <div class="tutorial flex_hori blurBackground" key="1" v-if="slide == 1">
+      <div
+        class="tutorial flex_hori blurBackground"
+        :style="bgBlink"
+        key="1"
+        v-if="slide == 1"
+      >
         <div class="texts">
           <div class="title">Welcome to Rhythm Plus!</div>
           <img class="logo" src="/assets/logo_white.png" />
@@ -12,7 +17,12 @@
         </div>
       </div>
 
-      <div class="tutorial flex_hori blurBackground" key="2" v-if="slide == 2">
+      <div
+        class="tutorial flex_hori blurBackground"
+        :style="bgBlink"
+        key="2"
+        v-if="slide == 2"
+      >
         <div class="texts">
           <div class="title">How to play</div>
           <div>
@@ -31,7 +41,12 @@
         </div>
       </div>
 
-      <div class="tutorial flex_hori blurBackground" key="3" v-if="slide == 3">
+      <div
+        class="tutorial flex_hori blurBackground"
+        :style="bgBlink"
+        key="3"
+        v-if="slide == 3"
+      >
         <div class="texts">
           <div class="title">How to play</div>
           <div>
@@ -46,7 +61,12 @@
         </div>
       </div>
 
-      <div class="tutorial flex_hori blurBackground" key="4" v-if="slide == 4">
+      <div
+        class="tutorial flex_hori blurBackground"
+        :style="bgBlink"
+        key="4"
+        v-if="slide == 4"
+      >
         <div class="texts">
           <div class="title">Nice job!</div>
           <div>
@@ -65,7 +85,12 @@
         </div>
       </div>
 
-      <div class="tutorial flex_hori blurBackground" key="5" v-if="slide == 5">
+      <div
+        class="tutorial flex_hori blurBackground"
+        :style="bgBlink"
+        key="5"
+        v-if="slide == 5"
+      >
         <div class="texts">
           <div class="title">Fantastic!</div>
           <div class="emoji">😎</div>
@@ -75,7 +100,12 @@
         </div>
       </div>
 
-      <div class="tutorial flex_hori blurBackground" key="6" v-if="slide == 6">
+      <div
+        class="tutorial flex_hori blurBackground"
+        :style="bgBlink"
+        key="6"
+        v-if="slide == 6"
+      >
         <div class="texts">
           <div class="title">There we go!</div>
           <div class="emoji">🎉🎉</div>
@@ -91,7 +121,7 @@
 </template>
 
 <script>
-import "vue-awesome/icons/info-circle";
+import VolumeSampler from "../../visualizers/VolumeSampler";
 
 const timeline = [
   { time: 1, slide: 1 },
@@ -107,6 +137,8 @@ const timeline = [
   { time: 200, slide: 0 },
 ];
 
+let sampler;
+
 export default {
   name: "Tutorial",
   data() {
@@ -114,6 +146,7 @@ export default {
       slide: 0,
       timer: null,
       idx: 0,
+      bgBlink: {},
     };
   },
   mounted() {
@@ -124,7 +157,9 @@ export default {
         this.idx = 0;
         this.slide = 0;
       }
+      this.blinkBackground();
     }, 50);
+    this.setupSampler();
   },
   computed: {
     time() {
@@ -134,7 +169,20 @@ export default {
   beforeDestroy() {
     clearInterval(this.timer);
   },
-  methods: {},
+  methods: {
+    setupSampler() {
+      const audioData = this.$store.state.audio.audioData;
+      console.log(audioData);
+      if (audioData) sampler = new VolumeSampler(audioData);
+    },
+    blinkBackground() {
+      let v = sampler ? sampler.volume / 80 : 0;
+      console.log(this.$store.state.audio.audioData.dataArray[0]);
+      this.bgBlink = {
+        background: `rgba(${v},${v},${v},${0.5})`,
+      };
+    },
+  },
 };
 </script>
 
@@ -147,6 +195,7 @@ export default {
   max-width: 500px;
   z-index: 1000;
   overflow: hidden;
+  transition: background 1s;
 }
 
 .logo {
@@ -192,7 +241,7 @@ export default {
 }
 .slide-fade-enter,
 .slide-fade-leave-to {
-  transform: translateY(-30px);
+  transform: translateY(30px);
   opacity: 0;
 }
 </style>

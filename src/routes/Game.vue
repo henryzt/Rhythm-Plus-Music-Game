@@ -309,7 +309,7 @@ export default {
     } else if (this.$route.path.includes("tutorial")) {
       // tutorial mode
       this.tutorial = true;
-      this.playWithId("MY5xOIfpO7IEvgutiW0b");
+      this.playWithId("SItZEA9Uysy6RC1Ylkqh");
     } else {
       this.$store.state.gModal.show({
         bodyText: "No song is chosen, tap 'OK' to go to song list.",

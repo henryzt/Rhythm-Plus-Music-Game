@@ -31,13 +31,13 @@
 
     <!-- mark indicator -->
     <MarkComboJudge
-      style="z-index: 400;"
+      style="z-index: 400; pointer-events: none;"
       ref="judgeDisplay"
       v-show="!isGameEnded"
     ></MarkComboJudge>
 
     <!-- center text (fever x2 etc) -->
-    <ZoomText style="z-index: 1000;" ref="zoom"></ZoomText>
+    <ZoomText class="zoom" ref="zoom"></ZoomText>
 
     <!-- game canvas -->
     <div class="gameWrapper" :class="{ 'no-events': hideGameForYtButton }">
@@ -138,7 +138,7 @@
           </div>
         </div>
 
-        <div class="youtube_notice">
+        <div class="youtube_notice" v-if="srcMode === 'youtube'">
           Powered by YouTube.
           <br />
           All copyright and revenue goes to the video owner.
@@ -531,6 +531,11 @@ export default {
   position: absolute;
   left: 20px;
   top: 12px;
+}
+
+.zoom {
+  z-index: 1000;
+  pointer-events: none;
 }
 
 @media only screen and (min-width: 800px) {

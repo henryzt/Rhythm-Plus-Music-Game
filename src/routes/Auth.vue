@@ -40,9 +40,11 @@
         </div>
         <br />
         <div>
+          Thank you for playing Rhythm Plus Alpha release, you can report bugs
+          and send feedback on our
           <a href="https://github.com/henryz00/Rhythm-Plus-Music-Game"
             >GitHub Repo</a
-          >
+          >. To show your support, give us a star!
         </div>
       </div>
 
@@ -253,8 +255,15 @@ export default {
 .centerCredit {
   text-align: center;
   opacity: 0.5;
-  margin: 50px;
   margin-bottom: 100px;
+  width: 100%;
+  padding: 0 10px;
+  max-width: 600px;
+  margin: 50px auto;
+}
+
+.centerCredit a {
+  text-decoration: underline;
 }
 
 .cutBottom .centerCredit {

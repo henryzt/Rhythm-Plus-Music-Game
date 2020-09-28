@@ -367,7 +367,7 @@ export default class GameInstance {
   }
 
   // animate all
-  update() {
+  update(time) {
     if (this.destoryed) return;
     requestAnimationFrame(this.update.bind(this));
     if (!this.vm.inEditor) this.updateCurrentTime();
@@ -378,7 +378,7 @@ export default class GameInstance {
       this.effectCanvas.width,
       this.effectCanvas.height
     );
-    this.vm.visualizerInstance.renderVisualizer();
+    this.vm.visualizerInstance.renderVisualizer(time);
     this.feverEff.update();
     // this.drawDecoration();
     let shouldAdvance = false;

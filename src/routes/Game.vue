@@ -40,11 +40,13 @@
     <ZoomText class="zoom" ref="zoom"></ZoomText>
 
     <!-- Tutorial -->
-    <Tutorial
-      v-if="tutorial"
-      v-show="started && !instance.paused"
-      class="zoom"
-    ></Tutorial>
+    <transition name="modal-fade">
+      <Tutorial
+        v-if="tutorial"
+        v-show="started && !instance.paused"
+        class="zoom"
+      ></Tutorial>
+    </transition>
 
     <!-- game canvas -->
     <div class="gameWrapper" :class="{ 'no-events': hideGameForYtButton }">

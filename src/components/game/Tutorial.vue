@@ -4,10 +4,10 @@
       <div class="tutorial flex_hori blurBackground" key="1" v-if="slide == 1">
         <div class="texts">
           <div class="title">Welcome to Rhythm Plus!</div>
-          <img class="logo" src="/assets/logo2.png" />
+          <img class="logo" src="/assets/logo_white.png" />
           <div>
-            R+ is a web-based vertical scorlling rhythm game (VSRG), you can
-            make, play, and share any songs from and with anyone!
+            Rhythm+ is a web-based vertical scorlling rhythm game (VSRG), you
+            can make, play, and share any songs from and with anyone!
           </div>
         </div>
       </div>
@@ -31,21 +31,58 @@
         </div>
       </div>
 
-      <div class="tutorial flex_hori blurBackground" key="2" v-if="slide == 3">
+      <div class="tutorial flex_hori blurBackground" key="3" v-if="slide == 3">
         <div class="texts">
           <div class="title">How to play</div>
           <div>
             Each track has an asscoiated key, for a 4 track game, D, F, J, K,
             associates to track 1-4 respectively.
           </div>
-          <img
-            class="logo"
-            style="max-width: 60%;"
-            src="/assets/tutorial/2.png"
-          />
+          <img class="logo" src="/assets/tutorial/2.png" />
           <div>
             On mobile devices, simply tap the white hit line to toggle the
             track. Try it now!
+          </div>
+        </div>
+      </div>
+
+      <div class="tutorial flex_hori blurBackground" key="4" v-if="slide == 4">
+        <div class="texts">
+          <div class="title">Nice job!</div>
+          <div>
+            Now let's try something different: hold notes.
+          </div>
+          <img
+            class="logo"
+            style="max-width: 60%;"
+            src="/assets/tutorial/3.png"
+          />
+          <div>
+            Hold the key when the bottom of the hold note reaches the white
+            line, then release the key once the top of the note has just left
+            the line.
+          </div>
+        </div>
+      </div>
+
+      <div class="tutorial flex_hori blurBackground" key="5" v-if="slide == 5">
+        <div class="texts">
+          <div class="title">Fantastic!</div>
+          <div class="emoji">😎</div>
+          <div>
+            Now, let's combine them all together!
+          </div>
+        </div>
+      </div>
+
+      <div class="tutorial flex_hori blurBackground" key="6" v-if="slide == 6">
+        <div class="texts">
+          <div class="title">There we go!</div>
+          <div class="emoji">🎉🎉</div>
+          <div>
+            Here is the end of the tutorial, you should now be able to play any
+            songs without problem! If in doubt, you can always replay the
+            tutorial :)
           </div>
         </div>
       </div>
@@ -56,20 +93,46 @@
 <script>
 import "vue-awesome/icons/info-circle";
 
+const timeline = [
+  { time: 1, slide: 1 },
+  { time: 9, slide: 2 },
+  { time: 19, slide: 3 },
+  { time: 29, slide: 0 },
+  { time: 48, slide: 4 },
+  { time: 54, slide: 0 },
+  { time: 63, slide: 5 },
+  { time: 67, slide: 0 },
+  { time: 108, slide: 6 },
+  { time: 119, slide: 0 },
+  { time: 200, slide: 0 },
+];
+
 export default {
   name: "Tutorial",
   data() {
     return {
       slide: 0,
+      timer: null,
+      idx: 0,
     };
   },
   mounted() {
-    this.$nextTick(() => {
-      this.slide = 1;
-    });
-    setTimeout(() => {
-      this.slide = 3;
-    }, 2000);
+    this.timer = setInterval(() => {
+      if (this.time >= timeline[this.idx].time) {
+        this.slide = timeline[this.idx++].slide;
+      } else if (this.idx != 0 && this.time < timeline[this.idx - 1].time) {
+        this.idx = 0;
+        this.slide = 0;
+      }
+    }, 50);
+  },
+  computed: {
+    time() {
+      return this.$parent.instance.playTime;
+    },
+  },
+  beforeDestroy() {
+    clearInterval(this.timer);
   },
   methods: {},
 };
@@ -111,6 +174,11 @@ export default {
 .title {
   font-size: 1.4em;
   padding: 10px 0;
+}
+
+.emoji {
+  font-size: 3em;
+  text-align: center;
 }
 
 .text_button {

@@ -44,6 +44,11 @@ const router = new VueRouter({
       ],
     },
     {
+      path: "/tutorial",
+      component: Game,
+      meta: { requireSignin: true, title: "Tutorial" },
+    },
+    {
       path: "/result",
       component: Result,
       props: true,

@@ -39,6 +39,13 @@
     <!-- center text (fever x2 etc) -->
     <ZoomText class="zoom" ref="zoom"></ZoomText>
 
+    <!-- Tutorial -->
+    <Tutorial
+      v-if="tutorial"
+      v-show="started && !instance.paused"
+      class="zoom"
+    ></Tutorial>
+
     <!-- game canvas -->
     <div class="gameWrapper" :class="{ 'no-events': hideGameForYtButton }">
       <canvas ref="effectCanvas" id="effectCanvas"></canvas>
@@ -242,6 +249,7 @@ import SheetDetailLine from "../components/menus/SheetDetailLine.vue";
 import ProgressBar from "../components/game/ProgressBar.vue";
 import Countdown from "../components/game/Countdown.vue";
 import MarkComboJudge from "../components/game/MarkComboJudge.vue";
+import Tutorial from "../components/game/Tutorial.vue";
 import GameMixin from "../mixins/gameMixin";
 import { Youtube } from "vue-youtube";
 import {
@@ -274,12 +282,14 @@ export default {
     Countdown,
     SheetDetailLine,
     MarkComboJudge,
+    Tutorial,
   },
   mixins: [GameMixin],
   data() {
     return {
       playId: null,
       showingAchievement: false,
+      tutorial: false,
     };
   },
   computed: {
@@ -290,9 +300,14 @@ export default {
     },
   },
   mounted() {
+    console.log(this.$route);
     if (this.$route.params.sheet) {
       this.instance.loading = true;
-      this.playWithId();
+      this.playWithId(this.$route.params.sheet);
+    } else if (this.$route.path.includes("tutorial")) {
+      // tutorial mode
+      this.tutorial = true;
+      this.playWithId("MY5xOIfpO7IEvgutiW0b");
     } else {
       this.$store.state.gModal.show({
         bodyText: "No song is chosen, tap 'OK' to go to song list.",
@@ -307,8 +322,7 @@ export default {
     this.reportExit("closed");
   },
   methods: {
-    async playWithId() {
-      const sheetId = this.$route.params.sheet;
+    async playWithId(sheetId) {
       try {
         let song = await getGameSheet(sheetId);
         this.instance.loadSong(song);

@@ -91,6 +91,7 @@
     <!-- youtube player -->
     <div v-if="srcMode === 'youtube' && !isGameEnded" v-show="initialized">
       <Youtube
+        v-if="srcMode === 'youtube' && !isGameEnded"
         class="ytPlayerMobileExtend"
         id="ytPlayer"
         ref="youtube"
@@ -376,7 +377,7 @@ export default {
         this.ytPlayer?.playVideo();
         this.ytPlayer?.setVolume(0);
       } else {
-        this.$refs.zoom.show("Get Ready...");
+        if (!this.tutorial) this.$refs.zoom.show("Get Ready...");
         this.instance.startSong();
       }
       if (isDev) return;
@@ -413,8 +414,8 @@ export default {
       this.instance.resetPlaying();
       this.instance.startSong();
     },
-    exitGame() {
-      this.reportExit("exited");
+    exitGame(reason) {
+      this.reportExit(reason ?? "exited");
       this.playId = null;
       this.hideMenu();
       this.$router.push("/menu");
@@ -434,6 +435,10 @@ export default {
       this.instance.destroyInstance();
       this.isGameEnded = true;
       let achievementPromise = Promise.resolve();
+      if (this.tutorial) {
+        this.exitGame("tutorial-ends");
+        return;
+      }
       if (this.result.marks.miss == 0) {
         this.showingAchievement = true;
         this.$refs.zoom.show("Full Combo");

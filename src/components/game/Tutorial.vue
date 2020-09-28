@@ -1,12 +1,7 @@
 <template>
   <div class="warpper">
     <transition name="slide-fade" mode="out-in">
-      <div
-        class="tutorial flex_hori blurBackground"
-        :style="bgBlink"
-        key="1"
-        v-if="slide == 1"
-      >
+      <div class="tutorial flex_hori blurBackground" key="1" v-if="slide == 1">
         <div class="texts">
           <div class="title">Welcome to Rhythm Plus!</div>
           <img class="logo" src="/assets/logo_white.png" />
@@ -17,14 +12,9 @@
         </div>
       </div>
 
-      <div
-        class="tutorial flex_hori blurBackground"
-        :style="bgBlink"
-        key="2"
-        v-if="slide == 2"
-      >
+      <div class="tutorial flex_hori blurBackground" key="2" v-if="slide == 2">
         <div class="texts">
-          <div class="title">How to play</div>
+          <div class="title">How to play - Judging</div>
           <div>
             You will see 4 to 9 tracks in the game, based on the rhythm, notes
             will drop from the top of the track, when the note gets closer to
@@ -41,14 +31,9 @@
         </div>
       </div>
 
-      <div
-        class="tutorial flex_hori blurBackground"
-        :style="bgBlink"
-        key="3"
-        v-if="slide == 3"
-      >
+      <div class="tutorial flex_hori blurBackground" key="3" v-if="slide == 3">
         <div class="texts">
-          <div class="title">How to play</div>
+          <div class="title">How to play - Keys</div>
           <div>
             Each track has an asscoiated key, for a 4 track game, D, F, J, K,
             associates to track 1-4 respectively.
@@ -61,17 +46,10 @@
         </div>
       </div>
 
-      <div
-        class="tutorial flex_hori blurBackground"
-        :style="bgBlink"
-        key="4"
-        v-if="slide == 4"
-      >
+      <div class="tutorial flex_hori blurBackground" key="4" v-if="slide == 4">
         <div class="texts">
           <div class="title">Nice job!</div>
-          <div>
-            Now let's try something different: hold notes.
-          </div>
+          <div>Now let's try something different: hold notes.</div>
           <img
             class="logo"
             style="max-width: 60%;"
@@ -85,27 +63,15 @@
         </div>
       </div>
 
-      <div
-        class="tutorial flex_hori blurBackground"
-        :style="bgBlink"
-        key="5"
-        v-if="slide == 5"
-      >
+      <div class="tutorial flex_hori blurBackground" key="5" v-if="slide == 5">
         <div class="texts">
           <div class="title">Fantastic!</div>
           <div class="emoji">😎</div>
-          <div>
-            Now, let's combine them all together!
-          </div>
+          <div>Now, let's combine them all together!</div>
         </div>
       </div>
 
-      <div
-        class="tutorial flex_hori blurBackground"
-        :style="bgBlink"
-        key="6"
-        v-if="slide == 6"
-      >
+      <div class="tutorial flex_hori blurBackground" key="6" v-if="slide == 6">
         <div class="texts">
           <div class="title">There we go!</div>
           <div class="emoji">🎉🎉</div>
@@ -121,13 +87,11 @@
 </template>
 
 <script>
-import VolumeSampler from "../../visualizers/VolumeSampler";
-
 const timeline = [
   { time: 1, slide: 1 },
   { time: 9, slide: 2 },
   { time: 19, slide: 3 },
-  { time: 29, slide: 0 },
+  { time: 29, slide: -1 },
   { time: 48, slide: 4 },
   { time: 54, slide: 0 },
   { time: 63, slide: 5 },
@@ -136,8 +100,6 @@ const timeline = [
   { time: 119, slide: 0 },
   { time: 200, slide: 0 },
 ];
-
-let sampler;
 
 export default {
   name: "Tutorial",
@@ -153,13 +115,12 @@ export default {
     this.timer = setInterval(() => {
       if (this.time >= timeline[this.idx].time) {
         this.slide = timeline[this.idx++].slide;
+        if (this.slide == -1) this.$parent.$refs.zoom.show("Get Ready...");
       } else if (this.idx != 0 && this.time < timeline[this.idx - 1].time) {
         this.idx = 0;
         this.slide = 0;
       }
-      this.blinkBackground();
     }, 50);
-    this.setupSampler();
   },
   computed: {
     time() {
@@ -169,37 +130,23 @@ export default {
   beforeDestroy() {
     clearInterval(this.timer);
   },
-  methods: {
-    setupSampler() {
-      const audioData = this.$store.state.audio.audioData;
-      console.log(audioData);
-      if (audioData) sampler = new VolumeSampler(audioData);
-    },
-    blinkBackground() {
-      let v = sampler ? sampler.volume / 80 : 0;
-      console.log(this.$store.state.audio.audioData.dataArray[0]);
-      this.bgBlink = {
-        background: `rgba(${v},${v},${v},${0.5})`,
-      };
-    },
-  },
+  methods: {},
 };
 </script>
 
 <style scoped>
 .tutorial {
   margin: auto;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0);
   padding: 45px 30px;
   width: 100%;
   max-width: 500px;
   z-index: 1000;
-  overflow: hidden;
   transition: background 1s;
+  box-sizing: border-box;
 }
 
 .logo {
-  max-width: 550px;
   width: 80%;
   margin: auto;
   text-align: center;
@@ -212,11 +159,11 @@ export default {
   left: 0;
   right: 0;
   top: 50%;
+  width: 100%;
   transform: translateY(-50%);
 }
 
 .texts {
-  padding-left: 30px;
   text-align: left;
 }
 

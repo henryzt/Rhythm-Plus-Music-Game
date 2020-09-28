@@ -144,7 +144,6 @@ img {
   .ytPlayerMobileExtend {
     width: 249vh !important;
     transform: translateX(calc(50vw - 124.5vh));
-    pointer-events: none;
   }
 }
 

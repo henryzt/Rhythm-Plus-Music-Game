@@ -21,6 +21,17 @@
             name="slide-in"
             :style="{ '--total': songDisplayList.length }"
           >
+            <!-- suggest song button -->
+            <div
+              :class="{ sHidden: selectedSong }"
+              class="btn-action btn-dark big-add"
+              key="btn0"
+              @click="$router.push('/tutorial/')"
+            >
+              <v-icon class="add-icon" name="question-circle" scale="2" />
+              <div style="font-size: 1.2em;">Tutorial</div>
+            </div>
+            <!-- song lists -->
             <div
               v-for="(song, i) in songDisplayList"
               :key="song.id"
@@ -98,6 +109,7 @@ import Loading from "../components/ui/Loading.vue";
 import Modal from "../components/ui/Modal.vue";
 import { getSheetList, getSongList } from "../javascript/db";
 import "vue-awesome/icons/lightbulb";
+import "vue-awesome/icons/question-circle";
 
 export default {
   name: "SongSelect",

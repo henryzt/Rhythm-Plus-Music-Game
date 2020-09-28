@@ -89,10 +89,11 @@
     </div>
 
     <!-- youtube player -->
+    <div><!-- for mp3 mode youtube bug --></div>
     <div v-if="srcMode === 'youtube' && !isGameEnded" v-show="initialized">
       <Youtube
-        v-if="srcMode === 'youtube' && !isGameEnded"
-        class="ytPlayerMobileExtend"
+        :class="{ 'allow-events': srcMode === 'youtube' }"
+        class="ytPlayerMobileExtend no-events"
         id="ytPlayer"
         ref="youtube"
         :video-id="youtubeId"
@@ -637,6 +638,10 @@ export default {
 
 .no-events {
   pointer-events: none;
+}
+
+.allow-events {
+  pointer-events: all;
 }
 
 .slide-fade-enter-active {

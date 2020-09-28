@@ -170,6 +170,7 @@ export default {
 .title {
   font-size: 1.4em;
   padding: 10px 0;
+  text-align: center;
 }
 
 .emoji {

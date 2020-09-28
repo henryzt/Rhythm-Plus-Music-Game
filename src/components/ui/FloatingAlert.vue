@@ -1,11 +1,9 @@
 <template>
   <transition name="alert-fade">
-    <div
-      v-if="visible"
-      class="horizontal animate__animated"
-      :class="[className, emphasize]"
-    >
-      {{ text }}
+    <div v-if="visible" class="warpper">
+      <div class="horizontal animate__animated" :class="[className, emphasize]">
+        {{ text }}
+      </div>
     </div>
   </transition>
 </template>
@@ -60,15 +58,20 @@ export default {
 </script>
 
 <style scoped>
-.horizontal {
+.warpper {
   position: fixed;
+  left: 0;
+  right: 0;
   top: 30px;
-  left: 50%;
-  transform: translateX(-50%);
+  z-index: 1000;
+}
+
+.horizontal {
+  margin: auto;
   background: orange;
   padding: 20px;
-  z-index: 1000;
   transition: 0.5s;
+  width: fit-content;
 }
 .info {
   background: rgb(0, 151, 197);

@@ -1,5 +1,8 @@
 import GameInstance from "../javascript/gameInstance";
 
+let pauseTime = 0;
+let pauseTimeout = null;
+
 export default {
   data() {
     return {
@@ -137,7 +140,19 @@ export default {
     },
     ytPaused() {
       Logger.log("pasued");
+      if (pauseTime > 10) {
+        this.$store.state.alert.error(
+          "Player anomoly detected, pause failed",
+          2000
+        );
+        return;
+      }
       if (this.started) this.pauseGame();
+      pauseTime++;
+      clearTimeout(pauseTimeout);
+      pauseTimeout = setTimeout(() => {
+        pauseTime = 0;
+      }, 1000);
     },
     ytError() {
       Logger.error("youtube error");

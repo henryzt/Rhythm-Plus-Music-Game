@@ -21,16 +21,20 @@
     <div class="leftBottom">
       {{ $store.state.appVersion + "-" + $store.state.build }}
     </div>
+
+    <AlphaNotice></AlphaNotice>
   </div>
 </template>
 
 <script>
 import Button from "../components/ui/Button.vue";
+import AlphaNotice from "../components/menus/AlphaNotice.vue";
 
 export default {
   name: "Home",
   components: {
     Button,
+    AlphaNotice,
   },
   data() {
     return {};

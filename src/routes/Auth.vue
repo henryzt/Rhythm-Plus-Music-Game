@@ -255,11 +255,12 @@ export default {
 .centerCredit {
   text-align: center;
   opacity: 0.5;
-  margin-bottom: 100px;
   width: 100%;
   padding: 0 10px;
   max-width: 600px;
   margin: 50px auto;
+  margin-bottom: 100px;
+  box-sizing: border-box;
 }
 
 .centerCredit a {

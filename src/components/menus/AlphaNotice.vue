@@ -111,6 +111,16 @@ export default {
   z-index: -1;
 }
 
+@media only screen and (max-width: 1000px) {
+  .alphaNotice {
+    padding: 10px 20px;
+  }
+
+  .ripple {
+    top: 25%;
+  }
+}
+
 @keyframes ripple {
   0% {
     opacity: 0.1;

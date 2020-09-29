@@ -9,6 +9,7 @@ export function logEvent(action, event) {
   let reportEvent = event ?? {};
   reportEvent.event_category = router.currentRoute?.name;
   window.gtag("event", action, reportEvent);
+  Logger.log("event logged - ", action);
 }
 
 export function logError(description, fatal) {
@@ -17,7 +18,7 @@ export function logError(description, fatal) {
     fatal,
   };
   window.gtag("event", "exception", data);
-  logEvent("exception", data);
+  logEvent("error", data);
 }
 
 export function sendPageview(path) {

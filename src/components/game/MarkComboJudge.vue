@@ -1,17 +1,19 @@
 <template>
-  <div class="judge">
-    <transition name="modal-fade">
-      <div class="combo" v-if="combo >= 5">
-        <div>Combo</div>
-        <div class="comboNum comboAnimation" v-if="display">
-          {{ combo }}
+  <transition name="fade">
+    <div class="judge" v-if="showAll">
+      <transition name="modal-fade">
+        <div class="combo" v-if="combo >= 5">
+          <div>Combo</div>
+          <div class="comboNum comboAnimation" v-if="display">
+            {{ combo }}
+          </div>
         </div>
+      </transition>
+      <div class="center_judge judgeAnimation" v-if="display">
+        <div class="judgeTypeAnimation" :class="judgeType">{{ markJudge }}</div>
       </div>
-    </transition>
-    <div class="center_judge judgeAnimation" v-if="display">
-      <div class="judgeTypeAnimation" :class="judgeType">{{ markJudge }}</div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script>
@@ -19,11 +21,13 @@ export default {
   name: "MarkComboJudge",
   data: () => {
     return {
+      showAll: false,
       display: true,
       markJudge: "",
       combo: 0,
       comboAni: {},
       judgeType: {},
+      timeout: null,
     };
   },
   methods: {
@@ -32,9 +36,14 @@ export default {
       this.combo = combo;
       this.display = false;
       this.judgeType = { ["judge" + this.markJudge]: true };
+      this.showAll = true;
       this.$nextTick(() => {
         this.display = true;
       });
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        this.showAll = false;
+      }, 3000);
     },
   },
 };

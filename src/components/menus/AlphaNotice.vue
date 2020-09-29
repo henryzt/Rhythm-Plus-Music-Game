@@ -11,12 +11,7 @@
           <div class="texts" key="1" v-if="slide == 1">
             <div class="bigger">Welcome to Rhythm Plus!</div>
           </div>
-          <div
-            class="texts"
-            style="font-size: 0.8em;"
-            key="2"
-            v-else-if="slide == 2"
-          >
+          <div class="texts long" key="2" v-else-if="slide == 2">
             <div class="bigger">
               This game is still under active development (Alpha)
             </div>
@@ -116,6 +111,10 @@ export default {
   z-index: -1;
 }
 
+.long {
+  font-size: 0.8em;
+}
+
 @media only screen and (max-width: 1000px) {
   .alphaNotice {
     padding: 10px 30px;
@@ -123,6 +122,10 @@ export default {
 
   .ripple {
     top: 25%;
+  }
+
+  .long {
+    width: 200px;
   }
 }
 

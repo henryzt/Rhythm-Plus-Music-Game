@@ -4,7 +4,7 @@
       <div class="tutorial flex_hori blurBackground" key="1" v-if="slide == 1">
         <div class="texts">
           <div class="title">Welcome to Rhythm Plus!</div>
-          <img class="logo" src="/assets/logo_white.png" />
+          <img class="logo" :src="img.logo" />
           <div>
             Rhythm+ is a web-based vertical scorlling rhythm game (VSRG), you
             can make, play, and share any songs from and with anyone!
@@ -21,12 +21,12 @@
             Each track has an asscoiated key, for a 4 track game, D, F, J, K,
             associates to track 1-4 respectively.
           </div>
-          <img class="logo" src="/assets/tutorial/2.png" />
+          <img class="logo" :src="img.a" />
           <div>
             On mobile devices, simply tap the white hit line to toggle the
             track. Try it now!
           </div>
-          <div class="text_button">Skip</div>
+          <div class="text_button" @click="skip">Skip</div>
         </div>
       </div>
 
@@ -38,15 +38,11 @@
             the note gets closer to the bottom white line, hit the corresponding
             track.
           </div>
-          <img
-            class="logo"
-            style="max-width: 60%;"
-            src="/assets/tutorial/1.png"
-          />
+          <img class="logo" style="max-width: 60%;" :src="img.b" />
           <div>
             Hit while the note is on the white line to get higher marks.
           </div>
-          <div class="text_button">Skip</div>
+          <div class="text_button" @click="skip">Skip</div>
         </div>
       </div>
 
@@ -54,11 +50,7 @@
         <div class="texts">
           <div class="title">Nice job!</div>
           <div>Now let's try something different: hold notes.</div>
-          <img
-            class="logo"
-            style="max-width: 60%;"
-            src="/assets/tutorial/3.png"
-          />
+          <img class="logo" style="max-width: 60%;" :src="img.c" />
           <div>
             Hold the key when the bottom of the hold note reaches the white
             line, then release the key once the top of the note has just left
@@ -114,10 +106,15 @@ export default {
       slide: 0,
       timer: null,
       idx: 0,
-      bgBlink: {},
+      img: {
+        logo: null,
+        a: null,
+        b: null,
+        c: null,
+      },
     };
   },
-  mounted() {
+  async mounted() {
     this.timer = setInterval(() => {
       if (this.time >= timeline[this.idx].time) {
         this.slide = timeline[this.idx++].slide;
@@ -127,6 +124,11 @@ export default {
         this.slide = 0;
       }
     }, 50);
+
+    this.img.logo = await this.loadImage("/assets/logo_white.png");
+    this.img.a = await this.loadImage("/assets/tutorial/2.png");
+    this.img.b = await this.loadImage("/assets/tutorial/1.png");
+    this.img.c = await this.loadImage("/assets/tutorial/3.png");
   },
   computed: {
     time() {
@@ -136,7 +138,20 @@ export default {
   beforeDestroy() {
     clearInterval(this.timer);
   },
-  methods: {},
+  methods: {
+    async loadImage(url) {
+      return new Promise((resolve) => {
+        let img = new Image();
+        img.src = url;
+        img.onload = () => {
+          resolve(img.src);
+        };
+      });
+    },
+    skip() {
+      this.$parent.instance.seekTo(timeline[this.idx].time);
+    },
+  },
 };
 </script>
 
@@ -180,7 +195,7 @@ export default {
 .artist_hr {
   width: 20%;
   margin-top: 15px;
-  border-top: 1px solid white;
+  border: 1px solid white;
 }
 
 .text_button {
@@ -197,11 +212,6 @@ export default {
 .emoji {
   font-size: 3em;
   text-align: center;
-}
-
-.text_button {
-  padding: 0;
-  display: inline-block;
 }
 
 .slide-fade-enter-active,

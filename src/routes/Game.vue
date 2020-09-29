@@ -304,7 +304,6 @@ export default {
     },
   },
   mounted() {
-    console.log(this.$route);
     if (this.$route.params.sheet) {
       this.instance.loading = true;
       this.playWithId(this.$route.params.sheet);
@@ -361,6 +360,7 @@ export default {
       Logger.log("cued");
       this.instance.loading = false;
       this.showStartButton = true;
+      logEvent("youtube_cued");
     },
     ytBuffering() {
       Logger.log("buffering");

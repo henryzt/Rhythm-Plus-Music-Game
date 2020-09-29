@@ -13,30 +13,36 @@ const router = new VueRouter({
   mode: "history",
   routes: [
     {
+      name: "home",
       path: "/",
       component: Home,
       meta: { requireBg: true, requireSignin: true },
     },
     {
+      name: "menu",
       path: "/menu",
       component: SongSelect,
       meta: { requireBg: true, title: "Song Select" },
     },
     {
+      name: "studio",
       path: "/studio",
       component: MyStudio,
       meta: { requireBg: true, requireSignin: true, title: "My Studio" },
     },
     {
+      name: "rankings",
       path: "/rankings",
       component: Rankings,
       meta: { requireBg: true, title: "Rankings" },
     },
     {
+      name: "game",
       path: "/game",
       component: Game,
       children: [
         {
+          name: "game",
           path: ":sheet",
           component: Game,
           meta: { requireSignin: true, title: "Game" },
@@ -44,23 +50,32 @@ const router = new VueRouter({
       ],
     },
     {
+      name: "tutorial",
       path: "/tutorial",
       component: Game,
       meta: { requireSignin: true, title: "Tutorial" },
     },
     {
+      name: "result",
       path: "/result",
       component: Result,
       props: true,
       children: [
-        { path: ":resultId", component: Result, meta: { title: "Result" } },
+        {
+          name: "result",
+          path: ":resultId",
+          component: Result,
+          meta: { title: "Result" },
+        },
       ],
     },
     {
+      name: "editor",
       path: "/editor",
       component: SheetEditor,
       children: [
         {
+          name: "editor",
           path: ":sheet",
           component: SheetEditor,
           meta: { requireSignin: true, title: "Editor" },
@@ -68,6 +83,7 @@ const router = new VueRouter({
       ],
     },
     {
+      name: "account",
       path: "/account",
       component: Auth,
       meta: {
@@ -76,7 +92,7 @@ const router = new VueRouter({
         title: "Account and Settings",
       },
     },
-    { path: "*", redirect: { path: "/" } },
+    { path: "*", redirect: { path: "/?notfound=true" } },
   ],
 });
 

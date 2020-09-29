@@ -1,18 +1,23 @@
 import { analytics } from "./firebaseConfig";
+import router from "./router";
 
 export function logEvent(action, event) {
   analytics().logEvent(action, event);
-  event.event_label = event ? Object.values(event)[0] : null;
-  window.gtag("event", action, event);
+  if (event) {
+    event.event_label = Object.values(event)[0];
+  }
+  let reportEvent = event ?? {};
+  reportEvent.event_category = router.currentRoute?.name;
+  window.gtag("event", action, reportEvent);
 }
 
 export function logError(description, fatal) {
   const data = {
-    description: description,
-    fatal: fatal,
+    description,
+    fatal,
   };
   window.gtag("event", "exception", data);
-  analytics().logEvent("exception", data);
+  logEvent("exception", data);
 }
 
 export function sendPageview(path) {

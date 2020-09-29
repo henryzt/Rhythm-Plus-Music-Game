@@ -11,6 +11,7 @@ import * as fb from "./helpers/firebaseConfig";
 import Icon from "vue-awesome/components/Icon.vue";
 import * as Sentry from "@sentry/browser";
 import { Vue as VueIntegration } from "@sentry/integrations";
+import { logEvent, logError } from "./helpers/analytics";
 
 import "animate.css";
 import "./registerServiceWorker";
@@ -45,6 +46,7 @@ Logger.setHandler((messages, context) => {
   if (context.level.value > Logger.WARN.value) {
     // ERROR level
     Sentry.captureException(messages[0]);
+    logError(messages[0]);
   }
 });
 
@@ -60,6 +62,7 @@ new Vue({
         fb.auth.signInAnonymously().catch((error) => {
           Logger.error(error.message);
         });
+        logEvent("anonymous_signin");
       }
     });
   },

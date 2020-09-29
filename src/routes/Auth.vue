@@ -76,6 +76,7 @@ import Settings from "../components/menus/Settings.vue";
 import firebase from "firebase/app";
 import * as firebaseui from "firebaseui";
 import "firebaseui/dist/firebaseui.css";
+import { logEvent } from "../helpers/analytics";
 
 export default {
   name: "Auth",
@@ -113,6 +114,7 @@ export default {
         signInSuccessWithAuthResult: (authResult) => {
           Logger.log(authResult);
           this.signInRedirect();
+          logEvent("user_signin");
           return true;
         },
         // handle merge conflicts which occur when an existing credential is linked to an anonymous user.
@@ -144,6 +146,7 @@ export default {
           try {
             this.$store.state.redirecting = true;
             await firebase.auth().signInWithCredential(cred);
+            logEvent("user_signin_a");
             this.signInRedirect();
           } catch (err) {
             Logger.error(err);
@@ -170,6 +173,7 @@ export default {
     if (this.$route.query.success) {
       this.$router.push({ query: null });
       this.$store.state.alert.success("Settings updated");
+      logEvent("settings_updated");
     }
   },
   methods: {
@@ -181,6 +185,7 @@ export default {
         this.$store.state.redirecting = true;
         await firebase.auth().signOut();
         this.$router.go();
+        logEvent("user_signout");
       } catch (err) {
         Logger.error(err);
       }
@@ -210,6 +215,7 @@ export default {
           setTimeout(() => {
             this.emailSentTimeout = false;
           }, 30000);
+          logEvent("verify_email_sent");
         })
         .catch((error) => {
           Logger.error(error);

@@ -9,6 +9,8 @@
 </template>
 
 <script>
+import { logError } from "../../helpers/analytics";
+
 export default {
   name: "FloatingAlert",
   data: function () {
@@ -48,6 +50,7 @@ export default {
     error(text, time) {
       this.className = "error";
       this.show(text, time);
+      logError(text);
     },
     success(text) {
       this.className = "success";

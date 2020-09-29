@@ -110,6 +110,7 @@ import Modal from "../components/ui/Modal.vue";
 import { getSheetList, getSongList } from "../javascript/db";
 import "vue-awesome/icons/lightbulb";
 import "vue-awesome/icons/question-circle";
+import { logEvent } from "../helpers/analytics";
 
 export default {
   name: "SongSelect",
@@ -132,8 +133,10 @@ export default {
   watch: {
     async selectedSong() {
       this.sheetList = null;
-      if (this.selectedSong)
+      if (this.selectedSong) {
         this.sheetList = await getSheetList(this.selectedSong.id);
+        logEvent("song_selected", { id: this.selectedSong.id });
+      }
     },
   },
   mounted() {

@@ -9,29 +9,12 @@
             Rhythm+ is a web-based vertical scorlling rhythm game (VSRG), you
             can make, play, and share any songs from and with anyone!
           </div>
+          <hr class="artist_hr" />
+          <div class="artist">♫ Doven - かめりあ</div>
         </div>
       </div>
 
       <div class="tutorial flex_hori blurBackground" key="2" v-if="slide == 2">
-        <div class="texts">
-          <div class="title">How to play - Judging</div>
-          <div>
-            You will see 4 to 9 tracks in the game, based on the rhythm, notes
-            will drop from the top of the track, when the note gets closer to
-            the bottom white line, hit the corresponding track.
-          </div>
-          <img
-            class="logo"
-            style="max-width: 60%;"
-            src="/assets/tutorial/1.png"
-          />
-          <div>
-            Hit while the note is on the white line to get higher marks.
-          </div>
-        </div>
-      </div>
-
-      <div class="tutorial flex_hori blurBackground" key="3" v-if="slide == 3">
         <div class="texts">
           <div class="title">How to play - Keys</div>
           <div>
@@ -43,6 +26,27 @@
             On mobile devices, simply tap the white hit line to toggle the
             track. Try it now!
           </div>
+          <div class="text_button">Skip</div>
+        </div>
+      </div>
+
+      <div class="tutorial flex_hori blurBackground" key="3" v-if="slide == 3">
+        <div class="texts">
+          <div class="title">How to play - Judging</div>
+          <div>
+            Based on the rhythm, notes will drop from the top of the track, when
+            the note gets closer to the bottom white line, hit the corresponding
+            track.
+          </div>
+          <img
+            class="logo"
+            style="max-width: 60%;"
+            src="/assets/tutorial/1.png"
+          />
+          <div>
+            Hit while the note is on the white line to get higher marks.
+          </div>
+          <div class="text_button">Skip</div>
         </div>
       </div>
 
@@ -80,6 +84,8 @@
             songs without problem! If in doubt, you can always replay the
             tutorial :)
           </div>
+          <hr class="artist_hr" />
+          <div class="artist">♫ Doven - かめりあ</div>
         </div>
       </div>
     </transition>
@@ -165,6 +171,21 @@ export default {
 
 .texts {
   text-align: left;
+}
+
+.artist {
+  text-align: center;
+}
+
+.artist_hr {
+  width: 20%;
+  margin-top: 15px;
+  border-top: 1px solid white;
+}
+
+.text_button {
+  padding: 10px;
+  text-align: center;
 }
 
 .title {

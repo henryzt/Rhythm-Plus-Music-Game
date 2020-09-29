@@ -29,7 +29,7 @@
               @click="$router.push('/tutorial/')"
             >
               <v-icon class="add-icon" name="question-circle" scale="2" />
-              <div style="font-size: 1.2em;">Tutorial</div>
+              <div style="font-size: 1.2em;">Play Tutorial</div>
             </div>
             <!-- song lists -->
             <div

@@ -39,12 +39,15 @@
           }}
         </div>
         <br />
-        <div>
+        <div v-if="$store.state.authed">
           Thank you for playing Rhythm Plus Alpha release, you can report bugs
-          and send feedback on our
-          <a href="https://github.com/henryz00/Rhythm-Plus-Music-Game"
-            >GitHub Repo</a
-          >. To show your support, give us a star!
+          and send feedback <a :href="bugReport" target="_blank">here</a> or on
+          our <a :href="github" target="_blank">GitHub Repo</a>. You can also
+          give us a star to support us!
+        </div>
+        <div v-else>
+          <a :href="bugReport" target="_blank">Bug Report</a> ·
+          <a :href="github" target="_blank">GitHub Repo</a>
         </div>
       </div>
 
@@ -86,6 +89,8 @@ export default {
     return {
       showModal: false,
       emailSentTimeout: false,
+      bugReport: "https://forms.gle/8gmuaWU7E9h82i4A7",
+      github: "https://github.com/henryz00/Rhythm-Plus-Music-Game",
     };
   },
   computed: {},
@@ -270,7 +275,8 @@ export default {
 .cutBottom .centerCredit {
   position: fixed;
   bottom: 0px;
-  width: calc(100% - 100px);
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .flex_hori {

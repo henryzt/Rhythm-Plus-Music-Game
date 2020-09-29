@@ -44,7 +44,7 @@
       <Tutorial
         v-if="tutorial"
         v-show="started && !instance.paused"
-        class="zoom"
+        class="zoom allow-events"
       ></Tutorial>
     </transition>
 

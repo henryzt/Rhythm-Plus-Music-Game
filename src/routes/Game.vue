@@ -262,7 +262,7 @@ import {
   createPlay,
   updatePlay,
 } from "../javascript/db";
-import { analytics } from "../helpers/firebaseConfig";
+import { logEvent, logError } from "../helpers/analytics";
 import ICountUp from "vue-countup-v2";
 import VanillaTilt from "vanilla-tilt";
 import "vue-awesome/icons/regular/pause-circle";
@@ -332,15 +332,13 @@ export default {
         this.instance.loadSong(song);
         document.title = song.title + " - Rhythm+ Music Game";
       } catch (err) {
-        analytics().logEvent("song_load_error", {
-          sheetId: sheetId,
-        });
         this.$store.state.gModal.show({
           bodyText: "Sorry, this song does not exist or is unavaliable.",
           isError: true,
           showCancel: false,
           okCallback: this.exitGame,
         });
+        logError("song_load_error_" + sheetId);
       }
     },
     songLoaded() {
@@ -371,7 +369,7 @@ export default {
       }
     },
     async startGame() {
-      analytics().logEvent("start_game", { songId: this.currentSong.songId });
+      logEvent("start_game", { songId: this.currentSong.songId });
       this.showStartButton = false;
       if (this.srcMode === "youtube") {
         this.instance.loading = true;
@@ -426,11 +424,13 @@ export default {
       return updatePlay(this.playId, data);
     },
     reportExit(status) {
-      this.updatePlay({
+      const data = {
         status,
         playTime: this.instance.playTime,
         result: this.result,
-      });
+      };
+      this.updatePlay(data);
+      logEvent("game_exited", data);
     },
     async gameEnded() {
       this.instance.destroyInstance();
@@ -465,7 +465,7 @@ export default {
         this.$router.push("/result/" + res.data.resultId);
         this.$confetti.stop();
         this.updatePlay({ status: "finished", resultId: res.data.resultId });
-        analytics().logEvent("result_uploaded", {
+        logEvent("result_uploaded", {
           resultId: res.data.resultId,
         });
       } catch (error) {
@@ -478,6 +478,7 @@ export default {
           okCallback: this.gameEnded,
           cancelCallback: this.exitGame,
         });
+        logError("result_upload_error");
       }
     },
     addTilt() {

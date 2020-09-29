@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import { usersCollection, analytics, auth } from "./firebaseConfig";
+import { usersCollection, auth } from "./firebaseConfig";
+import { logEvent, setUserId, setUserProps } from "./analytics";
 import md5 from "js-md5";
 
 Vue.use(Vuex);
@@ -71,7 +72,7 @@ export const store = new Vuex.Store({
           let data = res.data();
           commit("setUserProfile", data ?? {});
           commit("setTheme");
-          analytics().logEvent("app_initialized");
+          logEvent("app_initialized");
         } catch (err) {
           Logger.error(err);
         }
@@ -120,8 +121,8 @@ export const store = new Vuex.Store({
       this.dispatch("fetchUserProfile");
       if (!val) return;
       const { uid, displayName, emailVerified, isAnonymous } = val;
-      analytics().setUserId(uid);
-      analytics().setUserProperties({
+      setUserId(uid);
+      setUserProps({
         displayName,
         emailVerified,
         isAnonymous,

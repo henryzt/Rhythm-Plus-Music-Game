@@ -13,7 +13,7 @@
           </div>
           <div class="texts long" key="2" v-else-if="slide == 2">
             <div class="bigger">
-              This game is still under active development (Alpha)
+              This game is under active development (Alpha WIP)
             </div>
             <div>
               <div class="text_button" @click="openForm">Report bug</div>

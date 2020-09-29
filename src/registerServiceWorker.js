@@ -1,4 +1,5 @@
 import { register } from "register-service-worker";
+import { logEvent } from "./helpers/analytics";
 
 register(`/service-worker.js`, {
   ready() {
@@ -28,11 +29,12 @@ register(`/service-worker.js`, {
 });
 
 window.addEventListener("beforeinstallprompt", () => {
+  logEvent("before_install_prompt");
   Logger.log("Install Prompt");
 });
 
 window.addEventListener("appinstalled", () => {
-  // TODO Log install to analytics
+  logEvent("app_installed");
   Logger.log("INSTALL: Success");
 });
 

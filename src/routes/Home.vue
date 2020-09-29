@@ -13,7 +13,7 @@
         {{
           $store.state.authed
             ? "Welcome, " + $store.state.currentUser.displayName
-            : "Login or Reigster"
+            : "Login or Register"
         }}
       </div>
     </div>

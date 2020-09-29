@@ -388,6 +388,7 @@ export default class GameInstance {
     if (shouldAdvance) this.timeArrIdx++;
     if (this.vm.perspective) this.drawFadeOut();
     this.countFps();
+    this.gameTimingLoop();
   }
 
   countFps() {
@@ -438,7 +439,7 @@ export default class GameInstance {
         clearInterval(intervalPrePlay);
         clearInterval(this.intervalPlay);
         this.vm.started = true;
-        this.intervalPlay = setInterval(this.gameTimingLoop.bind(this), 100);
+        // this.intervalPlay = setInterval(this.gameTimingLoop.bind(this), 100);
       }
     }, 100);
   }

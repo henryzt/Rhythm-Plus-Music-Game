@@ -92,8 +92,8 @@ const timeline = [
   { time: 29, slide: -1 },
   { time: 48, slide: 4 },
   { time: 54, slide: 0 },
-  { time: 63, slide: 5 },
-  { time: 67, slide: 0 },
+  { time: 64, slide: 5 },
+  { time: 66, slide: 0 },
   { time: 108, slide: 6 },
   { time: 119, slide: 0 },
   { time: 200, slide: 0 },
@@ -181,7 +181,7 @@ export default {
   right: 0;
   top: 50%;
   width: 100%;
-  transform: translateY(-50%);
+  transform: translateY(-60%);
 }
 
 .texts {

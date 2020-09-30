@@ -445,6 +445,8 @@ export default class GameInstance {
   }
 
   async gameTimingLoop() {
+    if (!this.vm.currentSong) return;
+
     await this.updateCurrentTime();
 
     // check game end

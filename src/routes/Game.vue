@@ -413,7 +413,7 @@ export default {
       this.instance.resetPlaying();
       this.instance.startSong();
     },
-    exitGame(reason) {
+    exitGame(e, reason) {
       this.reportExit(reason ?? "exited");
       this.playId = null;
       this.hideMenu();
@@ -437,7 +437,7 @@ export default {
       this.isGameEnded = true;
       let achievementPromise = Promise.resolve();
       if (this.tutorial) {
-        this.exitGame("tutorial-ends");
+        this.exitGame(null, "tutorial-ends");
         return;
       }
       if (this.result.marks.miss == 0) {

@@ -13,6 +13,13 @@
         </div>
         <div
           class="cat_tab"
+          :class="{ active: tab == 'new' }"
+          @click="tab = 'new'"
+        >
+          New
+        </div>
+        <div
+          class="cat_tab"
           :class="{ active: tab == 'all' }"
           @click="tab = 'all'"
         >
@@ -30,6 +37,7 @@
             :class="{ sHidden: selectedSong }"
             :songs="songList"
             @sorted="songDisplayList = $event"
+            ref="sorter"
           ></SheetFilter>
           <transition-group
             v-if="songDisplayList"
@@ -52,7 +60,7 @@
             <div
               v-for="(song, i) in songDisplayList"
               :key="song.id"
-              :style="{ '--i': i }"
+              :style="{ '--i': i < 10 ? 10 : i }"
             >
               <SongListItem
                 :song="song"
@@ -162,29 +170,36 @@ export default {
         logEvent("song_selected", { id: this.selectedSong.id });
       }
     },
-    tab() {
+    async tab() {
+      this.songList = [];
       if (this.tab == "recom") {
-        this.getPlaylistSongs();
+        await this.filterRecommended(true);
+      } else if (this.tab == "new") {
+        await this.filterRecommended(false);
       } else if (this.tab == "all") {
-        this.getAllSongs();
+        await this.getAllSongs();
       }
+      this.$refs.sorter.defaultSort();
     },
   },
   mounted() {
-    this.getPlaylistSongs();
+    this.filterRecommended(true);
   },
   methods: {
-    getAllSongs() {
-      getSongList()
-        .then((res) => {
-          this.songList = res;
-        })
-        .catch((err) => {
-          Logger.error(err);
-        });
+    async getAllSongs() {
+      this.songList = await getSongList();
     },
-    getPlaylistSongs() {
-      getPlaylist("recommended").then(async (res) => {
+    async filterRecommended(getRecommened) {
+      const playlist = await getPlaylist("recommended");
+      const songs = await getSongList();
+      if (getRecommened) {
+        this.songList = songs.filter((e) => playlist.items.includes(e.id));
+      } else {
+        this.songList = songs.filter((e) => !playlist.items.includes(e.id));
+      }
+    },
+    getPlaylistSongs(playlistId) {
+      getPlaylist(playlistId).then(async (res) => {
         const list = res.items;
         this.songList = await getSongsInIdArray(false, false, list);
       });

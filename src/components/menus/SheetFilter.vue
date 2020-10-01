@@ -168,27 +168,32 @@ export default {
     },
   },
   methods: {
-    finishSort(sortName) {
-      if (this.currentSort === sortName) {
-        this.reverseSort = !this.reverseSort;
-      } else {
-        this.reverseSort = false;
+    finishSort(sortName, changeReverse) {
+      if (changeReverse) {
+        if (this.currentSort === sortName) {
+          this.reverseSort = !this.reverseSort;
+        } else {
+          this.reverseSort = false;
+        }
       }
       if (this.reverseSort) this.songs.reverse();
       this.currentSort = sortName;
       this.$emit("sorted", this.filteredSongs);
     },
-    sortByTitle() {
+    sortByTitle(keepReverse) {
       this.songs.sort((a, b) => a.title.localeCompare(b.title));
-      this.finishSort("title");
+      this.finishSort("title", !keepReverse);
     },
     sortByArtist() {
       this.songs.sort((a, b) => a.artist.localeCompare(b.artist));
-      this.finishSort("artist");
+      this.finishSort("artist", true);
     },
     sortByDate() {
       this.songs.sort((a, b) => b.dateCreated.seconds - a.dateCreated.seconds);
-      this.finishSort("date");
+      this.finishSort("date", true);
+    },
+    defaultSort() {
+      this.sortByTitle(true);
     },
   },
 };

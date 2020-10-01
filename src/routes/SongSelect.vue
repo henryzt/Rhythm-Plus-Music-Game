@@ -3,6 +3,23 @@
     <v-bar class="fullPage">
       <div class="pageTitle">Song Select</div>
 
+      <div class="cat flex_hori">
+        <div
+          class="cat_tab"
+          :class="{ active: tab == 'recom' }"
+          @click="tab = 'recom'"
+        >
+          Recommended
+        </div>
+        <div
+          class="cat_tab"
+          :class="{ active: tab == 'all' }"
+          @click="tab = 'all'"
+        >
+          All Songs
+        </div>
+      </div>
+
       <div class="mContainer">
         <div
           class="song_list"
@@ -107,7 +124,12 @@ import SongDetailPanel from "../components/menus/SongDetailPanel.vue";
 import SheetFilter from "../components/menus/SheetFilter.vue";
 import Loading from "../components/ui/Loading.vue";
 import Modal from "../components/ui/Modal.vue";
-import { getSheetList, getSongList } from "../javascript/db";
+import {
+  getSheetList,
+  getSongList,
+  getPlaylist,
+  getSongsInIdArray,
+} from "../javascript/db";
 import "vue-awesome/icons/lightbulb";
 import "vue-awesome/icons/question-circle";
 import { logEvent } from "../helpers/analytics";
@@ -127,6 +149,8 @@ export default {
       songDisplayList: [],
       sheetList: null,
       selectedSong: null,
+      recommendedList: [],
+      tab: "recom",
     };
   },
   computed: {},
@@ -138,17 +162,34 @@ export default {
         logEvent("song_selected", { id: this.selectedSong.id });
       }
     },
+    tab() {
+      if (this.tab == "recom") {
+        this.getPlaylistSongs();
+      } else if (this.tab == "all") {
+        this.getAllSongs();
+      }
+    },
   },
   mounted() {
-    getSongList()
-      .then((res) => {
-        this.songList = res;
-      })
-      .catch((err) => {
-        Logger.error(err);
-      });
+    this.getPlaylistSongs();
   },
-  methods: {},
+  methods: {
+    getAllSongs() {
+      getSongList()
+        .then((res) => {
+          this.songList = res;
+        })
+        .catch((err) => {
+          Logger.error(err);
+        });
+    },
+    getPlaylistSongs() {
+      getPlaylist("recommended").then(async (res) => {
+        const list = res.items;
+        this.songList = await getSongsInIdArray(false, false, list);
+      });
+    },
+  },
 };
 </script>
 
@@ -188,6 +229,27 @@ export default {
   position: absolute;
   left: 10%;
   top: 30px;
+}
+
+.cat {
+  margin: auto;
+  width: fit-content;
+}
+
+.cat_tab {
+  margin: 10px;
+  font-weight: bolder;
+  padding-bottom: 5px;
+  transition: all 0.2s;
+  opacity: 0.7;
+  color: white;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+}
+
+.active {
+  opacity: 0.9;
+  border-bottom: 2px solid white;
 }
 
 @media only screen and (max-width: 800px) {

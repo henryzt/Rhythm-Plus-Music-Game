@@ -7,6 +7,7 @@ import {
   resultsCollection,
   tagsCollection,
   playsCollection,
+  playlistsCollection,
 } from "../helpers/firebaseConfig"; //usersCollection
 import { store } from "../helpers/store";
 import { Validator } from "jsonschema";
@@ -30,11 +31,11 @@ const errorMsgs = {
 };
 
 function reportError(error, action) {
-  Logger.error(`Error ${action ?? "handling"} document: `, error);
+  Logger.error(`DB - Error ${action ?? "handling"} document: `, error);
 }
 
 function reportSuccess(action, msg) {
-  Logger.info(`Document ${action ?? "handling"} succeed.`, msg);
+  Logger.info(`DB - Document ${action ?? "handling"} succeed.`, msg);
 }
 
 function validate(instance, schema) {
@@ -278,6 +279,23 @@ export function getTags() {
   });
 }
 
+export function getPlaylist(id) {
+  return getDocById(playlistsCollection, id);
+}
+
+export function updatePlaylist(id, data) {
+  return playlistsCollection
+    .doc(id)
+    .update(data)
+    .then(function () {
+      reportSuccess(action.UPDATE);
+    })
+    .catch(function (error) {
+      // The document probably doesn't exist.
+      reportError(error, action.UPDATE);
+    });
+}
+
 export function createPlay(sheetId, songId) {
   let dateCreated = firestore.Timestamp.now();
   let dateUpdated = dateCreated;
@@ -489,18 +507,22 @@ export function uploadResult(data) {
   return uploader(data);
 }
 
-export async function getResult(resultId) {
+export function getResult(resultId) {
+  return getDocById(resultsCollection, resultId);
+}
+
+async function getDocById(collection, id) {
   try {
-    let doc = await resultsCollection.doc(resultId).get();
+    let doc = await collection.doc(id).get();
     if (doc.exists) {
       let result = doc.data();
       return result;
     } else {
-      Logger.error(errorMsgs.NOT_FOUND);
+      reportError(errorMsgs.NOT_FOUND, action.READ);
       throw new Error(errorMsgs.NOT_FOUND);
     }
   } catch (error) {
-    Logger.error(error);
+    reportError(error, action.READ);
     throw new Error(errorMsgs.READ);
   }
 }

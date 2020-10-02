@@ -27,6 +27,16 @@
         </div>
       </div>
 
+      <transition name="slide-fade">
+        <div class="new-info flex_hori" v-if="tab == 'new'">
+          <v-icon name="info-circle" style="padding-right: 10px;"></v-icon>
+          <div>
+            We cannot yet guarantee the quality of new sheets, accurate beatmaps
+            will be selected to the recommended songs periodically.
+          </div>
+        </div>
+      </transition>
+
       <div class="mContainer">
         <div
           class="song_list"
@@ -141,6 +151,7 @@ import {
 import "vue-awesome/icons/lightbulb";
 import "vue-awesome/icons/question-circle";
 import { logEvent } from "../helpers/analytics";
+import "vue-awesome/icons/info-circle";
 
 export default {
   name: "SongSelect",
@@ -157,7 +168,6 @@ export default {
       songDisplayList: [],
       sheetList: null,
       selectedSong: null,
-      recommendedList: [],
       tab: "recom",
     };
   },
@@ -171,15 +181,16 @@ export default {
       }
     },
     async tab() {
-      this.songList = [];
       if (this.tab == "recom") {
         await this.filterRecommended(true);
+        this.$refs.sorter.sort("title");
       } else if (this.tab == "new") {
-        await this.filterRecommended(false);
+        await this.getNewSongs();
+        this.$refs.sorter.sort("date");
       } else if (this.tab == "all") {
         await this.getAllSongs();
+        this.$refs.sorter.sort("title");
       }
-      this.$refs.sorter.defaultSort();
     },
   },
   mounted() {
@@ -197,6 +208,13 @@ export default {
       } else {
         this.songList = songs.filter((e) => !playlist.items.includes(e.id));
       }
+    },
+    async getNewSongs() {
+      await this.getAllSongs();
+      this.songList.sort(
+        (a, b) => a.dateCreated.seconds - b.dateCreated.seconds
+      );
+      this.songList = this.songList.slice(-20);
     },
     getPlaylistSongs(playlistId) {
       getPlaylist(playlistId).then(async (res) => {
@@ -216,6 +234,7 @@ export default {
   transition: 2s;
   white-space: nowrap;
   margin-bottom: 300px !important;
+  margin-top: 30px;
 }
 .song_list {
   width: 100%;
@@ -265,6 +284,15 @@ export default {
 .active {
   opacity: 0.9;
   border-bottom: 2px solid white;
+}
+
+.new-info {
+  max-width: 500px;
+  margin: 10px auto;
+  opacity: 0.5;
+  text-align: left;
+  font-size: 14px;
+  width: 90%;
 }
 
 @media only screen and (max-width: 800px) {

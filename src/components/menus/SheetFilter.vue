@@ -57,13 +57,13 @@
 
       <div class="flex_hori" key="2" v-if="showSort">
         <div class="flex_spacer"></div>
-        <div class="clip clip_outlined" @click="sortByTitle">
+        <div class="clip clip_outlined" @click="sort('title', true)">
           <v-icon :name="sortIcon" v-if="currentSort == 'title'" />Title
         </div>
-        <div class="clip clip_outlined" @click="sortByDate">
+        <div class="clip clip_outlined" @click="sort('date', true)">
           <v-icon :name="sortIcon" v-if="currentSort == 'date'" />Date
         </div>
-        <div class="clip clip_outlined" @click="sortByArtist">
+        <div class="clip clip_outlined" @click="sort('artist', true)">
           <v-icon :name="sortIcon" v-if="currentSort == 'artist'" />Artist
         </div>
         <div class="clip" @click="showSort = false">
@@ -112,7 +112,7 @@ export default {
   data: function () {
     return {
       showSort: false,
-      currentSort: null,
+      currentSort: "title",
       reverseSort: false,
       showSearch: false,
       searchTerms: null,
@@ -122,7 +122,7 @@ export default {
     };
   },
   async mounted() {
-    this.sortByTitle();
+    this.sort();
     this.tags = await getTags();
   },
   watch: {
@@ -180,20 +180,29 @@ export default {
       this.currentSort = sortName;
       this.$emit("sorted", this.filteredSongs);
     },
-    sortByTitle(keepReverse) {
+    sortByTitle() {
       this.songs.sort((a, b) => a.title.localeCompare(b.title));
-      this.finishSort("title", !keepReverse);
     },
     sortByArtist() {
       this.songs.sort((a, b) => a.artist.localeCompare(b.artist));
-      this.finishSort("artist", true);
     },
     sortByDate() {
       this.songs.sort((a, b) => b.dateCreated.seconds - a.dateCreated.seconds);
-      this.finishSort("date", true);
     },
-    defaultSort() {
-      this.sortByTitle(true);
+    sort(by, changeReverse) {
+      const sortBy = by ?? this.currentSort;
+      switch (sortBy) {
+        case "title":
+          this.sortByTitle();
+          break;
+        case "artist":
+          this.sortByArtist();
+          break;
+        case "date":
+          this.sortByDate();
+          break;
+      }
+      this.finishSort(sortBy, changeReverse);
     },
   },
 };

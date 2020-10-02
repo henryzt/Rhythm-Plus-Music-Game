@@ -7,7 +7,7 @@ import VueConfetti from "vue-confetti";
 import App from "./App.vue";
 import router from "./helpers/router";
 import { store } from "./helpers/store";
-import * as fb from "./helpers/firebaseConfig";
+import { auth } from "./helpers/firebaseConfig";
 import Icon from "vue-awesome/components/Icon.vue";
 import * as Sentry from "@sentry/browser";
 import { Vue as VueIntegration } from "@sentry/integrations";
@@ -54,12 +54,16 @@ new Vue({
   router,
   store,
   created() {
-    fb.auth.onAuthStateChanged(async (user) => {
+    auth.onAuthStateChanged(async (user) => {
+      if (this.$store.state.redirecting) {
+        Logger.warn("User state change discarded", user);
+        return;
+      }
       Logger.log("User state changed", user);
       await this.$store.commit("setCurrentUser", user);
       if (!user && !this.$store.state.redirecting) {
         Logger.warn("User not logged in, creating anonymous profile...");
-        fb.auth.signInAnonymously().catch((error) => {
+        auth.signInAnonymously().catch((error) => {
           Logger.error(error.message);
         });
         logEvent("anonymous_signin");

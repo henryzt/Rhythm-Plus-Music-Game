@@ -63,8 +63,8 @@ export default {
   },
   methods: {
     updateOnlineStatus(e) {
-      const isOnline = e ? e.type === "online" : window.navigator.onLine;
-      if (!e && isOnline) return;
+      if (!e?.type) return;
+      const isOnline = e.type === "online" || window.navigator.onLine;
       if (isOnline) this.$store.state.alert.success("You are back online!");
       else this.$store.state.alert.error("No internet connection");
     },

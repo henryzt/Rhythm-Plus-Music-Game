@@ -132,20 +132,24 @@ export default {
             if (
               this.$store.state.userProfile &&
               this.$store.state.userProfile.exp > 5
-            )
+            ) {
               await firebase
                 .firestore()
                 .collection("users")
                 .doc(anonymousUser.uid)
                 .set({ isAnonymousDeleted: true });
+            }
             await anonymousUser.delete();
+            await firebase.auth().signOut();
           } catch (err) {
             Logger.error(err);
           }
 
           try {
             this.$store.state.redirecting = true;
-            await firebase.auth().signInWithCredential(cred);
+            const res = await firebase.auth().signInWithCredential(cred);
+            Logger.log("login", res);
+            anonymousUser = null;
             logEvent("user_signin_a");
             this.signInRedirect();
           } catch (err) {
@@ -193,6 +197,8 @@ export default {
     signInRedirect() {
       this.$store.state.redirecting = true;
       const user = firebase.auth().currentUser;
+
+      Logger.log("redirected", user);
 
       if (user.emailVerified) {
         this.$router.push({ path: "/" });

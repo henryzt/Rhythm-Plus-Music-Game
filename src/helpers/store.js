@@ -52,7 +52,7 @@ export const store = new Vuex.Store({
         let url = state.currentUser.photoURL;
         if (url) {
           commit("setProfilePciture", url);
-        } else {
+        } else if (state.currentUser.email) {
           let hash = md5(state.currentUser.email);
           let gravatar_link =
             "https://www.gravatar.com/avatar/" + hash + "?s=50&d=404";
@@ -62,6 +62,8 @@ export const store = new Vuex.Store({
           } else {
             commit("setProfilePciture", null);
           }
+        } else {
+          commit("setProfilePciture", null);
         }
       }
     },

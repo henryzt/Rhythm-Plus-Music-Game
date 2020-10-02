@@ -37,7 +37,6 @@ const router = new VueRouter({
       meta: { requireBg: true, title: "Rankings" },
     },
     {
-      name: "game",
       path: "/game",
       component: Game,
       children: [
@@ -56,7 +55,6 @@ const router = new VueRouter({
       meta: { requireSignin: true, title: "Tutorial" },
     },
     {
-      name: "result",
       path: "/result",
       component: Result,
       props: true,
@@ -70,7 +68,6 @@ const router = new VueRouter({
       ],
     },
     {
-      name: "editor",
       path: "/editor",
       component: SheetEditor,
       children: [

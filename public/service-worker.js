@@ -1,7 +1,7 @@
 const FILES_TO_CACHE = ["/offline.html", "/style.css", "/assets/logo2.png"];
 const CACHE_NAME = "rhythm_plus";
 
-self.addEventListener("install", function (evt) {
+self.addEventListener("install", (evt) => {
   evt.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       console.log("[ServiceWorker] Pre-caching offline page");
@@ -10,7 +10,7 @@ self.addEventListener("install", function (evt) {
   );
 });
 
-self.addEventListener("activate", function (evt) {
+self.addEventListener("activate", (evt) => {
   evt.waitUntil(
     caches.keys().then((keyList) => {
       return Promise.all(
@@ -25,7 +25,7 @@ self.addEventListener("activate", function (evt) {
   );
 });
 
-self.addEventListener("fetch", function (evt) {
+self.addEventListener("fetch", (evt) => {
   if (evt.request.mode !== "navigate") {
     // Not a page navigation, bail.
     return;

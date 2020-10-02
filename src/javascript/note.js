@@ -34,7 +34,7 @@ export default class Note {
   }
 
   getDiffPercentage() {
-    if (this.gameHadBeenPaused || this.vm.playbackSpeed != 1) {
+    if (this.gameHadBeenPaused || this.vm.playbackSpeed !== 1) {
       // game had been pasued, time unuseable, use less accurate dist calculation instead
       const dist = this.game.checkHitLineY - this.y;
       const percentage = Math.abs(dist) / this.canvas.height; // the lower the better

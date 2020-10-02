@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import { usersCollection, analytics, auth } from "./firebaseConfig";
+import { usersCollection, auth } from "./firebaseConfig";
+import { logEvent, setUserId, setUserProps } from "./analytics";
 import md5 from "js-md5";
 
 Vue.use(Vuex);
@@ -29,6 +30,7 @@ export const store = new Vuex.Store({
       autoplay: 0,
       modestbranding: 1,
       nocookie: true,
+      fs: 0,
     },
     appVersion: process.env.APP_VERSION,
     build: process.env.COMMIT_HASH,
@@ -50,7 +52,7 @@ export const store = new Vuex.Store({
         let url = state.currentUser.photoURL;
         if (url) {
           commit("setProfilePciture", url);
-        } else {
+        } else if (state.currentUser.email) {
           let hash = md5(state.currentUser.email);
           let gravatar_link =
             "https://www.gravatar.com/avatar/" + hash + "?s=50&d=404";
@@ -60,6 +62,8 @@ export const store = new Vuex.Store({
           } else {
             commit("setProfilePciture", null);
           }
+        } else {
+          commit("setProfilePciture", null);
         }
       }
     },
@@ -70,7 +74,7 @@ export const store = new Vuex.Store({
           let data = res.data();
           commit("setUserProfile", data ?? {});
           commit("setTheme");
-          analytics().logEvent("app_initialized");
+          logEvent("app_initialized");
         } catch (err) {
           Logger.error(err);
         }
@@ -92,6 +96,21 @@ export const store = new Vuex.Store({
           Logger.warn("Photo URL updated using provider data");
           reloadRequired = true;
         }
+        Logger.log(user, state.userProfile);
+        if (
+          user.photoURL !== state.userProfile.photoURL ||
+          user.displayName !== state.userProfile.displayName
+        ) {
+          await usersCollection
+            .doc(user.uid)
+            .set(
+              { photoURL: user.photoURL, displayName: user.displayName },
+              { merge: true }
+            );
+          state.userProfile.displayName = user.displayName;
+          state.userProfile.photoURL = user.photoURL;
+          Logger.warn("user profile updated");
+        }
         if (reloadRequired) window.location.reload();
       }
     },
@@ -104,8 +123,8 @@ export const store = new Vuex.Store({
       this.dispatch("fetchUserProfile");
       if (!val) return;
       const { uid, displayName, emailVerified, isAnonymous } = val;
-      analytics().setUserId(uid);
-      analytics().setUserProperties({
+      setUserId(uid);
+      setUserProps({
         displayName,
         emailVerified,
         isAnonymous,

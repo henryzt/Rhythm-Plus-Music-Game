@@ -15,37 +15,32 @@
 
     <div
       class="shadow"
-      v-if="$store.state.authed && $store.state.userProfile"
+      v-if="($store.state.authed && userProfile) || overrideProfile"
       @click="goToAccount"
       style="display: flex; align-items: center;"
     >
-      <img
-        v-if="$store.state.profilePicture"
-        :src="$store.state.profilePicture"
-      />
+      <img v-if="userProfile.photoURL" :src="userProfile.photoURL" />
       <div class="detail">
         <div>
           {{
-            $store.state.currentUser.displayName
-              ? $store.state.currentUser.displayName
-              : "Name not set"
+            userProfile.displayName ? userProfile.displayName : "Name not set"
           }}
         </div>
         <div
           style="opacity: 0.6;"
-          v-if="$store.state.userProfile.lvd && $store.state.verified"
+          v-if="userProfile.lvd && $store.state.verified"
         >
-          Level.{{ $store.state.userProfile.lvd }}
+          Level.{{ userProfile.lvd }}
         </div>
-        <div class="wrapper" v-if="extend && $store.state.userProfile.lvd">
+        <div class="wrapper" v-if="extend && userProfile.lvd">
           <div class="progress-bar">
             <span
               class="progress-bar-fill increased"
-              :style="{ width: percentage + '%' }"
+              :style="{ width: percentage(true) + '%' }"
             ></span>
             <span
               class="progress-bar-fill"
-              :style="{ width: percentage + '%' }"
+              :style="{ width: percentage(false) + '%' }"
             ></span>
           </div>
         </div>
@@ -72,7 +67,7 @@
 <script>
 export default {
   name: "UserProfileCard",
-  props: ["extend"],
+  props: ["extend", "overrideProfile", "oldProfile"],
   data: function () {
     return {};
   },
@@ -81,9 +76,19 @@ export default {
   },
   computed: {
     percentage() {
-      const dec =
-        this.$store.state.userProfile.lv - this.$store.state.userProfile.lvd;
-      return dec * 100;
+      return (isDiff) => {
+        let base = this.$store.state.userProfile;
+        if (this.oldProfile?.lv) {
+          // if old profile provided, diff bar shows new info, normal bar shows old
+          if (!isDiff && base.lvd > this.oldProfile.lvd) return 0;
+          base = isDiff ? base : this.oldProfile;
+        }
+        const dec = base.lv - base.lvd;
+        return dec * 100;
+      };
+    },
+    userProfile() {
+      return this.overrideProfile ?? this.$store.state.userProfile;
     },
   },
   methods: {
@@ -147,6 +152,7 @@ img {
   opacity: 1;
   font-size: 1.2em;
   cursor: auto;
+  text-align: left;
 }
 
 .extend .shadow {
@@ -184,7 +190,7 @@ img {
 }
 
 .increased {
-  background-color: #ffd900;
+  background-color: #7bff00;
 }
 
 @media only screen and (max-width: 1000px) {

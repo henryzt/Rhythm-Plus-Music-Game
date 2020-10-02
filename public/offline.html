@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rhythm Plus Music Game - Game Offline</title>
+    <style>
+      body {
+        background: black;
+        color: white;
+        font-family: Arial, Helvetica, sans-serif;
+        user-select: none;
+      }
+
+      .center_logo {
+        text-align: center;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+      }
+
+      .btn-dark {
+        cursor: pointer;
+        padding: 10px;
+        min-width: 80px;
+        margin: 0 10px;
+        text-align: center;
+        transition: 0.5s;
+        max-width: 200px;
+        margin: 10px auto;
+        background: rgba(122, 122, 122, 0.2);
+      }
+
+      .btn-dark:hover {
+        background: rgb(255, 255, 255);
+        color: black;
+      }
+    </style>
+    <link rel="stylesheet" type="text/css" href="/style.css" />
+  </head>
+  <body>
+    <div class="center_logo">
+      <img
+        class="logo"
+        style="max-width: 300px; opacity: 0.5; padding: 20px;"
+        src="assets/logo2.png"
+        onerror="this.style.display='none'"
+      />
+      <div>
+        Sorry, you appears to be offline. <br />The game requires an internet
+        connection to work :(
+      </div>
+      <div
+        class="btn-dark"
+        style="margin-top: 60px;"
+        onclick="window.location.reload();"
+      >
+        Retry
+      </div>
+    </div>
+  </body>
+</html>

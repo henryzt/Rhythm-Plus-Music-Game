@@ -15,10 +15,17 @@
         style="height: calc(100%); overflow-y: auto;"
         ref="table"
         :data-key="'t'"
-        :data-sources="instance.timeArr"
+        :data-sources="timeArrDisplay"
         :data-component="NoteTableItem"
         :extra-props="{ instance, noteToEdit, parent: $parent, table: this }"
       />
+    </div>
+    <div
+      class="selectedIndicator"
+      v-if="$parent.selectedNotes.length > 0 && !isBlinking"
+    >
+      <span>{{ $parent.selectedNotes.length }} notes selected</span>
+      <a class="link" @click="clearSelected">Clear</a>
     </div>
     <NoteEditPanel
       v-if="noteToEdit"
@@ -78,6 +85,9 @@ export default {
     hasSelected() {
       return this.$parent.selectedNotes.length !== 0;
     },
+    timeArrDisplay() {
+      return this.instance.timeArr.slice().reverse();
+    },
   },
   components: {
     NoteEditPanel,
@@ -132,13 +142,13 @@ export default {
       this.$store.state.alert.success("Selected notes deleted");
     },
     scrollToCurrent() {
-      const idx = this.instance.timeArrIdx;
+      const idx = this.instance.timeArr.length - this.instance.timeArrIdx - 1;
       const table = this.$refs.table;
       if (idx < this.instance.timeArr.length) {
         table.scrollToIndex(idx);
-        table.scrollToOffset(table.getOffset() - 230);
+        table.scrollToOffset(table.getOffset() - 120);
       } else {
-        table.scrollToBottom();
+        table.scrollToTop();
       }
     },
     reorder() {
@@ -259,11 +269,7 @@ export default {
 }
 
 .flex_hori {
-  display: flex;
-  align-items: center;
-  flex-direction: row;
   justify-content: space-between;
-  text-align: center;
 }
 
 .disableChild a {
@@ -278,5 +284,16 @@ export default {
 .anti-disable {
   opacity: 1 !important;
   pointer-events: all !important;
+}
+
+.selectedIndicator {
+  background: rgb(192, 125, 0);
+  text-align: center;
+  padding: 5px;
+}
+
+.link {
+  text-decoration: underline;
+  cursor: pointer;
 }
 </style>

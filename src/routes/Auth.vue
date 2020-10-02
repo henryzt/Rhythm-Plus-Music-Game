@@ -1,6 +1,6 @@
 <template>
-  <v-bar class="fullPage">
-    <div :class="{ cutBottom: !$store.state.authed }">
+  <v-bar class="fullPage" :class="{ cutBottom: !$store.state.authed }">
+    <div>
       <div class="mContainer" v-if="$store.state.verified">
         <div class="flex_hori">
           <UserProfileCard :extend="true" />
@@ -12,7 +12,8 @@
 
       <div class="center_logo">
         <div v-show="!$store.state.authed">
-          <h3>Signin or Register Now for Complete Experience!</h3>
+          <h2>Signin or Register Now</h2>
+          <h4 style="padding-bottom: 30px;">for the Complete Experience!</h4>
           <div id="firebaseui-auth-container"></div>
         </div>
         <div v-if="$store.state.authed && !$store.state.verified">
@@ -37,7 +38,17 @@
             `App version: ${$store.state.appVersion} · Build: ${$store.state.build}`
           }}
         </div>
-        <!-- <div><a href="https://github.com/henryz00/Rhythm-Plus-Music-Game">GitHub Repo</a></div> -->
+        <br />
+        <div v-if="$store.state.authed">
+          Thank you for playing Rhythm Plus Alpha release, you can report bugs
+          and send feedback <a :href="bugReport" target="_blank">here</a> or on
+          our <a :href="github" target="_blank">GitHub Repo</a>. You can also
+          give us a star to support us!
+        </div>
+        <div v-else>
+          <a :href="bugReport" target="_blank">Bug Report</a> ·
+          <a :href="github" target="_blank">GitHub Repo</a>
+        </div>
       </div>
 
       <Modal
@@ -45,6 +56,7 @@
         :show="showModal"
         style="z-index: 1000;"
         bodyText="Are you sure you want to log out?"
+        type="question"
         okText="Logout"
         @ok="signOut"
       ></Modal>
@@ -64,6 +76,7 @@ import Settings from "../components/menus/Settings.vue";
 import firebase from "firebase/app";
 import * as firebaseui from "firebaseui";
 import "firebaseui/dist/firebaseui.css";
+import { logEvent } from "../helpers/analytics";
 
 export default {
   name: "Auth",
@@ -77,6 +90,8 @@ export default {
     return {
       showModal: false,
       emailSentTimeout: false,
+      bugReport: "https://forms.gle/8gmuaWU7E9h82i4A7",
+      github: "https://github.com/henryz00/Rhythm-Plus-Music-Game",
     };
   },
   computed: {},
@@ -99,6 +114,7 @@ export default {
         signInSuccessWithAuthResult: (authResult) => {
           Logger.log(authResult);
           this.signInRedirect();
+          logEvent("user_signin");
           return true;
         },
         // handle merge conflicts which occur when an existing credential is linked to an anonymous user.
@@ -116,20 +132,25 @@ export default {
             if (
               this.$store.state.userProfile &&
               this.$store.state.userProfile.exp > 5
-            )
+            ) {
               await firebase
                 .firestore()
                 .collection("users")
                 .doc(anonymousUser.uid)
                 .set({ isAnonymousDeleted: true });
+            }
             await anonymousUser.delete();
+            await firebase.auth().signOut();
           } catch (err) {
             Logger.error(err);
           }
 
           try {
             this.$store.state.redirecting = true;
-            await firebase.auth().signInWithCredential(cred);
+            const res = await firebase.auth().signInWithCredential(cred);
+            Logger.log("login", res);
+            anonymousUser = null;
+            logEvent("user_signin_a");
             this.signInRedirect();
           } catch (err) {
             Logger.error(err);
@@ -156,6 +177,7 @@ export default {
     if (this.$route.query.success) {
       this.$router.push({ query: null });
       this.$store.state.alert.success("Settings updated");
+      logEvent("settings_updated");
     }
   },
   methods: {
@@ -167,6 +189,7 @@ export default {
         this.$store.state.redirecting = true;
         await firebase.auth().signOut();
         this.$router.go();
+        logEvent("user_signout");
       } catch (err) {
         Logger.error(err);
       }
@@ -174,6 +197,8 @@ export default {
     signInRedirect() {
       this.$store.state.redirecting = true;
       const user = firebase.auth().currentUser;
+
+      Logger.log("redirected", user);
 
       if (user.emailVerified) {
         this.$router.push({ path: "/" });
@@ -196,6 +221,7 @@ export default {
           setTimeout(() => {
             this.emailSentTimeout = false;
           }, 30000);
+          logEvent("verify_email_sent");
         })
         .catch((error) => {
           Logger.error(error);
@@ -246,14 +272,26 @@ export default {
 .centerCredit {
   text-align: center;
   opacity: 0.5;
-  margin: 50px;
+  width: 100%;
+  padding: 0 10px;
+  max-width: 600px;
+  margin: 50px auto;
   margin-bottom: 100px;
+  box-sizing: border-box;
+}
+
+.centerCredit a {
+  text-decoration: underline;
+}
+
+.cutBottom .centerCredit {
+  position: fixed;
+  bottom: 0px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .flex_hori {
-  display: flex;
-  align-items: center;
-  flex-direction: row;
   justify-content: space-between;
 }
 

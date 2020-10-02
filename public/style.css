@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Dosis&family=Anton&family=Montserrat&family=Nova+Mono&family=Raleway&display=swap");
+
 body {
   padding: 0;
   margin: 0;
@@ -10,35 +12,15 @@ body {
   overflow-y: scroll;
 }
 
-.center_judge {
-  position: absolute;
-  color: white;
-  font-family: "Raleway";
-  font-size: 3em;
-  opacity: 0.7;
-  text-align: center;
-  line-height: 80px;
-  width: 400px;
-  height: 80px;
-  top: 60%;
-  left: 50%;
-  margin-top: -40px;
-  margin-left: -200px;
-  user-select: none;
-  z-index: 100;
-  pointer-events: none;
-
-  opacity: 0;
-  /* transition: opacity 2s ease-in-out; */
+.logo {
+  max-width: 550px;
+  padding: 50px 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 a {
   color: white;
-}
-
-.hitAnimation {
-  animation-name: hitScore;
-  animation-duration: 10s;
 }
 
 .hidden {
@@ -81,6 +63,14 @@ a {
   transform-origin: 50% 100%;
 }
 
+#effectCanvas {
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+}
+
 #visualizerBarBG {
   position: absolute;
   width: 100vw;
@@ -93,6 +83,14 @@ a {
   opacity: 0.25;
   background-color: midnightblue;
   pointer-events: none;
+}
+
+.flex_hori {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-around;
+  text-align: center;
 }
 
 .center_logo {
@@ -204,7 +202,11 @@ img {
 .btn-dark {
   max-width: 200px;
   margin: 10px auto;
-  background: rgba(78, 78, 78, 0.192);
+  background: rgba(122, 122, 122, 0.2);
+}
+
+.modal .btn-dark {
+  background: rgba(78, 78, 78, 0.2);
 }
 
 .btn-dark:hover {
@@ -480,11 +482,11 @@ input::placeholder {
 }
 .slide-in-leave-active {
   transition: opacity 0.4s linear, transform 0.4s cubic-bezier(0.5, 0, 0.7, 0.4);
-  transition-delay: calc(0.2s * (var(--total) - var(--i)));
+  transition-delay: calc(0.05s * (var(--total) - var(--i)));
 }
 .slide-in-enter-active {
   transition: opacity 0.5s linear, transform 0.5s cubic-bezier(0.2, 0.5, 0.1, 1);
-  transition-delay: calc(0.2s * var(--i));
+  transition-delay: calc(0.1s * var(--i));
 }
 .slide-in-enter,
 .slide-in-leave-to {
@@ -504,31 +506,5 @@ input::placeholder {
   }
   to {
     opacity: 1;
-  }
-}
-
-@keyframes hitScore {
-  from {
-    padding-top: 0;
-    opacity: 1;
-  }
-
-  1% {
-    padding-top: 20px;
-    opacity: 1;
-  }
-
-  2% {
-    padding-top: 0px;
-    opacity: 1;
-  }
-
-  80% {
-    padding-top: 0px;
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0;
   }
 }

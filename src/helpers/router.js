@@ -7,62 +7,94 @@ import Rankings from "../routes/Rankings.vue";
 import SongSelect from "../routes/SongSelect.vue";
 import MyStudio from "../routes/MyStudio.vue";
 import SheetEditor from "../routes/SheetEditor.vue";
-import { analytics } from "./firebaseConfig";
+import { sendPageview } from "./analytics";
 
 const router = new VueRouter({
   mode: "history",
   routes: [
     {
+      name: "home",
       path: "/",
       component: Home,
       meta: { requireBg: true, requireSignin: true },
     },
-    { path: "/menu", component: SongSelect, meta: { requireBg: true } },
     {
+      name: "menu",
+      path: "/menu",
+      component: SongSelect,
+      meta: { requireBg: true, title: "Song Select" },
+    },
+    {
+      name: "studio",
       path: "/studio",
       component: MyStudio,
-      meta: { requireBg: true, requireSignin: true },
+      meta: { requireBg: true, requireSignin: true, title: "My Studio" },
     },
-    { path: "/rankings", component: Rankings, meta: { requireBg: true } },
+    {
+      name: "rankings",
+      path: "/rankings",
+      component: Rankings,
+      meta: { requireBg: true, title: "Rankings" },
+    },
     {
       path: "/game",
       component: Game,
       children: [
-        { path: ":sheet", component: Game, meta: { requireSignin: true } },
+        {
+          name: "game",
+          path: ":sheet",
+          component: Game,
+          meta: { requireSignin: true, title: "Game" },
+        },
       ],
+    },
+    {
+      name: "tutorial",
+      path: "/tutorial",
+      component: Game,
+      meta: { requireSignin: true, title: "Tutorial" },
     },
     {
       path: "/result",
       component: Result,
       props: true,
-      children: [{ path: ":resultId", component: Result }],
+      children: [
+        {
+          name: "result",
+          path: ":resultId",
+          component: Result,
+          meta: { title: "Result" },
+        },
+      ],
     },
     {
       path: "/editor",
       component: SheetEditor,
       children: [
         {
+          name: "editor",
           path: ":sheet",
           component: SheetEditor,
-          meta: { requireSignin: true },
+          meta: { requireSignin: true, title: "Editor" },
         },
       ],
     },
     {
+      name: "account",
       path: "/account",
       component: Auth,
-      meta: { requireBg: true, requireSignin: true },
+      meta: {
+        requireBg: true,
+        requireSignin: true,
+        title: "Account and Settings",
+      },
     },
-    { path: "*", redirect: { path: "/" } },
+    { path: "*", redirect: { path: "/?notfound=true" } },
   ],
 });
 
 router.afterEach(async (to) => {
-  const path = to.path;
-  window.gaPageview(path);
-  analytics().setCurrentScreen(window.location.pathname);
-  analytics().logEvent("page_view", { type: "internal" });
-  analytics().logEvent("screen_view", { screen_name: path });
+  sendPageview(to.path);
 });
 
 export default router;

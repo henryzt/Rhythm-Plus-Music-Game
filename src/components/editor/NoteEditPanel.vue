@@ -225,14 +225,6 @@ export default {
   border-top: 1px solid rgba(128, 128, 128, 0.5);
 }
 
-.flex_hori {
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  justify-content: space-around;
-  text-align: center;
-}
-
 .flex_hori input {
   width: 30%;
   text-align: center;

@@ -3,7 +3,7 @@
     <v-bar class="fullPage">
       <div v-if="sheet">
         <PageBackground
-          songSrc="/audio/bgm/result.mp3"
+          songSrc="https://storage.googleapis.com/rhythm-plus-assets/bgm/result.mp3"
           :imageSrc="sheet.image"
           :showNav="false"
         ></PageBackground>
@@ -87,17 +87,24 @@
               <div class="title">{{ sheet.song.title }}</div>
               <div>{{ sheet.song.artist }}</div>
             </div>
+            <SheetDetailLine :sheet="sheet" :compact="true"></SheetDetailLine>
           </div>
 
           <!-- profile section -->
-          <div
-            class="user_sec"
-            v-if="
-              $store.state.currentUser &&
-              result.uid === $store.state.currentUser.uid
-            "
-          >
-            <UserProfileCard :extend="true" />
+          <div class="user_sec">
+            <UserProfileCard
+              v-if="
+                $store.state.currentUser &&
+                result.uid === $store.state.currentUser.uid
+              "
+              :extend="true"
+              :oldProfile="oldProfileInfo"
+            />
+            <UserProfileCard
+              v-else-if="overrideProfile"
+              :extend="true"
+              :overrideProfile="overrideProfile"
+            />
           </div>
         </div>
         <div class="btn_sec">
@@ -113,14 +120,48 @@
       </div>
       <Loading :show="!sheet || !result">Syncing Results...</Loading>
     </v-bar>
+
+    <!-- level up modal -->
+    <Modal
+      ref="levelModal"
+      :showCancel="false"
+      style="text-align: center; z-index: 500;"
+      @ok="$confetti.stop()"
+    >
+      <template v-slot:header>
+        <div style="width: 100%; font-size: 23px;">Level Up!</div>
+      </template>
+
+      <template>
+        <div style="opacity: 0.5;">
+          Congratulations, you have now leveled up.
+        </div>
+        <div class="flex_hori flex_row">
+          <div class="level" v-if="oldProfileInfo">
+            {{ oldProfileInfo.lvd }}
+          </div>
+          <v-icon name="arrow-right" scale="2" />
+          <div class="level">
+            {{ $store.state.userProfile && $store.state.userProfile.lvd }}
+          </div>
+        </div>
+      </template>
+    </Modal>
   </div>
 </template>
 
 <script>
 import PageBackground from "../components/common/PageBackground.vue";
 import UserProfileCard from "../components/common/UserProfileCard.vue";
+import SheetDetailLine from "../components/menus/SheetDetailLine.vue";
 import Loading from "../components/ui/Loading.vue";
-import { getGameSheet, getResult, getBestScore } from "../javascript/db";
+import Modal from "../components/ui/Modal.vue";
+import {
+  getGameSheet,
+  getResult,
+  getBestScore,
+  getUserProfile,
+} from "../javascript/db";
 import ICountUp from "vue-countup-v2";
 import VueCircle from "vue2-circle-progress/src/index.vue";
 import VanillaTilt from "vanilla-tilt";
@@ -135,6 +176,8 @@ export default {
     VueCircle,
     Loading,
     UserProfileCard,
+    Modal,
+    SheetDetailLine,
   },
   data() {
     return {
@@ -143,6 +186,8 @@ export default {
       sheet: null,
       windowWidth: window.innerWidth,
       newRecord: false,
+      oldProfileInfo: null,
+      overrideProfile: null,
     };
   },
   computed: {
@@ -210,7 +255,25 @@ export default {
       });
     }
 
-    this.$store.dispatch("updateUserProfile");
+    if (this.result.uid !== this.$store.state.currentUser.uid) {
+      this.overrideProfile = await getUserProfile(this.result.uid);
+      if (this.overrideProfile.isAnonymous) this.overrideProfile = null;
+    } else {
+      // update local user level info
+      const userProfile = this.$store.state.userProfile;
+      const { lvd, exp, lv } = userProfile;
+      this.oldProfileInfo = { lvd, exp, lv };
+
+      await this.$store.dispatch("updateUserProfile");
+
+      Logger.log(userProfile, this.oldProfileInfo);
+
+      if (this.$store.state.userProfile.lvd > lvd) {
+        Logger.warn("level up", lvd, userProfile.lvd);
+        this.$refs.levelModal.show();
+        this.$confetti.start();
+      }
+    }
   },
   beforeDestroy() {
     this.$store.state.audio.stop();
@@ -236,9 +299,6 @@ export default {
 
 <style scoped>
 .flex_hori {
-  display: flex;
-  align-items: center;
-  flex-direction: row;
   justify-content: space-evenly;
 }
 .center_logo {
@@ -322,7 +382,10 @@ export default {
   position: fixed;
   top: 10vh;
   left: 8%;
-  opacity: 0.2;
+  opacity: 0.3;
+}
+
+.song_item_sec .detail {
   line-height: 1.8em;
   font-size: 1.8em;
 }
@@ -361,6 +424,10 @@ export default {
 .fa-icon {
   vertical-align: middle;
   margin-right: 5px;
+}
+
+.level {
+  font-size: 5em;
 }
 
 @media only screen and (max-width: 1000px) {
@@ -420,6 +487,13 @@ export default {
     padding: 20px;
     opacity: 1;
   }
+  .song_item_sec .detail {
+    font-size: 1em;
+    border-bottom: 1px solid rgba(121, 121, 121, 0.5);
+    padding-bottom: 5px;
+    margin-bottom: 8px;
+  }
+
   .song_item_sec .title {
     font-size: 1.4em;
     font-weight: bold;
@@ -453,5 +527,10 @@ export default {
   .btn-dark {
     flex: 1;
   }
+}
+
+.flex_row {
+  flex-direction: row;
+  padding: 30px 0;
 }
 </style>

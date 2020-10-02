@@ -3,6 +3,30 @@
     <v-bar class="fullPage">
       <div class="pageTitle">Song Select</div>
 
+      <div class="cat flex_hori">
+        <div
+          class="cat_tab"
+          :class="{ active: tab == 'recom' }"
+          @click="tab = 'recom'"
+        >
+          Recommended
+        </div>
+        <div
+          class="cat_tab"
+          :class="{ active: tab == 'new' }"
+          @click="tab = 'new'"
+        >
+          New
+        </div>
+        <div
+          class="cat_tab"
+          :class="{ active: tab == 'all' }"
+          @click="tab = 'all'"
+        >
+          All Songs
+        </div>
+      </div>
+
       <div class="mContainer">
         <div
           class="song_list"
@@ -13,6 +37,7 @@
             :class="{ sHidden: selectedSong }"
             :songs="songList"
             @sorted="songDisplayList = $event"
+            ref="sorter"
           ></SheetFilter>
           <transition-group
             v-if="songDisplayList"
@@ -21,15 +46,44 @@
             name="slide-in"
             :style="{ '--total': songDisplayList.length }"
           >
+            <!-- suggest song button -->
+            <div
+              :class="{ sHidden: selectedSong }"
+              class="btn-action btn-dark big-add"
+              key="btn0"
+              @click="$router.push('/tutorial/')"
+            >
+              <v-icon class="add-icon" name="question-circle" scale="2" />
+              <div style="font-size: 1.2em;">Play Tutorial</div>
+            </div>
+            <!-- song lists -->
             <div
               v-for="(song, i) in songDisplayList"
               :key="song.id"
-              :style="{ '--i': i }"
+              :style="{ '--i': i < 10 ? 10 : i }"
             >
               <SongListItem
                 :song="song"
                 @selected="selectedSong = $event"
               ></SongListItem>
+            </div>
+            <!-- create song button -->
+            <div
+              class="btn-action btn-dark big-add"
+              key="btn1"
+              @click="$router.push('/studio/')"
+            >
+              <v-icon class="add-icon" name="plus" scale="2" />
+              <div>Create or Import a Song</div>
+            </div>
+            <!-- suggest song button -->
+            <div
+              class="btn-action btn-dark big-add"
+              key="btn2"
+              @click="$refs.suggest.show()"
+            >
+              <v-icon class="add-icon" name="lightbulb" scale="2" />
+              <div>Suggest a Song</div>
             </div>
           </transition-group>
         </div>
@@ -49,6 +103,26 @@
         >Fetching Latest Songs...</Loading
       >
     </v-bar>
+
+    <!-- song suggestion modal -->
+    <Modal
+      ref="suggest"
+      :showOk="false"
+      cancelText="Done"
+      titleText="Suggest a Song"
+    >
+      <template>
+        <iframe
+          src="https://docs.google.com/forms/d/e/1FAIpQLSf4nNnTn0vmYjWYbq3TeC6epuN8xkEhxlWONrtIMMZbgLJ38w/viewform?embedded=true"
+          style="width: 100%;"
+          height="500"
+          frameborder="0"
+          marginheight="0"
+          marginwidth="0"
+          >Loading…</iframe
+        >
+      </template>
+    </Modal>
   </div>
 </template>
 
@@ -57,7 +131,16 @@ import SongListItem from "../components/menus/SongListItem.vue";
 import SongDetailPanel from "../components/menus/SongDetailPanel.vue";
 import SheetFilter from "../components/menus/SheetFilter.vue";
 import Loading from "../components/ui/Loading.vue";
-import { getSheetList, getSongList } from "../javascript/db";
+import Modal from "../components/ui/Modal.vue";
+import {
+  getSheetList,
+  getSongList,
+  getPlaylist,
+  getSongsInIdArray,
+} from "../javascript/db";
+import "vue-awesome/icons/lightbulb";
+import "vue-awesome/icons/question-circle";
+import { logEvent } from "../helpers/analytics";
 
 export default {
   name: "SongSelect",
@@ -66,6 +149,7 @@ export default {
     SongDetailPanel,
     Loading,
     SheetFilter,
+    Modal,
   },
   data() {
     return {
@@ -73,26 +157,54 @@ export default {
       songDisplayList: [],
       sheetList: null,
       selectedSong: null,
+      recommendedList: [],
+      tab: "recom",
     };
   },
   computed: {},
   watch: {
     async selectedSong() {
       this.sheetList = null;
-      if (this.selectedSong)
+      if (this.selectedSong) {
         this.sheetList = await getSheetList(this.selectedSong.id);
+        logEvent("song_selected", { id: this.selectedSong.id });
+      }
+    },
+    async tab() {
+      this.songList = [];
+      if (this.tab == "recom") {
+        await this.filterRecommended(true);
+      } else if (this.tab == "new") {
+        await this.filterRecommended(false);
+      } else if (this.tab == "all") {
+        await this.getAllSongs();
+      }
+      this.$refs.sorter.defaultSort();
     },
   },
   mounted() {
-    getSongList()
-      .then((res) => {
-        this.songList = res;
-      })
-      .catch((err) => {
-        Logger.error(err);
-      });
+    this.filterRecommended(true);
   },
-  methods: {},
+  methods: {
+    async getAllSongs() {
+      this.songList = await getSongList();
+    },
+    async filterRecommended(getRecommened) {
+      const playlist = await getPlaylist("recommended");
+      const songs = await getSongList();
+      if (getRecommened) {
+        this.songList = songs.filter((e) => playlist.items.includes(e.id));
+      } else {
+        this.songList = songs.filter((e) => !playlist.items.includes(e.id));
+      }
+    },
+    getPlaylistSongs(playlistId) {
+      getPlaylist(playlistId).then(async (res) => {
+        const list = res.items;
+        this.songList = await getSongsInIdArray(false, false, list);
+      });
+    },
+  },
 };
 </script>
 
@@ -117,6 +229,42 @@ export default {
 .detail {
   transition: 1s;
   width: 350px;
+}
+
+.big-add {
+  width: 100%;
+  line-height: 80px;
+  max-width: 100%;
+  box-sizing: border-box;
+  position: relative;
+  padding-left: 10%;
+}
+
+.add-icon {
+  position: absolute;
+  left: 10%;
+  top: 30px;
+}
+
+.cat {
+  margin: auto;
+  width: fit-content;
+}
+
+.cat_tab {
+  margin: 10px;
+  font-weight: bolder;
+  padding-bottom: 5px;
+  transition: all 0.2s;
+  opacity: 0.7;
+  color: white;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+}
+
+.active {
+  opacity: 0.9;
+  border-bottom: 2px solid white;
 }
 
 @media only screen and (max-width: 800px) {

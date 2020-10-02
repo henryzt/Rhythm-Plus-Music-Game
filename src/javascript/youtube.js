@@ -26,9 +26,9 @@ export default class YoutubePlayer {
     this.ytPlayer.pauseVideo();
   }
 
-  resetVideo() {
+  resetVideo(time) {
     if (this.vm.srcMode !== "youtube" || !this.ytPlayer) return;
-    this.ytPlayer.seekTo(0);
+    this.ytPlayer.seekTo(time ?? 0);
     this.ytPlayer.pauseVideo();
   }
 

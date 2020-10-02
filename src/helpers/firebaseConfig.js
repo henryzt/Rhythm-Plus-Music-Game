@@ -39,6 +39,7 @@ const sheetsCollection = db.collection("sheets");
 const resultsCollection = db.collection("results");
 const tagsCollection = db.collection("tags");
 const playsCollection = db.collection("plays");
+const playlistsCollection = db.collection("playlists");
 
 export {
   db,
@@ -54,4 +55,5 @@ export {
   resultsCollection,
   tagsCollection,
   playsCollection,
+  playlistsCollection,
 };

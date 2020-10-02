@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="themeStyle!=='bgOff'" class="spaceBackground"></div>
+    <progressive-background v-if="themeStyle!=='bgOff'" class="spaceBackground" src="/assets/purpleSpace.jpg" />
     <canvas ref="visualizerCanvas"></canvas>
   </div>
 </template>
@@ -28,7 +28,7 @@ export default {
           },
         },
       },
-      themeStyle: "bg1",
+      themeStyle: "bg1Mask",
     };
   },
   mounted() {
@@ -164,7 +164,7 @@ function renderSpaceVisualizer(time, canvas, ctx, audioData, vm) {
   const v = getVolume();
   const v2 = v * 2 > 1 ? 1 : v * 2;
   const vmin = v - 0.35 < 0 ? 0 : v - 0.35;
-  const blackColorStop = h < w ? 0.15 : 0.2; // ? laptop : mobile
+  const blackColorStop = h < w ? 0.15 : 0.1; // ? laptop : mobile
 
   ctx.fillStyle = `rgba(0,0,0,0.4)`;
   ctx.clearRect(0, 0, w, h);
@@ -198,7 +198,6 @@ function renderSpaceVisualizer(time, canvas, ctx, audioData, vm) {
   top: 0;
   left: 0;
   z-index: -1;
-  background: url("space1.jpg");
   background-size: cover;
   animation: zoom 20s ease-in-out infinite alternate;
 }

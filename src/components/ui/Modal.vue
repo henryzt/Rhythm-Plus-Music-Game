@@ -11,11 +11,16 @@
           </slot>
         </header>
         <section class="modal-body" style="transform: translateZ(100px);">
-          <slot>{{ bodyText }}</slot>
+          <slot>
+            <div class="flex_hori">
+              <v-icon :name="icon" scale="2"></v-icon>
+              <div class="bodyText">{{ bodyText }}</div>
+            </div>
+          </slot>
         </section>
         <footer class="modal-footer" v-if="!hideFooter">
           <slot name="footer">
-            <div class="btn-action" @click="ok">{{ okText }}</div>
+            <div class="btn-action" @click="ok" v-if="showOk">{{ okText }}</div>
             <div class="btn-action" @click="close" v-if="showCancel">
               {{ cancelText }}
             </div>
@@ -28,6 +33,11 @@
 
 <script>
 import VanillaTilt from "vanilla-tilt";
+import "vue-awesome/icons/regular/question-circle";
+import "vue-awesome/icons/info-circle";
+import "vue-awesome/icons/exclamation-circle";
+import "vue-awesome/icons/exclamation-triangle";
+
 export default {
   name: "Modal",
   props: {
@@ -55,17 +65,37 @@ export default {
       type: Boolean,
       default: true,
     },
+    showOk: {
+      type: Boolean,
+      default: true,
+    },
+    type: {
+      type: String,
+      default: "info",
+    },
   },
   data: function () {
     return {
       showModal: false,
       resolve: null,
+      icon: "info-circle",
     };
   },
   methods: {
     show() {
       this.showModal = true;
-      this.$nextTick(this.addTilt);
+      this.$nextTick(() => {
+        this.addTilt();
+        if (this.type == "question") {
+          this.icon = "regular/question-circle";
+        } else if (this.type == "error") {
+          this.icon = "exclamation-triangle";
+        } else if (this.type == "warning") {
+          this.icon = "exclamation-circle";
+        } else {
+          this.icon = "info-circle";
+        }
+      });
       return new Promise((resolve) => {
         this.resolve = resolve;
       });
@@ -121,5 +151,11 @@ export default {
 .modal-body {
   position: relative;
   padding: 20px 30px;
+}
+
+.bodyText {
+  flex-grow: 1;
+  text-align: left;
+  padding-left: 20px;
 }
 </style>

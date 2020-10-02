@@ -6,8 +6,16 @@ import {
   functions,
   resultsCollection,
   tagsCollection,
+  playsCollection,
+  playlistsCollection,
 } from "../helpers/firebaseConfig"; //usersCollection
 import { store } from "../helpers/store";
+import { Validator } from "jsonschema";
+
+const assetsBaseUrl = "https://storage.googleapis.com/rhythm-plus-assets/songs";
+
+const v = new Validator();
+const songSchema = require("../../public/schema/song.schema.json");
 
 const action = {
   READ: "reading",
@@ -23,11 +31,19 @@ const errorMsgs = {
 };
 
 function reportError(error, action) {
-  Logger.error(`Error ${action ?? "handling"} document: `, error);
+  Logger.error(`DB - Error ${action ?? "handling"} document: `, error);
 }
 
 function reportSuccess(action, msg) {
-  Logger.info(`Document ${action ?? "handling"} succeed.`, msg);
+  Logger.info(`DB - Document ${action ?? "handling"} succeed.`, msg);
+}
+
+function validate(instance, schema) {
+  const res = v.validate(instance, schema);
+  if (res.errors.length > 0) {
+    reportError(res.errors);
+    throw new Error("Validator error");
+  }
 }
 
 export function createSong(songInfo) {
@@ -50,23 +66,28 @@ export function createSong(songInfo) {
   let createdBy = store.state.currentUser?.uid;
   let visibility = "private";
   Logger.log(songId);
+
+  const song = {
+    title,
+    artist,
+    image: image ?? null,
+    youtubeId: youtubeId ?? null,
+    url: url ?? null,
+    tags: tags ? updateTagArray(tags) : null,
+    subtitle: subtitle ?? null,
+    srcMode,
+    visibility,
+    dateCreated,
+    dateUpdated,
+    createdBy,
+  };
+
+  validate(song, songSchema);
+
   return new Promise((resolve, reject) => {
     songsCollection
       .doc(songId)
-      .set({
-        title,
-        artist,
-        image: image ?? null,
-        youtubeId: youtubeId ?? null,
-        url: url ?? null,
-        tags: tags ? updateTagArray(tags) : null,
-        subtitle: subtitle ?? null,
-        srcMode,
-        visibility,
-        dateCreated,
-        dateUpdated,
-        createdBy,
-      })
+      .set(song)
       .then(function () {
         reportSuccess(action.WRITE);
         resolve(songId);
@@ -138,7 +159,7 @@ export async function getSongsInIdArray(getPrivate, getAll, idArray) {
 
 function filterSongData(doc) {
   let song = doc.data();
-
+  replaceBaseUrl(song);
   song.id = doc.id;
   song.image =
     !song.image && song.youtubeId
@@ -254,6 +275,73 @@ export function getTags() {
       .catch(function (error) {
         reportError(error, action.READ);
         reject(error);
+      });
+  });
+}
+
+export function getPlaylist(id) {
+  return getDocById(playlistsCollection, id);
+}
+
+export function updatePlaylist(id, data) {
+  return playlistsCollection
+    .doc(id)
+    .update(data)
+    .then(function () {
+      reportSuccess(action.UPDATE);
+    })
+    .catch(function (error) {
+      // The document probably doesn't exist.
+      reportError(error, action.UPDATE);
+    });
+}
+
+export function createPlay(sheetId, songId) {
+  let dateCreated = firestore.Timestamp.now();
+  let dateUpdated = dateCreated;
+  let createdBy = store.state.currentUser?.uid;
+  const status = "started";
+  const isAuthed = store.state.authed;
+  let data = {
+    sheetId,
+    songId,
+    dateCreated,
+    dateUpdated,
+    createdBy,
+    status,
+    isAuthed,
+  };
+  return new Promise((resolve, reject) => {
+    playsCollection
+      .add(data)
+      .then((docRef) => {
+        reportSuccess(action.WRITE);
+        resolve(docRef.id);
+      })
+      .catch((error) => {
+        reportError(error, action.WRITE);
+        reject();
+      });
+  });
+}
+
+export function updatePlay(playId, updateData) {
+  let dateUpdated = firestore.Timestamp.now();
+  let data = {
+    ...updateData,
+    dateUpdated,
+  };
+  return new Promise((resolve, reject) => {
+    playsCollection
+      .doc(playId)
+      .update(data)
+      .then(() => {
+        reportSuccess(action.UPDATE);
+        resolve();
+      })
+      .catch((error) => {
+        reportError(error, action.UPDATE);
+        reject();
       });
   });
 }
@@ -411,7 +499,7 @@ export function getSheet(sheetId) {
 }
 
 function replaceBaseUrl(sheet) {
-  sheet.url = sheet.url ? sheet.url.replace("{base}", "/audio/songs") : null; // replace local songs
+  sheet.url = sheet.url ? sheet.url.replace("{base}", assetsBaseUrl) : null; // replace local songs
 }
 
 export function uploadResult(data) {
@@ -419,18 +507,22 @@ export function uploadResult(data) {
   return uploader(data);
 }
 
-export async function getResult(resultId) {
+export function getResult(resultId) {
+  return getDocById(resultsCollection, resultId);
+}
+
+async function getDocById(collection, id) {
   try {
-    let doc = await resultsCollection.doc(resultId).get();
+    let doc = await collection.doc(id).get();
     if (doc.exists) {
       let result = doc.data();
       return result;
     } else {
-      Logger.error(errorMsgs.NOT_FOUND);
+      reportError(errorMsgs.NOT_FOUND, action.READ);
       throw new Error(errorMsgs.NOT_FOUND);
     }
   } catch (error) {
-    Logger.error(error);
+    reportError(error, action.READ);
     throw new Error(errorMsgs.READ);
   }
 }
@@ -472,6 +564,18 @@ export async function updateUserProfile(data) {
   } catch (error) {
     // The document probably doesn't exist.
     reportError(error, action.UPDATE);
+    throw error;
+  }
+}
+
+export async function getUserProfile(uid) {
+  try {
+    const res = await usersCollection.doc(uid).get();
+    reportSuccess(action.READ);
+    return res.data();
+  } catch (error) {
+    // The document probably doesn't exist.
+    reportError(error, action.READ);
     throw error;
   }
 }

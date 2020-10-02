@@ -2,15 +2,10 @@
   <div>
     <div class="center_logo" v-if="$store.state">
       <img
+        class="logo"
         :src="
           'assets/' +
           ($store.state.theme ? $store.state.theme.logoAsset : 'logo2.png')
-        "
-        style="
-          max-width: 550px;
-          padding: 50px 0;
-          width: 100%;
-          box-sizing: border-box;
         "
       />
       <Button text="Start Game" @click="goToGame"></Button>
@@ -18,7 +13,7 @@
         {{
           $store.state.authed
             ? "Welcome, " + $store.state.currentUser.displayName
-            : "Login or Reigster"
+            : "Login or Register"
         }}
       </div>
     </div>
@@ -26,16 +21,20 @@
     <div class="leftBottom">
       {{ $store.state.appVersion + "-" + $store.state.build }}
     </div>
+
+    <AlphaNotice></AlphaNotice>
   </div>
 </template>
 
 <script>
 import Button from "../components/ui/Button.vue";
+import AlphaNotice from "../components/menus/AlphaNotice.vue";
 
 export default {
   name: "Home",
   components: {
     Button,
+    AlphaNotice,
   },
   data() {
     return {};

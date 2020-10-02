@@ -34,7 +34,7 @@ export default class Note {
   }
 
   getDiffPercentage() {
-    if (this.gameHadBeenPaused) {
+    if (this.gameHadBeenPaused || this.vm.playbackSpeed !== 1) {
       // game had been pasued, time unuseable, use less accurate dist calculation instead
       const dist = this.game.checkHitLineY - this.y;
       const percentage = Math.abs(dist) / this.canvas.height; // the lower the better
@@ -59,18 +59,18 @@ export default class Note {
   judge() {
     if (this.percentage < 0.05) {
       this.vm.result.marks.perfect += 1;
-      this.vm.markJudge = "Perfect";
+      this.markJudge = "Perfect";
     } else if (this.percentage < 0.15) {
       this.vm.result.marks.good += 1;
-      this.vm.markJudge = "Good";
+      this.markJudge = "Good";
     } else if (this.percentage < 0.3) {
       this.vm.result.marks.offbeat += 1;
-      this.vm.markJudge = "Offbeat";
+      this.markJudge = "Offbeat";
     } else {
       // when note is too out of hit line, it can miss randomly
       if (Math.random() > 0.5) {
         this.vm.result.marks.offbeat += 1;
-        this.vm.markJudge = "Offbeat";
+        this.markJudge = "Offbeat";
       } else {
         this.missNote();
       }
@@ -97,17 +97,17 @@ export default class Note {
         ? this.vm.result.combo
         : this.vm.result.maxCombo;
     this.vm.fever.percent += (1 - percentage) / 100;
-    this.hitIndicator(this.vm);
+    this.judgeDisplay();
   }
 
   missNote() {
     this.vm.result.marks.miss += 1;
     this.vm.result.totalHitNotes += 1;
     this.vm.result.combo = 0;
-    this.vm.markJudge = "Miss";
+    this.markJudge = "Miss";
     this.vm.fever.percent -= 0.1;
     this.vibrate([20, 20, 50]);
-    this.hitIndicator(this.vm);
+    this.judgeDisplay();
     this.noteFailed = true;
   }
 
@@ -198,19 +198,20 @@ export default class Note {
   drawHoldNote(color) {
     const endTime = this.keyObj.h[this.key];
     const holdLengthInSec = endTime === -1 ? 100 : endTime - this.keyObj.t;
-    const noteHeight = holdLengthInSec * this.game.noteSpeedPxPerSec;
+    const noteHeight =
+      (holdLengthInSec * this.game.noteSpeedPxPerSec) / this.vm.playbackSpeed;
     this.holdNoteHeight = noteHeight;
     this.holdNoteY = this.y - noteHeight + this.singleNoteHeight;
     let paintY = this.holdNoteY < 0 ? 0 : this.holdNoteY;
     let paintHeight =
       this.holdNoteY < 0 ? this.holdNoteY + noteHeight : noteHeight;
-    paintHeight = this.isUserHolding
-      ? this.game.checkHitLineY - paintY
-      : paintHeight;
+    if (this.isUserHolding) paintHeight = this.game.checkHitLineY - paintY;
     if (!this.vm.playMode) {
       // creating hold note
       const isUserCreating =
-        this.game.keyHoldingStatus[this.key] && this.createdNote;
+        this.game.keyHoldingStatus[this.key] &&
+        this.createdNote &&
+        this.keyObj.h?.[this.key] === -1;
       if (isUserCreating) {
         paintY = this.game.checkHitLineY;
         paintHeight = paintHeight - paintY;
@@ -234,11 +235,8 @@ export default class Note {
       window.navigator.vibrate(pattern);
   }
 
-  hitIndicator() {
-    if (!this.vm.$refs.hitIndicator || !this.vm.playMode) return;
-    this.vm.$refs.hitIndicator.classList.remove("hitAnimation");
-    setTimeout(() => {
-      this.vm.$refs.hitIndicator.classList.add("hitAnimation");
-    }, 2);
+  judgeDisplay() {
+    if (!this.vm.$refs.judgeDisplay || !this.vm.playMode) return;
+    this.vm.$refs.judgeDisplay.judge(this.markJudge, this.vm.result.combo);
   }
 }

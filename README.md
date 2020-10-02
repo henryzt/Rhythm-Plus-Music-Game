@@ -1,8 +1,14 @@
 # Rhythm+ Music Game
-Simple DJMAX like VSRG (Vertically Scrolling Rhythm Game) using vanillna js and HTML5 canvas, with UI written in vue js.
+Rhythm plus is a community-based online music game, you can play, create and share your favourite songs from and with anyone!
+
+![gameplay gif](https://rhythm-plus.web.app/og.jpg)
+
+
 
 # Gameplay
 
-[Play Now](https://rhythm-plus.web.app/)
+[Play Now](https://rhythm-plus.com/)
 
-![gameplay gif](gameplay.gif)
+![early gameplay gif](gameplay.gif)
+
+DJMAX like VSRG (Vertically Scrolling Rhythm Game) using vanilla js and HTML5 canvas, with UI written in Vue.js.

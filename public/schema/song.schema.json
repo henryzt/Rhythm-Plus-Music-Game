@@ -1,0 +1,118 @@
+{
+  "type": "object",
+  "name": "song",
+  "required": [
+    "title",
+    "artist",
+    "srcMode",
+    "visibility",
+    "dateCreated",
+    "dateUpdated",
+    "createdBy",
+    "image"
+  ],
+  "anyOf": [
+    {
+      "required": ["youtubeId"],
+      "properties": {
+        "youtubeId": { "type": "string", "maxLength": 11, "minLength": 11 }
+      }
+    },
+    {
+      "required": ["url"],
+      "properties": { "url": { "type": "string", "minLength": 1 } }
+    }
+  ],
+  "properties": {
+    "title": {
+      "$id": "#/properties/title",
+      "type": "string",
+      "default": ""
+    },
+    "artist": {
+      "$id": "#/properties/artist",
+      "type": "string",
+      "default": ""
+    },
+    "image": {
+      "default": null,
+      "type": ["string", "null"]
+    },
+    "youtubeId": {
+      "default": null,
+      "type": ["string", "null"]
+    },
+    "url": {
+      "default": null,
+      "type": ["string", "null"]
+    },
+    "tags": {
+      "$id": "#/properties/tags",
+      "type": "array",
+      "default": [],
+      "items": {
+        "$id": "#/properties/tags/items",
+        "anyOf": [
+          {
+            "$id": "#/properties/tags/items/anyOf/0",
+            "type": "string",
+            "default": ""
+          }
+        ]
+      }
+    },
+    "subtitle": {
+      "default": null,
+      "type": ["string", "null"]
+    },
+    "srcMode": {
+      "default": "youtube",
+      "enum": ["youtube", "url"]
+    },
+    "visibility": {
+      "default": "private",
+      "enum": ["public", "private", "unlisted", "deleted"]
+    },
+    "dateCreated": {
+      "$id": "#/properties/dateCreated",
+      "type": "object",
+      "default": {},
+      "required": ["seconds", "nanoseconds"],
+      "properties": {
+        "seconds": {
+          "$id": "#/properties/dateCreated/properties/seconds",
+          "type": "integer",
+          "default": 0
+        },
+        "nanoseconds": {
+          "$id": "#/properties/dateCreated/properties/nanoseconds",
+          "type": "integer",
+          "default": 0
+        }
+      }
+    },
+    "dateUpdated": {
+      "$id": "#/properties/dateUpdated",
+      "type": "object",
+      "default": {},
+      "required": ["seconds", "nanoseconds"],
+      "properties": {
+        "seconds": {
+          "$id": "#/properties/dateUpdated/properties/seconds",
+          "type": "integer",
+          "default": 0
+        },
+        "nanoseconds": {
+          "$id": "#/properties/dateUpdated/properties/nanoseconds",
+          "type": "integer",
+          "default": 0
+        }
+      }
+    },
+    "createdBy": {
+      "$id": "#/properties/createdBy",
+      "type": "string",
+      "default": ""
+    }
+  }
+}

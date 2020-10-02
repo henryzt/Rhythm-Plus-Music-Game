@@ -1,6 +1,6 @@
 {
   "name": "rhythm-plus-game",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "private": true,
   "description": "Online Vertical Scrolling Rhythm Game",
   "author": {
@@ -15,7 +15,7 @@
     "clean": "rm -rf ./dist",
     "serve": "yarn run build && serve .",
     "update": "npm version patch -m 'Upgrade to %s' && git push && git push --tags",
-    "deploy": "yarn build && firebase deploy && git push"
+    "deploy": "git push && yarn build && firebase deploy"
   },
   "dependencies": {
     "@sentry/browser": "^5.20.0",
@@ -28,12 +28,17 @@
     "hammerjs": "^2.0.8",
     "howler": "^2.2.0",
     "js-md5": "^0.7.3",
+    "jsonschema": "^1.2.6",
+    "register-service-worker": "^1.7.1",
+    "shifty": "^2.12.0",
     "vanilla-tilt": "^1.7.0",
     "vue": "^2.6.11",
     "vue-awesome": "^4.0.2",
+    "vue-confetti": "^2.2.1",
     "vue-countup-v2": "^4.0.0",
     "vue-moment": "^4.1.0",
     "vue-perfect-scrollbar": "^0.2.1",
+    "vue-progressive-image": "^3.2.0",
     "vue-router": "^3.3.4",
     "vue-select": "^3.10.7",
     "vue-slider-component": "^3.1.5",

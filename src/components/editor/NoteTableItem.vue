@@ -3,7 +3,7 @@
     class="row"
     :class="{
       onScreen: instance.isWithinTime(note),
-      current: index === instance.timeArrIdx,
+      current: index === instance.timeArr.length - instance.timeArrIdx - 1,
       editing: isEditing,
     }"
   >
@@ -52,7 +52,7 @@ export default {
     seek(note) {
       const follow = this.table.follow;
       this.table.follow = false;
-      this.parent.seekTo(note.t + 0.1);
+      this.parent.smoothSeekTo(note.t + 0.1);
       setTimeout(() => {
         this.table.follow = follow;
       }, 100);

@@ -3,7 +3,7 @@
     <!-- progress bar -->
     <ProgressBar
       v-if="currentSong && currentSong.length"
-      :progress="instance.playTime / currentSong.length"
+      :progress="progress"
     ></ProgressBar>
 
     <!-- resume game countdown -->
@@ -30,12 +30,27 @@
     </transition>
 
     <!-- mark indicator -->
-    <div class="center_judge" ref="hitIndicator">
-      {{ markJudge }} {{ result.combo >= 5 ? result.combo : "" }}
-    </div>
+    <MarkComboJudge
+      style="z-index: 400; pointer-events: none;"
+      ref="judgeDisplay"
+      v-show="!isGameEnded"
+    ></MarkComboJudge>
+
+    <!-- center text (fever x2 etc) -->
+    <ZoomText class="zoom" ref="zoom"></ZoomText>
+
+    <!-- Tutorial -->
+    <transition name="modal-fade">
+      <Tutorial
+        v-if="tutorial"
+        v-show="started && !instance.paused"
+        class="zoom allow-events"
+      ></Tutorial>
+    </transition>
 
     <!-- game canvas -->
     <div class="gameWrapper" :class="{ 'no-events': hideGameForYtButton }">
+      <canvas ref="effectCanvas" id="effectCanvas"></canvas>
       <canvas
         ref="mainCanvas"
         id="gameCanvas"
@@ -51,7 +66,16 @@
     ></Visualizer>
 
     <!-- score panel -->
-    <div class="score">
+    <div class="score" v-if="instance">
+      <div
+        class="performanceWarning"
+        v-if="fps && started && !instance.paused && instance.fps < 35"
+      >
+        Game Performance Degraded
+      </div>
+      <div style="font-size: 0.5em;" v-if="fps && instance.fps">
+        {{ instance.fps }} FPS
+      </div>
       <div style="font-size: 0.5em;">
         <ICountUp
           :endVal="percentage"
@@ -65,9 +89,11 @@
     </div>
 
     <!-- youtube player -->
+    <div><!-- for mp3 mode youtube bug --></div>
     <div v-if="srcMode === 'youtube' && !isGameEnded" v-show="initialized">
       <Youtube
-        class="ytPlayerMobileExtend"
+        :class="{ 'allow-events': srcMode === 'youtube' }"
+        class="ytPlayerMobileExtend no-events"
         id="ytPlayer"
         ref="youtube"
         :video-id="youtubeId"
@@ -122,17 +148,20 @@
             <v-icon name="info-circle" scale="1.5" />
           </div>
         </div>
+
+        <div class="youtube_notice" v-if="srcMode === 'youtube'">
+          Powered by YouTube.
+          <br />
+          All copyright and revenue goes to the video owner.
+        </div>
       </div>
     </transition>
-
-    <!-- center text (fever x2 etc) -->
-    <ZoomText style="z-index: 1000;" ref="zoom"></ZoomText>
 
     <!-- loading popup -->
     <Loading style="z-index: 200;" :show="instance && instance.loading"
       >Song Loading...</Loading
     >
-    <Loading style="z-index: 500;" :show="isGameEnded"
+    <Loading style="z-index: 600;" :show="isGameEnded && !showingAchievement"
       >Syncing Results...</Loading
     >
 
@@ -223,16 +252,24 @@ import Navbar from "../components/ui/Navbar.vue";
 import SheetDetailLine from "../components/menus/SheetDetailLine.vue";
 import ProgressBar from "../components/game/ProgressBar.vue";
 import Countdown from "../components/game/Countdown.vue";
+import MarkComboJudge from "../components/game/MarkComboJudge.vue";
+import Tutorial from "../components/game/Tutorial.vue";
 import GameMixin from "../mixins/gameMixin";
 import { Youtube } from "vue-youtube";
-import { getGameSheet, uploadResult } from "../javascript/db";
-import { analytics } from "../helpers/firebaseConfig";
+import {
+  getGameSheet,
+  uploadResult,
+  createPlay,
+  updatePlay,
+} from "../javascript/db";
+import { logEvent, logError } from "../helpers/analytics";
 import ICountUp from "vue-countup-v2";
 import VanillaTilt from "vanilla-tilt";
 import "vue-awesome/icons/regular/pause-circle";
 import "vue-awesome/icons/play";
 import "vue-awesome/icons/cog";
 import "vue-awesome/icons/info-circle";
+const isDev = process.env.NODE_ENV === "development";
 
 export default {
   name: "Game",
@@ -248,15 +285,32 @@ export default {
     ProgressBar,
     Countdown,
     SheetDetailLine,
+    MarkComboJudge,
+    Tutorial,
   },
   mixins: [GameMixin],
   data() {
-    return {};
+    return {
+      playId: null,
+      showingAchievement: false,
+      tutorial: false,
+    };
+  },
+  computed: {
+    progress() {
+      const startAt = this.currentSong.startAt ?? 0;
+      let time = (this.instance.playTime - startAt) / this.currentSong.length;
+      return time > 0 ? time : 0;
+    },
   },
   mounted() {
     if (this.$route.params.sheet) {
       this.instance.loading = true;
-      this.playWithId();
+      this.playWithId(this.$route.params.sheet);
+    } else if (this.$route.path.includes("tutorial")) {
+      // tutorial mode
+      this.tutorial = true;
+      this.playWithId("SItZEA9Uysy6RC1Ylkqh");
     } else {
       this.$store.state.gModal.show({
         bodyText: "No song is chosen, tap 'OK' to go to song list.",
@@ -266,21 +320,24 @@ export default {
       });
     }
   },
+  beforeDestroy() {
+    if (this.isGameEnded) return;
+    this.reportExit("closed");
+  },
   methods: {
-    async playWithId() {
+    async playWithId(sheetId) {
       try {
-        let song = await getGameSheet(this.$route.params.sheet);
+        let song = await getGameSheet(sheetId);
         this.instance.loadSong(song);
+        document.title = song.title + " - Rhythm+ Music Game";
       } catch (err) {
-        analytics().logEvent("song_load_error", {
-          songId: this.currentSong.songId,
-        });
         this.$store.state.gModal.show({
           bodyText: "Sorry, this song does not exist or is unavaliable.",
           isError: true,
           showCancel: false,
           okCallback: this.exitGame,
         });
+        logError("song_load_error_" + sheetId);
       }
     },
     songLoaded() {
@@ -303,6 +360,7 @@ export default {
       Logger.log("cued");
       this.instance.loading = false;
       this.showStartButton = true;
+      logEvent("youtube_cued");
     },
     ytBuffering() {
       Logger.log("buffering");
@@ -310,17 +368,22 @@ export default {
         this.startGame();
       }
     },
-    startGame() {
-      analytics().logEvent("start_game", { songId: this.currentSong.songId });
+    async startGame() {
+      logEvent("start_game", { songId: this.currentSong.songId });
       this.showStartButton = false;
       if (this.srcMode === "youtube") {
         this.instance.loading = true;
         this.ytPlayer?.playVideo();
         this.ytPlayer?.setVolume(0);
       } else {
-        this.$refs.zoom.show("Get Ready...");
+        if (!this.tutorial) this.$refs.zoom.show("Get Ready...");
         this.instance.startSong();
       }
+      if (isDev) return;
+      this.playId = await createPlay(
+        this.currentSong.sheetId,
+        this.currentSong.songId
+      );
     },
     pauseGame() {
       if (!this.started || this.isGameEnded) return;
@@ -350,23 +413,59 @@ export default {
       this.instance.resetPlaying();
       this.instance.startSong();
     },
-    exitGame() {
+    exitGame(e, reason) {
+      this.reportExit(reason ?? "exited");
+      this.playId = null;
       this.hideMenu();
       this.$router.push("/menu");
+    },
+    updatePlay(data) {
+      if (!this.playId) return;
+      return updatePlay(this.playId, data);
+    },
+    reportExit(status) {
+      const data = {
+        status,
+        playTime: this.instance.playTime,
+        result: this.result,
+      };
+      this.updatePlay(data);
+      logEvent("game_exited", data);
     },
     async gameEnded() {
       this.instance.destroyInstance();
       this.isGameEnded = true;
+      let achievementPromise = Promise.resolve();
+      if (this.tutorial) {
+        this.exitGame(null, "tutorial-ends");
+        return;
+      }
+      if (this.result.marks.miss == 0) {
+        this.showingAchievement = true;
+        this.$refs.zoom.show("Full Combo");
+        this.$confetti.start();
+        achievementPromise = new Promise((resolve) => {
+          setTimeout(() => {
+            this.showingAchievement = false;
+            resolve();
+          }, 2000);
+        });
+      }
       try {
-        const res = await uploadResult({
+        const uploadPromise = uploadResult({
           result: this.result,
           songId: this.currentSong.songId,
           sheetId: this.currentSong.sheetId,
+          playId: this.playId,
           isAuthed: this.$store.state.authed,
         });
+        const result = await Promise.all([uploadPromise, achievementPromise]);
+        const res = result[0];
         Logger.log(res);
         this.$router.push("/result/" + res.data.resultId);
-        analytics().logEvent("result_uploaded", {
+        this.$confetti.stop();
+        this.updatePlay({ status: "finished", resultId: res.data.resultId });
+        logEvent("result_uploaded", {
           resultId: res.data.resultId,
         });
       } catch (error) {
@@ -379,6 +478,7 @@ export default {
           okCallback: this.gameEnded,
           cancelCallback: this.exitGame,
         });
+        logError("result_upload_error");
       }
     },
     addTilt() {
@@ -456,10 +556,19 @@ export default {
   top: 12px;
 }
 
+.zoom {
+  z-index: 1000;
+  pointer-events: none;
+}
+
 @media only screen and (min-width: 800px) {
   /* desktop */
   .perspective {
-    transform: rotateX(30deg) scale(1.5) scaleX(0.8);
+    transform: rotateX(30deg) scale(1.5) scaleX(0.72);
+  }
+
+  .youtube_notice br {
+    display: none;
   }
 }
 
@@ -505,19 +614,35 @@ export default {
   flex-direction: row;
 }
 
-.flex_hori {
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-}
-
 .darker {
   backdrop-filter: blur(50px);
   -webkit-backdrop-filter: blur(50px);
 }
 
+.youtube_notice {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0.3;
+  font-size: 0.8em;
+  width: 90%;
+  text-align: center;
+}
+
+.performanceWarning {
+  font-size: 0.5em;
+  background: orange;
+  color: white;
+  padding: 5px;
+}
+
 .no-events {
   pointer-events: none;
+}
+
+.allow-events {
+  pointer-events: all;
 }
 
 .slide-fade-enter-active {

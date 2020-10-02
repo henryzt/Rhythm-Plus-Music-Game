@@ -7,12 +7,17 @@ const KeyCode = {
   KEY_RIGHT: 39,
   ESC: 27,
   P: 80,
+  SPACE: 32,
 };
+
+let fpsTime = [];
 
 export default class GameInstance {
   constructor(vm) {
     this.canvas = vm.canvas;
     this.ctx = vm.ctx;
+    this.effectCanvas = vm.effectCanvas;
+    this.effectCtx = vm.effectCtx;
     this.audio = vm.audio;
     this.vm = vm;
 
@@ -105,6 +110,10 @@ export default class GameInstance {
       this.canvas.width = window.innerWidth;
       this.canvas.height = window.innerHeight;
     }
+    this.effectCanvas.style.height = this.canvas.style.height;
+    this.effectCanvas.width = this.canvas.width;
+    this.effectCanvas.height = this.canvas.height;
+
     const trackWidth =
       this.canvas.width / this.trackNum > this.trackMaxWidth
         ? this.trackMaxWidth
@@ -126,6 +135,7 @@ export default class GameInstance {
     const isMobile = window.innerWidth < 1000;
     let hitLineProp = isMobile ? 8.5 : 9;
     if (!this.vm.playMode) hitLineProp = this.vm.options.lowerHitLine ? 4 : 0;
+    if (this.vm.perspective) hitLineProp += 0.3;
 
     this.checkHitLineY = (this.canvas.height / 10) * hitLineProp;
     this.noteSpeedPxPerSec = 380 * this.vm.noteSpeed * this.vm.playbackSpeed;
@@ -137,49 +147,45 @@ export default class GameInstance {
   }
 
   registerInput() {
-    window.addEventListener("resize", (_) => {
+    this.repositionEvent = (_) => {
       this.reposition();
-    });
+    };
 
-    window.addEventListener(
-      "orientationchange",
-      (_) => {
-        this.reposition();
-      },
-      false
-    );
-
-    document.addEventListener(
-      "keydown",
-      (event) => {
-        this.onKeyDown(event.key.toLowerCase());
-        if (event.keyCode === KeyCode.ESC || event.keyCode === KeyCode.P) {
-          if (!this.vm.started) return;
-          if (this.paused) {
-            this.vm.resumeGame(true);
-          } else {
-            this.vm.pauseGame();
-          }
+    this.keydownEvent = (event) => {
+      this.onKeyDown(event.key.toLowerCase());
+      if (
+        event.keyCode === KeyCode.ESC ||
+        event.keyCode === KeyCode.P ||
+        (!this.trackKeyBind.includes(" ") && event.keyCode === KeyCode.SPACE)
+      ) {
+        if (!this.vm.initialized) return;
+        if (!this.vm.started) {
+          if (this.vm.inEditor) this.vm.songLoaded();
+          else this.vm.startGame();
+        } else if (this.paused) {
+          this.vm.resumeGame(true);
+        } else {
+          this.vm.pauseGame();
         }
-        if (this.vm.inEditor) {
-          // editor time minor adjust by arrow keys
-          if (event.keyCode === KeyCode.KEY_LEFT) {
-            this.vm.seekTo(this.currentTime - 0.03);
-          } else if (event.keyCode === KeyCode.KEY_RIGHT) {
-            this.vm.seekTo(this.currentTime + 0.03);
-          }
+      }
+      if (this.vm.inEditor) {
+        // editor time minor adjust by arrow keys
+        if (event.keyCode === KeyCode.KEY_LEFT) {
+          this.vm.seekTo(this.currentTime - 0.03);
+        } else if (event.keyCode === KeyCode.KEY_RIGHT) {
+          this.vm.seekTo(this.currentTime + 0.03);
         }
-      },
-      false
-    );
+      }
+    };
 
-    document.addEventListener(
-      "keyup",
-      (event) => {
-        this.onKeyUp(event.key.toLowerCase());
-      },
-      false
-    );
+    this.keyupEvent = (event) => {
+      this.onKeyUp(event.key.toLowerCase());
+    };
+
+    window.addEventListener("resize", this.repositionEvent);
+    window.addEventListener("orientationchange", this.repositionEvent, false);
+    document.addEventListener("keydown", this.keydownEvent, false);
+    document.addEventListener("keyup", this.keyupEvent, false);
 
     let touches = {};
 
@@ -230,16 +236,24 @@ export default class GameInstance {
     };
   }
 
+  clearHoldingStatus() {
+    this.keyHoldingStatus = {};
+    this.holdingNote = {};
+    this.holdingNoteTimeout = {};
+    this.lastAddedTime = null;
+    this.lastAddedIdx = null;
+  }
+
   // log key and touch events
   async onKeyDown(key) {
+    if (!this.trackKeyBind.includes(key)) return;
     // avoid repeated triggering when key is held
     if (this.keyHoldingStatus[key]) return;
     this.keyHoldingStatus[key] = true;
-    if (!this.trackKeyBind.includes(key)) return;
     // if in create mode, create note
     if (!this.vm.playMode && !this.paused) {
       await this.updateCurrentTime();
-      this.createSingleNote(key, this.currentTime);
+      this.createSingleNote(key, this.currentTime, parseFloat(Date.now()));
       const singleNoteObj = this.timeArr[this.lastAddedIdx];
       // convert to hold note
       this.holdingNoteTimeout[key] = setTimeout(() => {
@@ -293,15 +307,15 @@ export default class GameInstance {
     this.timeArrIdx = idx + 1;
   }
 
-  createSingleNote(key, cTime) {
-    const waitTimeForMultiNote = 0.05;
+  createSingleNote(key, cTime, dateNow) {
+    const waitTimeForMultiNote = 50; // ms
     // this.timeArr.push({ t: cTime.toFixed(3), k: key });
     // this.timeArrIdx = this.timeArr.length - 1;
     if (
       this.lastAddedTime &&
       this.timeArr[this.lastAddedIdx] &&
       this.lastAddedKey !== key &&
-      cTime - this.lastAddedTime < waitTimeForMultiNote
+      dateNow - this.lastAddedTime < waitTimeForMultiNote
     ) {
       this.timeArr[this.lastAddedIdx].k += key;
     } else {
@@ -309,13 +323,7 @@ export default class GameInstance {
         t: Number(cTime.toFixed(3)),
         k: key,
       });
-      // this.timeArrIdx = this.timeArr.length - 1;
-      // add at idx
-      // this.timeArr.splice(this.timeArrIdx, 0, {
-      //   t: Number(cTime.toFixed(3)),
-      //   k: key,
-      // });
-      this.lastAddedTime = cTime;
+      this.lastAddedTime = dateNow;
       this.lastAddedIdx = this.timeArr.length - 1;
       this.lastAddedKey = key;
       if (this.lastAddedIdx === this.timeArrIdx) this.timeArrIdx++;
@@ -323,7 +331,7 @@ export default class GameInstance {
         if (!this.timeArr[this.lastAddedIdx]) return;
         const k = this.timeArr[this.lastAddedIdx].k;
         this.dropNote(k, this.timeArr[this.lastAddedIdx]);
-      }, waitTimeForMultiNote * 1000 + 5);
+      }, waitTimeForMultiNote + 5);
     }
   }
 
@@ -354,23 +362,42 @@ export default class GameInstance {
       }
       this.clearNotes();
       this.timeArrIdx = idx;
+      this.clearHoldingStatus();
     }
   }
 
   // animate all
-  update() {
+  update(time) {
     if (this.destoryed) return;
     requestAnimationFrame(this.update.bind(this));
     if (!this.vm.inEditor) this.updateCurrentTime();
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.vm.visualizerInstance.renderVisualizer();
+    this.effectCtx.clearRect(
+      0,
+      0,
+      this.effectCanvas.width,
+      this.effectCanvas.height
+    );
+    this.vm.visualizerInstance.renderVisualizer(time);
     this.feverEff.update();
+    // this.drawDecoration();
     let shouldAdvance = false;
     for (const track of this.dropTrackArr) {
       shouldAdvance = track.update() || shouldAdvance;
     }
     if (shouldAdvance) this.timeArrIdx++;
     if (this.vm.perspective) this.drawFadeOut();
+    this.countFps();
+    // this.gameTimingLoop();
+  }
+
+  countFps() {
+    const now = performance.now();
+    while (fpsTime.length > 0 && fpsTime[0] <= now - 1000) {
+      fpsTime.shift();
+    }
+    fpsTime.push(now);
+    this.fps = fpsTime.length;
   }
 
   drawFadeOut() {
@@ -381,6 +408,12 @@ export default class GameInstance {
     this.ctx.fillStyle = gradient;
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.globalCompositeOperation = "source-over";
+  }
+
+  drawDecoration() {
+    this.ctx.fillStyle = "white";
+    this.ctx.fillRect(this.startX - 10, 0, 10, this.canvas.height);
+    this.ctx.fillRect(this.endX, 0, 10, this.canvas.height);
   }
 
   startSong() {
@@ -412,14 +445,18 @@ export default class GameInstance {
   }
 
   async gameTimingLoop() {
+    if (!this.vm.currentSong) return;
+
     await this.updateCurrentTime();
 
     // check game end
-    const gameEndAt = this.vm.currentSong.length;
+    const gameStartAt = this.vm.currentSong.startAt ?? 0;
+    const gameEndAt =
+      this.vm.currentSong.endAt ?? this.vm.currentSong.length + gameStartAt;
     if (this.currentTime >= gameEndAt) {
       if (!this.vm.inEditor) {
         this.vm.gameEnded();
-      } else if (!this.paused && this.vm.currentSong.endAt === gameEndAt) {
+      } else if (!this.paused) {
         this.vm.pauseGame();
         this.seekTo(gameEndAt);
         this.vm.$store.state.alert.info(
@@ -464,7 +501,7 @@ export default class GameInstance {
   resetPlaying(resetTimeArr) {
     clearInterval(this.intervalPlay);
     this.vm.started = false;
-    this.ytPlayer.resetVideo();
+    this.ytPlayer.resetVideo(this.startSongAt);
     this.clearNotes();
     if (resetTimeArr) this.timeArr = [];
     this.timeArrIdx = 0;
@@ -498,6 +535,14 @@ export default class GameInstance {
 
   destroyInstance() {
     this.destoryed = true;
+    window.removeEventListener("resize", this.repositionEvent);
+    window.removeEventListener(
+      "orientationchange",
+      this.repositionEvent,
+      false
+    );
+    document.removeEventListener("keydown", this.keydownEvent, false);
+    document.removeEventListener("keyup", this.keyupEvent, false);
     this.resetPlaying();
   }
 

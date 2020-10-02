@@ -58,7 +58,7 @@ export default {
     if (this.autoUpdate) this.update();
     this.$nextTick(() => {
       this.$store.commit("setVisualizerIns", this.$refs.ins);
-      if (this.$store.state.theme.themeStyle && this.$refs.ins)
+      if (this.$store.state.theme?.themeStyle && this.$refs.ins)
         this.$refs.ins.themeStyle = this.$store.state.theme.themeStyle;
     });
   },

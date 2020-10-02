@@ -48,10 +48,10 @@
         />
         <div class="navtext">Toggle Fullscreen</div>
       </div>
-      <div class="nav">
+      <!-- <div class="nav">
         <v-icon name="share" scale="1.5" />
         <div class="navtext">Share</div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>

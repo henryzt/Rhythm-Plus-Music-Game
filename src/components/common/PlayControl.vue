@@ -59,6 +59,15 @@
         :cbStyle="cbStyle"
       ></Checkbox>
     </p>
+    <p>
+      <label></label>
+      <Checkbox
+        label="Show FPS"
+        :model="playData"
+        modelKey="fps"
+        :cbStyle="cbStyle"
+      ></Checkbox>
+    </p>
 
     <!-- create mode only -->
     <div v-if="playData.inEditor">

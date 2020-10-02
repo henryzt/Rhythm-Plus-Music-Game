@@ -18,6 +18,15 @@
       </div>
       <div style="flex-grow: 1;"></div>
       <a href="#" @click.prevent="newEditor">New</a>
+      <a
+        href="#"
+        :class="{ disabled: isDisabled }"
+        @click.prevent="
+          restartGame();
+          songLoaded();
+        "
+        >Restart</a
+      >
       <div style="display: flex;" :class="{ disabled: isDisabled }">
         <a
           href="#"
@@ -27,9 +36,9 @@
         >
           <span v-if="sheetChanged" class="saveIndicator">●</span>Save
         </a>
-        <a href="#" @click.prevent="togglePlayMode(false)">{{
-          playMode ? "Edit" : "Test"
-        }}</a>
+        <a href="#" @click.prevent="togglePlayMode(false)">
+          {{ playMode ? "Edit" : "Test" }}
+        </a>
         <a
           href="#"
           @click.prevent="showPublishModal"
@@ -115,6 +124,7 @@
         <div class="column middle" :class="{ disabled: !initialized }">
           <!-- game wrapper -->
           <div class="gameWrapper" ref="wrapper">
+            <canvas ref="effectCanvas" id="effectCanvas"></canvas>
             <canvas
               ref="mainCanvas"
               id="gameCanvas"
@@ -122,13 +132,11 @@
             ></canvas>
           </div>
           <!-- mark indicator -->
-          <div
-            class="center_judge"
+          <MarkComboJudge
+            style="z-index: 500;"
+            ref="judgeDisplay"
             v-show="playMode && result.combo > 0"
-            ref="hitIndicator"
-          >
-            {{ markJudge }} {{ result.combo }}
-          </div>
+          ></MarkComboJudge>
 
           <!-- center text -->
           <ZoomText style="z-index: 1000;" ref="zoom"></ZoomText>
@@ -254,15 +262,15 @@ import SheetTable from "../components/editor/SheetTable.vue";
 import SongListItem from "../components/menus/SongListItem.vue";
 import PlayControl from "../components/common/PlayControl.vue";
 import ZoomText from "../components/game/ZoomText.vue";
+import MarkComboJudge from "../components/game/MarkComboJudge.vue";
 import Modal from "../components/ui/Modal.vue";
 import Publish from "../components/editor/Publish.vue";
 import Loading from "../components/ui/Loading.vue";
 import GameMixin from "../mixins/gameMixin";
 import VueSlider from "vue-slider-component";
 import { Youtube } from "vue-youtube";
+import { tween } from "shifty";
 import "vue-slider-component/theme/antd.css";
-import "vue-awesome/icons/play";
-import "vue-awesome/icons/pause";
 import "vue-awesome/icons/redo";
 import "vue-awesome/icons/undo";
 
@@ -280,6 +288,7 @@ export default {
     Publish,
     PlayControl,
     ZoomText,
+    MarkComboJudge,
   },
   mixins: [GameMixin],
   data() {
@@ -371,13 +380,6 @@ export default {
         this.gameSheetInfo.sheet = this.gameSheetInfo.sheet ?? [];
         this.instance.loadSong(this.gameSheetInfo);
         Logger.log(this.gameSheetInfo);
-        if (this.$route.query.save) {
-          // refresh sheet data
-          await this.saveSheet();
-          this.$router.push({ query: { update: true } });
-          this.reloadEditor();
-          return;
-        }
         if (!this.isSheetOwner) {
           this.$store.state.alert.warn(
             "Warning, you do not have edit access to this sheet, any changes will not be saved!",
@@ -430,6 +432,13 @@ export default {
         this.songLength = await this.getLength();
         this.instance.pauseGame();
         this.initialized = true;
+        if (this.$route.query.save) {
+          // refresh sheet data
+          await this.saveSheet();
+          this.$router.push({ query: null });
+          this.gameSheetInfo = await getGameSheet(this.$route.params.sheet);
+          this.instance.loadSong(this.gameSheetInfo);
+        }
       } else if (!this.started) {
         this.instance.paused = false;
         this.instance.startSong();
@@ -480,6 +489,18 @@ export default {
         this.instance.seekTo(time);
       }
     },
+    async smoothSeekTo(seekTime) {
+      await tween({
+        render: ({ x }) => {
+          this.seeking(x);
+        },
+        easing: "easeInOutQuad",
+        duration: 500,
+        from: { x: Number(this.instance.currentTime) },
+        to: { x: seekTime },
+      });
+      this.seekTo(seekTime);
+    },
     setPlaybackRate(rate) {
       if (this.srcMode === "youtube") {
         this.ytPlayer.setPlaybackRate(Number(rate));
@@ -496,6 +517,7 @@ export default {
       }
       this.clearFever();
       this.instance.reposition();
+      this.instance.clearHoldingStatus();
     },
     updateSongDetail() {
       this.$refs.info.openSongUpdate();
@@ -552,15 +574,17 @@ export default {
     },
     countTotal() {
       const lastNote = this.instance.timeArr[this.instance.timeArr.length - 1];
-      this.sheetInfo.length =
+      const endAt =
         this.sheetInfo.endAt ??
         (lastNote
           ? Math.min.apply(Math, [this.songLength, lastNote.t + 5])
           : this.songLength);
+      this.sheetInfo.length = endAt - (this.sheetInfo.startAt ?? 0);
       this.sheetInfo.noteCount = this.instance.timeArr.length;
     },
 
     reloadEditor() {
+      this.instance.destroyInstance();
       this.$store.state.redirecting = true;
       this.$nextTick(() => {
         this.$store.state.redirecting = false;
@@ -573,6 +597,7 @@ export default {
   },
   beforeDestroy() {
     window.onbeforeunload = null;
+    this.instance.destroyInstance();
   },
 };
 </script>

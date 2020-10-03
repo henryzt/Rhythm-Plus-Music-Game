@@ -107,7 +107,18 @@
       </form>
     </div>
 
-    <div class="animate__animated animate__zoomIn animate__delay-2s">
+    <div
+      class="animate__animated animate__zoomIn animate__delay-2s"
+      style="position: relative; z-index: 1000;"
+    >
+      <div class="st_title">Game Preferences</div>
+      <p>
+        <label>Key Mappings</label>
+        <KeyMappings class="keyMap" v-model="preference.keyMap"></KeyMappings>
+      </p>
+    </div>
+
+    <div class="animate__animated animate__zoomIn animate__delay-3s">
       <div class="st_title">Default Game Settings</div>
       <play-control
         :playData="gameSt"
@@ -150,6 +161,7 @@
 import Checkbox from "../ui/Checkbox.vue";
 import PlayControl from "../common/PlayControl.vue";
 import Loading from "../ui/Loading.vue";
+import KeyMappings from "./KeyMappings.vue";
 import firebase from "firebase/app";
 import { updateUserProfile } from "../../javascript/db";
 import { getMeta, setMeta } from "../../helpers/storage";
@@ -161,6 +173,7 @@ export default {
     Checkbox,
     PlayControl,
     Loading,
+    KeyMappings,
   },
   data: function () {
     return {
@@ -176,6 +189,9 @@ export default {
         blur: false,
         syncYoutube: false,
         options: null,
+      },
+      preference: {
+        keyMap: null,
       },
       gameSt: {
         noteSpeed: 1,
@@ -346,6 +362,10 @@ input {
 
 .settings {
   --animate-delay: 0.1s;
+}
+
+.keyMap {
+  margin-left: auto;
 }
 
 .banner {

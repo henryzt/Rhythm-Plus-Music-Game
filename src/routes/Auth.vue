@@ -42,7 +42,7 @@
         <div v-if="$store.state.authed">
           Thank you for playing Rhythm Plus Alpha release, join our
           <a :href="discord" target="_blank">discord server</a> to get lastest
-          dev updates! You can report bugs and send feedbacks
+          dev updates. You can report bugs and send feedbacks
           <a :href="bugReport" target="_blank">here</a> or in our
           <a :href="github" target="_blank">GitHub Repo</a>. You can also give
           us a star to support us!

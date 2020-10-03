@@ -232,12 +232,7 @@ export default {
           this.$store.state.alert.success("Song created");
         }
       } catch (err) {
-        this.$parent.loading = false;
-        this.$store.state.alert.error(
-          "Something went wrong, please check your inputs",
-          5000
-        );
-        Logger.error(err);
+        this.handleFormError(err);
       }
     },
     submitExistingSong() {
@@ -281,12 +276,7 @@ export default {
         }
         this.$parent.reloadEditor();
       } catch (err) {
-        this.$parent.loading = false;
-        this.$store.state.alert.error(
-          "Something went wrong, please check your inputs",
-          5000
-        );
-        Logger.error(err);
+        this.handleFormError(err);
       }
     },
     submitExistingSheet() {
@@ -296,6 +286,11 @@ export default {
         this.$router.push("/editor/" + selectedSheet.id + "/");
         this.$parent.reloadEditor();
       }
+    },
+    handleFormError(err) {
+      this.$parent.loading = false;
+      this.$store.state.alert.error("Please fill in required fields", 5000);
+      Logger.error(err);
     },
     async openSongUpdate() {
       this.songFormOptions.tab = "form";

@@ -24,7 +24,7 @@
           :value="playData.noteSpeed ? playData.noteSpeed : 1"
           :interval="0.01"
           :min="0.3"
-          :max="3"
+          :max="5"
           :contained="true"
           :tooltip-formatter="(val) => val.toFixed(1) + 'x'"
           @change="changeSpeed"
@@ -102,6 +102,8 @@
         {{ playData.result.marks.good }} | offbeat -
         {{ playData.result.marks.offbeat }} | miss -
         {{ playData.result.marks.miss }}
+        <br />
+        fps - {{ playData.instance.fps }}
         <br />
         <br />
         fever level - {{ playData.fever.value }} | fever time -

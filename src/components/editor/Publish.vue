@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="sheetInfo.length">
-      <div class="text">
+      <div class="text" :class="{ disabled: !vm.isSongOwner }">
         Song Visibility
         <br />
         <select v-model="songInfo.visibility">
@@ -13,7 +13,7 @@
         <br />
       </div>
 
-      <div class="text">
+      <div class="text" :class="{ disabled: !vm.isSheetOwner }">
         Sheet Visibility
         <br />
         <select v-model="sheetInfo.visibility">
@@ -26,6 +26,12 @@
       <div style="margin: 20px;">
         <div>Total Length - {{ sheetInfo.length.toFixed(2) }} s</div>
         <div>Note Count - {{ sheetInfo.noteCount }}</div>
+        <div v-if="songPlayCount > 0">
+          Song Play Count - {{ songPlayCount }}
+        </div>
+        <div v-if="sheetPlayCount > 0">
+          Sheet Play Count - {{ sheetPlayCount }}
+        </div>
       </div>
 
       <div class="text_button" @click="openPreview">Preview Game</div>
@@ -64,6 +70,17 @@ export default {
     sheetInfo() {
       return this.vm.sheetInfo;
     },
+  },
+  data() {
+    return {
+      songPlayCount: 0,
+      sheetPlayCount: 0,
+    };
+  },
+  async mounted() {
+    // TODO current implementation will result in too many reads
+    // this.songPlayCount = await getPlayCount("songId", this.songInfo.id)
+    // this.sheetPlayCount = await getPlayCount("sheetId", this.sheetInfo.id)
   },
   methods: {
     async publish() {

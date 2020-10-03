@@ -125,6 +125,23 @@
       <div class="banner" v-if="changed">Unsaved changes</div>
     </transition>
 
+    <div class="discord_banner flex_hori" v-if="showDiscordBanner">
+      <v-icon name="brands/discord" scale="2"></v-icon>
+      <div style="padding-left: 10px;">
+        <a href="https://discord.gg/ZGhnKp4" target="_blank"
+          >Be the first to join our new
+          <span style="text-decoration: underline;"
+            >official Discord server</span
+          >!</a
+        >
+      </div>
+      <v-icon
+        name="times"
+        style="cursor: pointer;"
+        @click="hideDiscord"
+      ></v-icon>
+    </div>
+
     <Loading style="z-index: 999;" :show="loading">Saving...</Loading>
   </div>
 </template>
@@ -135,6 +152,8 @@ import PlayControl from "../common/PlayControl.vue";
 import Loading from "../ui/Loading.vue";
 import firebase from "firebase/app";
 import { updateUserProfile } from "../../javascript/db";
+import { getMeta, setMeta } from "../../helpers/storage";
+import "vue-awesome/icons/brands/discord";
 
 export default {
   name: "Settings",
@@ -168,6 +187,7 @@ export default {
       loading: false,
       changed: false,
       firstChanged: false,
+      showDiscordBanner: !getMeta("st_discord_showed"),
     };
   },
   mounted() {
@@ -238,7 +258,7 @@ export default {
         const user = firebase.auth().currentUser;
         await user.updateProfile({ displayName, photoURL });
 
-        if (this.visualizerIns.options) {
+        if (this.visualizerIns?.options) {
           this.appearanceSt.options = {
             themeStyle: this.visualizerIns.themeStyle,
           };
@@ -278,6 +298,10 @@ export default {
             8000
           );
         });
+    },
+    hideDiscord() {
+      setMeta("st_discord_showed", true);
+      this.showDiscordBanner = false;
     },
   },
 };
@@ -333,6 +357,19 @@ input {
   left: calc(50% - 150px);
   width: 300px;
   z-index: 900;
+  box-shadow: 4px 3px 24px -2px rgba(255, 115, 0, 0.5);
+}
+
+.discord_banner {
+  text-align: left;
+  background: rgb(81, 0, 148);
+  padding: 10px 20px;
+  top: 70px;
+  position: fixed;
+  left: calc(50% - 170px);
+  width: 300px;
+  z-index: 900;
+  box-shadow: 4px 3px 24px -2px rgba(81, 0, 148, 0.5);
 }
 
 @media only screen and (max-width: 1000px) {

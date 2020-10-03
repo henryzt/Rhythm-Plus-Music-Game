@@ -214,7 +214,7 @@ export default {
       this.songList.sort(
         (a, b) => a.dateCreated.seconds - b.dateCreated.seconds
       );
-      this.songList = this.songList.slice(-20);
+      this.songList = this.songList.slice(-35);
     },
     getPlaylistSongs(playlistId) {
       getPlaylist(playlistId).then(async (res) => {
@@ -275,10 +275,14 @@ export default {
   font-weight: bolder;
   padding-bottom: 5px;
   transition: all 0.2s;
-  opacity: 0.7;
+  opacity: 0.6;
   color: white;
   border-bottom: 2px solid transparent;
   cursor: pointer;
+}
+
+.cat_tab:hover {
+  opacity: 0.8;
 }
 
 .active {

@@ -310,6 +310,7 @@ export function createPlay(sheetId, songId) {
     createdBy,
     status,
     isAuthed,
+    visibility: "public",
   };
   return new Promise((resolve, reject) => {
     playsCollection

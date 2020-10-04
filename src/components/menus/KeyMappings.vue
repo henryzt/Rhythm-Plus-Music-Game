@@ -20,7 +20,7 @@
           <td @click="change(' ')" colspan="3" class="k">{{ m[" "] }}</td>
           <td></td>
           <td></td>
-          <td></td>
+          <td @click="reset" class="k reset"><v-icon name="redo"></v-icon></td>
         </tr>
       </tbody>
     </table>
@@ -54,6 +54,7 @@
 
 <script>
 import Modal from "../ui/Modal.vue";
+import "vue-awesome/icons/redo";
 
 const defaultMapping = {
   a: "a",
@@ -88,8 +89,9 @@ export default {
     newKey() {
       if (!this.newKey) return;
       if (this.newKey.length > 1) {
-        this.newKey = this.newKey.slice(-1).toLowerCase();
+        this.newKey = this.newKey.slice(-1);
       }
+      this.newKey = this.newKey.toLowerCase();
       this.collide = Object.values(this.m).includes(this.newKey);
     },
   },
@@ -110,6 +112,14 @@ export default {
           this.$refs.input?.focus();
         };
       }, 100);
+    },
+    async reset() {
+      const doReset = await this.$store.state.gModal.show({
+        bodyText: "Reset key mappings to default?",
+        okText: "Reset",
+        type: "warning",
+      });
+      if (doReset) this.$emit("input", defaultMapping);
     },
   },
 };
@@ -140,6 +150,10 @@ td {
 .s {
   /* secondary */
   background: rgba(83, 83, 83, 0.6);
+}
+
+.reset {
+  background: rgba(128, 128, 128, 0.1);
 }
 
 .newKey {

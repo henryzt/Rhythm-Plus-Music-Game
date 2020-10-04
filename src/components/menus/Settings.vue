@@ -109,7 +109,7 @@
 
     <div
       class="animate__animated animate__zoomIn animate__delay-2s"
-      style="position: relative; z-index: 1000;"
+      style="position: relative; z-index: 900;"
     >
       <div class="st_title">Game Preferences</div>
       <p>
@@ -153,7 +153,9 @@
       ></v-icon>
     </div>
 
-    <Loading style="z-index: 999;" :show="loading">Saving...</Loading>
+    <Loading style="position: relative; z-index: 999;" :show="loading"
+      >Saving...</Loading
+    >
   </div>
 </template>
 
@@ -214,7 +216,12 @@ export default {
       return this.$store.state.visualizerIns;
     },
     settings() {
-      return { pf: this.profileSt, gm: this.gameSt, ap: this.appearanceSt };
+      return {
+        pf: this.profileSt,
+        pr: this.preference,
+        gm: this.gameSt,
+        ap: this.appearanceSt,
+      };
     },
   },
   watch: {
@@ -264,6 +271,9 @@ export default {
       if (profile?.gameSt) {
         this.gameSt = profile.gameSt;
       }
+      if (profile?.preference) {
+        this.preference = profile.preference;
+      }
       this.loading = false;
     },
     async saveSettings() {
@@ -285,6 +295,7 @@ export default {
         await updateUserProfile({
           appearanceSt: this.appearanceSt,
           gameSt: this.gameSt,
+          preference: this.preference,
         });
 
         this.$router.push({ query: { success: true } });

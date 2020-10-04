@@ -26,21 +26,27 @@
     </table>
 
     <Modal
-      style="z-index: 1000;"
+      style="z-index: 1000; text-align: center;"
       ref="modal"
       okText="Done"
       :showOk="newKey != null"
     >
       <template v-slot:header>
-        <div style="text-align: center; width: 100%; font-size: 23px;">
+        <div style="width: 100%; font-size: 1.3em;">
           Key Remap
         </div>
       </template>
 
       <template>
-        <div v-if="!newKey">Press a key now</div>
-        <div v-else>{{ newKey }}</div>
-        <input autofocus="true" style="visibility: hidden;" v-model="newKey" />
+        <div class="press" v-if="!newKey">Press a key now</div>
+        <div class="newKey" v-else>{{ newKey }}</div>
+        <div v-if="collide">This key could collide with others</div>
+        <input
+          autofocus="true"
+          ref="input"
+          style="opacity: 0; width: 0;"
+          v-model="newKey"
+        />
       </template>
     </Modal>
   </div>
@@ -70,6 +76,7 @@ export default {
   data() {
     return {
       newKey: null,
+      collide: false,
     };
   },
   computed: {
@@ -77,15 +84,32 @@ export default {
       return this.value ?? defaultMapping;
     },
   },
+  watch: {
+    newKey() {
+      if (!this.newKey) return;
+      if (this.newKey.length > 1) {
+        this.newKey = this.newKey.slice(-1).toLowerCase();
+      }
+      this.collide = Object.values(this.m).includes(this.newKey);
+    },
+  },
   mounted() {},
   methods: {
     async change(key) {
       this.newKey = null;
-      const done = await this.$refs.modal.show();
-      if (done && this.newKey) {
-        const newMappings = Object.assign(this.m, { [key]: this.newKey });
-        this.$emit("input", newMappings);
-      }
+      this.collide = null;
+      this.$refs.modal.show().then((done) => {
+        if (done && this.newKey) {
+          const newMappings = Object.assign(this.m, { [key]: this.newKey });
+          this.$emit("input", newMappings);
+        }
+      });
+      setTimeout(() => {
+        this.$refs.input.focus();
+        this.$refs.input.onblur = () => {
+          this.$refs.input?.focus();
+        };
+      }, 100);
     },
   },
 };
@@ -116,5 +140,17 @@ td {
 .s {
   /* secondary */
   background: rgba(83, 83, 83, 0.6);
+}
+
+.newKey {
+  font-size: 2.5em;
+  font-weight: bolder;
+  padding-bottom: 15px;
+}
+
+.press {
+  font-size: 1.2em;
+  font-weight: bolder;
+  padding: 15px;
 }
 </style>

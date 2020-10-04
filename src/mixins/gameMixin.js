@@ -38,6 +38,7 @@ export default {
       isGameEnded: false,
       initialized: false,
       blur: false,
+      keyMap: null,
     };
   },
   computed: {
@@ -83,9 +84,6 @@ export default {
 
     this.audio.stop(true);
 
-    this.instance = new GameInstance(this);
-    this.instance.reposition();
-
     this.feverInterval = setInterval(this.feverTimer, 500);
 
     // setup user default settings
@@ -97,6 +95,15 @@ export default {
       this.vibrate = gameSettings.vibrate;
       this.fps = gameSettings.fps;
     }
+    const preference = this.$store.state?.userProfile?.preference;
+    if (preference) {
+      this.keyMap = preference.keyMap;
+    }
+    Logger.log(this.keyMap);
+
+    // init instance
+    this.instance = new GameInstance(this);
+    this.instance.reposition();
 
     window.addEventListener("blur", this.pauseGame);
   },

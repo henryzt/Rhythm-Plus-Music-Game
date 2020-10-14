@@ -136,7 +136,7 @@
       <div class="banner" v-if="changed">Unsaved changes</div>
     </transition>
 
-    <div class="discord_banner flex_hori" v-if="showDiscordBanner">
+    <!-- <div class="discord_banner flex_hori" v-if="showDiscordBanner">
       <v-icon name="brands/discord" scale="2"></v-icon>
       <div style="padding-left: 10px;">
         <a href="https://discord.gg/ZGhnKp4" target="_blank"
@@ -151,7 +151,7 @@
         style="cursor: pointer;"
         @click="hideDiscord"
       ></v-icon>
-    </div>
+    </div> -->
 
     <Loading style="position: relative; z-index: 999;" :show="loading"
       >Saving...</Loading

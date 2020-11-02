@@ -21,7 +21,7 @@
     "@sentry/browser": "^5.20.0",
     "@sentry/integrations": "^5.20.0",
     "animate.css": "^4.1.0",
-    "axios": "^0.20.0",
+    "axios": "^0.21.0",
     "countup.js": "^2.0.5",
     "firebase": "^7.15.5",
     "firebaseui": "^4.5.1",

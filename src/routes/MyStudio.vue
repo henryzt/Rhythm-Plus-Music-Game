@@ -6,14 +6,18 @@
           My Studio
           <div
             class="btn-action btn-dark"
-            style="font-size: 18px; width: 160px"
+            style="font-size: 18px; width: 160px;"
             @click="goToEditor"
           >
             <v-icon name="arrow-right" />
             <span>Go to Editor</span>
           </div>
         </div>
-        <SongList :songs="songAndSheetList" ref="list">
+        <SongList
+          :songs="songAndSheetList"
+          ref="list"
+          @selectedSheet="goToSheet($event)"
+        >
           <template v-slot:bottom>
             <div
               class="btn-action btn-dark big-add"
@@ -27,9 +31,9 @@
       </div>
       <div class="center_logo" v-else-if="!loading">
         <div class="pageTitle">My Studio</div>
-        <div style="width: 100%; max-width: 600px; margin: auto">
+        <div style="width: 100%; max-width: 600px; margin: auto;">
           <div>Create or import your favorite songs to play and share!</div>
-          <div style="margin-top: 50px">
+          <div style="margin-top: 50px;">
             <div
               class="btn-action btn-dark"
               @click="

@@ -20,7 +20,7 @@
           :sheets="song.sheets"
           :selected="selectedSong === song"
           @selected="songSelected($event)"
-          @selectedSheet="goToSheet($event)"
+          @selectedSheet="$emit('selectedSheet', $event)"
         ></SongListItem>
       </div>
       <slot name="bottom"></slot>

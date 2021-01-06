@@ -199,6 +199,7 @@ export default {
       );
     },
     sort(by, changeReverse) {
+      if (!this.songs) return;
       this.filteredSongs = [...this.songs];
       const sortBy = by ?? this.currentSort;
       switch (sortBy) {

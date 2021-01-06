@@ -27,7 +27,7 @@
         </div>
       </div>
 
-      <transition name="slide-fade">
+      <transition name="collapse-fade">
         <div class="new-info flex_hori" v-if="tab == 'new'">
           <v-icon name="info-circle" style="padding-right: 10px"></v-icon>
           <div>
@@ -43,6 +43,18 @@
           class="song_list_wrapper"
           :class="{ list_collapsed: selectedSong }"
         >
+          <transition name="slide-fade">
+            <div v-if="tab == 'recom'">
+              <SongList
+                class="song_list"
+                style="margin-bottom: 50px !important"
+                :sorter="false"
+                :songs="latestSongList"
+                @selected="selectedSong = $event"
+              ></SongList>
+            </div>
+          </transition>
+
           <SongList
             class="song_list"
             :songs="songList"
@@ -150,7 +162,9 @@ export default {
   },
   data() {
     return {
+      allSongs: null,
       songList: null,
+      latestSongList: null,
       sheetList: null,
       selectedSong: null,
       tab: "recom",
@@ -183,23 +197,33 @@ export default {
   },
   methods: {
     async getAllSongs() {
-      this.songList = await getSongList();
+      if (!this.allSongs) this.allSongs = await getSongList();
     },
     async filterRecommended(getRecommened) {
+      await this.getAllSongs();
       const playlist = await getPlaylist("recommended");
-      const songs = await getSongList();
+      if (!this.latestSongList) {
+        this.latestSongList = this.songListSortByDate().slice(-3);
+      }
       if (getRecommened) {
-        this.songList = songs.filter((e) => playlist.items.includes(e.id));
+        this.songList = this.allSongs.filter((e) =>
+          playlist.items.includes(e.id)
+        );
       } else {
-        this.songList = songs.filter((e) => !playlist.items.includes(e.id));
+        this.songList = this.allSongs.filter(
+          (e) => !playlist.items.includes(e.id)
+        );
       }
     },
     async getNewSongs() {
       await this.getAllSongs();
-      this.songList.sort(
-        (a, b) => a.dateCreated.seconds - b.dateCreated.seconds
+      this.songList = this.songListSortByDate().slice(-35);
+    },
+    songListSortByDate() {
+      if (!this.allSongs) return null;
+      return [...this.allSongs].sort(
+        (a, b) => a.dateUpdated.seconds - b.dateUpdated.seconds
       );
-      this.songList = this.songList.slice(-35);
     },
     getPlaylistSongs(playlistId) {
       getPlaylist(playlistId).then(async (res) => {
@@ -328,15 +352,22 @@ export default {
   margin: 0;
 }
 
-.slide-fade-enter-active {
+.slide-fade-enter-active,
+.slide-fade-leave-active {
   transition: all 0.7s ease;
 }
-.slide-fade-leave-active {
-  transition: all 0.8s ease;
-}
-.slide-fade-enter, .slide-fade-leave-to
-/* .slide-fade-leave-active below version 2.1.8 */ {
+.slide-fade-enter,
+.slide-fade-leave-to {
   transform: translateX(10px);
+  opacity: 0;
+}
+
+.collapse-fade-enter-active,
+.collapse-fade-leave-active {
+  transition: all 0.7s ease;
+}
+.collapse-fade-enter,
+.collapse-fade-leave-to {
   opacity: 0;
 }
 </style>

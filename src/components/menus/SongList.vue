@@ -1,6 +1,7 @@
 <template>
   <div class="mContainer">
     <SheetFilter
+      v-show="sorter"
       :songs="songs"
       @sorted="songDisplayList = $event"
       ref="sorter"
@@ -13,11 +14,7 @@
       :style="{ '--total': songDisplayList.length }"
     >
       <slot name="top"></slot>
-      <div
-        v-for="(song, i) in songDisplayList"
-        :key="song.id"
-        :style="{ '--i': i < 10 ? 10 : i }"
-      >
+      <div v-for="song in songDisplayList" :key="song.id">
         <SongListItem
           :song="song"
           :sheets="song.sheets"
@@ -34,6 +31,7 @@
 <script>
 import SongListItem from "./SongListItem.vue";
 import SheetFilter from "./SheetFilter.vue";
+import smoothReflow from "vue-smooth-reflow";
 
 export default {
   name: "SongList",
@@ -43,6 +41,10 @@ export default {
       default() {
         return [];
       },
+    },
+    sorter: {
+      type: Boolean,
+      default: true,
     },
   },
   components: {
@@ -54,6 +56,10 @@ export default {
       selectedSong: null,
       songDisplayList: null,
     };
+  },
+  mixins: [smoothReflow],
+  mounted() {
+    if (!this.sorter) this.$smoothReflow();
   },
   methods: {
     songSelected(e) {

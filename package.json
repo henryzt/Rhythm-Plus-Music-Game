@@ -1,6 +1,6 @@
 {
   "name": "rhythm-plus-game",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "private": true,
   "description": "Online Vertical Scrolling Rhythm Game",
   "author": {
@@ -43,6 +43,7 @@
     "vue-router": "^3.3.4",
     "vue-select": "^3.10.7",
     "vue-slider-component": "^3.1.5",
+    "vue-smooth-reflow": "^0.1.12",
     "vue-spinner": "^1.0.3",
     "vue-virtual-scroll-list": "^2.3.0",
     "vue-youtube": "^1.4.0",

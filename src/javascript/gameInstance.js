@@ -115,17 +115,13 @@ export default class GameInstance {
       Logger.log("keyMap:", this.userKeyBind, this.reverseKeyMap);
     } else {
       this.userKeyBind = trackKeyBind;
-      this.reverseKeyMap = null;
+      this.reverseKeyMap = {};
     }
   }
 
   getKeyName(keyEvent) {
     const key = keyEvent.key.toLowerCase();
-    if (this.reverseKeyMap) {
-      return this.reverseKeyMap[key] ?? "";
-    } else {
-      return key;
-    }
+    return this.reverseKeyMap[key] ?? key;
   }
 
   async reposition() {

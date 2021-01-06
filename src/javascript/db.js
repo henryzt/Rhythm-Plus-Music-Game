@@ -355,7 +355,7 @@ export function getPlayCount(idKey, id) {
       .then((snapshot) => {
         resolve(snapshot.size);
       })
-      .catch(function (error) {
+      .catch((error) => {
         reportError(error, action.READ);
         reject(error);
       });

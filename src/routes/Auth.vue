@@ -8,16 +8,16 @@
         </div>
         <Settings ref="settings"></Settings>
       </div>
-      <div v-else style="min-height: calc(100% - 120px);"></div>
+      <div v-else style="min-height: calc(100% - 120px)"></div>
 
       <div class="center_logo">
         <div v-show="!$store.state.authed">
           <h2>Signin or Register Now</h2>
-          <h4 style="padding-bottom: 30px;">for the Complete Experience!</h4>
+          <h4 style="padding-bottom: 30px">for the Complete Experience!</h4>
           <div id="firebaseui-auth-container"></div>
         </div>
         <div v-if="$store.state.authed && !$store.state.verified">
-          <div style="font-size: 20px; padding-bottom: 30px;">
+          <div style="font-size: 20px; padding-bottom: 30px">
             Please check your email to verify your account!
           </div>
           <div class="text_button" @click="$router.go()">Refresh</div>
@@ -57,14 +57,14 @@
       <Modal
         ref="modal"
         :show="showModal"
-        style="z-index: 1000;"
+        style="z-index: 1000"
         bodyText="Are you sure you want to log out?"
         type="question"
         okText="Logout"
         @ok="signOut"
       ></Modal>
 
-      <Loading style="z-index: 999;" :show="!$store.state.initialized"
+      <Loading style="z-index: 999" :show="!$store.state.initialized"
         >Communicating...</Loading
       >
     </div>
@@ -262,10 +262,6 @@ export default {
 }
 
 .mContainer {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  transition: 2s;
   width: 90%;
   max-width: 600px;
   margin: auto;

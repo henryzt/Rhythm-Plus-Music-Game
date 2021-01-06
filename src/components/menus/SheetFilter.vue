@@ -30,7 +30,7 @@
         <div class="clip">
           <span @click="showSearch = !showSearch">
             <v-icon name="search" />
-            <span v-if="!showSearch" style="overflow: hidden;">Search</span>
+            <span v-if="!showSearch" style="overflow: hidden">Search</span>
           </span>
           <span>
             <transition name="width">
@@ -119,27 +119,15 @@ export default {
       tags: [],
       currentTag: null,
       showAllTags: false,
+      filteredSongs: [],
     };
   },
   async mounted() {
-    this.sort();
     this.tags = await getTags();
   },
   watch: {
     searchTerms() {
-      if (!this.searchTerms) {
-        this.$emit("sorted", this.filteredSongs);
-        return;
-      }
-      const term = this.searchTerms?.toLowerCase();
-      const isMatch = (s) => {
-        return (
-          s.title?.toLowerCase().includes(term) ||
-          s.subtitle?.toLowerCase().includes(term) ||
-          s.artist?.toLowerCase().includes(term)
-        );
-      };
-      this.$emit("sorted", this.filteredSongs.filter(isMatch));
+      this.sort();
     },
     showSearch() {
       if (this.showSearch) {
@@ -154,20 +142,38 @@ export default {
       }
     },
     currentTag() {
-      this.$emit("sorted", this.filteredSongs);
+      this.sort();
+    },
+    songs() {
+      this.sort();
     },
   },
   computed: {
-    filteredSongs() {
-      return this.currentTag
-        ? this.songs.filter((e) => e.tags.includes(this.currentTag))
-        : this.songs;
-    },
     sortIcon() {
       return this.reverseSort ? "arrow-up" : "arrow-down";
     },
   },
   methods: {
+    emitResult() {
+      if (this.currentTag)
+        this.filteredSongs = this.filteredSongs.filter((e) =>
+          e.tags.includes(this.currentTag)
+        );
+
+      if (!this.searchTerms) {
+        this.$emit("sorted", this.filteredSongs);
+      } else {
+        const term = this.searchTerms?.toLowerCase();
+        const isMatch = (s) => {
+          return (
+            s.title?.toLowerCase().includes(term) ||
+            s.subtitle?.toLowerCase().includes(term) ||
+            s.artist?.toLowerCase().includes(term)
+          );
+        };
+        this.$emit("sorted", this.filteredSongs.filter(isMatch));
+      }
+    },
     finishSort(sortName, changeReverse) {
       if (changeReverse) {
         if (this.currentSort === sortName) {
@@ -176,20 +182,23 @@ export default {
           this.reverseSort = false;
         }
       }
-      if (this.reverseSort) this.songs.reverse();
+      if (this.reverseSort) this.filteredSongs.reverse();
       this.currentSort = sortName;
-      this.$emit("sorted", this.filteredSongs);
+      this.emitResult();
     },
     sortByTitle() {
-      this.songs.sort((a, b) => a.title.localeCompare(b.title));
+      this.filteredSongs.sort((a, b) => a.title.localeCompare(b.title));
     },
     sortByArtist() {
-      this.songs.sort((a, b) => a.artist.localeCompare(b.artist));
+      this.filteredSongs.sort((a, b) => a.artist.localeCompare(b.artist));
     },
     sortByDate() {
-      this.songs.sort((a, b) => b.dateCreated.seconds - a.dateCreated.seconds);
+      this.filteredSongs.sort(
+        (a, b) => b.dateCreated.seconds - a.dateCreated.seconds
+      );
     },
     sort(by, changeReverse) {
+      this.filteredSongs = [...this.songs];
       const sortBy = by ?? this.currentSort;
       switch (sortBy) {
         case "title":

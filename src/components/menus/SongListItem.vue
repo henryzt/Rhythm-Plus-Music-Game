@@ -21,28 +21,25 @@
       </div>
       <slot></slot>
     </div>
-    <div v-if="selected && !hideBg">
-      <div v-if="sheets" style="padding-bottom: 20px">
-        <div v-for="sheet in sheets" :value="sheet.id" :key="sheet.id">
-          <div
-            @click="$emit('selectedSheet', sheet)"
-            :class="{ sheet: true, active: selectedSheet == sheet }"
-          >
-            <SheetDetailLine
-              :sheet="sheet"
-              :compactDetailed="true"
-            ></SheetDetailLine>
-          </div>
-        </div>
+    <div v-if="sheets && selected && !hideBg" style="padding-bottom: 20px">
+      <div v-for="sheet in sheets" :value="sheet.id" :key="sheet.id">
         <div
-          class="sheet"
-          @click="goToEditorWithSong"
-          style="padding: 3px; text-align: center"
+          @click="$emit('selectedSheet', sheet)"
+          :class="{ sheet: true, active: selectedSheet == sheet }"
         >
-          Create new
+          <SheetDetailLine
+            :sheet="sheet"
+            :compactDetailed="true"
+          ></SheetDetailLine>
         </div>
       </div>
-      <div v-else>Loading...</div>
+      <div
+        class="sheet"
+        @click="goToEditorWithSong"
+        style="padding: 3px; text-align: center"
+      >
+        Create new
+      </div>
     </div>
   </div>
 </template>

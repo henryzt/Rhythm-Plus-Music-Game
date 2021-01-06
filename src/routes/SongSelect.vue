@@ -37,26 +37,19 @@
         </div>
       </transition>
 
-      <div class="mContainer">
-        <div
-          class="song_list"
+      <!-- class="song_list"
           :class="{ list_collapsed: selectedSong }"
-          v-if="songList"
+-->
+      <div class="list_and_detail">
+        <!-- song list -->
+        <SongList
+          class="song_list"
+          :songs="songList"
+          @selected="selectedSong = $event"
+          ref="list"
         >
-          <SheetFilter
-            :class="{ sHidden: selectedSong }"
-            :songs="songList"
-            @sorted="songDisplayList = $event"
-            ref="sorter"
-          ></SheetFilter>
-          <transition-group
-            v-if="songDisplayList"
-            appear
-            tag="div"
-            name="slide-in"
-            :style="{ '--total': songDisplayList.length }"
-          >
-            <!-- suggest song button -->
+          <template v-slot:top>
+            <!-- tutorial button -->
             <div
               :class="{ sHidden: selectedSong }"
               class="btn-action btn-dark big-add"
@@ -66,17 +59,8 @@
               <v-icon class="add-icon" name="question-circle" scale="2" />
               <div style="font-size: 1.2em">Play Tutorial</div>
             </div>
-            <!-- song lists -->
-            <div
-              v-for="(song, i) in songDisplayList"
-              :key="song.id"
-              :style="{ '--i': i < 10 ? 10 : i }"
-            >
-              <SongListItem
-                :song="song"
-                @selected="selectedSong = $event"
-              ></SongListItem>
-            </div>
+          </template>
+          <template v-slot:bottom>
             <!-- create song button -->
             <div
               class="btn-action btn-dark big-add"
@@ -95,9 +79,10 @@
               <v-icon class="add-icon" name="lightbulb" scale="2" />
               <div>Suggest a Song</div>
             </div>
-          </transition-group>
-        </div>
+          </template>
+        </SongList>
 
+        <!-- detail panel -->
         <div :class="{ detail: true, detail_collapsed: !selectedSong }">
           <transition name="slide-fade">
             <SongDetailPanel
@@ -109,6 +94,8 @@
           </transition>
         </div>
       </div>
+
+      <!-- loading -->
       <Loading :show="!songList || songList.length === 0" :delay="true"
         >Fetching Latest Songs...</Loading
       >
@@ -137,9 +124,8 @@
 </template>
 
 <script>
-import SongListItem from "../components/menus/SongListItem.vue";
 import SongDetailPanel from "../components/menus/SongDetailPanel.vue";
-import SheetFilter from "../components/menus/SheetFilter.vue";
+import SongList from "../components/menus/SongList.vue";
 import Loading from "../components/ui/Loading.vue";
 import Modal from "../components/ui/Modal.vue";
 import {
@@ -156,16 +142,14 @@ import "vue-awesome/icons/info-circle";
 export default {
   name: "SongSelect",
   components: {
-    SongListItem,
     SongDetailPanel,
     Loading,
-    SheetFilter,
     Modal,
+    SongList,
   },
   data() {
     return {
       songList: null,
-      songDisplayList: [],
       sheetList: null,
       selectedSong: null,
       tab: "recom",
@@ -183,13 +167,13 @@ export default {
     async tab() {
       if (this.tab == "recom") {
         await this.filterRecommended(true);
-        this.$refs.sorter.sort("title");
+        this.$refs.list.sort("title");
       } else if (this.tab == "new") {
         await this.getNewSongs();
-        this.$refs.sorter.sort("date");
+        this.$refs.list.sort("date");
       } else if (this.tab == "all") {
         await this.getAllSongs();
-        this.$refs.sorter.sort("title");
+        this.$refs.list.sort("title");
       }
     },
   },
@@ -227,15 +211,14 @@ export default {
 </script>
 
 <style scoped>
-.mContainer {
-  /* perspective: 100em; */
+/* .mContainer {
   display: flex;
   justify-content: center;
   transition: 2s;
   white-space: nowrap;
   margin-bottom: 300px !important;
   margin-top: 30px;
-}
+} */
 .song_list {
   width: 100%;
   max-width: 800px;
@@ -246,9 +229,16 @@ export default {
 /* .list_collapsed {
   transform: rotateY(10deg);
 } */
+
+.list_and_detail {
+  display: flex;
+  justify-content: center;
+}
+
 .detail {
   transition: 1s;
   width: 350px;
+  padding-top: 20px;
 }
 
 .big-add {

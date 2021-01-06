@@ -6,38 +6,15 @@
           My Studio
           <div
             class="btn-action btn-dark"
-            style="font-size: 18px; width: 160px;"
+            style="font-size: 18px; width: 160px"
             @click="goToEditor"
           >
             <v-icon name="arrow-right" />
             <span>Go to Editor</span>
           </div>
         </div>
-        <div class="mContainer">
-          <SheetFilter
-            :songs="songAndSheetList"
-            @sorted="songDisplayList = $event"
-          ></SheetFilter>
-          <transition-group
-            v-if="songDisplayList"
-            appear
-            tag="div"
-            name="slide-in"
-            :style="{ '--total': songDisplayList.length }"
-          >
-            <div
-              v-for="(song, i) in songDisplayList"
-              :key="song.id"
-              :style="{ '--i': i }"
-            >
-              <SongListItem
-                :song="song"
-                :sheets="song.sheets"
-                :selected="selectedSong === song"
-                @selected="selectedSong = $event"
-                @selectedSheet="goToSheet($event)"
-              ></SongListItem>
-            </div>
+        <SongList :songs="songAndSheetList">
+          <template v-slot:bottom>
             <div
               class="btn-action btn-dark big-add"
               key="btn"
@@ -45,14 +22,14 @@
             >
               <v-icon name="plus" scale="2" />
             </div>
-          </transition-group>
-        </div>
+          </template>
+        </SongList>
       </div>
       <div class="center_logo" v-else-if="!loading">
         <div class="pageTitle">My Studio</div>
-        <div style="width: 100%; max-width: 600px; margin: auto;">
+        <div style="width: 100%; max-width: 600px; margin: auto">
           <div>Create or import your favorite songs to play and share!</div>
-          <div style="margin-top: 50px;">
+          <div style="margin-top: 50px">
             <div
               class="btn-action btn-dark"
               @click="
@@ -73,23 +50,19 @@
 </template>
 
 <script>
-import SongListItem from "../components/menus/SongListItem.vue";
-import SheetFilter from "../components/menus/SheetFilter.vue";
+import SongList from "../components/menus/SongList.vue";
 import Loading from "../components/ui/Loading.vue";
 import { getSheetList, getSongsInIdArray } from "../javascript/db";
 
 export default {
   name: "MyStudio",
   components: {
-    SongListItem,
     Loading,
-    SheetFilter,
+    SongList,
   },
   data() {
     return {
-      selectedSong: null,
       songAndSheetList: null,
-      songDisplayList: null,
       loading: true,
     };
   },
@@ -123,19 +96,6 @@ export default {
 </script>
 
 <style scoped>
-.mContainer {
-  /* perspective: 100em; */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  transition: 2s;
-  white-space: nowrap;
-  margin-top: 30px;
-  margin-bottom: 300px !important;
-  max-width: 780px;
-  margin-left: auto;
-  margin-right: auto;
-}
 .fa-icon {
   vertical-align: middle;
   margin-right: 5px;

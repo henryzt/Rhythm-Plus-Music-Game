@@ -23,6 +23,21 @@ a {
   color: white;
 }
 
+/* songlist and settings  */
+.mContainer {
+  /* perspective: 100em; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: 2s;
+  white-space: nowrap;
+  margin-top: 30px;
+  margin-bottom: 300px !important;
+  max-width: 780px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .hidden {
   visibility: hidden;
   opacity: 0;

@@ -11,9 +11,9 @@
         <img :src="song.image" onerror="this.style.display='none'" />
       </div>
       <div class="detail">
-        <div style="font-size: 1.3em; font-weight: bold;">
+        <div style="font-size: 1.3em; font-weight: bold">
           {{ song.title }}
-          <span v-if="song.subtitle" style="opacity: 0.6;"
+          <span v-if="song.subtitle" style="opacity: 0.6"
             >({{ song.subtitle }})</span
           >
         </div>
@@ -22,7 +22,7 @@
       <slot></slot>
     </div>
     <div v-if="selected && !hideBg">
-      <div v-if="sheets" style="padding-bottom: 20px;">
+      <div v-if="sheets" style="padding-bottom: 20px">
         <div v-for="sheet in sheets" :value="sheet.id" :key="sheet.id">
           <div
             @click="$emit('selectedSheet', sheet)"
@@ -37,7 +37,7 @@
         <div
           class="sheet"
           @click="goToEditorWithSong"
-          style="padding: 3px; text-align: center;"
+          style="padding: 3px; text-align: center"
         >
           Create new
         </div>
@@ -88,13 +88,15 @@ export default {
   width: 100%;
   max-width: 800px;
   margin: 10px auto;
-  transition: 0.5s;
+  transition: 0.5s, outline-width 0s, outline-color 0.5s;
   overflow: hidden;
   cursor: pointer;
+  outline-color: transparent;
 }
 .song_item_bg:hover {
   background: rgba(255, 255, 255, 0.4);
   transform: scale(1.1);
+  outline: 5px solid white;
   z-index: 500;
 }
 .detail {

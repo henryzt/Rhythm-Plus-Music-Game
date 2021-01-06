@@ -29,7 +29,7 @@
 
       <transition name="slide-fade">
         <div class="new-info flex_hori" v-if="tab == 'new'">
-          <v-icon name="info-circle" style="padding-right: 10px;"></v-icon>
+          <v-icon name="info-circle" style="padding-right: 10px"></v-icon>
           <div>
             We cannot yet guarantee the quality of new sheets, accurate beatmaps
             will be selected to the recommended songs periodically.
@@ -64,7 +64,7 @@
               @click="$router.push('/tutorial/')"
             >
               <v-icon class="add-icon" name="question-circle" scale="2" />
-              <div style="font-size: 1.2em;">Play Tutorial</div>
+              <div style="font-size: 1.2em">Play Tutorial</div>
             </div>
             <!-- song lists -->
             <div
@@ -109,7 +109,7 @@
           </transition>
         </div>
       </div>
-      <Loading :show="(!songList || songList.length===0)" :delay="true"
+      <Loading :show="!songList || songList.length === 0" :delay="true"
         >Fetching Latest Songs...</Loading
       >
     </v-bar>
@@ -124,7 +124,7 @@
       <template>
         <iframe
           src="https://docs.google.com/forms/d/e/1FAIpQLSf4nNnTn0vmYjWYbq3TeC6epuN8xkEhxlWONrtIMMZbgLJ38w/viewform?embedded=true"
-          style="width: 100%;"
+          style="width: 100%"
           height="500"
           frameborder="0"
           marginheight="0"
@@ -241,6 +241,7 @@ export default {
   max-width: 800px;
   margin: 0 20px;
   transition: 1s;
+  z-index: 100;
 }
 /* .list_collapsed {
   transform: rotateY(10deg);

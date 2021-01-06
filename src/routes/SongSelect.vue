@@ -27,7 +27,7 @@
         </div>
       </div>
 
-      <transition name="collapse-fade">
+      <div class="reflow1">
         <div class="new-info flex_hori" v-if="tab == 'new'">
           <v-icon name="info-circle" style="padding-right: 10px"></v-icon>
           <div>
@@ -35,7 +35,7 @@
             will be selected to the recommended songs periodically.
           </div>
         </div>
-      </transition>
+      </div>
 
       <div class="list_and_detail">
         <!-- song list -->
@@ -43,17 +43,23 @@
           class="song_list_wrapper"
           :class="{ list_collapsed: selectedSong }"
         >
-          <transition name="slide-fade">
+          <div class="reflow2 song_list">
             <div v-if="tab == 'recom'">
+              <div class="btn-action btn-dark btn-more" @click="tab = 'new'">
+                More >
+              </div>
+              <div class="subtitle">Latest</div>
+
               <SongList
-                class="song_list"
-                style="margin-bottom: 50px !important"
+                class="latest_song_list"
                 :sorter="false"
                 :songs="latestSongList"
                 @selected="selectedSong = $event"
               ></SongList>
+
+              <div class="subtitle" style="padding-bottom: 20px">For you</div>
             </div>
-          </transition>
+          </div>
 
           <SongList
             class="song_list"
@@ -151,6 +157,7 @@ import "vue-awesome/icons/lightbulb";
 import "vue-awesome/icons/question-circle";
 import { logEvent } from "../helpers/analytics";
 import "vue-awesome/icons/info-circle";
+import smoothReflow from "vue-smooth-reflow";
 
 export default {
   name: "SongSelect",
@@ -193,8 +200,22 @@ export default {
       }
     },
   },
+  mixins: [smoothReflow],
   mounted() {
     this.filterRecommended(true);
+    const transitionEvent = {
+      selector: "div",
+    };
+    this.$smoothReflow([
+      {
+        el: ".reflow1",
+        transitionEvent,
+      },
+      {
+        el: ".reflow2",
+        transitionEvent,
+      },
+    ]);
   },
   methods: {
     async getAllSongs() {
@@ -237,17 +258,19 @@ export default {
 </script>
 
 <style scoped>
-/* .mContainer {
-  display: flex;
-  justify-content: center;
-  transition: 2s;
-  white-space: nowrap;
-  margin-bottom: 300px !important;
-  margin-top: 30px;
-} */
+.subtitle {
+  font-size: 2em;
+}
+
 .song_list {
   min-width: 350px;
   margin: 0 20px;
+}
+
+.latest_song_list {
+  margin: 0;
+  margin-bottom: 39px !important;
+  clear: right;
 }
 
 .song_list_wrapper {
@@ -266,6 +289,11 @@ export default {
 .detail {
   transition: 1s;
   width: 350px;
+}
+
+.btn-more {
+  float: right;
+  margin: 0;
 }
 
 .big-add {
@@ -338,6 +366,12 @@ export default {
   .list_and_detail {
     margin: 50px;
   }
+  .subtitle {
+    font-size: 3em;
+  }
+  .btn-more {
+    margin-top: 10px;
+  }
 }
 
 @media only screen and (max-width: 1000px) {
@@ -360,15 +394,6 @@ export default {
 .slide-fade-enter,
 .slide-fade-leave-to {
   transform: translateX(10px);
-  opacity: 0;
-}
-
-.collapse-fade-enter-active,
-.collapse-fade-leave-active {
-  transition: all 0.7s ease;
-}
-.collapse-fade-enter,
-.collapse-fade-leave-to {
   opacity: 0;
 }
 </style>

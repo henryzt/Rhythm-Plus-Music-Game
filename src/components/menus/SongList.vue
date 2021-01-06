@@ -31,7 +31,6 @@
 <script>
 import SongListItem from "./SongListItem.vue";
 import SheetFilter from "./SheetFilter.vue";
-import smoothReflow from "vue-smooth-reflow";
 
 export default {
   name: "SongList",
@@ -56,10 +55,6 @@ export default {
       selectedSong: null,
       songDisplayList: null,
     };
-  },
-  mixins: [smoothReflow],
-  mounted() {
-    if (!this.sorter) this.$smoothReflow();
   },
   methods: {
     songSelected(e) {

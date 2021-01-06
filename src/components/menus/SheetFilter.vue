@@ -195,7 +195,7 @@ export default {
     },
     sortByDate() {
       this.filteredSongs.sort(
-        (a, b) => b.dateCreated.seconds - a.dateCreated.seconds
+        (a, b) => b.dateUpdated.seconds - a.dateUpdated.seconds
       );
     },
     sort(by, changeReverse) {

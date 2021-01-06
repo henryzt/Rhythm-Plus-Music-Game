@@ -72,7 +72,7 @@ export default class GameInstance {
 
     this.trackNum = trackNum;
     this.trackKeyBind = this.getTrackKeyBind(trackNum);
-    this.setUserKeyBind(this.trackKeyBind);
+    this.setUserKeyBind();
     this.trackMaxWidth = 150;
 
     // init
@@ -102,11 +102,11 @@ export default class GameInstance {
     }
   }
 
-  setUserKeyBind(trackKeyBind) {
+  setUserKeyBind() {
     const keyMap = this.vm.keyMap;
-    Logger.log("!!!", keyMap);
+    Logger.log("user key map:", keyMap);
     if (keyMap) {
-      this.userKeyBind = trackKeyBind.map((e) => keyMap[e]);
+      this.userKeyBind = this.trackKeyBind.map((e) => keyMap[e]);
       let ret = {};
       Object.keys(keyMap).forEach((key) => {
         ret[keyMap[key]] = key;
@@ -114,7 +114,7 @@ export default class GameInstance {
       this.reverseKeyMap = ret;
       Logger.log("keyMap:", this.userKeyBind, this.reverseKeyMap);
     } else {
-      this.userKeyBind = trackKeyBind;
+      this.userKeyBind = this.trackKeyBind;
       this.reverseKeyMap = {};
     }
   }

@@ -103,7 +103,7 @@ const tick = (time, v) => {
   let elapsed = time - prevTime;
   prevTime = time;
 
-  moveStars(elapsed * 0.06 + v, v);
+  moveStars(elapsed * 0.02 + v, v);
 
   const cx = w / 2;
   const cy = h / 2;
@@ -121,7 +121,7 @@ const tick = (time, v) => {
     const d = star.z / 1000.0;
     const b = 1 - d * d;
 
-    putPixel(x, y, b, v, star);
+    putPixel(x, y, b * 0.6, v, star);
   }
 };
 

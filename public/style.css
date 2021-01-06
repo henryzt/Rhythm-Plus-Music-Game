@@ -155,13 +155,6 @@ img {
   z-index: -100;
 }
 
-@media only screen and (max-width: 1000px) {
-  .ytPlayerMobileExtend {
-    width: 249vh !important;
-    transform: translateX(calc(50vw - 124.5vh));
-  }
-}
-
 .visualizer {
   position: fixed;
   top: 0;
@@ -485,7 +478,8 @@ input::placeholder {
 .slide-in-enter,
 .slide-in-move,
 .slide-in-leave-to {
-  transition: all 0.5s;
+  transform: none;
+  transition: opacity 0.5s, transform 0.5s, margin 0.5s 0.5s;
 }
 
 .slide-in-enter {
@@ -494,7 +488,9 @@ input::placeholder {
 }
 .slide-in-leave-to {
   opacity: 0;
+  margin: 0;
   transform: translateX(1em);
+  margin-top: -130px;
 }
 
 @keyframes enter {
@@ -504,5 +500,16 @@ input::placeholder {
   }
   to {
     opacity: 1;
+  }
+}
+
+@media only screen and (max-width: 1000px) {
+  .ytPlayerMobileExtend {
+    width: 249vh !important;
+    transform: translateX(calc(50vw - 124.5vh));
+  }
+
+  .slide-in-leave-to {
+    margin-top: -100px;
   }
 }

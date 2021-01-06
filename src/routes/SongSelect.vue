@@ -188,6 +188,7 @@ export default {
         this.$refs.list.sort("date");
       } else if (this.tab == "all") {
         await this.getAllSongs();
+        this.songList = this.allSongs;
         this.$refs.list.sort("title");
       }
     },
@@ -217,7 +218,7 @@ export default {
     },
     async getNewSongs() {
       await this.getAllSongs();
-      this.songList = this.songListSortByDate().slice(-35);
+      this.songList = this.songListSortByDate().slice(-45);
     },
     songListSortByDate() {
       if (!this.allSongs) return null;

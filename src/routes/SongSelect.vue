@@ -37,50 +37,51 @@
         </div>
       </transition>
 
-      <!-- class="song_list"
-          :class="{ list_collapsed: selectedSong }"
--->
       <div class="list_and_detail">
         <!-- song list -->
-        <SongList
-          class="song_list"
-          :songs="songList"
-          @selected="selectedSong = $event"
-          ref="list"
+        <div
+          class="song_list_wrapper"
+          :class="{ list_collapsed: selectedSong }"
         >
-          <template v-slot:top>
-            <!-- tutorial button -->
-            <div
-              :class="{ sHidden: selectedSong }"
-              class="btn-action btn-dark big-add"
-              key="btn0"
-              @click="$router.push('/tutorial/')"
-            >
-              <v-icon class="add-icon" name="question-circle" scale="2" />
-              <div style="font-size: 1.2em">Play Tutorial</div>
-            </div>
-          </template>
-          <template v-slot:bottom>
-            <!-- create song button -->
-            <div
-              class="btn-action btn-dark big-add"
-              key="btn1"
-              @click="$router.push('/studio/')"
-            >
-              <v-icon class="add-icon" name="plus" scale="2" />
-              <div>Create or Import a Song</div>
-            </div>
-            <!-- suggest song button -->
-            <div
-              class="btn-action btn-dark big-add"
-              key="btn2"
-              @click="$refs.suggest.show()"
-            >
-              <v-icon class="add-icon" name="lightbulb" scale="2" />
-              <div>Suggest a Song</div>
-            </div>
-          </template>
-        </SongList>
+          <SongList
+            class="song_list"
+            :songs="songList"
+            @selected="selectedSong = $event"
+            ref="list"
+          >
+            <template v-slot:top>
+              <!-- tutorial button -->
+              <div
+                class="btn-action btn-dark big-add"
+                key="btn0"
+                @click="$router.push('/tutorial/')"
+              >
+                <v-icon class="add-icon" name="question-circle" scale="2" />
+                <div style="font-size: 1.2em">Play Tutorial</div>
+              </div>
+            </template>
+            <template v-slot:bottom>
+              <!-- create song button -->
+              <div
+                class="btn-action btn-dark big-add"
+                key="btn1"
+                @click="$router.push('/studio/')"
+              >
+                <v-icon class="add-icon" name="plus" scale="2" />
+                <div>Create or Import a Song</div>
+              </div>
+              <!-- suggest song button -->
+              <div
+                class="btn-action btn-dark big-add"
+                key="btn2"
+                @click="$refs.suggest.show()"
+              >
+                <v-icon class="add-icon" name="lightbulb" scale="2" />
+                <div>Suggest a Song</div>
+              </div>
+            </template>
+          </SongList>
+        </div>
 
         <!-- detail panel -->
         <div :class="{ detail: true, detail_collapsed: !selectedSong }">
@@ -220,15 +221,17 @@ export default {
   margin-top: 30px;
 } */
 .song_list {
-  width: 100%;
-  max-width: 800px;
+  min-width: 350px;
   margin: 0 20px;
+}
+
+.song_list_wrapper {
   transition: 1s;
   z-index: 100;
+  min-width: 350px;
+  max-width: 800px;
+  width: 100%;
 }
-/* .list_collapsed {
-  transform: rotateY(10deg);
-} */
 
 .list_and_detail {
   display: flex;
@@ -238,7 +241,6 @@ export default {
 .detail {
   transition: 1s;
   width: 350px;
-  padding-top: 20px;
 }
 
 .big-add {
@@ -297,18 +299,9 @@ export default {
     visibility: hidden;
     margin: 0;
     padding: 0;
-    transform: none;
+    min-width: 0;
+    transform: translateX(-120vw);
   }
-
-  .sHidden {
-    opacity: 0;
-    width: 0;
-    overflow: hidden;
-  }
-
-  /* .detail {
-    width: 80%;
-  } */
 }
 
 @media only screen and (min-width: 800px) {
@@ -317,8 +310,15 @@ export default {
     /* transform: rotateY(-30deg); */
     margin: 0 20px;
   }
-  .mContainer {
+  .list_and_detail {
     margin: 50px;
+  }
+}
+
+@media only screen and (max-width: 1000px) {
+  /* tablet */
+  .list_and_detail {
+    margin: 30px 0;
   }
 }
 

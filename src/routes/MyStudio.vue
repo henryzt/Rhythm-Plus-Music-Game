@@ -13,7 +13,7 @@
             <span>Go to Editor</span>
           </div>
         </div>
-        <SongList :songs="songAndSheetList">
+        <SongList :songs="songAndSheetList" ref="list">
           <template v-slot:bottom>
             <div
               class="btn-action btn-dark big-add"

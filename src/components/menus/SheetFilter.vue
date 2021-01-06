@@ -1,5 +1,5 @@
 <template>
-  <div class="animate__animated animate__fadeIn">
+  <div class="animate__animated animate__fadeIn" v-if="songs">
     <transition name="slide-fade" mode="out-in">
       <div class="flex_hori" key="1" v-if="!showSort">
         <div class="flex_hori tags">
@@ -124,6 +124,7 @@ export default {
   },
   async mounted() {
     this.tags = await getTags();
+    this.sort();
   },
   watch: {
     searchTerms() {

@@ -72,6 +72,7 @@ export default class GameInstance {
 
     this.trackNum = trackNum;
     this.trackKeyBind = this.getTrackKeyBind(trackNum);
+    this.setUserKeyBind();
     this.trackMaxWidth = 150;
 
     // init
@@ -99,6 +100,28 @@ export default class GameInstance {
       default:
         return ["d", "f", "j", "k"];
     }
+  }
+
+  setUserKeyBind() {
+    const keyMap = this.vm.keyMap;
+    Logger.log("user key map:", keyMap);
+    if (keyMap) {
+      this.userKeyBind = this.trackKeyBind.map((e) => keyMap[e]);
+      let ret = {};
+      Object.keys(keyMap).forEach((key) => {
+        ret[keyMap[key]] = key;
+      });
+      this.reverseKeyMap = ret;
+      Logger.log("keyMap:", this.userKeyBind, this.reverseKeyMap);
+    } else {
+      this.userKeyBind = this.trackKeyBind;
+      this.reverseKeyMap = {};
+    }
+  }
+
+  getKeyName(keyEvent) {
+    const key = keyEvent.key.toLowerCase();
+    return this.reverseKeyMap[key] ?? key;
   }
 
   async reposition() {
@@ -152,11 +175,11 @@ export default class GameInstance {
     };
 
     this.keydownEvent = (event) => {
-      this.onKeyDown(event.key.toLowerCase());
+      this.onKeyDown(this.getKeyName(event));
       if (
         event.keyCode === KeyCode.ESC ||
-        event.keyCode === KeyCode.P ||
-        (!this.trackKeyBind.includes(" ") && event.keyCode === KeyCode.SPACE)
+        (!this.userKeyBind.includes("p") && event.keyCode === KeyCode.P) ||
+        (!this.userKeyBind.includes(" ") && event.keyCode === KeyCode.SPACE)
       ) {
         if (!this.vm.initialized) return;
         if (!this.vm.started) {
@@ -179,7 +202,7 @@ export default class GameInstance {
     };
 
     this.keyupEvent = (event) => {
-      this.onKeyUp(event.key.toLowerCase());
+      this.onKeyUp(this.getKeyName(event));
     };
 
     window.addEventListener("resize", this.repositionEvent);
@@ -245,6 +268,7 @@ export default class GameInstance {
   }
 
   // log key and touch events
+  // here key needs to be converted to d f j k etc
   async onKeyDown(key) {
     if (!this.trackKeyBind.includes(key)) return;
     // avoid repeated triggering when key is held

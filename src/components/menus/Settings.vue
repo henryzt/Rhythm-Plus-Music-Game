@@ -107,7 +107,18 @@
       </form>
     </div>
 
-    <div class="animate__animated animate__zoomIn animate__delay-2s">
+    <div
+      class="animate__animated animate__zoomIn animate__delay-2s"
+      style="position: relative; z-index: 900;"
+    >
+      <div class="st_title">Game Preferences</div>
+      <p>
+        <label>Key Mappings</label>
+        <KeyMappings class="keyMap" v-model="preference.keyMap"></KeyMappings>
+      </p>
+    </div>
+
+    <div class="animate__animated animate__zoomIn animate__delay-3s">
       <div class="st_title">Default Game Settings</div>
       <play-control
         :playData="gameSt"
@@ -125,7 +136,26 @@
       <div class="banner" v-if="changed">Unsaved changes</div>
     </transition>
 
-    <Loading style="z-index: 999;" :show="loading">Saving...</Loading>
+    <!-- <div class="discord_banner flex_hori" v-if="showDiscordBanner">
+      <v-icon name="brands/discord" scale="2"></v-icon>
+      <div style="padding-left: 10px;">
+        <a href="https://discord.gg/ZGhnKp4" target="_blank"
+          >Be the first to join our new
+          <span style="text-decoration: underline;"
+            >official Discord server</span
+          >!</a
+        >
+      </div>
+      <v-icon
+        name="times"
+        style="cursor: pointer;"
+        @click="hideDiscord"
+      ></v-icon>
+    </div> -->
+
+    <Loading style="position: relative; z-index: 999;" :show="loading"
+      >Saving...</Loading
+    >
   </div>
 </template>
 
@@ -133,8 +163,11 @@
 import Checkbox from "../ui/Checkbox.vue";
 import PlayControl from "../common/PlayControl.vue";
 import Loading from "../ui/Loading.vue";
+import KeyMappings from "./KeyMappings.vue";
 import firebase from "firebase/app";
 import { updateUserProfile } from "../../javascript/db";
+import { getMeta, setMeta } from "../../helpers/storage";
+import "vue-awesome/icons/brands/discord";
 
 export default {
   name: "Settings",
@@ -142,6 +175,7 @@ export default {
     Checkbox,
     PlayControl,
     Loading,
+    KeyMappings,
   },
   data: function () {
     return {
@@ -158,6 +192,9 @@ export default {
         syncYoutube: false,
         options: null,
       },
+      preference: {
+        keyMap: null,
+      },
       gameSt: {
         noteSpeed: 1,
         vibrate: true,
@@ -168,6 +205,7 @@ export default {
       loading: false,
       changed: false,
       firstChanged: false,
+      showDiscordBanner: !getMeta("st_discord_showed"),
     };
   },
   mounted() {
@@ -178,7 +216,12 @@ export default {
       return this.$store.state.visualizerIns;
     },
     settings() {
-      return { pf: this.profileSt, gm: this.gameSt, ap: this.appearanceSt };
+      return {
+        pf: this.profileSt,
+        pr: this.preference,
+        gm: this.gameSt,
+        ap: this.appearanceSt,
+      };
     },
   },
   watch: {
@@ -228,6 +271,9 @@ export default {
       if (profile?.gameSt) {
         this.gameSt = profile.gameSt;
       }
+      if (profile?.preference) {
+        this.preference = profile.preference;
+      }
       this.loading = false;
     },
     async saveSettings() {
@@ -238,7 +284,7 @@ export default {
         const user = firebase.auth().currentUser;
         await user.updateProfile({ displayName, photoURL });
 
-        if (this.visualizerIns.options) {
+        if (this.visualizerIns?.options) {
           this.appearanceSt.options = {
             themeStyle: this.visualizerIns.themeStyle,
           };
@@ -249,6 +295,7 @@ export default {
         await updateUserProfile({
           appearanceSt: this.appearanceSt,
           gameSt: this.gameSt,
+          preference: this.preference,
         });
 
         this.$router.push({ query: { success: true } });
@@ -278,6 +325,10 @@ export default {
             8000
           );
         });
+    },
+    hideDiscord() {
+      setMeta("st_discord_showed", true);
+      this.showDiscordBanner = false;
     },
   },
 };
@@ -324,6 +375,10 @@ input {
   --animate-delay: 0.1s;
 }
 
+.keyMap {
+  margin-left: auto;
+}
+
 .banner {
   background: rgb(255, 115, 0);
   text-align: center;
@@ -333,6 +388,19 @@ input {
   left: calc(50% - 150px);
   width: 300px;
   z-index: 900;
+  box-shadow: 4px 3px 24px -2px rgba(255, 115, 0, 0.5);
+}
+
+.discord_banner {
+  text-align: left;
+  background: rgb(81, 0, 148);
+  padding: 10px 20px;
+  top: 70px;
+  position: fixed;
+  left: calc(50% - 170px);
+  width: 300px;
+  z-index: 900;
+  box-shadow: 4px 3px 24px -2px rgba(81, 0, 148, 0.5);
 }
 
 @media only screen and (max-width: 1000px) {

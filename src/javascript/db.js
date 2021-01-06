@@ -310,6 +310,7 @@ export function createPlay(sheetId, songId) {
     createdBy,
     status,
     isAuthed,
+    visibility: "public",
   };
   return new Promise((resolve, reject) => {
     playsCollection
@@ -342,6 +343,21 @@ export function updatePlay(playId, updateData) {
       .catch((error) => {
         reportError(error, action.UPDATE);
         reject();
+      });
+  });
+}
+
+export function getPlayCount(idKey, id) {
+  return new Promise((resolve, reject) => {
+    playsCollection
+      .where(idKey, "==", id)
+      .get()
+      .then((snapshot) => {
+        resolve(snapshot.size);
+      })
+      .catch((error) => {
+        reportError(error, action.READ);
+        reject(error);
       });
   });
 }

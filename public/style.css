@@ -465,37 +465,20 @@ input::placeholder {
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }
 
-/* staggered list view enter */
-/* ref https://codepen.io/shshaw/pen/YLmdxz */
-
-.list-enter-active,
-.list-leave-active {
-  transition: all 1s;
-}
-.list-enter, .list-leave-to /* .list-leave-active below version 2.1.8 */ {
-  opacity: 0;
-  transform: translateY(30px);
-}
-
-.slide-in-move {
-  transition: opacity 0.5s linear, transform 0.5s ease-in-out;
-}
-.slide-in-leave-active {
-  transition: opacity 0.4s linear, transform 0.4s cubic-bezier(0.5, 0, 0.7, 0.4);
-  transition-delay: calc(0.05s * (var(--total) - var(--i)));
-}
-.slide-in-enter-active {
-  transition: opacity 0.5s linear, transform 0.5s cubic-bezier(0.2, 0.5, 0.1, 1);
-  transition-delay: calc(0.1s * var(--i));
-}
+.slide-in-enter-active,
+.slide-in-leave-active,
 .slide-in-enter,
+.slide-in-move,
 .slide-in-leave-to {
-  opacity: 0;
+  transition: all 0.5s;
 }
+
 .slide-in-enter {
+  opacity: 0;
   transform: translateX(-1em);
 }
 .slide-in-leave-to {
+  opacity: 0;
   transform: translateX(1em);
 }
 

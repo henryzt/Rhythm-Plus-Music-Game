@@ -67,6 +67,7 @@ export default {
   right: 0;
   top: 30px;
   z-index: 1000;
+  pointer-events: none;
 }
 
 .horizontal {

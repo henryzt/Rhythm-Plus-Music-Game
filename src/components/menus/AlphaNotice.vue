@@ -16,6 +16,8 @@
               This game is under active development (Alpha WIP)
             </div>
             <div>
+              <!-- <div class="text_button" @click="openDiscord">Discord</div>
+              · -->
               <div class="text_button" @click="openForm">Report bug</div>
               ·
               <div class="text_button" @click="openGithub">
@@ -50,6 +52,9 @@ export default {
   methods: {
     openForm() {
       window.open("https://forms.gle/8gmuaWU7E9h82i4A7", "_blank");
+    },
+    openDiscord() {
+      window.open("https://discord.gg/ZGhnKp4", "_blank");
     },
     openGithub() {
       window.open(

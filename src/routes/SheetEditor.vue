@@ -89,7 +89,9 @@
             :hideBg="true"
             @selected="updateSongDetail"
             style="cursor: pointer;"
-          ></SongListItem>
+          >
+            <div style="padding-right: 20px; opacity: 0.5;">Edit</div>
+          </SongListItem>
           <div
             v-show="gameSheetInfo"
             style="height: 200px;"

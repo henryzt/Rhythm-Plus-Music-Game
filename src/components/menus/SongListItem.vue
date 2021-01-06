@@ -8,7 +8,7 @@
       v-if="song"
     >
       <div class="image">
-        <img :src="song.image" />
+        <img :src="song.image" onerror="this.style.display='none'" />
       </div>
       <div class="detail">
         <div style="font-size: 1.3em; font-weight: bold;">
@@ -19,6 +19,7 @@
         </div>
         <div>{{ song.artist }}</div>
       </div>
+      <slot></slot>
     </div>
     <div v-if="selected && !hideBg">
       <div v-if="sheets" style="padding-bottom: 20px;">

@@ -8,16 +8,17 @@
     <ModalGlobal ref="gm"></ModalGlobal>
     <FloatingAlert ref="alert"></FloatingAlert>
     <transition name="fade" v-if="$store.state.audio">
-      <router-view
-        class="routerView"
-        :key="$route.path"
+      <keep-alive
+        :include="['SongSelect', 'MyStudio']"
         v-if="showOnPageRequireSignin && !$store.state.redirecting"
-      />
+      >
+        <router-view class="routerView" :key="$route.path" />
+      </keep-alive>
       <div v-else>
         <div class="center blink_me">
           <img
             src="/assets/logo2.png"
-            style="max-width: 350px; padding: 20px 0; width: 100%;"
+            style="max-width: 350px; padding: 20px 0; width: 100%"
           />
           <div>Logging you in...</div>
         </div>

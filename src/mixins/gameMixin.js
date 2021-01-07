@@ -132,12 +132,12 @@ export default {
       if (this.fever.value < 1) this.fever.value = 1;
       if (this.fever.percent < 0) this.fever.percent = 0;
       if (this.fever.percent >= 1) {
-        // this.audio.playEffect("/audio/effects/swoosh2.mp3");
         this.fever.percent = 0;
         this.fever.time = 30;
         this.fever.value =
           this.fever.value < 5 ? this.fever.value + 1 : this.fever.value;
         this.$refs?.zoom?.show("X" + this.fever.value, "45%", "fever");
+        this.$store.state.audio.playEffect("explode");
       }
       if (this.fever.time > 0) {
         this.fever.time -= 0.5;

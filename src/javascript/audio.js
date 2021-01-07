@@ -83,7 +83,9 @@ export default class Audio {
     this.loadSong(bgmUrlArr[0], true);
   }
 
-  playEffect(url) {
+  playEffect(name) {
+    // 2nd param: override
+    const url = `/audio/effects/${name}.mp3`;
     const effectPlayer = new Howl({
       volume: 0.5,
       src: [url],

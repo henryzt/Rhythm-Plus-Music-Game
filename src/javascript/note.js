@@ -226,7 +226,7 @@ export default class Note {
       return;
     if (!this.sePlayed && this.y >= this.game.checkHitLineY) {
       this.sePlayed = true;
-      this.vm.$store.state.audio.playEffect("/audio/effects/du.mp3");
+      this.vm.$store.state.audio.playEffect("du", true);
     }
   }
 

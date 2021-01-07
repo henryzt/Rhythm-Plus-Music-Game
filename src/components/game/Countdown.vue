@@ -64,7 +64,7 @@ export default {
   },
   watch: {
     num() {
-      this.$store.state.audio.playEffect("/audio/effects/du.mp3");
+      this.$store.state.audio.playEffect("ui/event");
     },
   },
 };

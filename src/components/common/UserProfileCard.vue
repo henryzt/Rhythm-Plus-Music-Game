@@ -14,10 +14,9 @@
     </div>
 
     <div
-      class="shadow"
+      class="shadow cardWrapper"
       v-if="($store.state.authed && userProfile) || overrideProfile"
       @click="goToAccount"
-      style="display: flex; align-items: center; width: 100%;"
     >
       <img v-if="userProfile.photoURL" :src="userProfile.photoURL" />
       <div class="detail">
@@ -154,6 +153,7 @@ img {
   font-size: 1.2em;
   cursor: auto;
   text-align: left;
+  width: 100%;
 }
 
 .extend .shadow {
@@ -164,6 +164,15 @@ img {
 .extend img {
   max-width: 100px;
   max-height: 100px;
+}
+
+.cardWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.extend .cardWrapper {
+  width: 100%;
 }
 
 .wrapper {
@@ -198,7 +207,6 @@ img {
   /* mobile */
   .extend {
     font-size: 1em;
-    width: 100%;
   }
   .extend img {
     max-width: 70px;

@@ -136,9 +136,11 @@ export default {
   },
   watch: {
     searchTerms() {
+      this.playEffect("ui/click");
       this.sort();
     },
     showSearch() {
+      this.playEffect("ui/click");
       if (this.showSearch) {
         this.showSort = false;
       } else {
@@ -146,11 +148,16 @@ export default {
       }
     },
     showSort() {
+      this.playEffect("ui/click");
       if (this.showSort) {
         this.showSearch = false;
       }
     },
+    showAllTags() {
+      this.playEffect("ui/click");
+    },
     currentTag() {
+      this.playEffect("ui/slide2");
       this.sort();
     },
     songs() {
@@ -222,6 +229,12 @@ export default {
           break;
       }
       this.finishSort(sortBy, changeReverse);
+      if (changeReverse) {
+        this.playEffect("ui/slide1");
+      }
+    },
+    playEffect(effect) {
+      this.$store.state.audio.playEffect(effect);
     },
   },
 };

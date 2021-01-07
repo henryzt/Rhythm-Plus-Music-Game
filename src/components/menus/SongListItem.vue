@@ -4,16 +4,17 @@
       class="song_item"
       :class="{ song_item_bg: !hideBg, song_item_small: hideBg }"
       ref="item"
-      @click="$emit('selected', song)"
+      @click="click"
       v-if="song"
+      @mouseenter="playHoverSound"
     >
       <div class="image">
         <img :src="song.image" onerror="this.style.display='none'" />
       </div>
       <div class="detail">
-        <div style="font-size: 1.3em; font-weight: bold">
+        <div style="font-size: 1.3em; font-weight: bold;">
           {{ song.title }}
-          <span v-if="song.subtitle" style="opacity: 0.6"
+          <span v-if="song.subtitle" style="opacity: 0.6;"
             >({{ song.subtitle }})</span
           >
         </div>
@@ -21,7 +22,7 @@
       </div>
       <slot></slot>
     </div>
-    <div v-if="sheets && selected && !hideBg" style="padding-bottom: 20px">
+    <div v-if="sheets && selected && !hideBg" style="padding-bottom: 20px;">
       <div v-for="sheet in sheets" :value="sheet.id" :key="sheet.id">
         <div
           @click="$emit('selectedSheet', sheet)"
@@ -36,7 +37,7 @@
       <div
         class="sheet"
         @click="goToEditorWithSong"
-        style="padding: 3px; text-align: center"
+        style="padding: 3px; text-align: center;"
       >
         Create new
       </div>
@@ -61,6 +62,16 @@ export default {
   methods: {
     goToEditorWithSong() {
       this.$router.push({ path: "/editor", query: { song: this.song.id } });
+    },
+    playHoverSound() {
+      this.$store.state.audio.playEffect("ui/ta");
+    },
+    playClickSound() {
+      this.$store.state.audio.playEffect("ui/pop");
+    },
+    click() {
+      this.playClickSound();
+      this.$emit("selected", this.song);
     },
   },
   mounted() {},

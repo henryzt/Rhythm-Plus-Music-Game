@@ -7,21 +7,21 @@
         <div
           class="cat_tab"
           :class="{ active: tab == 'recom' }"
-          @click="tab = 'recom'"
+          @click="changeTab('recom')"
         >
           Recommended
         </div>
         <div
           class="cat_tab"
           :class="{ active: tab == 'new' }"
-          @click="tab = 'new'"
+          @click="changeTab('new')"
         >
           New
         </div>
         <div
           class="cat_tab"
           :class="{ active: tab == 'all' }"
-          @click="tab = 'all'"
+          @click="changeTab('all')"
         >
           All Songs
         </div>
@@ -45,7 +45,10 @@
         >
           <div class="reflow2 song_list">
             <div v-if="tab == 'recom'">
-              <div class="btn-action btn-dark btn-more" @click="tab = 'new'">
+              <div
+                class="btn-action btn-dark btn-more"
+                @click="changeTab('new')"
+              >
                 More >
               </div>
               <div class="subtitle">Latest</div>
@@ -218,6 +221,10 @@ export default {
     ]);
   },
   methods: {
+    changeTab(tab) {
+      this.tab = tab;
+      this.$store.state.audio.playEffect("ui/pop");
+    },
     async getAllSongs() {
       if (!this.allSongs) this.allSongs = await getSongList();
     },

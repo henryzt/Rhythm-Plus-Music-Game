@@ -263,7 +263,7 @@ export default {
 }
 
 .song_list {
-  min-width: 350px;
+  min-width: 300px;
   margin: 0 20px;
 }
 

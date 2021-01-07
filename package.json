@@ -38,7 +38,6 @@
     "vue-confetti": "^2.2.1",
     "vue-countup-v2": "^4.0.0",
     "vue-moment": "^4.1.0",
-    "vue-perfect-scrollbar": "^0.2.1",
     "vue-progressive-image": "^3.2.0",
     "vue-router": "^3.3.4",
     "vue-select": "^3.10.7",
@@ -48,6 +47,7 @@
     "vue-virtual-scroll-list": "^2.3.0",
     "vue-youtube": "^1.4.0",
     "vue2-circle-progress": "^1.2.3",
+    "vuescroll": "^4.17.3",
     "vuex": "^3.5.1"
   },
   "devDependencies": {

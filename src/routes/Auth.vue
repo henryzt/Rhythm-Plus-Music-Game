@@ -1,74 +1,77 @@
 <template>
-  <v-bar class="fullPage" :class="{ cutBottom: !$store.state.authed }">
-    <div>
-      <div class="mContainer" v-if="$store.state.verified">
-        <div class="flex_hori">
-          <UserProfileCard :extend="true" />
-          <div class="clip" @click="confirmSignOut">Logout</div>
-        </div>
-        <Settings ref="settings"></Settings>
+  <div>
+    <!-- login and verify prompt -->
+    <div class="center_logo">
+      <div v-show="!$store.state.authed">
+        <h2>Signin or Register Now</h2>
+        <h4 style="padding-bottom: 30px;">for the Complete Experience!</h4>
+        <div id="firebaseui-auth-container"></div>
       </div>
-      <div v-else style="min-height: calc(100% - 120px);"></div>
-
-      <div class="center_logo">
-        <div v-show="!$store.state.authed">
-          <h2>Signin or Register Now</h2>
-          <h4 style="padding-bottom: 30px;">for the Complete Experience!</h4>
-          <div id="firebaseui-auth-container"></div>
+      <div v-if="$store.state.authed && !$store.state.verified">
+        <div style="font-size: 20px; padding-bottom: 30px;">
+          Please check your email to verify your account!
         </div>
-        <div v-if="$store.state.authed && !$store.state.verified">
-          <div style="font-size: 20px; padding-bottom: 30px;">
-            Please check your email to verify your account!
-          </div>
-          <div class="text_button" @click="$router.go()">Refresh</div>
-          <div
-            class="text_button"
-            :class="{ disabled: emailSentTimeout }"
-            @click="sendVerificationEmail"
-          >
-            Resend Email
-          </div>
-          <div class="text_button" @click="confirmSignOut">Logout</div>
+        <div class="text_button" @click="$router.go()">Refresh</div>
+        <div
+          class="text_button"
+          :class="{ disabled: emailSentTimeout }"
+          @click="sendVerificationEmail"
+        >
+          Resend Email
         </div>
+        <div class="text_button" @click="confirmSignOut">Logout</div>
       </div>
-
-      <div class="centerCredit">
-        <div>
-          {{
-            `App version: ${$store.state.appVersion} · Build: ${$store.state.build}`
-          }}
-        </div>
-        <br />
-        <div v-if="$store.state.authed">
-          Thank you for playing Rhythm Plus Alpha release, join our
-          <a :href="discord" target="_blank">discord server</a> to get lastest
-          dev updates. You can report bugs and send feedbacks
-          <a :href="bugReport" target="_blank">here</a> or in our
-          <a :href="github" target="_blank">GitHub Repo</a>. You can also give
-          us a star to support us!
-        </div>
-        <div v-else>
-          <a :href="bugReport" target="_blank">Bug Report</a> ·
-          <a :href="discord" target="_blank">Discord</a> ·
-          <a :href="github" target="_blank">GitHub Repo</a>
-        </div>
-      </div>
-
-      <Modal
-        ref="modal"
-        :show="showModal"
-        style="z-index: 1000;"
-        bodyText="Are you sure you want to log out?"
-        type="question"
-        okText="Logout"
-        @ok="signOut"
-      ></Modal>
-
-      <Loading style="z-index: 999;" :show="!$store.state.initialized"
-        >Communicating...</Loading
-      >
     </div>
-  </v-bar>
+    <!-- settings -->
+    <v-bar class="fullPage" :class="{ cutBottom: !$store.state.authed }">
+      <div>
+        <div class="mContainer" v-if="$store.state.verified">
+          <div class="flex_hori">
+            <UserProfileCard :extend="true" />
+            <div class="clip" @click="confirmSignOut">Logout</div>
+          </div>
+          <Settings ref="settings"></Settings>
+        </div>
+        <div v-else style="min-height: calc(100% - 120px);"></div>
+
+        <div class="centerCredit">
+          <div>
+            {{
+              `App version: ${$store.state.appVersion} · Build: ${$store.state.build}`
+            }}
+          </div>
+          <br />
+          <div v-if="$store.state.authed">
+            Thank you for playing Rhythm Plus Alpha release, join our
+            <a :href="discord" target="_blank">discord server</a> to get lastest
+            dev updates. You can report bugs and send feedbacks
+            <a :href="bugReport" target="_blank">here</a> or in our
+            <a :href="github" target="_blank">GitHub Repo</a>. You can also give
+            us a star to support us!
+          </div>
+          <div v-else>
+            <a :href="bugReport" target="_blank">Bug Report</a> ·
+            <a :href="discord" target="_blank">Discord</a> ·
+            <a :href="github" target="_blank">GitHub Repo</a>
+          </div>
+        </div>
+
+        <Modal
+          ref="modal"
+          :show="showModal"
+          style="z-index: 1000;"
+          bodyText="Are you sure you want to log out?"
+          type="question"
+          okText="Logout"
+          @ok="signOut"
+        ></Modal>
+
+        <Loading style="z-index: 999;" :show="!$store.state.initialized"
+          >Communicating...</Loading
+        >
+      </div>
+    </v-bar>
+  </div>
 </template>
 
 <script>
@@ -306,6 +309,7 @@ export default {
   height: calc(100% - 70px);
 }
 .center_logo {
+  top: calc(50% - 50px);
   z-index: 500;
   position: absolute;
 }

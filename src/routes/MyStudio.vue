@@ -1,7 +1,10 @@
 <template>
   <div>
     <v-bar class="fullPage">
-      <div v-if="songAndSheetList && songAndSheetList.length > 0">
+      <div
+        class="song_list"
+        v-if="songAndSheetList && songAndSheetList.length > 0"
+      >
         <div class="pageTitle">
           My Studio
           <div
@@ -109,5 +112,9 @@ export default {
   line-height: 80px;
   max-width: 100%;
   box-sizing: border-box;
+}
+.song_list {
+  min-width: 300px;
+  margin: 0 20px;
 }
 </style>

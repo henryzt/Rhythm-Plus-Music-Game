@@ -30,7 +30,7 @@
         <div class="clip">
           <span @click="showSearch = !showSearch">
             <v-icon name="search" />
-            <span v-if="!showSearch" style="overflow: hidden">Search</span>
+            <span v-if="!showSearch" style="overflow: hidden;">Search</span>
           </span>
           <span>
             <transition name="width">
@@ -74,21 +74,29 @@
 
     <!-- all tags -->
     <div v-if="showAllTags">
-      <v-bar class="flex_hori all_tags">
-        <div
-          class="clip clip_outlined"
-          @click="currentTag = null"
-          :class="{ active: currentTag === null }"
-        >
-          All
-        </div>
-        <div v-for="tag in tags.slice(0, 100)" :key="tag">
+      <v-bar
+        :ops="{
+          scrollPanel: {
+            scrollingX: true,
+          },
+        }"
+      >
+        <div class="flex_hori all_tags">
           <div
             class="clip clip_outlined"
-            @click="currentTag = tag"
-            :class="{ active: currentTag === tag }"
+            @click="currentTag = null"
+            :class="{ active: currentTag === null }"
           >
-            {{ tag }}
+            All
+          </div>
+          <div v-for="tag in tags.slice(0, 100)" :key="tag">
+            <div
+              class="clip clip_outlined"
+              @click="currentTag = tag"
+              :class="{ active: currentTag === tag }"
+            >
+              {{ tag }}
+            </div>
           </div>
         </div>
       </v-bar>

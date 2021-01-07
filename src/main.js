@@ -1,7 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import VueMoment from "vue-moment";
-import VuePerfectScrollbar from "vue-perfect-scrollbar";
+import vuescroll from "vuescroll";
 import VueProgressiveImage from "vue-progressive-image";
 import VueConfetti from "vue-confetti";
 import App from "./App.vue";
@@ -27,7 +27,19 @@ Vue.use(VueMoment);
 Vue.use(VueRouter);
 Vue.use(VueProgressiveImage);
 Vue.use(VueConfetti);
-Vue.component("v-bar", VuePerfectScrollbar);
+Vue.use(vuescroll, {
+  ops: {
+    scrollPanel: {
+      scrollingX: false,
+    },
+    bar: {
+      background: "#ffffff",
+      opacity: 0.3,
+    },
+  },
+  name: "v-bar",
+});
+
 Vue.component("v-icon", Icon);
 
 if (!isDev) {

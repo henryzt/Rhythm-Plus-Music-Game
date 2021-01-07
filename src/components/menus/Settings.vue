@@ -98,7 +98,7 @@
         <p>
           <label></label>
           <Checkbox
-            label="Sync Plays to YouTube History"
+            label="Sync Plays to YouTube"
             :model="appearanceSt"
             cbStyle="form"
             modelKey="syncYoutube"

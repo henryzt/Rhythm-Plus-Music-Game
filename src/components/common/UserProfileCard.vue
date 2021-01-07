@@ -17,7 +17,7 @@
       class="shadow"
       v-if="($store.state.authed && userProfile) || overrideProfile"
       @click="goToAccount"
-      style="display: flex; align-items: center;"
+      style="display: flex; align-items: center; width: 100%;"
     >
       <img v-if="userProfile.photoURL" :src="userProfile.photoURL" />
       <div class="detail">
@@ -133,6 +133,7 @@ export default {
   display: flex;
   flex-direction: column;
   padding: 10px;
+  width: 100%;
 }
 img {
   max-width: 50px;
@@ -168,7 +169,7 @@ img {
 .wrapper {
   width: 100%;
   max-width: 200px;
-  min-width: 170px;
+  min-width: 140px;
 }
 
 .progress-bar {
@@ -197,6 +198,7 @@ img {
   /* mobile */
   .extend {
     font-size: 1em;
+    width: 100%;
   }
   .extend img {
     max-width: 70px;

@@ -18,10 +18,12 @@ register(`/service-worker.js`, {
     Logger.log("New content is downloading.");
   },
   updated() {
-    Logger.log("New content is available; please refresh.");
+    console.warn("New content is available; please refresh.");
   },
   offline() {
-    Logger.log("No internet connection found. App is running in offline mode.");
+    console.warn(
+      "No internet connection found. App is running in offline mode."
+    );
   },
   error(error) {
     Logger.error("Error during service worker registration:", error);

@@ -223,7 +223,7 @@ export default {
   methods: {
     changeTab(tab) {
       this.tab = tab;
-      this.$store.state.audio.playEffect("ui/pop");
+      this.$store.state.audio.playEffect("ui/slide2");
     },
     async getAllSongs() {
       if (!this.allSongs) this.allSongs = await getSongList();

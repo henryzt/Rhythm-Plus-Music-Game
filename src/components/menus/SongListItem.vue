@@ -64,7 +64,7 @@ export default {
       this.$router.push({ path: "/editor", query: { song: this.song.id } });
     },
     playHoverSound() {
-      this.$store.state.audio.playEffect("ui/ta");
+      this.$store.state.audio.playEffect("ui/deep");
     },
     playClickSound() {
       this.$store.state.audio.playEffect("ui/pop");

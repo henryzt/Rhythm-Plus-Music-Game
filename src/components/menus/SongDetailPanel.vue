@@ -157,14 +157,17 @@ export default {
         this.previewPlayer.play();
       }
       this.$store.state.audio.pause();
+      this.$store.state.audio.playEffect("ui/click");
     },
     endPreivew() {
+      if (this.inPreivew) this.$store.state.audio.playEffect("ui/click");
       this.inPreivew = false;
       this.$store.state.audio.play();
       this.previewPlayer?.stop();
     },
   },
   beforeDestroy() {
+    this.$store.state.audio.playEffect("ui/slide1");
     this.endPreivew();
   },
   watch: {

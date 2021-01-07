@@ -4,7 +4,9 @@
     v-if="$store.state.theme"
     :class="{ [$store.state.theme.buttonStyle]: true }"
   >
-    <button class="main_button" @click="clicked">{{ text }}</button>
+    <button class="main_button" @click="clicked" @mouseenter="hover">
+      {{ text }}
+    </button>
   </div>
 </template>
 
@@ -17,7 +19,11 @@ export default {
   },
   mounted() {},
   methods: {
+    hover() {
+      this.$store.state.audio.playEffect("ui/click2");
+    },
     clicked() {
+      this.$store.state.audio.playEffect("ui/power");
       this.$emit("click", null);
     },
   },

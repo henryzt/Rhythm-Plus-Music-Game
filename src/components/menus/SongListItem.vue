@@ -107,6 +107,10 @@ export default {
   outline: 5px solid white;
   z-index: 500;
 }
+.song_item_bg:active:hover {
+  transition: transform 0.2s;
+  transform: scale(1.05);
+}
 .detail {
   display: flex;
   flex-direction: column;
@@ -155,6 +159,9 @@ export default {
 @media only screen and (max-width: 1300px) {
   .song_item_bg:hover {
     transform: none;
+  }
+  .song_item_bg:active:hover {
+    transform: scale(0.95);
   }
 }
 </style>

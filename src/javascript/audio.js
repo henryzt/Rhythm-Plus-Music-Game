@@ -95,6 +95,10 @@ export default class Audio {
     effectPlayer.play();
   }
 
+  playHoverEffect(name) {
+    if (window.innerWidth > 1000) this.playEffect(name);
+  }
+
   stop(stopBackground) {
     if (!stopBackground && this.asBackground) return;
     Logger.warn("stop", this.player, this.asBackground);

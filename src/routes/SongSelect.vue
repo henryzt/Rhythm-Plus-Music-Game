@@ -7,6 +7,7 @@
         <div
           class="cat_tab"
           :class="{ active: tab == 'recom' }"
+          @mouseenter="handleHover"
           @click="changeTab('recom')"
         >
           Recommended
@@ -14,6 +15,7 @@
         <div
           class="cat_tab"
           :class="{ active: tab == 'new' }"
+          @mouseenter="handleHover"
           @click="changeTab('new')"
         >
           New
@@ -21,6 +23,7 @@
         <div
           class="cat_tab"
           :class="{ active: tab == 'all' }"
+          @mouseenter="handleHover"
           @click="changeTab('all')"
         >
           All Songs
@@ -224,6 +227,9 @@ export default {
     changeTab(tab) {
       this.tab = tab;
       this.$store.state.audio.playEffect("ui/slide2");
+    },
+    handleHover() {
+      this.$store.state.audio.playHoverEffect("ui/ta");
     },
     async getAllSongs() {
       if (!this.allSongs) this.allSongs = await getSongList();

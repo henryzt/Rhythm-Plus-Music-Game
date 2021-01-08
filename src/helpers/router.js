@@ -22,7 +22,7 @@ const router = new VueRouter({
       name: "menu",
       path: "/menu",
       component: SongSelect,
-      meta: { requireBg: true, title: "Song Select" },
+      meta: { requireBg: true, requireSignin: true, title: "Song Select" },
     },
     {
       name: "studio",

@@ -1,14 +1,16 @@
 <template>
-  <div class="profile_card" :class="{ extend }">
+  <div class="profile_card" :class="{ extend }" @click="handleClick">
     <div class="controls shadow" v-if="!extend">
       <v-icon
         :name="$store.state.audio.muteBg ? 'volume-mute' : 'volume-up'"
         scale="1.3"
+        @mouseenter="handleHover"
         @click="$store.state.audio.toggleBgMute()"
       />
       <v-icon
         :name="$store.state.isFullscreen ? 'compress' : 'expand'"
         scale="1.3"
+        @mouseenter="handleHover"
         @click="$store.commit('toggleFullscreen')"
       />
     </div>
@@ -17,6 +19,7 @@
       class="shadow cardWrapper"
       v-if="($store.state.authed && userProfile) || overrideProfile"
       @click="goToAccount"
+      @mouseenter="handleHover"
     >
       <img v-if="userProfile.photoURL" :src="userProfile.photoURL" />
       <div class="detail">
@@ -94,6 +97,12 @@ export default {
     goToAccount() {
       if (!this.extend) this.$router.push("/account");
     },
+    handleClick() {
+      this.$store.state.audio.playEffect("ui/pop");
+    },
+    handleHover() {
+      if (!this.extend) this.$store.state.audio.playHoverEffect("ui/ta");
+    },
   },
 };
 </script>
@@ -128,6 +137,7 @@ export default {
   z-index: 500;
   -webkit-tap-highlight-color: transparent;
 }
+
 .detail {
   display: flex;
   flex-direction: column;

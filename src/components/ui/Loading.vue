@@ -71,6 +71,7 @@ export default {
   max-width: 500px;
   width: auto;
   background: transparent;
+  box-shadow: none;
 }
 
 .modal-body {

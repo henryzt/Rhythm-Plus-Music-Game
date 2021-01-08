@@ -122,6 +122,7 @@
             advancedMenuOptions = true;
             $refs.menu.show();
           "
+          @mouseenter="handleHover"
         >
           <v-icon name="cog" scale="1.5" />
         </div>
@@ -131,6 +132,7 @@
           class="modal blurBackground"
           :class="{ darker: hideGameForYtButton }"
           ref="playButton"
+          @mouseenter="handleHover"
         >
           <div
             class="modal-body"
@@ -143,7 +145,7 @@
           </div>
         </div>
         <!-- info button -->
-        <div @click="showInfoMenu">
+        <div @click="showInfoMenu" @mouseenter="handleHover">
           <div class="flex_hori start_page_button">
             <v-icon name="info-circle" scale="1.5" />
           </div>
@@ -225,7 +227,7 @@
             <div
               class="btn-action btn-dark"
               style="display: inline-block;"
-              @click="started ? resumeGame(true) : hideMenu()"
+              @click="started ? resumeGame(true) : hideMenu(true)"
             >
               Done
             </div>
@@ -350,6 +352,9 @@ export default {
         logError("song_load_error_" + sheetId);
       }
     },
+    handleHover() {
+      this.$store.state.audio.playHoverEffect("ui/ta");
+    },
     songLoaded() {
       Logger.log("playing");
       this.instance.loading = false;
@@ -402,15 +407,16 @@ export default {
       this.instance.pauseGame();
       this.$refs.menu.show();
     },
-    hideMenu() {
+    hideMenu(safeClose) {
       this.advancedMenuOptions = false;
-      this.$refs.menu.close();
+      if (safeClose) this.$refs.menu.ok();
+      else this.$refs.menu.close();
     },
     showInfoMenu() {
       this.$refs.info.show();
     },
     resumeGame(fromMenu) {
-      this.hideMenu();
+      this.hideMenu(true);
       if (!fromMenu) {
         this.$refs.countdown.clear();
         this.instance.resumeGame();

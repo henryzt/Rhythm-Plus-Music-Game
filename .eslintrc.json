@@ -40,7 +40,8 @@
     "func-names": 0,
     "no-console": ["error", { "allow": ["warn", "error", "log"] }],
     "max-classes-per-file": 0,
-    "vue/custom-event-name-casing": "warn"
+    "vue/custom-event-name-casing": "warn",
+    "vue/no-mutating-props": "warn"
   },
   "env": {
     "es6": true,

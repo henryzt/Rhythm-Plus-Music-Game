@@ -44,11 +44,10 @@
           <div class="navtext">Back</div>
         </div>
       </router-link>
-      <div class="nav">
+      <div class="nav" @click="$store.commit('toggleFullscreen')">
         <v-icon
           :name="$store.state.isFullscreen ? 'compress' : 'expand'"
           scale="1.5"
-          @click="$store.commit('toggleFullscreen')"
         />
         <div class="navtext">Toggle Fullscreen</div>
       </div>

@@ -2,10 +2,10 @@
   <div :class="{ hidden: delaying }">
     <transition name="modal-fade">
       <div class="modal-backdrop" v-if="show && !delaying">
-        <div class="modal blurBackground">
+        <div class="modal">
           <section class="modal-body">
-            <Loader color="white" style="display: inline; float: left" />
-            <div style="margin-left: 50px">
+            <Loader color="white" style="display: inline; float: left;" />
+            <div style="margin-left: 50px;">
               <slot>{{ text }}</slot>
             </div>
           </section>
@@ -70,6 +70,7 @@ export default {
   margin: 30px;
   max-width: 500px;
   width: auto;
+  background: transparent;
 }
 
 .modal-body {

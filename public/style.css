@@ -12,6 +12,16 @@ body {
   overflow-y: scroll;
 }
 
+.loading_ph {
+  opacity: 0.5;
+}
+
+.loading_logo {
+  max-width: 350px;
+  padding: 20px 0;
+  width: 100%;
+}
+
 .logo {
   max-width: 550px;
   padding: 50px 0;
@@ -491,6 +501,17 @@ input::placeholder {
   margin: 0;
   transform: translateX(1em);
   margin-top: -130px;
+}
+
+.blink_me {
+  opacity: 0.5;
+  animation: blinker 2s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0.2;
+  }
 }
 
 @keyframes enter {

@@ -7,6 +7,7 @@ import Rankings from "../routes/Rankings.vue";
 import SongSelect from "../routes/SongSelect.vue";
 import MyStudio from "../routes/MyStudio.vue";
 import SheetEditor from "../routes/SheetEditor.vue";
+import GameOverScreen from "../routes/GameOverScreen.vue";
 import { sendPageview } from "./analytics";
 
 const router = new VueRouter({
@@ -64,6 +65,19 @@ const router = new VueRouter({
           path: ":resultId",
           component: Result,
           meta: { title: "Result" },
+        },
+      ],
+    },
+    {
+      path: "/game-over",
+      component: GameOverScreen,
+      props: true,
+      children: [
+        {
+          name: "game-over",
+          path: ":sheetId",
+          component: GameOverScreen,
+          meta: { title: "Game Over" },
         },
       ],
     },

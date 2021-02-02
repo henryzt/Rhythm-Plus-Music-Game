@@ -76,7 +76,7 @@ export default class Note {
       }
     }
     if (!this.vm.noFail && this.vm.health < 100 && this.percentage < 0.3) {
-      this.vm.health += 2 * (0.5 - this.percentage); // TODO health addition
+      this.vm.health += 0.3 - this.percentage; // TODO health addition
     }
   }
 

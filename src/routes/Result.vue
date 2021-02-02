@@ -8,10 +8,7 @@
           :showNav="false"
         ></PageBackground>
         <div class="blurFilter">
-          <div v-if="result.isGameOver" class="center_logo darker flex_hori">
-            Game Over
-          </div>
-          <div v-else class="center_logo darker flex_hori">
+          <div class="center_logo darker flex_hori">
             <div class="scoreCircle" ref="resultDiv">
               <VueCircle
                 :progress="result.result.percentage"
@@ -168,8 +165,6 @@ import {
 import ICountUp from "vue-countup-v2";
 import VueCircle from "vue2-circle-progress/src/index.vue";
 import VanillaTilt from "vanilla-tilt";
-import "vue-awesome/icons/redo";
-import "vue-awesome/icons/arrow-right";
 
 export default {
   name: "Result",

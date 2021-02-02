@@ -154,7 +154,7 @@
         <div class="youtube_notice" v-if="srcMode === 'youtube'">
           Powered by YouTube.
           <br />
-          All copyright and revenue goes to the video owner.
+          Video copyright goes to the owner.
         </div>
       </div>
     </transition>
@@ -170,7 +170,7 @@
       :show="youtubeBuffering"
       :delay="true"
       :delayLength="3000"
-      >Buffering the video just for you, one sec...</Loading
+      >Buffering...</Loading
     >
     <Loading style="z-index: 600;" :show="isGameEnded && !showingAchievement"
       >Syncing Results...</Loading

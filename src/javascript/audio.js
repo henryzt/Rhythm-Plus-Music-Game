@@ -73,7 +73,6 @@ export default class Audio {
     // randomly play background music
     let bgmUrlArr = [
       assetsBaseUrl + "aurora.mp3",
-      assetsBaseUrl + "kontekst.mp3",
       assetsBaseUrl + "beyond.mp3",
     ];
     if (songToExclude && !bgmUrlArr.includes(songToExclude)) return; // is playing result bgm

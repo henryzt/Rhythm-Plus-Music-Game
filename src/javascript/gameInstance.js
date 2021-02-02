@@ -489,6 +489,9 @@ export default class GameInstance {
         );
       }
     }
+    if (!this.noFail && this.vm.health <= 0) {
+      this.vm.gameEnded(true);
+    }
   }
 
   async updateCurrentTime() {
@@ -525,6 +528,7 @@ export default class GameInstance {
   resetPlaying(resetTimeArr) {
     clearInterval(this.intervalPlay);
     this.vm.started = false;
+    this.vm.health = 100;
     this.ytPlayer.resetVideo(this.startSongAt);
     this.clearNotes();
     if (resetTimeArr) this.timeArr = [];

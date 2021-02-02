@@ -198,6 +198,7 @@ export default {
       gameSt: {
         noteSpeed: 1,
         vibrate: true,
+        noFail: false,
         perspective: false,
         blur: false,
         fps: false,

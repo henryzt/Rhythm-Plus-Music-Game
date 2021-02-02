@@ -75,6 +75,9 @@ export default class Note {
         this.missNote();
       }
     }
+    if (!this.vm.noFail && this.vm.health < 100 && this.percentage < 0.3) {
+      this.vm.health += 2 * (0.5 - this.percentage); // TODO health addition
+    }
   }
 
   hitAndCountScore(isHolding) {
@@ -106,6 +109,7 @@ export default class Note {
     this.vm.result.combo = 0;
     this.markJudge = "Miss";
     this.vm.fever.percent -= 0.1;
+    if (!this.vm.noFail) this.vm.health -= 3; // TODO exp health reduction
     this.vibrate([20, 20, 50]);
     this.judgeDisplay();
     this.noteFailed = true;

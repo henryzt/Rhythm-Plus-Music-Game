@@ -8,7 +8,10 @@
           :showNav="false"
         ></PageBackground>
         <div class="blurFilter">
-          <div class="center_logo darker flex_hori">
+          <div v-if="result.isGameOver" class="center_logo darker flex_hori">
+            Game Over
+          </div>
+          <div v-else class="center_logo darker flex_hori">
             <div class="scoreCircle" ref="resultDiv">
               <VueCircle
                 :progress="result.result.percentage"

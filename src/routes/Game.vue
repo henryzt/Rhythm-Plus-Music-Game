@@ -73,6 +73,7 @@
       >
         Game Performance Degraded
       </div>
+      <div style="font-size: 0.5em;" v-if="health">HP - {{ health }}</div>
       <div style="font-size: 0.5em;" v-if="fps && instance.fps">
         {{ instance.fps }} FPS
       </div>
@@ -450,7 +451,7 @@ export default {
       this.updatePlay(data);
       logEvent("game_exited", data);
     },
-    async gameEnded() {
+    async gameEnded(isGameOver) {
       this.instance.destroyInstance();
       this.isGameEnded = true;
       let achievementPromise = Promise.resolve();
@@ -472,6 +473,7 @@ export default {
       }
       try {
         const uploadPromise = uploadResult({
+          isGameOver: !!isGameOver,
           result: this.result,
           songId: this.currentSong.songId,
           sheetId: this.currentSong.sheetId,
@@ -483,7 +485,10 @@ export default {
         Logger.log(res);
         this.$router.push("/result/" + res.data.resultId);
         this.$confetti.stop();
-        this.updatePlay({ status: "finished", resultId: res.data.resultId });
+        this.updatePlay({
+          status: isGameOver ? "failed" : "finished",
+          resultId: res.data.resultId,
+        });
         logEvent("result_uploaded", {
           resultId: res.data.resultId,
         });

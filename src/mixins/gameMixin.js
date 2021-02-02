@@ -24,6 +24,7 @@ export default {
         marks: { perfect: 0, good: 0, offbeat: 0, miss: 0 },
       },
       fever: { value: 1, time: 0, percent: 0 },
+      health: 100,
       feverInterval: null,
       srcMode: "youtube",
       instance: null,
@@ -31,6 +32,7 @@ export default {
       youtubeId: "caCqu-p_wZc",
       perspective: false,
       vibrate: true,
+      noFail: false,
       fps: false,
       advancedMenuOptions: false,
       started: false,
@@ -92,6 +94,7 @@ export default {
       this.blur = gameSettings.blur;
       this.noteSpeed = gameSettings.noteSpeed ?? 1;
       this.perspective = gameSettings.perspective;
+      this.noFail = gameSettings.noFail;
       this.vibrate = gameSettings.vibrate;
       this.fps = gameSettings.fps;
     }

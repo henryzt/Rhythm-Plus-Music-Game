@@ -40,7 +40,9 @@ export default {
   },
   computed: {},
   watch: {},
-  mounted() {},
+  mounted() {
+    this.$store.state.audio.playEffect("whoosh");
+  },
   methods: {
     replay() {
       this.$router.push("/game/" + this.$route.params.sheetId);
@@ -96,11 +98,15 @@ export default {
 @keyframes fail_enter {
   from {
     transform: scale(3);
+    color: red;
     opacity: 0;
+    text-shadow: none;
   }
   to {
     opacity: 1;
+    color: white;
     transform: scale(1);
+    text-shadow: 2px 2px 50px rgb(150, 0, 0);
   }
 }
 @keyframes fade {

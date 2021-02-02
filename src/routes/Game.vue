@@ -66,28 +66,7 @@
     ></Visualizer>
 
     <!-- score panel -->
-    <div class="score" v-if="instance">
-      <div
-        class="performanceWarning"
-        v-if="fps && started && !instance.paused && instance.fps < 35"
-      >
-        Game Performance Degraded
-      </div>
-      <div style="font-size: 0.5em;" v-if="health">HP - {{ health }}</div>
-      <div style="font-size: 0.5em;" v-if="fps && instance.fps">
-        {{ instance.fps }} FPS
-      </div>
-      <div style="font-size: 0.5em;">
-        <ICountUp
-          :endVal="percentage"
-          :options="{ decimalPlaces: 2, duration: 1 }"
-        />%
-      </div>
-      <ICountUp
-        :endVal="result.score"
-        :options="{ decimalPlaces: 0, duration: 1 }"
-      />
-    </div>
+    <ScorePanel></ScorePanel>
 
     <!-- youtube player -->
     <div><!-- for mp3 mode youtube bug --></div>
@@ -266,6 +245,7 @@ import ProgressBar from "../components/game/ProgressBar.vue";
 import Countdown from "../components/game/Countdown.vue";
 import MarkComboJudge from "../components/game/MarkComboJudge.vue";
 import Tutorial from "../components/game/Tutorial.vue";
+import ScorePanel from "../components/game/ScorePanel.vue";
 import GameMixin from "../mixins/gameMixin";
 import { Youtube } from "vue-youtube";
 import {
@@ -275,7 +255,6 @@ import {
   updatePlay,
 } from "../javascript/db";
 import { logEvent, logError } from "../helpers/analytics";
-import ICountUp from "vue-countup-v2";
 import VanillaTilt from "vanilla-tilt";
 import "vue-awesome/icons/regular/pause-circle";
 import "vue-awesome/icons/play";
@@ -291,7 +270,6 @@ export default {
     Youtube,
     Loading,
     Modal,
-    ICountUp,
     ZoomText,
     Navbar,
     ProgressBar,
@@ -299,6 +277,7 @@ export default {
     SheetDetailLine,
     MarkComboJudge,
     Tutorial,
+    ScorePanel,
   },
   mixins: [GameMixin],
   data() {
@@ -458,6 +437,7 @@ export default {
       if (isGameOver) {
         this.$router.push("/game-over/" + this.currentSong.sheetId);
         this.reportExit("failed");
+        logEvent("game_failed");
         return;
       }
       if (this.tutorial) {
@@ -532,17 +512,6 @@ export default {
   width: 100%;
 }
 
-.score {
-  position: fixed;
-  bottom: 10px;
-  left: 10px;
-  font-size: 3.5em;
-  opacity: 0.3;
-  font-family: "Dosis", sans-serif;
-  display: flex;
-  flex-direction: column;
-}
-
 .perspective {
   transform: rotateX(30deg) scaleY(1.5);
   transform-origin: 50% 100%;
@@ -597,20 +566,6 @@ export default {
   }
 }
 
-@media only screen and (max-width: 1000px) {
-  /* mobile */
-  .score {
-    top: 10px;
-    right: 10px;
-    bottom: auto;
-    left: auto;
-    font-size: 1.5em;
-    font-family: "Nova Mono", monospace;
-    flex-direction: column-reverse;
-    text-align: right;
-  }
-}
-
 .pause_button {
   cursor: pointer;
   position: absolute;
@@ -653,13 +608,6 @@ export default {
   font-size: 0.8em;
   width: 90%;
   text-align: center;
-}
-
-.performanceWarning {
-  font-size: 0.5em;
-  background: orange;
-  color: white;
-  padding: 5px;
 }
 
 .no-events {

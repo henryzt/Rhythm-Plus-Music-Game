@@ -434,7 +434,7 @@ export default {
       this.instance.destroyInstance();
       this.isGameEnded = true;
       let achievementPromise = Promise.resolve();
-      if (isGameOver) {
+      if (isGameOver === true) {
         this.$router.push("/game-over/" + this.currentSong.sheetId);
         this.reportExit("failed");
         logEvent("game_failed");

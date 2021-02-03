@@ -3,7 +3,12 @@
     <div class="health_bar_wrapper" v-if="!vm.noFail">
       <div class="health_bar" :style="barStyle"></div>
     </div>
-    <div class="low_health" v-if="!vm.instance.paused && vm.health < 20"></div>
+    <transition name="modal-fade">
+      <div
+        class="low_health"
+        v-if="!vm.instance.paused && vm.health < 20"
+      ></div>
+    </transition>
     <div class="score" v-if="vm.instance">
       <div
         class="performanceWarning"
@@ -50,11 +55,10 @@ export default {
     barStyle() {
       const health = this.vm.health;
       let colour = "rgb(53, 211, 53)";
-      if (!health) return {};
-      if (health < 100) colour = "#cceb34";
-      if (health < 70) colour = "yellow";
-      if (health < 40) colour = "orange";
       if (health < 30) colour = "red";
+      else if (health < 40) colour = "orange";
+      else if (health < 70) colour = "yellow";
+      else if (health < 100) colour = "#cceb34";
       return {
         width: health + "%",
         backgroundColor: colour,
@@ -107,7 +111,7 @@ export default {
   right: 0;
   width: 100vw;
   height: 100vh;
-  animation: health_low 2s ease infinite;
+  animation: health_low 5s ease infinite;
   box-shadow: inset 0 0 180px 50px red;
 }
 
@@ -133,7 +137,7 @@ export default {
     opacity: 0.8;
   }
   50% {
-    opacity: 0;
+    opacity: 0.3;
   }
   100% {
     opacity: 0.8;

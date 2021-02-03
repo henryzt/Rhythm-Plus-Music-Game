@@ -65,10 +65,8 @@ export default {
 }
 
 .gameover {
-  font-family: "Anton", Impact, "Raleway", "Arial Narrow Bold", sans-serif;
   font-size: 5em;
   color: white;
-  text-shadow: 2px 2px 50px rgb(150, 0, 0);
   margin-bottom: 50px;
   width: 90vw;
   animation: fail_enter 1.5s ease;

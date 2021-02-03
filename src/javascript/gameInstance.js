@@ -479,7 +479,7 @@ export default class GameInstance {
       this.vm.currentSong.endAt ?? this.vm.currentSong.length + gameStartAt;
     if (this.currentTime >= gameEndAt) {
       if (!this.vm.inEditor) {
-        this.vm.gameEnded();
+        this.vm.gameEnded(false);
       } else if (!this.paused) {
         this.vm.pauseGame();
         this.seekTo(gameEndAt);

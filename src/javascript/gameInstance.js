@@ -489,7 +489,7 @@ export default class GameInstance {
         );
       }
     }
-    if (!this.noFail && this.vm.health <= 0) {
+    if (!this.vm.inEditor && !this.noFail && this.vm.health <= 0) {
       this.vm.gameEnded(true);
     }
   }

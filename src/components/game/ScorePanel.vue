@@ -113,6 +113,7 @@ export default {
   height: 100vh;
   animation: health_low 5s ease infinite;
   box-shadow: inset 0 0 180px 50px red;
+  pointer-events: none;
 }
 
 @media only screen and (max-width: 1000px) {

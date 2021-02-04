@@ -124,27 +124,27 @@
       <Loading :show="!songList || songList.length === 0" :delay="true"
         >Fetching Latest Songs...</Loading
       >
-    </v-bar>
 
-    <!-- song suggestion modal -->
-    <Modal
-      ref="suggest"
-      :showOk="false"
-      cancelText="Done"
-      titleText="Suggest a Song"
-    >
-      <template>
-        <iframe
-          src="https://docs.google.com/forms/d/e/1FAIpQLSf4nNnTn0vmYjWYbq3TeC6epuN8xkEhxlWONrtIMMZbgLJ38w/viewform?embedded=true"
-          style="width: 100%;"
-          height="500"
-          frameborder="0"
-          marginheight="0"
-          marginwidth="0"
-          >Loading…</iframe
-        >
-      </template>
-    </Modal>
+      <!-- song suggestion modal -->
+      <Modal
+        ref="suggest"
+        :showOk="false"
+        cancelText="Done"
+        titleText="Suggest a Song"
+      >
+        <template>
+          <iframe
+            src="https://docs.google.com/forms/d/e/1FAIpQLSf4nNnTn0vmYjWYbq3TeC6epuN8xkEhxlWONrtIMMZbgLJ38w/viewform?embedded=true"
+            style="width: 100%;"
+            height="500"
+            frameborder="0"
+            marginheight="0"
+            marginwidth="0"
+            >Loading…</iframe
+          >
+        </template>
+      </Modal>
+    </v-bar>
   </div>
 </template>
 

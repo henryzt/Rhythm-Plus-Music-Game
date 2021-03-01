@@ -68,7 +68,7 @@
     "eslint-plugin-vue": "^7.0.1",
     "file-loader": "^6.0.0",
     "html-webpack-plugin": "^4.3.0",
-    "husky": "^4.2.5",
+    "husky": "^5.1.2",
     "less": "^3.12.2",
     "less-loader": "^7.0.1",
     "lint-staged": "^10.2.11",

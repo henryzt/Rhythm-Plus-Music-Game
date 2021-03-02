@@ -6,7 +6,7 @@
           <div class="title">Welcome to Rhythm Plus!</div>
           <img class="logo" :src="img.logo" />
           <div>
-            Rhythm+ is a web-based vertical scorlling rhythm game (VSRG), you
+            Rhythm+ is a web-based vertical scrolling rhythm game (VSRG), you
             can make, play, and share any songs from and with anyone!
           </div>
           <hr class="artist_hr" />
@@ -18,12 +18,12 @@
         <div class="texts">
           <div class="title">How to play - Keys</div>
           <div>
-            Each track has an asscoiated key, for a 4 track game, D, F, J, K,
+            Each track has an associated key, for a 4 track game, D, F, J, K,
             associates to track 1-4 respectively.
           </div>
           <img class="logo" :src="img.a" />
           <div>
-            On mobile devices, simply tap the white hit line to toggle the
+            On mobile devices, simply tap the hit line to toggle the
             track. Try it now!
           </div>
           <div class="text_button" @click="skip">Skip</div>

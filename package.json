@@ -19,7 +19,7 @@
     "test": "echo \"no test specified yet\" && exit 0"
   },
   "dependencies": {
-    "@sentry/browser": "^5.20.0",
+    "@sentry/browser": "^6.2.1",
     "@sentry/integrations": "^6.2.0",
     "animate.css": "^4.1.0",
     "axios": "^0.21.0",

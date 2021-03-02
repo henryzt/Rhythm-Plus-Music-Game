@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@sentry/browser": "^5.20.0",
-    "@sentry/integrations": "^5.20.0",
+    "@sentry/integrations": "^6.2.0",
     "animate.css": "^4.1.0",
     "axios": "^0.21.0",
     "countup.js": "^2.0.5",

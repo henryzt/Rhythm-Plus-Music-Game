@@ -24,7 +24,7 @@ export default {
     },
     hanldeClick() {
       this.$store.state.audio.playEffect("ui/power");
-      this.$emit("click", null);
+      this.$emit("click");
     },
   },
 };

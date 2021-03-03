@@ -81,7 +81,7 @@ export default {
     },
     handleHover(e) {
       const text = e.target.innerText;
-      if (!text || text == this.lastText) return;
+      if (!text || text === this.lastText) return;
       this.$store.state.audio.playHoverEffect("ui/ta");
       this.lastText = text;
     },

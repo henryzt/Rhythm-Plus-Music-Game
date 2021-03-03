@@ -18,8 +18,8 @@
         <div class="texts">
           <div class="title">How to play - Keys</div>
           <div>
-            Each track has an associated key, for a 4 track game, D, F, J, K,
-            associates to track 1-4 respectively.
+            Each track has an associated key bind. For a game with 4 tracks, keys D, F, J and K,
+            corresponds to tracks 1, 2, 3 and 4 respectively.
           </div>
           <img class="logo" :src="img.a" />
           <div>

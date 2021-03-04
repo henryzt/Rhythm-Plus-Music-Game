@@ -41,7 +41,9 @@
     "no-console": ["error", { "allow": ["warn", "error", "log"] }],
     "max-classes-per-file": 0,
     "vue/custom-event-name-casing": "warn",
-    "vue/no-mutating-props": "warn"
+    "vue/no-mutating-props": "warn",
+    "curly": [2, "multi-line"],
+    "quotes": ["error", "double"]
   },
   "env": {
     "es6": true,

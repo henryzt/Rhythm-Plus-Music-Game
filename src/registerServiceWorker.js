@@ -1,7 +1,7 @@
 import { register } from "register-service-worker";
 import { logEvent } from "./helpers/analytics";
 
-register(`/service-worker.js`, {
+register("/service-worker.js", {
   ready() {
     Logger.log(
       "App is being served from cache by a service worker.\n" +

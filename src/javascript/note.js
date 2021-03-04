@@ -226,8 +226,13 @@ export default class Note {
   }
 
   playSoundEffect() {
-    if (!this.vm.inEditor || !this.vm.options.soundEffect || !this.vm.playMode)
+    if (
+      !this.vm.inEditor ||
+      !this.vm.options.soundEffect ||
+      !this.vm.playMode
+    ) {
       return;
+    }
     if (!this.sePlayed && this.y >= this.game.checkHitLineY) {
       this.sePlayed = true;
       this.vm.$store.state.audio.playEffect("du", true);
@@ -235,8 +240,9 @@ export default class Note {
   }
 
   vibrate(pattern) {
-    if (this.vm.vibrate && window.navigator.vibrate)
+    if (this.vm.vibrate && window.navigator.vibrate) {
       window.navigator.vibrate(pattern);
+    }
   }
 
   judgeDisplay() {

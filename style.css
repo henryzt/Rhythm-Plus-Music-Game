@@ -1,0 +1,538 @@
+@import url("https://fonts.googleapis.com/css2?family=Dosis&family=Anton&family=Montserrat&family=Nova+Mono&family=Raleway&display=swap");
+
+body {
+  padding: 0;
+  margin: 0;
+  background: black;
+  color: white;
+  font-family: "Raleway";
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0.3);
+  scrollbar-width: none; /* Also needed to disable scrollbar Firefox */
+  -ms-overflow-style: none; /* Disable scrollbar IE 10+ */
+  overflow-y: scroll;
+}
+
+.loading_ph {
+  opacity: 0.5;
+}
+
+.loading_logo {
+  max-width: 350px;
+  padding: 20px 0;
+  width: 100%;
+}
+
+.logo {
+  max-width: 550px;
+  padding: 50px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+a {
+  color: white;
+}
+
+/* songlist and settings  */
+.mContainer {
+  /* perspective: 100em; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: 2s;
+  white-space: nowrap;
+  margin-top: 30px;
+  margin-bottom: 300px !important;
+  max-width: 780px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hidden {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.blurFilter {
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  z-index: 100;
+}
+
+.blurBackground {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.gameWrapper {
+  perspective: 600px;
+}
+
+.pageTitle {
+  font-size: 2.3em;
+  font-weight: bold;
+  text-align: center;
+  padding: 10px;
+  margin-top: 70px;
+  animation-name: fadeInDown;
+  animation-duration: 1s;
+}
+
+#gameCanvas {
+  transition: 2s;
+  transform-origin: 50% 100%;
+}
+
+#effectCanvas {
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+}
+
+#visualizerBarBG {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  left: 0;
+  top: 0;
+  z-index: 10;
+  filter: blur(8px);
+  -webkit-filter: blur(8px);
+  opacity: 0.25;
+  background-color: midnightblue;
+  pointer-events: none;
+}
+
+.flex_hori {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-around;
+  text-align: center;
+}
+
+.center_logo {
+  text-align: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  animation-name: enter;
+  animation-duration: 1s;
+}
+
+.center {
+  text-align: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.flex_spacer {
+  flex-grow: 1;
+}
+
+img {
+  pointer-events: none;
+}
+
+.disabled {
+  opacity: 0.6;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.enterAnimation {
+  animation-name: enter;
+  animation-duration: 1s;
+}
+
+#ytPlayer {
+  position: fixed;
+  width: 100vw;
+  height: 140vh;
+  left: 0;
+  top: -20vh;
+  z-index: -100;
+}
+
+.visualizer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  width: 100%;
+}
+
+.text_button {
+  padding: 10px;
+  cursor: pointer;
+  z-index: 100;
+  transition: 1s;
+  opacity: 0.5;
+  width: fit-content;
+  margin: auto;
+}
+
+.text_button:hover {
+  transform: scale(1.2);
+  opacity: 1;
+}
+
+*.unselectable {
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.ui-shadow {
+  box-shadow: 4px 3px 24px -2px rgba(0, 0, 0, 0.8);
+}
+
+/* modal */
+.btn-action {
+  cursor: pointer;
+  color: white;
+  background: transparent;
+  padding: 10px;
+  min-width: 80px;
+  margin: 0 10px;
+  text-align: center;
+  transition: 0.5s;
+}
+
+.btn-action:hover {
+  color: gray;
+  background: rgba(255, 255, 255, 0.527);
+}
+
+.btn-dark {
+  max-width: 200px;
+  margin: 10px auto;
+  background: rgba(122, 122, 122, 0.2);
+}
+
+.modal .btn-dark {
+  background: rgba(78, 78, 78, 0.2);
+}
+
+.btn-dark:hover {
+  background: rgb(255, 255, 255);
+}
+
+.btn-close {
+  border: none;
+  font-size: 20px;
+  font-weight: bold;
+  padding: 2px;
+  margin: 0;
+  min-width: 20px;
+}
+
+.modal-fade-enter,
+.modal-fade-leave-active {
+  transform: scale(1.2);
+  opacity: 0;
+}
+
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: 0.5s;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  z-index: 100;
+}
+
+.modal {
+  background: rgba(255, 255, 255, 0.5);
+  overflow-x: auto;
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  max-width: 500px;
+  box-shadow: 0px 10px 50px 10px rgb(153 153 153 / 25%);
+}
+
+/* checkboxes */
+/* ref https://www.w3schools.com/howto/howto_css_custom_checkbox.asp */
+
+/* The container */
+.cb_container {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  cursor: pointer;
+  font-size: 18px;
+  text-align: center;
+  margin: 10px auto;
+  width: 190px;
+}
+
+/* Hide the browser's default checkbox */
+.cb_container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+  transition: 0.5s;
+}
+
+/* On mouse-over, add a grey background color */
+.cb_container:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.cb_container input:checked ~ .checkmark {
+  background-color: rgb(228, 121, 0);
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.cb_container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.cb_container .checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+}
+
+/* small cb */
+
+.cb_small {
+  padding-left: 0px;
+  font-size: 14px;
+  width: auto;
+}
+
+.cb_small .checkmark:after {
+  left: 4px;
+  top: 0px;
+}
+
+.cb_small .checkmark {
+  height: 15px;
+  width: 15px;
+}
+
+.cb_small input {
+  position: relative;
+}
+
+/* inputs */
+
+input[type="text"],
+input[type="number"],
+input[type="submit"],
+input[type="button"],
+select,
+.songSelect .vs__dropdown-toggle,
+.input {
+  background-color: rgba(109, 109, 109, 0.7);
+  color: white;
+  padding: 6px 15px;
+  margin: 3px 0;
+  box-sizing: border-box;
+  border: 3px solid transparent;
+  transition: 0.5s;
+  outline: none;
+  width: 100%;
+}
+
+input[type="text"]:hover,
+input[type="number"]:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover,
+.songSelect .vs__dropdown-toggle:hover,
+select:hover,
+.input:hover {
+  border: 3px solid rgb(150, 150, 150);
+}
+
+.songSelect .vs__dropdown-toggle {
+  border-radius: 0;
+  padding: 3px 6px;
+  font-size: 13px;
+}
+
+.vs__search {
+  color: white;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="submit"]:focus,
+input[type="button"]:focus,
+select:focus,
+.input:focus {
+  border: 3px solid #ccc;
+}
+
+input::placeholder {
+  color: rgb(255, 255, 255);
+  opacity: 0.35;
+}
+
+/* scrollbar - todo */
+@-moz-document url-prefix() {
+  /* Disable scrollbar Firefox */
+  html {
+    scrollbar-width: none;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  background: transparent;
+}
+
+::-webkit-scrollbar-track {
+  background: none;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(223, 223, 223, 0.5);
+  border-radius: 10px;
+  transition: 0.5s;
+  width: 1px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(145, 145, 145, 1);
+}
+
+::-webkit-scrollbar-corner {
+  display: none;
+}
+
+.fullPage {
+  height: 100%;
+  width: 100%;
+}
+
+.scrollBar ::-webkit-scrollbar {
+  width: 3px;
+  min-height: 5px;
+  background: transparent;
+}
+
+.scrollBar ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 1px;
+  width: 3px;
+  min-height: 5px;
+}
+
+.scrollBar ::-webkit-scrollbar-thumb:hover {
+  background: white;
+}
+
+#firebaseui-auth-container {
+  z-index: 1000;
+}
+#firebaseui-auth-container input[type="text"] {
+  background-color: white;
+  padding-left: 0;
+  color: black;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.slide-in-enter-active,
+.slide-in-leave-active,
+.slide-in-enter,
+.slide-in-move,
+.slide-in-leave-to {
+  transform: none;
+  transition: opacity 0.5s, transform 0.5s, margin 0.5s 0.5s;
+}
+
+.slide-in-enter {
+  opacity: 0;
+  transform: translateX(-1em);
+}
+.slide-in-leave-to {
+  opacity: 0;
+  margin: 0;
+  transform: translateX(1em);
+  margin-top: -130px;
+}
+
+.blink_me {
+  opacity: 0.5;
+  animation: blinker 2s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0.2;
+  }
+}
+
+@keyframes enter {
+  from {
+    top: 30%;
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media only screen and (max-width: 1000px) {
+  .ytPlayerMobileExtend {
+    width: 249vh !important;
+    transform: translateX(calc(50vw - 124.5vh));
+  }
+
+  .slide-in-leave-to {
+    margin-top: -100px;
+  }
+}

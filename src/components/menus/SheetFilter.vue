@@ -1,5 +1,5 @@
 <template>
-  <div class="animate__animated animate__fadeIn">
+  <div class="animate__animated animate__fadeIn" v-if="songs">
     <transition name="slide-fade" mode="out-in">
       <div class="flex_hori" key="1" v-if="!showSort">
         <div class="flex_hori tags">
@@ -74,21 +74,29 @@
 
     <!-- all tags -->
     <div v-if="showAllTags">
-      <v-bar class="flex_hori all_tags">
-        <div
-          class="clip clip_outlined"
-          @click="currentTag = null"
-          :class="{ active: currentTag === null }"
-        >
-          All
-        </div>
-        <div v-for="tag in tags.slice(0, 100)" :key="tag">
+      <v-bar
+        :ops="{
+          scrollPanel: {
+            scrollingX: true,
+          },
+        }"
+      >
+        <div class="flex_hori all_tags">
           <div
             class="clip clip_outlined"
-            @click="currentTag = tag"
-            :class="{ active: currentTag === tag }"
+            @click="currentTag = null"
+            :class="{ active: currentTag === null }"
           >
-            {{ tag }}
+            All
+          </div>
+          <div v-for="tag in tags.slice(0, 100)" :key="tag">
+            <div
+              class="clip clip_outlined"
+              @click="currentTag = tag"
+              :class="{ active: currentTag === tag }"
+            >
+              {{ tag }}
+            </div>
           </div>
         </div>
       </v-bar>
@@ -119,29 +127,20 @@ export default {
       tags: [],
       currentTag: null,
       showAllTags: false,
+      filteredSongs: [],
     };
   },
   async mounted() {
-    this.sort();
     this.tags = await getTags();
+    this.sort();
   },
   watch: {
     searchTerms() {
-      if (!this.searchTerms) {
-        this.$emit("sorted", this.filteredSongs);
-        return;
-      }
-      const term = this.searchTerms?.toLowerCase();
-      const isMatch = (s) => {
-        return (
-          s.title?.toLowerCase().includes(term) ||
-          s.subtitle?.toLowerCase().includes(term) ||
-          s.artist?.toLowerCase().includes(term)
-        );
-      };
-      this.$emit("sorted", this.filteredSongs.filter(isMatch));
+      this.playEffect("ui/click");
+      this.sort();
     },
     showSearch() {
+      this.playEffect("ui/click");
       if (this.showSearch) {
         this.showSort = false;
       } else {
@@ -149,25 +148,48 @@ export default {
       }
     },
     showSort() {
+      this.playEffect("ui/click");
       if (this.showSort) {
         this.showSearch = false;
       }
     },
+    showAllTags() {
+      this.playEffect("ui/click");
+    },
     currentTag() {
-      this.$emit("sorted", this.filteredSongs);
+      this.playEffect("ui/slide2");
+      this.sort();
+    },
+    songs() {
+      this.sort();
     },
   },
   computed: {
-    filteredSongs() {
-      return this.currentTag
-        ? this.songs.filter((e) => e.tags.includes(this.currentTag))
-        : this.songs;
-    },
     sortIcon() {
       return this.reverseSort ? "arrow-up" : "arrow-down";
     },
   },
   methods: {
+    emitResult() {
+      if (this.currentTag)
+        this.filteredSongs = this.filteredSongs.filter((e) =>
+          e.tags.includes(this.currentTag)
+        );
+
+      if (!this.searchTerms) {
+        this.$emit("sorted", this.filteredSongs);
+      } else {
+        const term = this.searchTerms?.toLowerCase();
+        const isMatch = (s) => {
+          return (
+            s.title?.toLowerCase().includes(term) ||
+            s.subtitle?.toLowerCase().includes(term) ||
+            s.artist?.toLowerCase().includes(term)
+          );
+        };
+        this.$emit("sorted", this.filteredSongs.filter(isMatch));
+      }
+    },
     finishSort(sortName, changeReverse) {
       if (changeReverse) {
         if (this.currentSort === sortName) {
@@ -176,20 +198,24 @@ export default {
           this.reverseSort = false;
         }
       }
-      if (this.reverseSort) this.songs.reverse();
+      if (this.reverseSort) this.filteredSongs.reverse();
       this.currentSort = sortName;
-      this.$emit("sorted", this.filteredSongs);
+      this.emitResult();
     },
     sortByTitle() {
-      this.songs.sort((a, b) => a.title.localeCompare(b.title));
+      this.filteredSongs.sort((a, b) => a.title.localeCompare(b.title));
     },
     sortByArtist() {
-      this.songs.sort((a, b) => a.artist.localeCompare(b.artist));
+      this.filteredSongs.sort((a, b) => a.artist.localeCompare(b.artist));
     },
     sortByDate() {
-      this.songs.sort((a, b) => b.dateCreated.seconds - a.dateCreated.seconds);
+      this.filteredSongs.sort(
+        (a, b) => b.dateUpdated.seconds - a.dateUpdated.seconds
+      );
     },
     sort(by, changeReverse) {
+      if (!this.songs) return;
+      this.filteredSongs = [...this.songs];
       const sortBy = by ?? this.currentSort;
       switch (sortBy) {
         case "title":
@@ -203,6 +229,12 @@ export default {
           break;
       }
       this.finishSort(sortBy, changeReverse);
+      if (changeReverse) {
+        this.playEffect("ui/slide1");
+      }
+    },
+    playEffect(effect) {
+      this.$store.state.audio.playEffect(effect);
     },
   },
 };

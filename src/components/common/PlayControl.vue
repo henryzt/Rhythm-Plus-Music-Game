@@ -35,6 +35,15 @@
     <p>
       <label></label>
       <Checkbox
+        label="No Fail"
+        :model="playData"
+        modelKey="noFail"
+        :cbStyle="cbStyle"
+      ></Checkbox>
+    </p>
+    <p>
+      <label></label>
+      <Checkbox
         label="Vibration"
         :model="playData"
         modelKey="vibrate"

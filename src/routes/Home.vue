@@ -8,7 +8,7 @@
           ($store.state.theme ? $store.state.theme.logoAsset : 'logo2.png')
         "
       />
-      <Button text="Start Game" @click="goToGame"></Button>
+      <StartButton text="Start Game" @click="goToGame"></StartButton>
       <div class="text_button" @click="goToAuth">
         {{
           $store.state.authed
@@ -27,13 +27,13 @@
 </template>
 
 <script>
-import Button from "../components/ui/Button.vue";
+import StartButton from "../components/ui/StartButton.vue";
 import AlphaNotice from "../components/menus/AlphaNotice.vue";
 
 export default {
   name: "Home",
   components: {
-    Button,
+    StartButton,
     AlphaNotice,
   },
   data() {

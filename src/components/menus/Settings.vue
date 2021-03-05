@@ -98,7 +98,7 @@
         <p>
           <label></label>
           <Checkbox
-            label="Sync Plays to YouTube History"
+            label="Sync Plays to YouTube"
             :model="appearanceSt"
             cbStyle="form"
             modelKey="syncYoutube"
@@ -198,6 +198,7 @@ export default {
       gameSt: {
         noteSpeed: 1,
         vibrate: true,
+        noFail: false,
         perspective: false,
         blur: false,
         fps: false,

@@ -1,8 +1,8 @@
 {
   "name": "rhythm-plus-game",
-  "version": "1.0.8",
+  "version": "1.1.0",
   "private": true,
-  "description": "Online Vertical Scrolling Rhythm Game",
+  "description": "Community based vertical scrolling rhythm game",
   "author": {
     "name": "henryz00"
   },
@@ -16,16 +16,17 @@
     "serve": "yarn run build && serve .",
     "update": "npm version patch -m 'Upgrade to %s' && git push && git push --tags",
     "deploy": "git push && yarn build && firebase deploy",
-    "test": "echo \"no test specified yet\" && exit 0"
+    "test": "echo \"no test specified yet\" && exit 0",
+    "prepare": "husky install"
   },
   "dependencies": {
-    "@sentry/browser": "^5.20.0",
-    "@sentry/integrations": "^5.20.0",
+    "@sentry/browser": "^6.2.1",
+    "@sentry/integrations": "^6.2.0",
     "animate.css": "^4.1.0",
     "axios": "^0.21.0",
     "countup.js": "^2.0.5",
     "firebase": "^8.2.1",
-    "firebaseui": "^4.5.1",
+    "firebaseui": "^4.7.1",
     "hammerjs": "^2.0.8",
     "howler": "^2.2.0",
     "js-md5": "^0.7.3",
@@ -38,15 +39,16 @@
     "vue-confetti": "^2.2.1",
     "vue-countup-v2": "^4.0.0",
     "vue-moment": "^4.1.0",
-    "vue-perfect-scrollbar": "^0.2.1",
     "vue-progressive-image": "^3.2.0",
     "vue-router": "^3.3.4",
     "vue-select": "^3.10.7",
     "vue-slider-component": "^3.1.5",
+    "vue-smooth-reflow": "^0.1.12",
     "vue-spinner": "^1.0.3",
     "vue-virtual-scroll-list": "^2.3.0",
     "vue-youtube": "^1.4.0",
     "vue2-circle-progress": "^1.2.3",
+    "vuescroll": "^4.17.3",
     "vuex": "^3.5.1"
   },
   "devDependencies": {
@@ -62,30 +64,24 @@
     "cross-env": "^7.0.3",
     "css-loader": "^3.5.3",
     "eslint": "^7.3.1",
-    "eslint-config-prettier": "^7.1.0",
+    "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-vue": "^7.0.1",
     "file-loader": "^6.0.0",
-    "html-webpack-plugin": "^4.3.0",
-    "husky": "^4.2.5",
-    "less": "^3.12.2",
-    "less-loader": "^7.0.1",
-    "lint-staged": "^10.2.11",
+    "html-webpack-plugin": "^5.2.0",
+    "husky": "^5.1.3",
+    "less": "^4.1.1",
+    "less-loader": "^8.0.0",
+    "lint-staged": "^10.5.4",
     "node-sass": "^5.0.0",
     "prettier": "^2.0.5",
-    "pug-plain-loader": "^1.0.0",
     "sass-loader": "^10.1.0",
     "url-loader": "^4.1.0",
     "vue-loader": "^15.9.3",
     "vue-template-compiler": "^2.6.11",
-    "webpack": "^4.43.0",
-    "webpack-cli": "^4.2.0",
-    "webpack-dev-server": "^3.11.0"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
+    "webpack": "^5.24.2",
+    "webpack-cli": "^4.5.0",
+    "webpack-dev-server": "^3.11.2"
   },
   "lint-staged": {
     "*.{js,vue}": [

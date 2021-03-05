@@ -73,7 +73,7 @@ export default class Audio {
     // randomly play background music
     let bgmUrlArr = [
       assetsBaseUrl + "aurora.mp3",
-      assetsBaseUrl + "kontekst.mp3",
+      assetsBaseUrl + "beyond.mp3",
     ];
     if (songToExclude && !bgmUrlArr.includes(songToExclude)) return; // is playing result bgm
     shuffle(bgmUrlArr);
@@ -83,13 +83,19 @@ export default class Audio {
     this.loadSong(bgmUrlArr[0], true);
   }
 
-  playEffect(url) {
+  playEffect(name) {
+    // 2nd param: override
+    const url = `/audio/effects/${name}.mp3`;
     const effectPlayer = new Howl({
       volume: 0.5,
       src: [url],
       loop: false,
     });
     effectPlayer.play();
+  }
+
+  playHoverEffect(name) {
+    if (window.innerWidth > 1000) this.playEffect(name);
   }
 
   stop(stopBackground) {

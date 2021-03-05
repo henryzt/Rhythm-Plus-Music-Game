@@ -165,8 +165,6 @@ import {
 import ICountUp from "vue-countup-v2";
 import VueCircle from "vue2-circle-progress/src/index.vue";
 import VanillaTilt from "vanilla-tilt";
-import "vue-awesome/icons/redo";
-import "vue-awesome/icons/arrow-right";
 
 export default {
   name: "Result",

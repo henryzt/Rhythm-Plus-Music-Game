@@ -83,6 +83,7 @@ export default {
   },
   methods: {
     show() {
+      if (!this.showModal) this.$store.state.audio.playEffect("ui/bonk");
       this.showModal = true;
       this.$nextTick(() => {
         this.addTilt();
@@ -101,11 +102,13 @@ export default {
       });
     },
     ok() {
+      if (this.showModal) this.$store.state.audio.playEffect("ui/pop");
       this.showModal = false;
       this.$emit("ok");
       if (this.resolve) this.resolve(true);
     },
     close() {
+      if (this.showModal) this.$store.state.audio.playEffect("ui/loose");
       this.showModal = false;
       this.$emit("close");
       if (this.resolve) this.resolve(false);

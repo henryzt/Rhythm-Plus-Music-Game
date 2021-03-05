@@ -118,7 +118,7 @@ export default class DropTrack {
 
   playSoundEffect() {
     if (!this.vm.inEditor || !this.vm.options.soundEffect) return;
-    this.vm.$store.state.audio.playEffect("/audio/effects/du.mp3");
+    this.vm.$store.state.audio.playEffect("du", true);
   }
 
   update() {
@@ -212,8 +212,9 @@ export class HitEffect {
     this.vm = vm;
   }
 
-  create(mX, y, mWidth, height, judge) {
+  create(mX, mY, mWidth, height, judge) {
     let x = mX + mWidth / 2 - 5;
+    let y = mY;
     if (this.vm.perspective) y -= 35;
     let width = 10;
     let count = 0;

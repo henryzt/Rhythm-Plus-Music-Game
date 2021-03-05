@@ -14,7 +14,7 @@
           style="height: 8vh; cursor: pointer; pointer-events: all;"
           @click="goToMenu"
         />
-        <div>Sheet Editor</div>
+        <div>Sheet Editor (Alpha)</div>
       </div>
       <div style="flex-grow: 1;"></div>
       <a href="#" @click.prevent="newEditor">New</a>

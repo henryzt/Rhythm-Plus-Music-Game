@@ -37,7 +37,7 @@ export default {
           this.visible = false;
         }, time);
       }
-      // this.$store.state.audio.playEffect("/audio/effects/error.mp3");
+      this.$store.state.audio.playEffect("ui/ping");
     },
     info(text, time) {
       this.className = "info";

@@ -8,17 +8,15 @@
     <ModalGlobal ref="gm"></ModalGlobal>
     <FloatingAlert ref="alert"></FloatingAlert>
     <transition name="fade" v-if="$store.state.audio">
-      <router-view
-        class="routerView"
-        :key="$route.path"
+      <keep-alive
+        :include="['SongSelect', 'MyStudio']"
         v-if="showOnPageRequireSignin && !$store.state.redirecting"
-      />
+      >
+        <router-view class="routerView" :key="$route.path" />
+      </keep-alive>
       <div v-else>
         <div class="center blink_me">
-          <img
-            src="/assets/logo2.png"
-            style="max-width: 350px; padding: 20px 0; width: 100%;"
-          />
+          <img src="/assets/logo2.png" class="loading_logo" />
           <div>Logging you in...</div>
         </div>
       </div>
@@ -41,6 +39,7 @@ import "vue-awesome/icons/cog";
 import "vue-awesome/icons/sign-out-alt";
 import "vue-awesome/icons/play";
 import "vue-awesome/icons/pause";
+import "vue-awesome/icons/arrow-right";
 
 export default {
   name: "App",
@@ -95,11 +94,6 @@ export default {
   opacity: 0;
 }
 
-.blink_me {
-  opacity: 0.5;
-  animation: blinker 2s linear infinite;
-}
-
 .routerView {
   position: fixed;
   width: 100%;
@@ -107,11 +101,5 @@ export default {
   top: 0;
   left: 0;
   overflow-y: scroll;
-}
-
-@keyframes blinker {
-  50% {
-    opacity: 0.2;
-  }
 }
 </style>

@@ -479,7 +479,7 @@ export default class GameInstance {
       this.vm.currentSong.endAt ?? this.vm.currentSong.length + gameStartAt;
     if (this.currentTime >= gameEndAt) {
       if (!this.vm.inEditor) {
-        this.vm.gameEnded();
+        this.vm.gameEnded(false);
       } else if (!this.paused) {
         this.vm.pauseGame();
         this.seekTo(gameEndAt);
@@ -488,6 +488,9 @@ export default class GameInstance {
           3000
         );
       }
+    }
+    if (!this.vm.inEditor && !this.noFail && this.vm.health <= 0) {
+      this.vm.gameEnded(true);
     }
   }
 
@@ -525,6 +528,7 @@ export default class GameInstance {
   resetPlaying(resetTimeArr) {
     clearInterval(this.intervalPlay);
     this.vm.started = false;
+    this.vm.health = 100;
     this.ytPlayer.resetVideo(this.startSongAt);
     this.clearNotes();
     if (resetTimeArr) this.timeArr = [];

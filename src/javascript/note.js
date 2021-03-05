@@ -75,6 +75,9 @@ export default class Note {
         this.missNote();
       }
     }
+    if (!this.vm.noFail && this.vm.health < 100 && this.percentage < 0.3) {
+      this.vm.health += 0.3 - this.percentage; // TODO health addition
+    }
   }
 
   hitAndCountScore(isHolding) {
@@ -106,6 +109,7 @@ export default class Note {
     this.vm.result.combo = 0;
     this.markJudge = "Miss";
     this.vm.fever.percent -= 0.1;
+    if (!this.vm.noFail) this.vm.health -= 3; // TODO exp health reduction
     this.vibrate([20, 20, 50]);
     this.judgeDisplay();
     this.noteFailed = true;
@@ -222,17 +226,23 @@ export default class Note {
   }
 
   playSoundEffect() {
-    if (!this.vm.inEditor || !this.vm.options.soundEffect || !this.vm.playMode)
+    if (
+      !this.vm.inEditor ||
+      !this.vm.options.soundEffect ||
+      !this.vm.playMode
+    ) {
       return;
+    }
     if (!this.sePlayed && this.y >= this.game.checkHitLineY) {
       this.sePlayed = true;
-      this.vm.$store.state.audio.playEffect("/audio/effects/du.mp3");
+      this.vm.$store.state.audio.playEffect("du", true);
     }
   }
 
   vibrate(pattern) {
-    if (this.vm.vibrate && window.navigator.vibrate)
+    if (this.vm.vibrate && window.navigator.vibrate) {
       window.navigator.vibrate(pattern);
+    }
   }
 
   judgeDisplay() {

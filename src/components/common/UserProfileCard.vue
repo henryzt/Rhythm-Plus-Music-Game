@@ -1,23 +1,25 @@
 <template>
-  <div class="profile_card" :class="{ extend }">
+  <div class="profile_card" :class="{ extend }" @click="handleClick">
     <div class="controls shadow" v-if="!extend">
       <v-icon
         :name="$store.state.audio.muteBg ? 'volume-mute' : 'volume-up'"
         scale="1.3"
+        @mouseenter="handleHover"
         @click="$store.state.audio.toggleBgMute()"
       />
       <v-icon
         :name="$store.state.isFullscreen ? 'compress' : 'expand'"
         scale="1.3"
+        @mouseenter="handleHover"
         @click="$store.commit('toggleFullscreen')"
       />
     </div>
 
     <div
-      class="shadow"
+      class="shadow cardWrapper"
       v-if="($store.state.authed && userProfile) || overrideProfile"
       @click="goToAccount"
-      style="display: flex; align-items: center;"
+      @mouseenter="handleHover"
     >
       <img v-if="userProfile.photoURL" :src="userProfile.photoURL" />
       <div class="detail">
@@ -95,6 +97,12 @@ export default {
     goToAccount() {
       if (!this.extend) this.$router.push("/account");
     },
+    handleClick() {
+      this.$store.state.audio.playEffect("ui/pop");
+    },
+    handleHover() {
+      if (!this.extend) this.$store.state.audio.playHoverEffect("ui/ta");
+    },
   },
 };
 </script>
@@ -129,10 +137,12 @@ export default {
   z-index: 500;
   -webkit-tap-highlight-color: transparent;
 }
+
 .detail {
   display: flex;
   flex-direction: column;
   padding: 10px;
+  width: 100%;
 }
 img {
   max-width: 50px;
@@ -153,6 +163,7 @@ img {
   font-size: 1.2em;
   cursor: auto;
   text-align: left;
+  width: 100%;
 }
 
 .extend .shadow {
@@ -165,10 +176,19 @@ img {
   max-height: 100px;
 }
 
+.cardWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.extend .cardWrapper {
+  width: 100%;
+}
+
 .wrapper {
   width: 100%;
   max-width: 200px;
-  min-width: 170px;
+  min-width: 140px;
 }
 
 .progress-bar {

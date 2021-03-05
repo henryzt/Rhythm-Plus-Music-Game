@@ -24,6 +24,7 @@ export default {
         marks: { perfect: 0, good: 0, offbeat: 0, miss: 0 },
       },
       fever: { value: 1, time: 0, percent: 0 },
+      health: 100,
       feverInterval: null,
       srcMode: "youtube",
       instance: null,
@@ -31,6 +32,7 @@ export default {
       youtubeId: "caCqu-p_wZc",
       perspective: false,
       vibrate: true,
+      noFail: false,
       fps: false,
       advancedMenuOptions: false,
       started: false,
@@ -92,6 +94,7 @@ export default {
       this.blur = gameSettings.blur;
       this.noteSpeed = gameSettings.noteSpeed ?? 1;
       this.perspective = gameSettings.perspective;
+      this.noFail = gameSettings.noFail;
       this.vibrate = gameSettings.vibrate;
       this.fps = gameSettings.fps;
     }
@@ -132,12 +135,12 @@ export default {
       if (this.fever.value < 1) this.fever.value = 1;
       if (this.fever.percent < 0) this.fever.percent = 0;
       if (this.fever.percent >= 1) {
-        // this.audio.playEffect("/audio/effects/swoosh2.mp3");
         this.fever.percent = 0;
         this.fever.time = 30;
         this.fever.value =
           this.fever.value < 5 ? this.fever.value + 1 : this.fever.value;
         this.$refs?.zoom?.show("X" + this.fever.value, "45%", "fever");
+        this.$store.state.audio.playEffect("explode");
       }
       if (this.fever.time > 0) {
         this.fever.time -= 0.5;

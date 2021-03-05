@@ -66,27 +66,7 @@
     ></Visualizer>
 
     <!-- score panel -->
-    <div class="score" v-if="instance">
-      <div
-        class="performanceWarning"
-        v-if="fps && started && !instance.paused && instance.fps < 35"
-      >
-        Game Performance Degraded
-      </div>
-      <div style="font-size: 0.5em;" v-if="fps && instance.fps">
-        {{ instance.fps }} FPS
-      </div>
-      <div style="font-size: 0.5em;">
-        <ICountUp
-          :endVal="percentage"
-          :options="{ decimalPlaces: 2, duration: 1 }"
-        />%
-      </div>
-      <ICountUp
-        :endVal="result.score"
-        :options="{ decimalPlaces: 0, duration: 1 }"
-      />
-    </div>
+    <ScorePanel></ScorePanel>
 
     <!-- youtube player -->
     <div><!-- for mp3 mode youtube bug --></div>
@@ -122,6 +102,7 @@
             advancedMenuOptions = true;
             $refs.menu.show();
           "
+          @mouseenter="handleHover"
         >
           <v-icon name="cog" scale="1.5" />
         </div>
@@ -131,6 +112,7 @@
           class="modal blurBackground"
           :class="{ darker: hideGameForYtButton }"
           ref="playButton"
+          @mouseenter="handleHover"
         >
           <div
             class="modal-body"
@@ -143,7 +125,7 @@
           </div>
         </div>
         <!-- info button -->
-        <div @click="showInfoMenu">
+        <div @click="showInfoMenu" @mouseenter="handleHover">
           <div class="flex_hori start_page_button">
             <v-icon name="info-circle" scale="1.5" />
           </div>
@@ -152,14 +134,23 @@
         <div class="youtube_notice" v-if="srcMode === 'youtube'">
           Powered by YouTube.
           <br />
-          All copyright and revenue goes to the video owner.
+          Video copyright goes to the owner.
         </div>
       </div>
     </transition>
 
     <!-- loading popup -->
-    <Loading style="z-index: 200;" :show="instance && instance.loading"
+    <Loading
+      style="z-index: 200;"
+      :show="instance && instance.loading && !youtubeBuffering"
       >Song Loading...</Loading
+    >
+    <Loading
+      style="z-index: 200;"
+      :show="youtubeBuffering"
+      :delay="true"
+      :delayLength="3000"
+      >Buffering...</Loading
     >
     <Loading style="z-index: 600;" :show="isGameEnded && !showingAchievement"
       >Syncing Results...</Loading
@@ -216,7 +207,7 @@
             <div
               class="btn-action btn-dark"
               style="display: inline-block;"
-              @click="started ? resumeGame(true) : hideMenu()"
+              @click="started ? resumeGame(true) : hideMenu(true)"
             >
               Done
             </div>
@@ -254,6 +245,7 @@ import ProgressBar from "../components/game/ProgressBar.vue";
 import Countdown from "../components/game/Countdown.vue";
 import MarkComboJudge from "../components/game/MarkComboJudge.vue";
 import Tutorial from "../components/game/Tutorial.vue";
+import ScorePanel from "../components/game/ScorePanel.vue";
 import GameMixin from "../mixins/gameMixin";
 import { Youtube } from "vue-youtube";
 import {
@@ -263,7 +255,6 @@ import {
   updatePlay,
 } from "../javascript/db";
 import { logEvent, logError } from "../helpers/analytics";
-import ICountUp from "vue-countup-v2";
 import VanillaTilt from "vanilla-tilt";
 import "vue-awesome/icons/regular/pause-circle";
 import "vue-awesome/icons/play";
@@ -279,7 +270,6 @@ export default {
     Youtube,
     Loading,
     Modal,
-    ICountUp,
     ZoomText,
     Navbar,
     ProgressBar,
@@ -287,6 +277,7 @@ export default {
     SheetDetailLine,
     MarkComboJudge,
     Tutorial,
+    ScorePanel,
   },
   mixins: [GameMixin],
   data() {
@@ -294,6 +285,7 @@ export default {
       playId: null,
       showingAchievement: false,
       tutorial: false,
+      youtubeBuffering: false,
     };
   },
   computed: {
@@ -340,9 +332,13 @@ export default {
         logError("song_load_error_" + sheetId);
       }
     },
+    handleHover() {
+      this.$store.state.audio.playHoverEffect("ui/ta");
+    },
     songLoaded() {
       Logger.log("playing");
       this.instance.loading = false;
+      this.youtubeBuffering = false;
       if (!this.started) {
         // first loaded
         this.showStartButton = true;
@@ -373,6 +369,7 @@ export default {
       this.showStartButton = false;
       if (this.srcMode === "youtube") {
         this.instance.loading = true;
+        this.youtubeBuffering = true;
         this.ytPlayer?.playVideo();
         this.ytPlayer?.setVolume(0);
       } else {
@@ -390,15 +387,16 @@ export default {
       this.instance.pauseGame();
       this.$refs.menu.show();
     },
-    hideMenu() {
+    hideMenu(safeClose) {
       this.advancedMenuOptions = false;
-      this.$refs.menu.close();
+      if (safeClose) this.$refs.menu.ok();
+      else this.$refs.menu.close();
     },
     showInfoMenu() {
       this.$refs.info.show();
     },
     resumeGame(fromMenu) {
-      this.hideMenu();
+      this.hideMenu(true);
       if (!fromMenu) {
         this.$refs.countdown.clear();
         this.instance.resumeGame();
@@ -432,10 +430,16 @@ export default {
       this.updatePlay(data);
       logEvent("game_exited", data);
     },
-    async gameEnded() {
+    async gameEnded(isGameOver) {
       this.instance.destroyInstance();
       this.isGameEnded = true;
       let achievementPromise = Promise.resolve();
+      if (isGameOver === true) {
+        this.$router.push("/game-over/" + this.currentSong.sheetId);
+        this.reportExit("failed");
+        logEvent("game_failed");
+        return;
+      }
       if (this.tutorial) {
         this.exitGame(null, "tutorial-ends");
         return;
@@ -444,6 +448,7 @@ export default {
         this.showingAchievement = true;
         this.$refs.zoom.show("Full Combo");
         this.$confetti.start();
+        this.$store.state.audio.playEffect("wow");
         achievementPromise = new Promise((resolve) => {
           setTimeout(() => {
             this.showingAchievement = false;
@@ -507,17 +512,6 @@ export default {
   width: 100%;
 }
 
-.score {
-  position: fixed;
-  bottom: 10px;
-  left: 10px;
-  font-size: 3.5em;
-  opacity: 0.3;
-  font-family: "Dosis", sans-serif;
-  display: flex;
-  flex-direction: column;
-}
-
 .perspective {
   transform: rotateX(30deg) scaleY(1.5);
   transform-origin: 50% 100%;
@@ -572,20 +566,6 @@ export default {
   }
 }
 
-@media only screen and (max-width: 1000px) {
-  /* mobile */
-  .score {
-    top: 10px;
-    right: 10px;
-    bottom: auto;
-    left: auto;
-    font-size: 1.5em;
-    font-family: "Nova Mono", monospace;
-    flex-direction: column-reverse;
-    text-align: right;
-  }
-}
-
 .pause_button {
   cursor: pointer;
   position: absolute;
@@ -628,13 +608,6 @@ export default {
   font-size: 0.8em;
   width: 90%;
   text-align: center;
-}
-
-.performanceWarning {
-  font-size: 0.5em;
-  background: orange;
-  color: white;
-  padding: 5px;
 }
 
 .no-events {

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div @mousedown="mouseDown" @mouseup="mouseUp">
     <!-- no bg style -->
     <label v-if="cbStyle === 'no-bg'" class="cb_container">
       {{ label }}
@@ -29,7 +29,20 @@
 export default {
   name: "Checkbox",
   props: ["label", "model", "modelKey", "cbStyle"],
+  methods: {
+    mouseDown() {
+      this.$store.state.audio.playEffect("ui2/pop-down");
+    },
+    mouseUp() {
+      const state = this.model[this.modelKey];
+      this.$store.state.audio.playEffect(`ui2/pop-up-${state ? "off" : "on"}`);
+    },
+  },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.cb_container:active:hover {
+  transform: scale(0.95);
+}
+</style>

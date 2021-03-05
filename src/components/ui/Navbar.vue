@@ -1,8 +1,12 @@
 <template>
-  <div>
+  <div
+    @click="handleClick"
+    @mouseover="handleHover"
+    @mouseleave="lastText = null"
+  >
     <div class="navbar mainNav" v-if="!gameNav">
       <router-link to="/" exact tag="div">
-        <div class="nav">
+        <div class="nav" data-nav="home">
           <v-icon name="home" scale="2" />
           <div class="navtext">Home</div>
         </div>
@@ -40,11 +44,10 @@
           <div class="navtext">Back</div>
         </div>
       </router-link>
-      <div class="nav">
+      <div class="nav" @click="$store.commit('toggleFullscreen')">
         <v-icon
           :name="$store.state.isFullscreen ? 'compress' : 'expand'"
           scale="1.5"
-          @click="$store.commit('toggleFullscreen')"
         />
         <div class="navtext">Toggle Fullscreen</div>
       </div>
@@ -67,6 +70,22 @@ import "vue-awesome/icons/pencil-ruler";
 export default {
   name: "Navbar",
   props: ["gameNav"],
+  data() {
+    return {
+      lastText: null,
+    };
+  },
+  methods: {
+    handleClick() {
+      this.$store.state.audio.playEffect("ui/pop");
+    },
+    handleHover(e) {
+      const text = e.target.innerText;
+      if (!text || text === this.lastText) return;
+      this.$store.state.audio.playHoverEffect("ui/ta");
+      this.lastText = text;
+    },
+  },
 };
 </script>
 

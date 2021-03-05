@@ -1,7 +1,10 @@
 <template>
   <div>
     <v-bar class="fullPage">
-      <div v-if="songAndSheetList && songAndSheetList.length > 0">
+      <div
+        class="song_list"
+        v-if="songAndSheetList && songAndSheetList.length > 0"
+      >
         <div class="pageTitle">
           My Studio
           <div
@@ -13,31 +16,12 @@
             <span>Go to Editor</span>
           </div>
         </div>
-        <div class="mContainer">
-          <SheetFilter
-            :songs="songAndSheetList"
-            @sorted="songDisplayList = $event"
-          ></SheetFilter>
-          <transition-group
-            v-if="songDisplayList"
-            appear
-            tag="div"
-            name="slide-in"
-            :style="{ '--total': songDisplayList.length }"
-          >
-            <div
-              v-for="(song, i) in songDisplayList"
-              :key="song.id"
-              :style="{ '--i': i }"
-            >
-              <SongListItem
-                :song="song"
-                :sheets="song.sheets"
-                :selected="selectedSong === song"
-                @selected="selectedSong = $event"
-                @selectedSheet="goToSheet($event)"
-              ></SongListItem>
-            </div>
+        <SongList
+          :songs="songAndSheetList"
+          ref="list"
+          @selectedSheet="goToSheet($event)"
+        >
+          <template v-slot:bottom>
             <div
               class="btn-action btn-dark big-add"
               key="btn"
@@ -45,8 +29,8 @@
             >
               <v-icon name="plus" scale="2" />
             </div>
-          </transition-group>
-        </div>
+          </template>
+        </SongList>
       </div>
       <div class="center_logo" v-else-if="!loading">
         <div class="pageTitle">My Studio</div>
@@ -73,23 +57,19 @@
 </template>
 
 <script>
-import SongListItem from "../components/menus/SongListItem.vue";
-import SheetFilter from "../components/menus/SheetFilter.vue";
+import SongList from "../components/menus/SongList.vue";
 import Loading from "../components/ui/Loading.vue";
 import { getSheetList, getSongsInIdArray } from "../javascript/db";
 
 export default {
   name: "MyStudio",
   components: {
-    SongListItem,
     Loading,
-    SheetFilter,
+    SongList,
   },
   data() {
     return {
-      selectedSong: null,
       songAndSheetList: null,
-      songDisplayList: null,
       loading: true,
     };
   },
@@ -123,19 +103,6 @@ export default {
 </script>
 
 <style scoped>
-.mContainer {
-  /* perspective: 100em; */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  transition: 2s;
-  white-space: nowrap;
-  margin-top: 30px;
-  margin-bottom: 300px !important;
-  max-width: 780px;
-  margin-left: auto;
-  margin-right: auto;
-}
 .fa-icon {
   vertical-align: middle;
   margin-right: 5px;
@@ -145,5 +112,9 @@ export default {
   line-height: 80px;
   max-width: 100%;
   box-sizing: border-box;
+}
+.song_list {
+  min-width: 300px;
+  margin: 0 20px;
 }
 </style>

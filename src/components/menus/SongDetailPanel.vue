@@ -94,7 +94,7 @@
         </transition>
 
         <div style="padding: 20px 0;">
-          <Button text="Play!" @click="startSelected"></Button>
+          <StartButton text="Play!" @click="startSelected"></StartButton>
           <div class="flex_hori">
             <div class="text_button" v-if="isOwner" @click="goToEdit">
               Edit Song
@@ -108,7 +108,7 @@
 </template>
 
 <script>
-import Button from "../ui/Button.vue";
+import StartButton from "../ui/StartButton.vue";
 import SheetDetailLine from "./SheetDetailLine.vue";
 import { getBestScore } from "../../javascript/db";
 import { Youtube } from "vue-youtube";
@@ -127,7 +127,7 @@ export default {
     };
   },
   components: {
-    Button,
+    StartButton,
     SheetDetailLine,
     Youtube,
   },
@@ -157,14 +157,17 @@ export default {
         this.previewPlayer.play();
       }
       this.$store.state.audio.pause();
+      this.$store.state.audio.playEffect("ui/click");
     },
     endPreivew() {
+      if (this.inPreivew) this.$store.state.audio.playEffect("ui/click");
       this.inPreivew = false;
       this.$store.state.audio.play();
       this.previewPlayer?.stop();
     },
   },
   beforeDestroy() {
+    this.$store.state.audio.playEffect("ui/slide1");
     this.endPreivew();
   },
   watch: {

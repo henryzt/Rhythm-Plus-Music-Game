@@ -7,7 +7,7 @@ on:
     branches:
       - dev
 jobs:
-  build-and-deploy:
+  dev-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
@@ -23,4 +23,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
-          cname: dev.rhythm-plus.com
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          cname: www2.rhythm-plus.com

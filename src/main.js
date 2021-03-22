@@ -80,6 +80,12 @@ new Vue({
         });
         logEvent("anonymous_signin");
       }
+      // log jwt, dev purpose only
+      if (isDev) {
+        user.getIdToken().then((jwt) => {
+          Logger.log("JWT", jwt);
+        });
+      }
     });
   },
   render: (h) => h(App),

@@ -52,14 +52,16 @@ export default {
     window.addEventListener("orientationchange", this.resizeCanvas, false);
     if (this.setVisualizer) this.vComponent = this.setVisualizer;
     if (this.setBlur) this.blur = this.setBlur;
-    if (!this.$store.state.visualizerArr)
+    if (!this.$store.state.visualizerArr) {
       this.$store.commit("setVisualizerArr", visualizers);
+    }
     if (this.audioData) this.audioDataLoaded = true;
     if (this.autoUpdate) this.update();
     this.$nextTick(() => {
       this.$store.commit("setVisualizerIns", this.$refs.ins);
-      if (this.$store.state.theme?.themeStyle && this.$refs.ins)
+      if (this.$store.state.theme?.themeStyle && this.$refs.ins) {
         this.$refs.ins.themeStyle = this.$store.state.theme.themeStyle;
+      }
     });
   },
   beforeDestroy() {
@@ -87,10 +89,10 @@ export default {
     },
   },
   watch: {
-    audioData: () => {
+    audioData() {
       if (this.audioData) this.audioDataLoaded = true;
     },
-    setVisualizer: () => {
+    setVisualizer() {
       if (!this) return;
       this.vComponent = this.setVisualizer;
     },

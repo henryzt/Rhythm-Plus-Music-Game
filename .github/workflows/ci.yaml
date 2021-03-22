@@ -1,0 +1,22 @@
+name: Test and Build CI
+on: [push, pull_request]
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2.3.1
+
+      - name: Install 🔨
+        run: |
+          npm install
+
+      - name: Format and Lint 🔧
+        run: |
+          npm run format
+          npm run lint
+          npm run test
+
+      - name: Build ⚙️
+        run: |
+          npm run build

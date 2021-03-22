@@ -18,13 +18,14 @@
         <div class="texts">
           <div class="title">How to play - Keys</div>
           <div>
-            Each track has an associated key bind. For a game with 4 tracks, keys D, F, J and K,
-            corresponds to tracks 1, 2, 3 and 4 respectively.
+            Each track has an associated key bind. For a game with 4 tracks,
+            keys D, F, J and K, corresponds to tracks 1, 2, 3 and 4
+            respectively.
           </div>
           <img class="logo" :src="img.a" />
           <div>
-            On mobile devices, simply tap the hit line to toggle the
-            track. Try it now!
+            On mobile devices, simply tap the hit line to toggle the track. Try
+            it now!
           </div>
           <div class="text_button" @click="skip">Skip</div>
         </div>

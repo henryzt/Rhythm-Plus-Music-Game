@@ -6,6 +6,8 @@ import md5 from "js-md5";
 
 Vue.use(Vuex);
 
+const isDev = process.env.NODE_ENV === "development";
+
 export const store = new Vuex.Store({
   state: {
     audio: null,
@@ -33,7 +35,8 @@ export const store = new Vuex.Store({
       fs: 0,
     },
     appVersion: process.env.APP_VERSION,
-    build: process.env.COMMIT_HASH,
+    build: process.env.COMMIT_HASH + (isDev ? "-dev-build" : ""),
+    isDev,
   },
   actions: {
     async fetchUserProfile() {

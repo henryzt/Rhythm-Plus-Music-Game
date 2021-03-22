@@ -181,8 +181,9 @@ export default {
     async sheets() {
       if (this.song) {
         this.selectedSheet = null;
-        if (this.sheets?.[0])
+        if (this.sheets?.[0]) {
           this.bestResult = await getBestScore(this.sheets[0].id);
+        }
       }
     },
     async selectedSheet() {

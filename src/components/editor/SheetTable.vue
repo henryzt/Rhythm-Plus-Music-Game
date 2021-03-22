@@ -105,8 +105,9 @@ export default {
   },
   watch: {
     "instance.timeArrIdx"() {
-      if (!this.follow || (!this.$parent.playMode && !this.instance.paused))
+      if (!this.follow || (!this.$parent.playMode && !this.instance.paused)) {
         return;
+      }
       this.scrollToCurrent();
     },
     "$parent.selectedNotes"() {

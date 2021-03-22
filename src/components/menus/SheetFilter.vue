@@ -171,10 +171,11 @@ export default {
   },
   methods: {
     emitResult() {
-      if (this.currentTag)
+      if (this.currentTag) {
         this.filteredSongs = this.filteredSongs.filter((e) =>
           e.tags.includes(this.currentTag)
         );
+      }
 
       if (!this.searchTerms) {
         this.$emit("sorted", this.filteredSongs);

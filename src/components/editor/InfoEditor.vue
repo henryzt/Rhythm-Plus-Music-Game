@@ -221,8 +221,9 @@ export default {
           if (!(await this.$parent.saveWarning())) return;
           this.$parent.loading = true;
           await updateSong(this.songFormData);
-          if (!this.$route.query.song)
+          if (!this.$route.query.song) {
             this.$router.push({ query: { update: true } });
+          }
           this.$parent.reloadEditor();
         } else {
           this.$parent.loading = true;
@@ -244,8 +245,9 @@ export default {
     },
     async getSheets(addQuery) {
       const songId = this.$parent.songInfo.id;
-      if (addQuery)
+      if (addQuery) {
         this.$router.replace({ path: "/editor", query: { song: songId } });
+      }
       this.sheetFormOptions.publicList = await getSheetList(songId);
       this.sheetFormOptions.privateList = await getSheetList(
         songId,

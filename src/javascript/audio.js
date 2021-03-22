@@ -74,7 +74,7 @@ export default class Audio {
     let bgmUrlArr = [
       assetsBaseUrl + "aurora.mp3",
       assetsBaseUrl + "beyond.mp3",
-      assetsBaseUrl + "machinery.mp3",
+      // assetsBaseUrl + "machinery.mp3",
     ];
     if (songToExclude && !bgmUrlArr.includes(songToExclude)) return; // is playing result bgm
     shuffle(bgmUrlArr);

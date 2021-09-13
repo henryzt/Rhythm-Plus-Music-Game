@@ -81,7 +81,7 @@
     "vue-template-compiler": "^2.6.11",
     "webpack": "^5.24.2",
     "webpack-cli": "^4.5.0",
-    "webpack-dev-server": "^3.11.2"
+    "webpack-dev-server": "^4.2.0"
   },
   "lint-staged": {
     "*.{js,vue}": [

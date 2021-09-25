@@ -2,6 +2,7 @@ const FILES_TO_CACHE = ["/offline.html", "/style.css", "/assets/logo2.png"];
 const CACHE_NAME = "rhythm_plus";
 
 self.addEventListener("install", (evt) => {
+  self.skipWaiting();
   evt.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       console.log("[ServiceWorker] Pre-caching offline page");

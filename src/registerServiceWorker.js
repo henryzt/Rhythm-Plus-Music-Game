@@ -15,10 +15,14 @@ register("/service-worker.js", {
     Logger.log("Content has been cached for offline use.");
   },
   updatefound() {
-    Logger.log("New content is downloading.");
+    Logger.warn("New content is downloading.");
   },
   updated() {
     console.warn("New content is available; please refresh.");
+    window.location.reload(true);
+  },
+  statechange() {
+    console.warn("SW changed.");
   },
   offline() {
     console.warn(

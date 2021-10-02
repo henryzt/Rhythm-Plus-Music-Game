@@ -17,9 +17,11 @@ register("/service-worker.js", {
   updatefound() {
     Logger.warn("New content is downloading.");
   },
-  updated() {
+  updated(registration) {
     console.warn("New content is available; please refresh.");
-    window.location.reload(true);
+    document.dispatchEvent(
+      new CustomEvent("swUpdated", { detail: registration })
+    );
   },
   statechange() {
     console.warn("SW changed.");

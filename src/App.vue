@@ -52,6 +52,7 @@ export default {
     this.$store.commit("setAudio", new Audio());
     this.$store.commit("setGlobalModal", this.$refs.gm);
     this.$store.commit("setFloatingAlert", this.$refs.alert);
+    this.listenToUpdates();
     window.addEventListener("online", this.updateOnlineStatus);
     window.addEventListener("offline", this.updateOnlineStatus);
     this.updateOnlineStatus();
@@ -60,12 +61,57 @@ export default {
     window.removeEventListener("online", this.updateOnlineStatus);
     window.removeEventListener("offline", this.updateOnlineStatus);
   },
+  data() {
+    return {
+      refreshing: false,
+      registration: null,
+    };
+  },
   methods: {
     updateOnlineStatus(e) {
       if (!e?.type) return;
       const isOnline = e.type === "online" || window.navigator.onLine;
       if (isOnline) this.$store.state.alert.success("You are back online!");
       else this.$store.state.alert.error("No internet connection");
+    },
+    listenToUpdates() {
+      document.addEventListener("swUpdated", this.updateAvailable, {
+        once: true,
+      });
+
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if (this.refreshing) return;
+        this.refreshing = true;
+        console.log("Game is updating...");
+        window.location.reload();
+      });
+    },
+    // Store the SW registration so we can send it a message
+    // We use `updateExists` to control whatever alert, toast, dialog, etc we want to use
+    // To alert the user there is an update they need to refresh for
+    async updateAvailable(event) {
+      this.registration = event.detail;
+      let acceptUpdate = await this.$store.state.alert.info(
+        "A new version of the game is found!",
+        0,
+        "Update Now"
+      );
+      acceptUpdate = acceptUpdate
+        ? await this.$store.state.gModal.show({
+            bodyText: "All opened tabs of the game will refresh, update now?",
+            okText: "Update",
+            type: "warning",
+          })
+        : false;
+      // user accepted the update
+      if (acceptUpdate) {
+        this.$store.state.alert.success("Updating... :D");
+        Logger.log("update accpeted");
+        // Make sure we only send a 'skip waiting' message if the SW is waiting
+        if (!this.registration || !this.registration.waiting) return;
+        // send message to SW to skip the waiting and activate the new SW
+        this.registration.waiting.postMessage({ type: "SKIP_WAITING" });
+      }
     },
   },
   computed: {

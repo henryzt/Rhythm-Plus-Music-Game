@@ -3,6 +3,12 @@
     <div v-if="visible" class="warpper">
       <div class="horizontal animate__animated" :class="[className, emphasize]">
         {{ text }}
+        <div v-if="confirmText" @click="ok" class="btn-action">
+          {{ confirmText }}
+        </div>
+        <div v-if="confirmText" @click="close" class="btn-action">
+          Remind me later
+        </div>
       </div>
     </div>
   </transition>
@@ -17,12 +23,14 @@ export default {
     return {
       visible: false,
       text: "This is a floating notification",
+      confirmText: null,
       className: "",
       emphasize: "",
+      resolve: null,
     };
   },
   methods: {
-    show(text, time) {
+    show(text, time, confirm) {
       if (this.visible && this.text === text) {
         this.emphasize = "animate__flash";
         setTimeout(() => {
@@ -37,24 +45,50 @@ export default {
           this.visible = false;
         }, time);
       }
+      if (confirm) {
+        this.confirmText = confirm;
+      }
       this.$store.state.audio.playEffect("ui/ping");
+      return new Promise((resolve) => {
+        this.resolve = resolve;
+      });
     },
-    info(text, time) {
+    info(text, time, confirm) {
       this.className = "info";
-      this.show(text, time);
+      return this.show(text, time, confirm);
     },
-    warn(text, time) {
+    warn(text, time, confirm) {
       this.className = "warn";
-      this.show(text, time);
+      return this.show(text, time, confirm);
     },
-    error(text, time) {
+    error(text, time, confirm) {
       this.className = "error";
-      this.show(text, time);
       logError(text);
+      return this.show(text, time, confirm);
     },
     success(text) {
       this.className = "success";
-      this.show(text, 3500);
+      return this.show(text, 3500);
+    },
+
+    ok() {
+      if (this.visible) this.$store.state.audio.playEffect("ui/pop");
+      this.visible = false;
+      this.$emit("ok");
+      if (this.resolve) this.resolve(true);
+    },
+    close() {
+      if (this.visible) this.$store.state.audio.playEffect("ui/loose");
+      this.visible = false;
+      this.$emit("close");
+      if (this.resolve) this.resolve(false);
+    },
+  },
+  watch: {
+    visible() {
+      if (!this.visible) {
+        this.confirmText = null;
+      }
     },
   },
 };
@@ -68,6 +102,16 @@ export default {
   top: 30px;
   z-index: 1000;
   pointer-events: none;
+}
+
+.btn-action {
+  pointer-events: all;
+  cursor: pointer;
+  font-size: 0.8em;
+  margin: 0px auto;
+  border: 1px solid;
+  margin-top: 20px;
+  width: 150px;
 }
 
 .horizontal {

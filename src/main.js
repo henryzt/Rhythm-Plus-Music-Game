@@ -8,7 +8,7 @@ import App from "./App.vue";
 import router from "./helpers/router";
 import { store } from "./helpers/store";
 import { auth } from "./helpers/firebaseConfig";
-import Icon from "vue-awesome/components/Icon.vue";
+import Icon from "vue-awesome/components/Icon";
 import * as Sentry from "@sentry/browser";
 import { Vue as VueIntegration } from "@sentry/integrations";
 import { logEvent, logError } from "./helpers/analytics";
@@ -44,8 +44,7 @@ Vue.component("v-icon", Icon);
 
 if (!isDev) {
   Sentry.init({
-    dsn:
-      "https://7c0cf5f165ab4854994380c0a0d9711e@o424134.ingest.sentry.io/5355558",
+    dsn: "https://7c0cf5f165ab4854994380c0a0d9711e@o424134.ingest.sentry.io/5355558",
     integrations: [
       new VueIntegration({ Vue, attachProps: true, logErrors: true }),
     ],

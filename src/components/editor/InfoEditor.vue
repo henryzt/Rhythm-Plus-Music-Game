@@ -161,7 +161,7 @@ export default {
         title: null,
         artist: null,
         image: null,
-        srcMode: null,
+        srcMode: "youtube",
         tags: [],
       },
       songFormOptions: {

@@ -12,7 +12,7 @@ import {
 import { store } from "../helpers/store";
 import { Validator } from "jsonschema";
 
-const assetsBaseUrl = "https://storage.googleapis.com/rhythm-plus-assets/songs";
+const assetsBaseUrl = "https://assets.rhythm-plus.com/songs";
 
 const v = new Validator();
 const songSchema = require("../../public/schema/song.schema.json");

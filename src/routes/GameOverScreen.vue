@@ -1,13 +1,13 @@
 <template>
   <div>
     <PageBackground
-      songSrc="https://storage.googleapis.com/rhythm-plus-assets/bgm/nomyn-flow.mp3"
+      songSrc="https://assets.rhythm-plus.com/bgm/nomyn-flow.mp3"
       imageSrc="black"
       :showNav="false"
     ></PageBackground>
     <video autoplay muted loop class="bgVid">
       <source
-        src="https://storage.googleapis.com/rhythm-plus-assets/video/blue_paint.mp4"
+        src="https://assets.rhythm-plus.com/video/blue_paint.mp4"
         type="video/mp4"
       />
     </video>

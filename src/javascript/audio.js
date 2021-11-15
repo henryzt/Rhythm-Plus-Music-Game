@@ -1,5 +1,5 @@
 import { Howl, Howler } from "howler";
-const assetsBaseUrl = "https://storage.googleapis.com/rhythm-plus-assets/bgm/";
+const assetsBaseUrl = "https://assets.rhythm-plus.com/bgm/";
 
 export default class Audio {
   constructor() {

@@ -3,7 +3,7 @@
     <v-bar class="fullPage">
       <div v-if="sheet">
         <PageBackground
-          songSrc="https://storage.googleapis.com/rhythm-plus-assets/bgm/result.mp3"
+          songSrc="https://assets.rhythm-plus.com/bgm/result.mp3"
           :imageSrc="sheet.image"
           :showNav="false"
         ></PageBackground>

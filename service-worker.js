@@ -2,6 +2,7 @@ const FILES_TO_CACHE = ["/offline.html", "/style.css", "/assets/logo2.png"];
 const CACHE_NAME = "rhythm_plus";
 
 self.addEventListener("install", (evt) => {
+  // self.skipWaiting();
   evt.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       console.log("[ServiceWorker] Pre-caching offline page");
@@ -23,6 +24,13 @@ self.addEventListener("activate", (evt) => {
       );
     })
   );
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    console.log("SW skipped waiting");
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener("fetch", (evt) => {

@@ -91,27 +91,15 @@ export default {
     // To alert the user there is an update they need to refresh for
     async updateAvailable(event) {
       this.registration = event.detail;
-      let acceptUpdate = await this.$store.state.alert.info(
-        "A new version of the game is found!",
-        0,
-        "Update Now"
-      );
-      acceptUpdate = acceptUpdate
-        ? await this.$store.state.gModal.show({
-            bodyText: "All opened tabs of the game will refresh, update now?",
-            okText: "Update",
-            type: "warning",
-          })
-        : false;
-      // user accepted the update
-      if (acceptUpdate) {
-        this.$store.state.alert.success("Updating... :D");
-        Logger.log("update accpeted");
-        // Make sure we only send a 'skip waiting' message if the SW is waiting
-        if (!this.registration || !this.registration.waiting) return;
-        // send message to SW to skip the waiting and activate the new SW
-        this.registration.waiting.postMessage({ type: "SKIP_WAITING" });
-      }
+      this.$store.state.alert
+        .info("A new version of the game is found!", 0, "Update Now")
+        .then(() => {
+          Logger.log("update accpeted");
+          // Make sure we only send a 'skip waiting' message if the SW is waiting
+          if (!this.registration || !this.registration.waiting) return;
+          // send message to SW to skip the waiting and activate the new SW
+          this.registration.waiting.postMessage({ type: "SKIP_WAITING" });
+        });
     },
   },
   computed: {

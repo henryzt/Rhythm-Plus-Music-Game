@@ -1,7 +1,7 @@
 <template>
   <div class="warpper">
     <div class="alphaNotice flex_hori blurBackground">
-      <div class="ripple" style="animation-delay: 0.8s;"></div>
+      <div class="ripple" style="animation-delay: 0.8s"></div>
       <div class="ripple"></div>
       <div>
         <v-icon name="info-circle" scale="2"></v-icon>
@@ -16,8 +16,8 @@
               This game is under active development (Alpha WIP)
             </div>
             <div>
-              <!-- <div class="text_button" @click="openDiscord">Discord</div>
-              · -->
+              <div class="text_button" @click="openDiscord">Discord</div>
+              ·
               <div class="text_button" @click="openForm">Report bug</div>
               ·
               <div class="text_button" @click="openGithub">

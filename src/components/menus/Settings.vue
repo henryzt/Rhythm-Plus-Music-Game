@@ -69,8 +69,9 @@
               v-for="[key, value] in Object.entries($store.state.visualizerArr)"
               :value="value"
               :key="key"
-              >{{ key }}</option
             >
+              {{ key }}
+            </option>
           </select>
         </p>
         <p v-if="visualizerIns && visualizerIns.options">
@@ -82,8 +83,9 @@
               )"
               :value="value"
               :key="key"
-              >{{ key }}</option
             >
+              {{ key }}
+            </option>
           </select>
         </p>
         <p>
@@ -109,7 +111,7 @@
 
     <div
       class="animate__animated animate__zoomIn animate__delay-2s"
-      style="position: relative; z-index: 900;"
+      style="position: relative; z-index: 900"
     >
       <div class="st_title">Game Preferences</div>
       <p>
@@ -136,24 +138,22 @@
       <div class="banner" v-if="changed">Unsaved changes</div>
     </transition>
 
-    <!-- <div class="discord_banner flex_hori" v-if="showDiscordBanner">
+    <div class="discord_banner flex_hori" v-if="showDiscordBanner">
       <v-icon name="brands/discord" scale="2"></v-icon>
-      <div style="padding-left: 10px;">
+      <div style="padding: 0 10px">
         <a href="https://discord.gg/ZGhnKp4" target="_blank"
-          >Be the first to join our new
-          <span style="text-decoration: underline;"
-            >official Discord server</span
-          >!</a
+          >Be one of the first to join <br />our new
+          <span style="text-decoration: underline">discord server</span>!</a
         >
       </div>
       <v-icon
         name="times"
-        style="cursor: pointer;"
+        style="cursor: pointer"
         @click="hideDiscord"
       ></v-icon>
-    </div> -->
+    </div>
 
-    <Loading style="position: relative; z-index: 999;" :show="loading"
+    <Loading style="position: relative; z-index: 999" :show="loading"
       >Saving...</Loading
     >
   </div>
@@ -398,7 +398,7 @@ input {
   padding: 10px 20px;
   top: 70px;
   position: fixed;
-  left: calc(50% - 170px);
+  left: calc(50% - 150px);
   width: 300px;
   z-index: 900;
   box-shadow: 4px 3px 24px -2px rgba(81, 0, 148, 0.5);

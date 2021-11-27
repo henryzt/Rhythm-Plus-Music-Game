@@ -37,6 +37,7 @@ export const store = new Vuex.Store({
     appVersion: process.env.APP_VERSION,
     build: process.env.COMMIT_HASH + (isDev ? "-dev-build" : ""),
     isDev,
+    remoteConfig: null,
   },
   actions: {
     async fetchUserProfile() {
@@ -184,6 +185,9 @@ export const store = new Vuex.Store({
     },
     setVisualizerIns(state, val) {
       state.visualizerIns = val;
+    },
+    setRemoteConfig(state, val) {
+      state.remoteConfig = val;
     },
     async toggleFullscreen(state) {
       state.isFullscreen = document.fullscreen;

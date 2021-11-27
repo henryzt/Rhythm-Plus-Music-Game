@@ -2,15 +2,23 @@
   <div id="app" class="unselectable">
     <PageBackground
       v-if="
-        $store.state.audio && $route.meta.requireBg && showOnPageRequireSignin
+        $store.state.audio &&
+        $route.meta.requireBg &&
+        showOnPageRequireSignin &&
+        !isMaintenanceMode
       "
     ></PageBackground>
     <ModalGlobal ref="gm"></ModalGlobal>
     <FloatingAlert ref="alert"></FloatingAlert>
     <transition name="fade" v-if="$store.state.audio">
+      <div class="center" v-if="isMaintenanceMode">
+        <h1>{{ maintenanceMsg.title }}</h1>
+        <div v-html="maintenanceMsg.body"></div>
+        <img src="/assets/logo2.png" class="maintenance_logo" />
+      </div>
       <keep-alive
         :include="['SongSelect', 'MyStudio']"
-        v-if="showOnPageRequireSignin && !$store.state.redirecting"
+        v-else-if="showOnPageRequireSignin && !$store.state.redirecting"
       >
         <router-view class="routerView" :key="$route.path" />
       </keep-alive>
@@ -109,6 +117,20 @@ export default {
         (this.$store.state.initialized && this.$route.meta.requireSignin)
       );
     },
+    isMaintenanceMode() {
+      return (
+        this.$store.state.remoteConfig &&
+        this.$store.state.remoteConfig.maintenanceMode._value === "true"
+      );
+    },
+    maintenanceMsg() {
+      const msg = this.$store.state.remoteConfig?.maintenanceMessage;
+      if (msg) {
+        return JSON.parse(msg._value);
+      } else {
+        return null;
+      }
+    },
   },
   watch: {
     $route(to) {
@@ -135,5 +157,16 @@ export default {
   top: 0;
   left: 0;
   overflow-y: scroll;
+}
+
+.maintenance_logo {
+  margin-top: 50px;
+  max-width: 150px;
+  opacity: 0.5;
+}
+
+.center a {
+  color: rgb(127, 255, 255);
+  text-decoration: underline;
 }
 </style>

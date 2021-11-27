@@ -4,6 +4,7 @@ import "firebase/analytics";
 import "firebase/functions";
 import "firebase/auth";
 import "firebase/performance";
+import "firebase/remote-config";
 
 // firebase init goes here
 const config = {
@@ -28,6 +29,9 @@ const auth = firebase.auth();
 const functions = firebase.functions();
 const analytics = firebase.analytics;
 const currentUser = auth.currentUser;
+const remoteConfig = firebase.remoteConfig();
+
+remoteConfig.settings.minimumFetchIntervalMillis = 10000;
 
 // Initialize Performance Monitoring and get a reference to the service
 const perf = firebase.performance();
@@ -56,4 +60,5 @@ export {
   tagsCollection,
   playsCollection,
   playlistsCollection,
+  remoteConfig,
 };

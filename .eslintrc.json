@@ -43,7 +43,13 @@
     "vue/custom-event-name-casing": "warn",
     "vue/no-mutating-props": "warn",
     "curly": [2, "multi-line"],
-    "quotes": ["error", "double"]
+    "quotes": ["error", "double"],
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
+      }
+    ]
   },
   "env": {
     "es6": true,

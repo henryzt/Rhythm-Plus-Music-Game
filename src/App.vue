@@ -37,6 +37,7 @@ import Audio from "./javascript/audio.js";
 import ModalGlobal from "./components/ui/ModalGlobal.vue";
 import FloatingAlert from "./components/ui/FloatingAlert.vue";
 import PageBackground from "./components/common/PageBackground.vue";
+import { logEvent } from "./helpers/analytics";
 import "vue-awesome/icons/volume-up";
 import "vue-awesome/icons/volume-mute";
 import "vue-awesome/icons/expand";
@@ -81,6 +82,7 @@ export default {
       const isOnline = e.type === "online" || window.navigator.onLine;
       if (isOnline) this.$store.state.alert.success("You are back online!");
       else this.$store.state.alert.error("No internet connection");
+      logEvent("online_status_changed", isOnline);
     },
     listenToUpdates() {
       document.addEventListener("swUpdated", this.updateAvailable, {
@@ -91,6 +93,7 @@ export default {
         if (this.refreshing) return;
         this.refreshing = true;
         console.log("Game is updating...");
+        logEvent("game_updated");
         window.location.reload();
       });
     },
@@ -98,11 +101,13 @@ export default {
     // We use `updateExists` to control whatever alert, toast, dialog, etc we want to use
     // To alert the user there is an update they need to refresh for
     async updateAvailable(event) {
+      logEvent("update_available");
       this.registration = event.detail;
       this.$store.state.alert
         .info("A new version of the game is found!", 0, "Update Now")
         .then(() => {
-          Logger.log("update accpeted");
+          Logger.log("update accepted");
+          logEvent("update_accepted");
           // Make sure we only send a 'skip waiting' message if the SW is waiting
           if (!this.registration || !this.registration.waiting) return;
           // send message to SW to skip the waiting and activate the new SW
@@ -118,10 +123,13 @@ export default {
       );
     },
     isMaintenanceMode() {
-      return (
+      const show =
         this.$store.state.remoteConfig &&
-        this.$store.state.remoteConfig.maintenanceMode._value === "true"
-      );
+        this.$store.state.remoteConfig.maintenanceMode._value === "true";
+      if (show) {
+        logEvent("maintenance_mode_showed");
+      }
+      return show;
     },
     maintenanceMsg() {
       const msg = this.$store.state.remoteConfig?.maintenanceMessage;
@@ -133,6 +141,17 @@ export default {
     },
   },
   watch: {
+    async "$store.state.remoteConfig"(val) {
+      if (val.showNotification._value === "true" && val.notification._value) {
+        const msg = JSON.parse(val.notification._value);
+        await this.$store.state.gModal.show({
+          titleText: msg.title,
+          bodyText: msg.body,
+          showCancel: false,
+        });
+        this.$store.state.alert.warn(msg.short, 8000);
+      }
+    },
     $route(to) {
       const pageTitle = to.meta.title ? to.meta.title + " - " : "";
       document.title = pageTitle + "Rhythm+ Music Game";

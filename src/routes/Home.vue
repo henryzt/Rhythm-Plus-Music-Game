@@ -19,7 +19,7 @@
     </div>
 
     <div class="leftBottom">
-      {{ $store.state.appVersion + "-" + $store.state.build }}
+      {{ $store.state.appVersionWithPrefix + "-" + $store.state.build }}
     </div>
 
     <AlphaNotice></AlphaNotice>

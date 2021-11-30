@@ -92,7 +92,8 @@ module.exports = {
     new webpack.DefinePlugin({
       "process.env": {
         NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-        APP_VERSION: `"${versionPrefix}-${version}"`,
+        VERSION_PREFIX: `"${versionPrefix}"`,
+        APP_VERSION: `"${version}"`,
         COMMIT_HASH: `"${commitHash}"`,
       },
     }),

@@ -5,16 +5,26 @@
         $store.state.audio &&
         $route.meta.requireBg &&
         showOnPageRequireSignin &&
-        !isMaintenanceMode
+        !maintenanceMsg
       "
     ></PageBackground>
     <ModalGlobal ref="gm"></ModalGlobal>
     <FloatingAlert ref="alert"></FloatingAlert>
     <transition name="fade" v-if="$store.state.audio">
-      <div class="center" v-if="isMaintenanceMode">
+      <div class="center" v-if="maintenanceMsg">
         <h1>{{ maintenanceMsg.title }}</h1>
         <div v-html="maintenanceMsg.body"></div>
         <img src="/assets/logo2.png" class="maintenance_logo" />
+        <div
+          v-if="maintenanceMsg.showUpdateButton"
+          class="btn-action btn-dark"
+          @click="reload"
+        >
+          Update
+        </div>
+        <div style="opacity: 0.2">
+          {{ maintenanceMsg.currentVersion }} - {{ maintenanceMsg.build }}
+        </div>
       </div>
       <keep-alive
         :include="['SongSelect', 'MyStudio']"
@@ -38,6 +48,7 @@ import ModalGlobal from "./components/ui/ModalGlobal.vue";
 import FloatingAlert from "./components/ui/FloatingAlert.vue";
 import PageBackground from "./components/common/PageBackground.vue";
 import { logEvent } from "./helpers/analytics";
+import semver from "semver";
 import "vue-awesome/icons/volume-up";
 import "vue-awesome/icons/volume-mute";
 import "vue-awesome/icons/expand";
@@ -74,6 +85,7 @@ export default {
     return {
       refreshing: false,
       registration: null,
+      maintenanceMsg: null,
     };
   },
   methods: {
@@ -96,6 +108,10 @@ export default {
         logEvent("game_updated");
         window.location.reload();
       });
+    },
+    reload() {
+      window.location.reload(true);
+      logEvent("game_force_updated");
     },
     // Store the SW registration so we can send it a message
     // We use `updateExists` to control whatever alert, toast, dialog, etc we want to use
@@ -122,34 +138,43 @@ export default {
         (this.$store.state.initialized && this.$route.meta.requireSignin)
       );
     },
-    isMaintenanceMode() {
-      const show =
-        this.$store.state.remoteConfig &&
-        this.$store.state.remoteConfig.maintenanceMode._value === "true";
-      if (show) {
-        logEvent("maintenance_mode_showed");
-      }
-      return show;
-    },
-    maintenanceMsg() {
-      const msg = this.$store.state.remoteConfig?.maintenanceMessage;
-      if (msg) {
-        return JSON.parse(msg._value);
-      } else {
-        return null;
-      }
-    },
   },
   watch: {
-    async "$store.state.remoteConfig"(val) {
-      if (val.showNotification._value === "true" && val.notification._value) {
-        const msg = JSON.parse(val.notification._value);
+    async "$store.state.remoteConfig"(config) {
+      // const config = this.$store.state.remoteConfig;
+      if (!config) return;
+      const currentVersion = this.$store.state.appVersion;
+      const minimumVersion = config.minimumVersion._value;
+
+      if (semver.lt(currentVersion, minimumVersion)) {
+        // show if current version is lower than minimum
+        const msg = config.versionTooOldMessage;
+        this.maintenanceMsg = JSON.parse(msg._value);
+        logEvent("update_required_msg_showed");
+      } else if (config.maintenanceMode._value === "true") {
+        // show otherwise: if has maintenance message
+        const msg = config.maintenanceMessage;
+        this.maintenanceMsg = JSON.parse(msg._value);
+        logEvent("maintenance_mode_showed");
+      } else if (config.showNotification._value === "true") {
+        // show otherwise: if has upcoming update notification
+        logEvent("upcoming_update_warning_showed");
+        const msg = JSON.parse(config.notification._value);
         await this.$store.state.gModal.show({
           titleText: msg.title,
           bodyText: msg.body,
           showCancel: false,
         });
         this.$store.state.alert.warn(msg.short, 8000);
+      }
+
+      if (this.maintenanceMsg) {
+        this.maintenanceMsg = {
+          currentVersion,
+          minimumVersion,
+          build: this.$store.state.build,
+          ...this.maintenanceMsg,
+        };
       }
     },
     $route(to) {

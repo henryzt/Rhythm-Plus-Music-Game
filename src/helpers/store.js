@@ -34,6 +34,7 @@ export const store = new Vuex.Store({
       nocookie: true,
       fs: 0,
     },
+    appVersionWithPrefix: `${process.env.VERSION_PREFIX}-${process.env.APP_VERSION}`,
     appVersion: process.env.APP_VERSION,
     build: process.env.COMMIT_HASH + (isDev ? "-dev-build" : ""),
     isDev,

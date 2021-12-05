@@ -22,7 +22,7 @@ export function logEvent(action, event, category) {
   // log also in gtag
   reportEvent.event_label = Object.values(reportEvent)[0];
   window.gtag("event", action, reportEvent);
-  Logger.log("event logged - ", action, reportEvent);
+  Logger.log("event logged - ", action);
 }
 
 export function logError(description, fatal) {

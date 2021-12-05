@@ -1,12 +1,12 @@
 <template>
   <div class="warpper">
     <transition name="slide-fade" mode="out-in">
-      <div class="tutorial flex_hori blurBackground" key="1" v-if="slide == 1">
+      <div class="tutorial flex_hori" key="1" v-if="slide == 1">
         <div class="texts">
           <div class="title">Welcome to Rhythm Plus!</div>
           <img class="logo" :src="img.logo" />
           <div>
-            Rhythm+ is a web-based vertical scrolling rhythm game (VSRG), you
+            Rhythm+ is a web-based Vertical Scrolling Rhythm Game (VSRG), you
             can make, play, and share any songs from and with anyone!
           </div>
           <hr class="artist_hr" />
@@ -14,7 +14,7 @@
         </div>
       </div>
 
-      <div class="tutorial flex_hori blurBackground" key="2" v-if="slide == 2">
+      <div class="tutorial flex_hori" key="2" v-if="slide == 2">
         <div class="texts">
           <div class="title">How to play - Keys</div>
           <div>
@@ -31,7 +31,7 @@
         </div>
       </div>
 
-      <div class="tutorial flex_hori blurBackground" key="3" v-if="slide == 3">
+      <div class="tutorial flex_hori" key="3" v-if="slide == 3">
         <div class="texts">
           <div class="title">How to play - Judging</div>
           <div>
@@ -39,7 +39,7 @@
             the note gets closer to the bottom white line, hit the corresponding
             track.
           </div>
-          <img class="logo" style="max-width: 60%;" :src="img.b" />
+          <img class="logo" style="max-width: 60%" :src="img.b" />
           <div>
             Hit while the note is on the white line to get higher marks.
           </div>
@@ -47,11 +47,11 @@
         </div>
       </div>
 
-      <div class="tutorial flex_hori blurBackground" key="4" v-if="slide == 4">
+      <div class="tutorial flex_hori" key="4" v-if="slide == 4">
         <div class="texts">
           <div class="title">Nice job!</div>
           <div>Now let's try something different: hold notes.</div>
-          <img class="logo" style="max-width: 60%;" :src="img.c" />
+          <img class="logo" style="max-width: 60%" :src="img.c" />
           <div>
             Hold the key when the bottom of the hold note reaches the white
             line, then release the key once the top of the note has just left
@@ -60,7 +60,7 @@
         </div>
       </div>
 
-      <div class="tutorial flex_hori blurBackground" key="5" v-if="slide == 5">
+      <div class="tutorial flex_hori" key="5" v-if="slide == 5">
         <div class="texts">
           <div class="title">Fantastic!</div>
           <div class="emoji">😎</div>
@@ -68,7 +68,7 @@
         </div>
       </div>
 
-      <div class="tutorial flex_hori blurBackground" key="6" v-if="slide == 6">
+      <div class="tutorial flex_hori" key="6" v-if="slide == 6">
         <div class="texts">
           <div class="title">There we go!</div>
           <div class="emoji">🎉🎉</div>

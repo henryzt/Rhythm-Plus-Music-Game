@@ -1,7 +1,7 @@
 <template>
   <div v-if="render">
-    <Navbar v-if="showNav"></Navbar>
-    <UserProfileCard></UserProfileCard>
+    <Navbar v-if="showNav && !backgroundOnly"></Navbar>
+    <UserProfileCard v-if="!backgroundOnly"></UserProfileCard>
     <div
       v-if="imageSrc"
       class="bgImage"
@@ -13,7 +13,7 @@
     <Visualizer
       v-else-if="themeOptions"
       ref="visualizer"
-      style="opacity: 1;"
+      style="opacity: 1"
       :setVisualizer="themeOptions.visualizer"
       :setBlur="themeOptions.blur"
       :autoUpdate="true"
@@ -44,6 +44,10 @@ export default {
     showNav: {
       type: Boolean,
       default: true,
+    },
+    backgroundOnly: {
+      type: Boolean,
+      default: false,
     },
   },
   components: {

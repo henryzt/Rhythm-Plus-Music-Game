@@ -20,8 +20,8 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "@sentry/browser": "^6.2.1",
-    "@sentry/integrations": "^6.2.0",
+    "@sentry/tracing": "^6.15.0",
+    "@sentry/vue": "^6.15.0",
     "animate.css": "^4.1.0",
     "axios": "^0.21.0",
     "countup.js": "^2.0.5",

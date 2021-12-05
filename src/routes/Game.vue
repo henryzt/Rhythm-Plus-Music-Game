@@ -8,7 +8,7 @@
 
     <!-- resume game countdown -->
     <Countdown
-      style="z-index: 1000; pointer-events: none;"
+      style="z-index: 1000; pointer-events: none"
       ref="countdown"
       @finish="instance.resumeGame()"
     ></Countdown>
@@ -24,14 +24,14 @@
       </a>
       <Navbar
         v-else-if="!isGameEnded"
-        style="z-index: 1000;"
+        style="z-index: 1000"
         :gameNav="true"
       ></Navbar>
     </transition>
 
     <!-- mark indicator -->
     <MarkComboJudge
-      style="z-index: 400; pointer-events: none;"
+      style="z-index: 400; pointer-events: none"
       ref="judgeDisplay"
       v-show="!isGameEnded"
     ></MarkComboJudge>
@@ -141,18 +141,18 @@
 
     <!-- loading popup -->
     <Loading
-      style="z-index: 200;"
+      style="z-index: 200"
       :show="instance && instance.loading && !youtubeBuffering"
       >Song Loading...</Loading
     >
     <Loading
-      style="z-index: 200;"
+      style="z-index: 200"
       :show="youtubeBuffering"
       :delay="true"
       :delayLength="3000"
       >Buffering...</Loading
     >
-    <Loading style="z-index: 600;" :show="isGameEnded && !showingAchievement"
+    <Loading style="z-index: 600" :show="isGameEnded && !showingAchievement"
       >Syncing Results...</Loading
     >
 
@@ -160,10 +160,10 @@
     <Modal
       ref="menu"
       :hideFooter="true"
-      style="text-align: center; z-index: 500;"
+      style="text-align: center; z-index: 500"
     >
       <template v-slot:header>
-        <div style="width: 100%; font-size: 23px;">
+        <div style="width: 100%; font-size: 23px">
           {{ advancedMenuOptions ? "Options" : "Pause Menu" }}
         </div>
       </template>
@@ -195,10 +195,10 @@
           <div v-else key="2">
             <PlayControl :playData="$data"></PlayControl>
             <br />
-            <hr style="opacity: 0.2;" />
+            <hr style="opacity: 0.2" />
             <div
               class="btn-action btn-dark"
-              style="display: inline-block;"
+              style="display: inline-block"
               @click="advancedMenuOptions = false"
               v-if="started"
             >
@@ -206,7 +206,7 @@
             </div>
             <div
               class="btn-action btn-dark"
-              style="display: inline-block;"
+              style="display: inline-block"
               @click="started ? resumeGame(true) : hideMenu(true)"
             >
               Done
@@ -220,10 +220,10 @@
     <Modal
       ref="info"
       :showCancel="false"
-      style="text-align: center; z-index: 500;"
+      style="text-align: center; z-index: 500"
     >
       <template v-slot:header>
-        <div style="width: 100%; font-size: 23px;">Sheet Info</div>
+        <div style="width: 100%; font-size: 23px">Sheet Info</div>
       </template>
 
       <template>
@@ -365,6 +365,7 @@ export default {
       }
     },
     async startGame() {
+      if (!this.showStartButton) return;
       logEvent("start_game", { songId: this.currentSong.songId });
       this.showStartButton = false;
       if (this.srcMode === "youtube") {

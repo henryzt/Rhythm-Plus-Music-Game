@@ -1,15 +1,28 @@
 import { analytics } from "./firebaseConfig";
 import router from "./router";
+import { store } from "./store";
 
-export function logEvent(action, event) {
-  analytics().logEvent(action, event);
-  if (event) {
-    event.event_label = Object.values(event)[0];
+let version;
+
+function getVersion() {
+  if (!version && store.state.appVersion) {
+    version = `${store.state.appVersion}-${store.state.build}`;
   }
+  return version ?? "unkown";
+}
+
+export function logEvent(action, event, category) {
+  // log in fba
   let reportEvent = event ?? {};
-  reportEvent.event_category = router.currentRoute?.name;
+  reportEvent.version = getVersion();
+  reportEvent.uid = store.state.currentUser?.uid;
+  reportEvent.route = router.currentRoute?.name;
+  reportEvent.event_category = category ?? reportEvent.route;
+  analytics().logEvent(action, reportEvent);
+  // log also in gtag
+  reportEvent.event_label = Object.values(reportEvent)[0];
   window.gtag("event", action, reportEvent);
-  Logger.log("event logged - ", action);
+  Logger.log("event logged - ", action, reportEvent);
 }
 
 export function logError(description, fatal) {
@@ -18,7 +31,7 @@ export function logError(description, fatal) {
     fatal,
   };
   window.gtag("event", "exception", data);
-  logEvent("error", data);
+  logEvent(`error-${getVersion()}`, data, "error");
 }
 
 export function sendPageview(path) {

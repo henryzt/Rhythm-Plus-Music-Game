@@ -102,6 +102,6 @@ new Vue({
 }).$mount("#app");
 
 console.log(
-  "%cThank you for playing Rhythm Plus! This game is still under active development, so if you have spotted a bug or have feedback, please don't hesitate to submit an issue on GitHub linked below. Since this is a free open source project, a star is always appreciated, thank you for your support :) https://github.com/henryz00/Rhythm-Plus-Music-Game",
-  "color:purple;font-weight: bold;"
+  "%cThank you for playing Rhythm Plus! This game is still under active development, if you have spotted a bug or have feedback, please don't hesitate to submit an issue on GitHub linked below. This is a free open source project, a star is always appreciated, thank you for your support :) https://github.com/henryz00/Rhythm-Plus-Music-Game",
+  "color: #faaf4e; font-weight: bold;"
 );

@@ -79,7 +79,7 @@ export const store = new Vuex.Store({
           let data = res.data();
           commit("setUserProfile", data ?? {});
           commit("setTheme");
-          logEvent("app_initialized");
+          logEvent("app_initialized", null, "system");
         } catch (err) {
           Logger.error(err);
         }

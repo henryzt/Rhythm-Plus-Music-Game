@@ -94,7 +94,7 @@ export default {
       const isOnline = e.type === "online" || window.navigator.onLine;
       if (isOnline) this.$store.state.alert.success("You are back online!");
       else this.$store.state.alert.error("No internet connection");
-      logEvent("online_status_changed", isOnline);
+      logEvent("online_status_changed", isOnline, "system");
     },
     listenToUpdates() {
       document.addEventListener("swUpdated", this.updateAvailable, {
@@ -105,25 +105,25 @@ export default {
         if (this.refreshing) return;
         this.refreshing = true;
         console.log("Game is updating...");
-        logEvent("game_updated");
+        logEvent("game_updated", null, "system");
         window.location.reload();
       });
     },
     reload() {
       window.location.reload(true);
-      logEvent("game_force_updated");
+      logEvent("game_force_updated", null, "system");
     },
     // Store the SW registration so we can send it a message
     // We use `updateExists` to control whatever alert, toast, dialog, etc we want to use
     // To alert the user there is an update they need to refresh for
     async updateAvailable(event) {
-      logEvent("update_available");
+      logEvent("update_available", null, "system");
       this.registration = event.detail;
       this.$store.state.alert
         .info("A new version of the game is found!", 0, "Update Now")
         .then(() => {
           Logger.log("update accepted");
-          logEvent("update_accepted");
+          logEvent("update_accepted", null, "system");
           // Make sure we only send a 'skip waiting' message if the SW is waiting
           if (!this.registration || !this.registration.waiting) return;
           // send message to SW to skip the waiting and activate the new SW
@@ -150,15 +150,15 @@ export default {
         // show if current version is lower than minimum
         const msg = config.versionTooOldMessage;
         this.maintenanceMsg = JSON.parse(msg._value);
-        logEvent("update_required_msg_showed");
+        logEvent("update_required_msg_showed", null, "system");
       } else if (config.maintenanceMode._value === "true") {
         // show otherwise: if has maintenance message
         const msg = config.maintenanceMessage;
         this.maintenanceMsg = JSON.parse(msg._value);
-        logEvent("maintenance_mode_showed");
+        logEvent("maintenance_mode_showed", null, "system");
       } else if (config.showNotification._value === "true") {
         // show otherwise: if has upcoming update notification
-        logEvent("upcoming_update_warning_showed");
+        logEvent("upcoming_update_warning_showed", null, "system");
         const msg = JSON.parse(config.notification._value);
         await this.$store.state.gModal.show({
           titleText: msg.title,

@@ -99,6 +99,18 @@ export function createSong(songInfo) {
   });
 }
 
+export async function getSongListCached() {
+  try {
+    return await fetch("https://cache.rhythm-plus.com/songs").then((res) =>
+      res.json()
+    );
+  } catch (e) {
+    Logger.error("fall back to firebase", e);
+    // fall back
+    return getSongList();
+  }
+}
+
 export function getSongList(getPrivate, getAll, filterIdArr) {
   return new Promise((resolve, reject) => {
     let collection = songsCollection;

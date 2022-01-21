@@ -32,7 +32,7 @@
 
       <div class="reflow1">
         <div class="new-info flex_hori" v-if="tab == 'new'">
-          <v-icon name="info-circle" style="padding-right: 10px;"></v-icon>
+          <v-icon name="info-circle" style="padding-right: 10px"></v-icon>
           <div>
             We cannot yet guarantee the quality of new sheets, accurate beatmaps
             will be selected to the recommended songs periodically.
@@ -63,7 +63,7 @@
                 @selected="selectedSong = $event"
               ></SongList>
 
-              <div class="subtitle" style="padding-bottom: 20px;">For you</div>
+              <div class="subtitle" style="padding-bottom: 20px">For you</div>
             </div>
           </div>
 
@@ -81,7 +81,7 @@
                 @click="$router.push('/tutorial/')"
               >
                 <v-icon class="add-icon" name="question-circle" scale="2" />
-                <div style="font-size: 1.2em;">Play Tutorial</div>
+                <div style="font-size: 1.2em">Play Tutorial</div>
               </div>
             </template>
             <template v-slot:bottom>
@@ -135,7 +135,7 @@
         <template>
           <iframe
             src="https://docs.google.com/forms/d/e/1FAIpQLSf4nNnTn0vmYjWYbq3TeC6epuN8xkEhxlWONrtIMMZbgLJ38w/viewform?embedded=true"
-            style="width: 100%;"
+            style="width: 100%"
             height="500"
             frameborder="0"
             marginheight="0"
@@ -155,7 +155,7 @@ import Loading from "../components/ui/Loading.vue";
 import Modal from "../components/ui/Modal.vue";
 import {
   getSheetList,
-  getSongList,
+  getSongListCached,
   getPlaylist,
   getSongsInIdArray,
 } from "../javascript/db";
@@ -232,7 +232,7 @@ export default {
       this.$store.state.audio.playHoverEffect("ui/ta");
     },
     async getAllSongs() {
-      if (!this.allSongs) this.allSongs = await getSongList();
+      if (!this.allSongs) this.allSongs = await getSongListCached();
     },
     async filterRecommended(getRecommened) {
       await this.getAllSongs();

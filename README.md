@@ -10,14 +10,18 @@ Rhythm plus is a web-based vertical scrolling rhythm game (VSRG), you can make, 
 
 # Gameplay
 
-[Play Now](https://rhythm-plus.com/)
+** [Play Now](https://rhythm-plus.com/) **
 
 ![early gameplay gif](gameplay.gif)
 
-DJMAX like VSRG (Vertically Scrolling Rhythm Game) using vanilla js and HTML5 canvas, with UI written in Vue.js.
+Built with Vue.JS and vanilla canvas 2d api. Visit our [wiki](https://wiki.rhythm-plus.com/) for more information. Join our [discord community](https://discord.com/invite/ZGhnKp4) to get the latest updates!
 
 
-# Special Thanks
+# Contributors
 
+[@henryzt](https://github.com/henryzt)
 [@jieyouxu](https://github.com/jieyouxu)
 [@KZHIWEI](https://github.com/KZHIWEI)
+[@yoyouC](https://github.com/yoyouC)
+[@Kouakiradou](https://github.com/Kouakiradou)
+[@Shadowhusky](https://github.com/Shadowhusky)

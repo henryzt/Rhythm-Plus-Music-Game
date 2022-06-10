@@ -1,6 +1,7 @@
 # Rhythm+ Music Game
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/5f8676be-76d6-48e7-849f-24c85a3a8970/deploy-status)](https://app.netlify.com/sites/rhythm-plus-staging/deploys)
+[![Discord](https://discordapp.com/api/guilds/760931362378874910/widget.png)](https://discord.com/invite/ZGhnKp4)
 
 Rhythm plus is a web-based vertical scrolling rhythm game (VSRG), you can make, play, and share any songs from and with anyone!
 

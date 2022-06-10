@@ -5,7 +5,8 @@
 
 Rhythm plus is a web-based vertical scrolling rhythm game (VSRG), you can make, play, and share any songs from and with anyone!
 
-![gameplay gif](https://rhythm-plus.web.app/og.jpg)
+[![gameplay](https://rhythm-plus.web.app/og.jpg)](https://rhythm-plus.com/)
+
 
 
 
@@ -13,7 +14,7 @@ Rhythm plus is a web-based vertical scrolling rhythm game (VSRG), you can make, 
 
 [**Play Now**](https://rhythm-plus.com/)
 
-![early gameplay gif](gameplay.gif)
+[![early gameplay gif](gameplay.gif)](https://rhythm-plus.com/)
 
 Built with Vue.JS and vanilla canvas 2d api. Visit our [wiki](https://wiki.rhythm-plus.com/) for more information. Join our [discord server](https://discord.com/invite/ZGhnKp4) to get the latest updates!
 

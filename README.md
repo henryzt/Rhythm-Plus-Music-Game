@@ -2,8 +2,16 @@
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/5f8676be-76d6-48e7-849f-24c85a3a8970/deploy-status)](https://app.netlify.com/sites/rhythm-plus-staging/deploys)
 [![Discord](https://img.shields.io/discord/760931362378874910?color=7289da&label=Discord&logo=discord&logoColor=white)](https://discord.com/invite/ZGhnKp4)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 Rhythm Plus is a community-based web Vertical Scrolling Rhythm Game (VSRG) that allows you to create, play, and share songs with anyone!
+
+- 🎮 **Instant Play:** Run directly in your browser
+- 🛠️ **Built-in Editor:** Create your own levels with an intuitive sheet editor
+- 🌐 **Community Driven:** Share your creations and play levels made by the community
+- 🎨 **Deep Customization:** Personalize your experience with custom skins and settings
+- ☁️ **Cross-Device Sync:** Mark favorites, create playlists, and keep your progress updated anywhere
+
 
 [![gameplay](https://rhythm-plus.web.app/og.jpg)](https://rhythm-plus.com/)
 

@@ -1,9 +1,9 @@
 # Rhythm Plus Music Game
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/5f8676be-76d6-48e7-849f-24c85a3a8970/deploy-status)](https://app.netlify.com/sites/rhythm-plus-staging/deploys)
-[![Discord](https://discordapp.com/api/guilds/760931362378874910/widget.png)](https://discord.com/invite/ZGhnKp4)
+[![Discord](https://img.shields.io/discord/760931362378874910?color=7289da&label=Discord&logo=discord&logoColor=white)](https://discord.com/invite/ZGhnKp4)
 
-Rhythm plus is a web-based vertical scrolling rhythm game (VSRG), you can make, play, and share any songs from and with anyone!
+Rhythm Plus is a community-based web Vertical Scrolling Rhythm Game (VSRG) that allows you to create, play, and share songs with anyone!
 
 [![gameplay](https://rhythm-plus.web.app/og.jpg)](https://rhythm-plus.com/)
 
@@ -41,14 +41,16 @@ Rhythm plus is a web-based vertical scrolling rhythm game (VSRG), you can make, 
 
 [![early gameplay gif](gameplay.gif)](https://rhythm-plus.com/)
 
-Built with Vue.JS and vanilla canvas 2d api. Visit our [wiki](https://wiki.rhythm-plus.com/) for more information. Join our [discord server](https://discord.com/invite/ZGhnKp4) to get the latest updates!
+
+Built with **Vue.js 2** and **Vanilla Canvas 2D API**. Visit our [Wiki](https://wiki.rhythm-plus.com/) for more information. Join our [Discord Server](https://discord.com/invite/ZGhnKp4) to get the latest updates!
+
+> This repository contains the source code for the legacy V1 version of Rhythm Plus which is built with Firebase Firestore.
+>
+> We are currently working on V2, the biggest update to Rhythm Plus. V2 is built with a modern stack including **Nuxt 3**, **TypeScript**, **PixiJS**, and **Babylon.js**, supporting custom skins, true 3D modes, SV, and much more! V2 is not yet open-sourced, please stay tuned!
+>
+> To learn more about V2 and stay updated, [join our Discord server](https://discord.com/invite/ZGhnKp4)!
+
 
 
 ## Contributors
-
-[@henryzt](https://github.com/henryzt)
-[@jieyouxu](https://github.com/jieyouxu)
-[@KZHIWEI](https://github.com/KZHIWEI)
-[@yoyouC](https://github.com/yoyouC)
-[@Kouakiradou](https://github.com/Kouakiradou)
-[@Shadowhusky](https://github.com/Shadowhusky)
+[@henryzt](https://github.com/henryzt) [@robinWongM](https://github.com/robinWongM) [@jieyouxu](https://github.com/jieyouxu) [@KZHIWEI](https://github.com/KZHIWEI) [@yoyouC](https://github.com/yoyouC) [@Kouakiradou](https://github.com/Kouakiradou) [@Shadowhusky](https://github.com/Shadowhusky) [@splamei](https://github.com/splamei)

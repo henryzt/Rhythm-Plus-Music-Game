@@ -7,10 +7,10 @@
 Rhythm Plus is a community-based web Vertical Scrolling Rhythm Game (VSRG) that allows you to create, play, and share songs with anyone!
 
 - 🎮 **Instant Play:** Run directly in your browser
-- 🛠️ **Built-in Editor:** Create your own levels with an intuitive sheet editor
 - 🌐 **Community Driven:** Share your creations and play levels made by the community
-- 🎨 **Deep Customization:** Personalize your experience with custom skins and settings
+- 🛠️ **Built-in Editor:** Create your own levels with an intuitive sheet editor
 - ☁️ **Cross-Device Sync:** Mark favorites, create playlists, and keep your progress updated anywhere
+- 🎨 **Deep Customization:** Personalize your experience with custom skins and settings
 
 
 [![gameplay](https://rhythm-plus.web.app/og.jpg)](https://rhythm-plus.com/)
@@ -50,9 +50,10 @@ Rhythm Plus is a community-based web Vertical Scrolling Rhythm Game (VSRG) that 
 [![early gameplay gif](gameplay.gif)](https://rhythm-plus.com/)
 
 
-Built with **Vue.js 2** and **Vanilla Canvas 2D API**. Visit our [Wiki](https://wiki.rhythm-plus.com/) for more information. Join our [Discord Server](https://discord.com/invite/ZGhnKp4) to get the latest updates!
+Visit our [Wiki](https://wiki.rhythm-plus.com/) for more information. Join our [Discord server](https://discord.com/invite/ZGhnKp4) to get the latest updates!
 
-> This repository contains the source code for the legacy V1 version of Rhythm Plus which is built with Firebase Firestore.
+> [!NOTE]
+> This repository contains the source code for the legacy V1 version of Rhythm Plus which is built with **Vue.js 2**, **Vanilla Canvas 2D API** and **Firebase Firestore**.
 >
 > We are currently working on V2, the biggest update to Rhythm Plus. V2 is built with a modern stack including **Nuxt 3**, **TypeScript**, **PixiJS**, and **Babylon.js**, supporting custom skins, true 3D modes, SV, and much more! V2 is not yet open-sourced, please stay tuned!
 >

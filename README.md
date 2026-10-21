@@ -24,27 +24,27 @@ Rhythm Plus is a community-based web Vertical Scrolling Rhythm Game (VSRG) that 
 
 ### Title Screen
 
-![](<https://github.com/rhythm-plus/wiki-gitbook/blob/master/.gitbook/assets/image (6).png>)
+![](docs/images/title-screen.png)
 
 ### Song Select
 
-![](<https://github.com/rhythm-plus/wiki-gitbook/blob/master/.gitbook/assets/image (3).png>)
+![](docs/images/song-select.png)
 
 ### Gameplay
 
-![Gameplay](<https://github.com/rhythm-plus/wiki-gitbook/blob/master/.gitbook/assets/Screenshot (124).png>)
+![Gameplay](docs/images/gameplay.png)
 
-![Custom Colors](https://github.com/rhythm-plus/wiki-gitbook/blob/master/.gitbook/assets/colors.png)
+![Custom Colors](docs/images/custom-colors.png)
 
 ### Preferences
 
-![Preferences](<https://github.com/rhythm-plus/wiki-gitbook/blob/master/.gitbook/assets/image (4).png>)
+![Preferences](docs/images/preferences.png)
 
 ### Sheet Editor
 
-![Sheet Editor](<https://github.com/rhythm-plus/wiki-gitbook/blob/master/.gitbook/assets/Screenshot (122).png>)
+![Sheet Editor](docs/images/sheet-editor.png)
 
-![Editor 2](<https://github.com/rhythm-plus/wiki-gitbook/blob/master/.gitbook/assets/image (2).png>)
+![Editor 2](docs/images/sheet-editor-2.png)
 
 
 [![early gameplay gif](gameplay.gif)](https://rhythm-plus.com/)
